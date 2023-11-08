@@ -1,0 +1,22 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ELIFECYCLE",
+    "errno": "ENOENT",
+    "syscall": "spawn",
+    "file": "sh",
+    "pkgid": "@petboarding/app@0.1.0",
+    "stage": "build:ssr",
+    "script": "vitrify build -m ssr",
+    "pkgname": "@petboarding/app",
+    "err": {
+      "name": "pnpm",
+      "message": "@petboarding/app@0.1.0 build:ssr: `vitrify build -m ssr`\nspawn ENOENT",
+      "code": "ELIFECYCLE",
+      "stack": "pnpm: @petboarding/app@0.1.0 build:ssr: `vitrify build -m ssr`\nspawn ENOENT\n    at ChildProcess.<anonymous> (/snapshot/dist/pnpm.cjs)\n    at ChildProcess.emit (events.js:376:20)\n    at maybeClose (internal/child_process.js:1055:16)\n    at Process.ChildProcess._handle.onexit (internal/child_process.js:288:5)"
+    }
+  },
+  "2 warn pnpm:global": " Local package.json exists, but node_modules missing, did you mean to install?"
+}

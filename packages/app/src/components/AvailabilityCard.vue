@@ -1,0 +1,115 @@
+<template>
+  <q-styled-card>
+    <template #title>
+      {{ lang.availability.title }}
+      <q-btn icon="info" flat color="primary" @click="openDialog" />
+    </template>
+    <div class="row full-width justify-between">
+      <q-btn-toggle v-model="toggle" :options="buttonOptions" />
+    </div>
+    <div class="row">
+      <date-picker
+        v-model="dateRange"
+        :periods="unavailablePeriods"
+        :range="toggle === 'boarding'"
+        :options="options"
+        first-day-of-week="1"
+      />
+    </div>
+    <a class="text-caption">
+      {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
+    </a>
+  </q-styled-card>
+  <responsive-dialog ref="dialogRef" display>
+    <a>
+      {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
+    </a>
+    <periods-list v-if="periods" :model-value="periods" bordered />
+  </responsive-dialog>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'AvailabilityCard'
+}
+</script>
+
+<script setup lang="ts">
+import { Period } from '@petboarding/api/zod'
+import { watch, computed, ref, toRefs } from 'vue'
+import { QStyledCard, ResponsiveDialog } from '@simsustech/quasar-components'
+import { DatePicker } from '@simsustech/quasar-components/form'
+import { useLang } from '../lang/index.js'
+import { useConfiguration } from '../configuration.js'
+import { date as dateUtil } from 'quasar'
+const props = defineProps<{
+  periods: Period[]
+  allowPastDates?: boolean
+}>()
+
+const lang = useLang()
+const configuration = useConfiguration()
+const { periods, allowPastDates } = toRefs(props)
+
+const toggle = ref<'boarding' | 'daycare'>('boarding')
+const buttonOptions = computed(() => [
+  {
+    label: lang.value.boarding.substring(0, 12),
+    value: 'boarding'
+  },
+  {
+    label: lang.value.daycare.title.substring(0, 12),
+    value: 'daycare'
+  }
+])
+
+const dialogRef = ref<typeof ResponsiveDialog>()
+const openDialog = () => {
+  dialogRef.value?.functions.open()
+}
+
+const dateRange = ref({
+  from: '',
+  to: ''
+})
+watch(toggle, (val) => {
+  if (val) dateRange.value = { from: '', to: '' }
+})
+const unavailablePeriods = computed(() => {
+  const periodTypes = ['unavailableforall']
+  if (toggle.value === 'boarding') periodTypes.push('unavailableforbookings')
+  else periodTypes.push('unavailablefordaycare')
+  return periods.value
+    ?.filter((period) => periodTypes.includes(period.type))
+    .map((period) => ({
+      startDate: period.startDate,
+      endDate: period.endDate,
+      type: 'unavailable' as const
+    }))
+})
+
+const options = (date: string) => {
+  if (
+    toggle.value === 'daycare' &&
+    configuration.value.DAYCARE_DISABLED_WEEKDAYS?.includes(
+      Number(dateUtil.formatDate(dateUtil.extractDate(date, 'YYYY/MM/DD'), 'd'))
+    )
+  ) {
+    return false
+  }
+  return (
+    date >
+      dateUtil.formatDate(
+        dateUtil.subtractFromDate(new Date(), {
+          days: allowPastDates?.value ? 14 : 2
+        }),
+        'YYYY/MM/DD'
+      ) &&
+    date <
+      dateUtil.formatDate(
+        dateUtil.addToDate(new Date(), { days: 366 }),
+        'YYYY/MM/DD'
+      )
+  )
+}
+</script>

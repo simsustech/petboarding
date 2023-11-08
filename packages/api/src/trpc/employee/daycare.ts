@@ -1,0 +1,38 @@
+import { TRPCError } from '@trpc/server'
+import { t } from '../index.js'
+import * as z from 'zod'
+import type { FastifyInstance } from 'fastify'
+import { findDaycareDates } from 'src/repositories/daycare'
+import { DAYCARE_DATE_STATUS } from 'src/zod'
+
+export const employeeDaycareRoutes = ({
+  // fastify,
+  procedure
+}: {
+  fastify?: FastifyInstance
+  procedure: typeof t.procedure
+}) => ({
+  getDaycareDates: procedure
+    .input(
+      z.object({
+        from: z.string(),
+        until: z.string(),
+        status: z.nativeEnum(DAYCARE_DATE_STATUS)
+      })
+    )
+    .query(async ({ input }) => {
+      const { from, until, status } = input
+      if (from && until) {
+        const daycareDates = await findDaycareDates({
+          criteria: {
+            from,
+            until,
+            status
+          }
+        })
+
+        return daycareDates
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+})

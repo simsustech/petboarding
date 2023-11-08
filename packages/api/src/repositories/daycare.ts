@@ -1,0 +1,212 @@
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
+import { Database, db } from '../kysely/index.js'
+import type { DaycareDates } from '../kysely/types.d.ts'
+
+import type {
+  ExpressionBuilder,
+  Insertable,
+  Selectable,
+  Updateable
+} from 'kysely'
+import { DAYCARE_DATE_STATUS } from 'src/zod'
+type DaycareDate = Selectable<DaycareDates>
+type NewDaycareDate = Insertable<DaycareDates>
+type DaycareDateUpdate = Updateable<DaycareDates>
+
+const defaultSelect = [
+  'id',
+  'date',
+  'status',
+  'comments',
+  'customerId',
+  'daycareSubscriptionId'
+] as (keyof DaycareDate)[]
+
+function withPets(eb: ExpressionBuilder<Database, 'daycareDates'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('pets')
+      .innerJoin(
+        'daycareDatePetKennel',
+        'pets.id',
+        'daycareDatePetKennel.petId'
+      )
+      .innerJoin('customers', 'pets.customerId', 'customers.id')
+      .select(({ eb: ceb }) => [
+        'pets.id',
+        'pets.name',
+        'pets.categoryId',
+        'pets.breed',
+        'pets.sterilized',
+        'pets.gender',
+        jsonObjectFrom(
+          ceb
+            .selectFrom('customers')
+            .select(['customers.id', 'customers.lastName'])
+            .whereRef('customers.id', '=', 'pets.customerId')
+        ).as('customer')
+      ])
+      .whereRef('daycareDates.id', '=', 'daycareDatePetKennel.daycareDateId')
+  ).as('pets')
+}
+
+function withCustomer(eb: ExpressionBuilder<Database, 'daycareDates'>) {
+  return jsonObjectFrom(
+    eb
+      .selectFrom('customers')
+      .select([
+        'customers.id',
+        'customers.accountId',
+        'customers.firstName',
+        'customers.lastName',
+        'customers.gender',
+        'customers.address',
+        'customers.city',
+        'customers.postalCode',
+        'customers.telephoneNumber',
+        'customers.veterinarian'
+      ])
+      .whereRef('daycareDates.customerId', '=', 'customers.id')
+  ).as('customer')
+}
+
+function find({
+  criteria,
+  select
+}: {
+  criteria: Partial<DaycareDate> & { from?: string; until?: string }
+  select?: (keyof DaycareDate)[]
+}) {
+  if (select) select = [...defaultSelect, ...select]
+  else select = [...defaultSelect]
+
+  let query = db.selectFrom('daycareDates')
+
+  if (criteria.id) {
+    query = query.where('id', '=', criteria.id)
+  }
+
+  if (criteria.customerId) {
+    query = query.where('customerId', '=', criteria.customerId)
+  }
+
+  if (criteria.from) {
+    query = query.where('date', '>=', criteria.from)
+  }
+
+  if (criteria.until) {
+    query = query.where('date', '<=', criteria.until)
+  }
+
+  if (criteria.status) {
+    query = query.where('status', '=', criteria.status)
+  }
+  return query.select(select).select([withCustomer, withPets])
+}
+
+export async function findDaycareDate({
+  criteria,
+  select
+}: {
+  criteria: Partial<DaycareDate> & { from?: string; until?: string }
+  select?: (keyof DaycareDate)[]
+}) {
+  const query = find({ criteria, select })
+
+  return query.executeTakeFirst()
+}
+
+export async function findDaycareDates({
+  criteria,
+  select
+}: {
+  criteria: Partial<DaycareDate> & { from?: string; until?: string }
+  select?: (keyof DaycareDate)[]
+}) {
+  const query = find({
+    criteria,
+    select
+  })
+  return query.execute()
+}
+
+export async function createDaycareDate({
+  daycareDate,
+  petIds
+}: {
+  daycareDate: NewDaycareDate
+  petIds: number[]
+}) {
+  const newDaycareDate = await db
+    .insertInto('daycareDates')
+    .values(daycareDate)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  await db
+    .insertInto('daycareDatePetKennel')
+    .values(
+      petIds.map((petId) => ({
+        petId,
+        daycareDateId: newDaycareDate.id
+      }))
+    )
+    .executeTakeFirstOrThrow()
+}
+
+export async function updateDaycareDate(
+  criteria: Partial<DaycareDate> & {
+    startDate?: string
+    endDate?: string
+    ids?: number[]
+  },
+  updateWith: {
+    daycareDate: DaycareDateUpdate
+    petIds?: number[]
+  }
+) {
+  let query = db.updateTable('daycareDates')
+
+  if (criteria.id) {
+    query = query.where('id', '=', criteria.id)
+  } else if (criteria.ids) {
+    query = query.where('id', 'in', criteria.ids)
+  }
+
+  if (criteria.customerId) {
+    query = query.where('customerId', '=', criteria.customerId)
+  }
+  const updatedDaycareDate = await query
+    .set(updateWith.daycareDate)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  if (Array.isArray(updateWith.petIds)) {
+    await db
+      .deleteFrom('daycareDatePetKennel')
+      .where('daycareDateId', '=', updatedDaycareDate.id)
+      .executeTakeFirstOrThrow()
+
+    await db
+      .insertInto('daycareDatePetKennel')
+      .values(
+        updateWith.petIds.map((petId) => ({
+          petId,
+          daycareDateId: updatedDaycareDate.id
+        }))
+      )
+      .executeTakeFirstOrThrow()
+  }
+}
+
+export async function getDaycareDateCount(status: DAYCARE_DATE_STATUS) {
+  const count = (
+    await db
+      .selectFrom('daycareDates')
+      .where('status', '=', status)
+      .select(({ fn }) => [fn.count<number>('daycareDates.id').as('count')])
+      .executeTakeFirst()
+  )?.count
+
+  return count
+}

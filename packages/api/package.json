@@ -1,0 +1,103 @@
+{
+  "private": true,
+  "name": "@petboarding/api",
+  "productName": "Petboarding",
+  "version": "0.1.0",
+  "description": "Petboarding API",
+  "license": "ELv2",
+  "author": "simsustech",
+  "type": "module",
+  "exports": {
+    "./zod": {
+      "import": "./src/zod/index.ts"
+    },
+    "./trpc": {
+      "types": "./src/trpc/index.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "trpc": [
+        "./src/trpc/index.ts"
+      ],
+      "zod": [
+        "./src/zod/index.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/",
+    "vitrify.config.ts"
+  ],
+  "scripts": {
+    "serve": "node ./dist/server/server.mjs",
+    "dev": "vitrify dev -m fastify",
+    "build:migrations": "tsc -p tsconfig.migrations.json",
+    "build:api": "vitrify build -m fastify",
+    "build": "run-s build:api build:migrations",
+    "test": "vitrify test",
+    "test:e2e": "playwright test",
+    "lint": "eslint --ext .vue --ext .ts src",
+    "lint:fix": "eslint --ext .vue --ext .ts src --fix",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "migrate:latest": "node ./dist/migrate.js",
+    "seed:fake": "node ./dist/seeds/fake.js",
+    "seed:test": "node ./dist/seeds/test.js",
+    "seed:data": "node ./dist/seeds/data.js",
+    "start": "run-s migrate:latest migrate:latest serve"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "@fastify/cors": "^8.3.0",
+    "@fastify/middie": "8.3.0",
+    "@fastify/static": "6.10.2",
+    "@modular-api/api": "^0.3.0",
+    "@modular-api/fastify-oidc": "^0.2.0",
+    "@petboarding/app": "^0.1.0",
+    "@quasar/extras": "1.16.5",
+    "@trpc/server": "^10.37.1",
+    "@vitrify/tools": "^0.1.4",
+    "bcrypt": "^5.1.1",
+    "compress-tag": "^2.0.1",
+    "date-fns": "^2.30.0",
+    "date-holidays": "^3.21.3",
+    "fastify": "^4.21.0",
+    "handlebars": "^4.7.8",
+    "js-base64": "^3.7.5",
+    "kysely": "^0.26.3",
+    "npm-run-all": "^4.1.5",
+    "oidc-provider": "^8.2.2",
+    "otplib": "^12.0.1",
+    "pg": "^8.11.3",
+    "quasar": "2.12.5",
+    "sharp": "^0.32.6",
+    "vue": "3.3.4",
+    "vue-router": "4.2.4",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.39.0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/oidc-provider": "^8.2.0",
+    "@types/pg": "^8.10.3",
+    "@typescript-eslint/eslint-plugin": "6.4.0",
+    "@typescript-eslint/parser": "6.4.0",
+    "@vitejs/plugin-vue": "4.3.2",
+    "critters": "0.0.20",
+    "devcert": "1.2.2",
+    "eslint": "8.47.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier-vue": "4.2.0",
+    "eslint-plugin-vue": "9.17.0",
+    "kysely-codegen": "^0.10.1",
+    "typescript": "5.1.6",
+    "vite": "4.4.9",
+    "vitrify": "^0.13.2"
+  },
+  "dependenciesMeta": {
+    "@modular-api/fastify-oidc": {
+      "injected": true
+    }
+  }
+}

@@ -1,0 +1,91 @@
+version: "3.9"
+services:
+  api:
+    image: "ghcr.io/simsustech/petboarding"
+    build:
+      context: .
+      secrets:
+        - POSTGRES_PASSWORD
+        - OTP_SECRET
+        - SIMSUSTECH_NPM_TOKEN
+      dockerfile: Dockerfile
+      target: api
+      # args:
+      # App env variables
+      # - VITE_API_HOSTNAME=${HOSTNAME}
+      # - VITE_API_HOSTNAME=vitrify.test
+      # - VITE_OIDC_ISSUER=https://${HOSTNAME}/oidc
+      # - VITE_OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
+      # - VITE_OIDC_REDIRECT_URI=https://${HOSTNAME}/redirect
+      # - VITE_OIDC_EMAIL_CHANGE_URI=https://${HOSTNAME}/interaction/email/change
+      # - VITE_OIDC_EMAIL_VERIFY_URI=https://${HOSTNAME}/interaction/email/verify
+      # - VITE_OIDC_PASSWORD_CHANGE_URI=https://${HOSTNAME}/interaction/password/change
+      # - VITE_TITLE=Petboarding
+      # - VITE_LANG=nl
+      # - VITE_ALLOWED_SPECIES=dog
+    # volumes:
+    # - ./termsandconditions.pdf:/app/node_modules/@petboarding/app/dist/ssr/client/termsandconditions.pdf
+    labels:
+      caddy: ${HOSTNAME}
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    environment:
+      # Modular API
+      VITE_API_HOSTNAME: ${HOSTNAME}
+      OIDC_ISSUER_NAME: ${OIDC_ISSUER_NAME}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      LICENSE_KEY: ${LICENSE_KEY}
+      OTP_SECRET_FILE: /run/secrets/OTP_SECRET
+      OTP_VALIDITY_SECONDS: 3600
+      EMAIL_FOOTER: "Footer"
+      VITE_TITLE: Petboarding dev
+      VITE_LANG: en-US
+      # VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      VITE_ALLOWED_SPECIES: dog
+      VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
+
+    # entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
+    secrets:
+      - POSTGRES_PASSWORD
+      - SIMSUSTECH_NPM_TOKEN
+      - OTP_SECRET
+    networks:
+      web:
+      petboarding:
+        aliases:
+          - api
+    restart: unless-stopped
+
+  database:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    secrets:
+      - POSTGRES_PASSWORD
+    networks:
+      petboarding:
+        aliases:
+          - database
+    restart: unless-stopped
+
+secrets:
+  POSTGRES_PASSWORD:
+    file: ./env/POSTGRES_PASSWORD
+  SIMSUSTECH_NPM_TOKEN:
+    file: ./env/SIMSUSTECH_NPM_TOKEN
+  OTP_SECRET:
+    file: ./env/OTP_SECRET
+
+networks:
+  petboarding:
+  web:
+    external: true

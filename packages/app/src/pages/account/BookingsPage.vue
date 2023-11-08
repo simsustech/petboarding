@@ -1,0 +1,190 @@
+<template>
+  <resource-page
+    type="create"
+    :disabled="disabled"
+    @create="openCreateDialog"
+    @update="openUpdateDialog"
+  >
+    <template #header>
+      {{ lang.booking.title }}
+    </template>
+    <div v-if="ready">
+      <div v-if="petsData?.length">
+        <q-list>
+          <booking-expansion-item
+            v-for="booking in data"
+            :key="booking.id"
+            :model-value="booking"
+            show-icon
+            show-edit-button
+            @update="openUpdateDialog"
+            @cancel="cancelBooking"
+          />
+        </q-list>
+      </div>
+      <div v-else>
+        <router-link to="/account/pets">{{
+          lang.booking.messages.addPets
+        }}</router-link>
+      </div>
+    </div>
+    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+      <booking-form
+        ref="updateBookingFormRef"
+        :pets="petsData"
+        :services="servicesData"
+        :terms-and-conditions-url="termsAndConditionsUrl"
+        @submit="updateBooking"
+      ></booking-form>
+    </responsive-dialog>
+    <responsive-dialog ref="createDialogRef" persistent @submit="create">
+      <booking-form
+        ref="createBookingFormRef"
+        :pets="petsData"
+        :services="servicesData"
+        :terms-and-conditions-url="termsAndConditionsUrl"
+        @submit="createBooking"
+      ></booking-form>
+    </responsive-dialog>
+  </resource-page>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'AccountBookingsPage'
+}
+</script>
+
+<script setup lang="ts">
+import { ref, nextTick, onMounted } from 'vue'
+import { createUseTrpc } from '../../trpc.js'
+import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
+import BookingForm from '../../components/booking/BookingForm.vue'
+import BookingItem from 'src/components/booking/BookingItem.vue'
+import { useLang } from '../../lang/index.js'
+import { extend } from 'quasar'
+import { computed } from 'vue'
+import { useConfiguration } from '../../configuration.js'
+const configuration = useConfiguration()
+const { useQuery, useMutation } = await createUseTrpc()
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
+
+const lang = useLang()
+
+const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
+  // immediate: true
+})
+
+const { data, execute } = useQuery('user.getBookings', {
+  // immediate: true
+})
+
+const { data: servicesData, execute: executeServices } =
+  useQuery('public.getServices')
+
+const disabled = computed(() => !petsData.value?.length)
+
+const termsAndConditionsUrl = computed(
+  () =>
+    configuration.value.TERMS_AND_CONDITIONS_URL || '/termsandconditions.pdf'
+)
+
+const updateBookingFormRef = ref<typeof BookingForm>()
+const createBookingFormRef = ref<typeof BookingForm>()
+const updateDialogRef = ref<typeof ResponsiveDialog>()
+const createDialogRef = ref<typeof ResponsiveDialog>()
+// const updateDialogOpened = ref(false)
+const openUpdateDialog: InstanceType<
+  typeof ResourcePage
+>['$props']['onUpdate'] = ({ data }) => {
+  updateDialogRef.value?.functions.open()
+  nextTick(() => {
+    updateBookingFormRef.value?.functions.setValue(data)
+  })
+}
+
+const openCreateDialog: InstanceType<
+  typeof ResourcePage
+>['$props']['onCreate'] = () => {
+  createDialogRef.value?.functions.open()
+}
+
+const update: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  const afterUpdate = (success?: boolean) => {
+    done(success)
+    execute()
+  }
+  updateBookingFormRef.value?.functions.submit({ done: afterUpdate })
+}
+
+const create: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  const afterCreate = (success?: boolean) => {
+    done(success)
+    execute()
+  }
+  createBookingFormRef.value?.functions.submit({ done: afterCreate })
+}
+
+const updateBooking: InstanceType<
+  typeof BookingForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  data = extend(true, {}, data)
+  delete data.customerId
+
+  const result = useMutation('user.updateBooking', {
+    args: data as WithRequired<typeof data, 'id'>,
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  done(!result.error.value)
+}
+
+const cancelBooking: InstanceType<
+  typeof BookingItem
+>['$props']['onCancel'] = async ({ data: { booking, reason }, done }) => {
+  if (booking.id) {
+    const result = useMutation('user.cancelBooking', {
+      args: {
+        id: booking.id,
+        reason
+      },
+      immediate: true
+    })
+
+    await result.immediatePromise
+
+    execute()
+    // if (result.data.value) modelValue.value = result.data.value
+    done(!result.error.value)
+  }
+}
+
+const createBooking: InstanceType<
+  typeof BookingForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  delete data.customerId
+
+  const result = useMutation('user.createBooking', {
+    args: data as WithRequired<typeof data, 'id'>,
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  done(!result.error.value)
+}
+
+const ready = ref<boolean>(false)
+onMounted(async () => {
+  await executeCustomer()
+  await executeServices()
+  await execute()
+  ready.value = true
+})
+</script>

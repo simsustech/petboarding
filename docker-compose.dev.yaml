@@ -1,0 +1,67 @@
+version: "3.7"
+services:
+  database:
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ufgouifdgjdfg
+      POSTGRES_DB: petboarding
+    volumes:
+      - ./devdatabase:/var/lib/postgresql/data
+    networks:
+      dev:
+        aliases:
+          - database
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    logging:
+      driver: "none"
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      dev:
+        aliases:
+          - mailhog
+
+  dev:
+    image: "ghcr.io/simsustech/petboarding:staging"
+    labels:
+      caddy: ${HOSTNAME}.local
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    volumes:
+      - ./packages/app/dist:/packages/app/dist
+      - ./packages/api/dist:/app/dist
+    environment:
+      POSTGRES_HOST: database
+      POSTGRES_PASSWORD: ufgouifdgjdfg
+    environment:
+      # API env variables
+      VITE_API_HOSTNAME: ${HOSTNAME}.local
+      VITE_LICENSE_KEY: undefined
+      VITE_TITLE: Petboarding dev
+      POSTGRES_HOST: database
+      POSTGRES_DB: petboarding
+      POSTGRES_PASSWORD: ufgouifdgjdfg
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      OTP_SECRET_FILE: nonsecure
+      OTP_VALIDITY_SECONDS: 3600
+      EMAIL_FOOTER: "Petboarding dev"
+
+    networks:
+      dev:
+        aliases:
+          - database
+      web:
+
+networks:
+  dev:
+  web:
+    external: true

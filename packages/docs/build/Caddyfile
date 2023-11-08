@@ -1,0 +1,7 @@
+www.petboarding.app {
+  handle {
+    root * /srv/www.petboarding.app
+    try_files {path}.html {path} /index.html
+    file_server
+  }
+}
