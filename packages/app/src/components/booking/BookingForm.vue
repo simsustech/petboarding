@@ -217,8 +217,17 @@ const setDates: InstanceType<typeof QDate>['$props']['onRangeEnd'] = ({
   from,
   to
 }) => {
-  modelValue.value.startDate = `${from.year}/${from.month}/${from.day}`
-  modelValue.value.endDate = `${to.year}/${to.month}/${to.day}`
+  const startDate = `${from.year}/${from.month}/${from.day}`
+  const endDate = `${to.year}/${to.month}/${to.day}`
+  if (startDate !== endDate) {
+    modelValue.value.startDate = startDate
+    modelValue.value.endDate = endDate
+  } else {
+    dateRange.value = {
+      from: '',
+      to: ''
+    }
+  }
 }
 
 const removeDates: InstanceType<
