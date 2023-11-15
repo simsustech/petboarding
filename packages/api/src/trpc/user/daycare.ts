@@ -6,9 +6,11 @@ import type { FastifyInstance } from 'fastify'
 import {
   createDaycareDate,
   findDaycareDates,
+  findDaycareDatesByIds,
   updateDaycareDate
 } from 'src/repositories/daycare'
 import { findCustomer } from 'src/repositories/customer'
+import { format, addDays } from 'date-fns'
 
 export const userDaycareValidation = daycareDate.omit({
   customerId: true,
@@ -89,8 +91,15 @@ export const userDaycareRoutes = ({
             accountId: Number(ctx.account.id)
           }
         })
-        const daycareDateIds = input
-        if (customer?.id) {
+        const daycareDates = await findDaycareDatesByIds(input)
+        const daycareDateIds = daycareDates
+          .filter(
+            (daycareDate) =>
+              daycareDate.date > format(addDays(new Date(), 1), 'yyyy-MM-dd')
+          )
+          .map((daycareDate) => daycareDate.id)
+
+        if (customer?.id && daycareDateIds.length) {
           await updateDaycareDate(
             {
               ids: daycareDateIds

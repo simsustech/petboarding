@@ -116,6 +116,12 @@ export async function findDaycareDate({
   return query.executeTakeFirst()
 }
 
+export async function findDaycareDatesByIds(ids: number[]) {
+  const query = db.selectFrom('daycareDates').selectAll().where('id', 'in', ids)
+
+  return query.execute()
+}
+
 export async function findDaycareDates({
   criteria,
   select
