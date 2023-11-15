@@ -264,7 +264,7 @@ const lang: Language = {
       verifyCancellation:
         'Weet u zeker dat u de volgende datums wilt annuleren?',
       verifyApproval: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
-      verifyRejection: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
+      verifyRejection: 'Weet u zeker dat u de volgende datums wilt weigeren?',
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.'
     },
