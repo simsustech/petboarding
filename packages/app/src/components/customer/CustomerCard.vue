@@ -29,6 +29,16 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-item>
+        <q-item-section>
+          <q-item-label overline>
+            {{ lang.account.fields.email }}
+          </q-item-label>
+          <q-item-label>
+            {{ modelValue.account.email }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-list>
 
     <template #actions>

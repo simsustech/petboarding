@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { account } from './account.js'
 
 export const customerValidation = {
   id: z.number().optional(),
@@ -13,6 +14,7 @@ export const customerValidation = {
   veterinarian: z.string(),
   comments: z.string().optional(),
   accountId: z.number().optional(),
+  account: account.optional(),
   bookings: z
     .object({
       id: z.number()
