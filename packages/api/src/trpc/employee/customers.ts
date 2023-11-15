@@ -38,7 +38,11 @@ export const employeeCustomerRoutes = ({
           criteria: {
             id
           },
-          select: ['rating', 'comments']
+          select: ['rating', 'comments'],
+          relations: {
+            pets: true,
+            bookings: true
+          }
         })
         return customer
       }

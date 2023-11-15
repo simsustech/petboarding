@@ -1,4 +1,4 @@
-import { jsonObjectFrom } from 'kysely/helpers/postgres'
+import { jsonObjectFrom, jsonArrayFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import type { Customers } from '../kysely/types.d.ts'
 
@@ -35,12 +35,35 @@ function withAccount(eb: ExpressionBuilder<Database, 'customers'>) {
   ).as('account')
 }
 
+function withPets(eb: ExpressionBuilder<Database, 'customers'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('pets')
+      .select(['pets.id'])
+      .whereRef('customers.id', '=', 'pets.customerId')
+  ).as('pets')
+}
+
+function withBookings(eb: ExpressionBuilder<Database, 'customers'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('bookings')
+      .select(['bookings.id'])
+      .whereRef('customers.id', '=', 'bookings.customerId')
+  ).as('bookings')
+}
+
 export async function findCustomer({
   criteria,
-  select
+  select,
+  relations
 }: {
   criteria: Partial<Customer>
   select?: (keyof Customer)[]
+  relations?: {
+    pets?: boolean
+    bookings?: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -55,6 +78,8 @@ export async function findCustomer({
     query = query.where('accountId', '=', criteria.accountId)
   }
 
+  if (relations?.pets) query = query.select([withPets])
+  if (relations?.bookings) query = query.select([withBookings])
   return query.select(select).select([withAccount]).executeTakeFirst()
 }
 
