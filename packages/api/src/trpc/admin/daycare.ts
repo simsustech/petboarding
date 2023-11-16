@@ -6,6 +6,7 @@ import * as z from 'zod'
 import { DAYCARE_DATE_STATUS } from 'src/zod'
 import { findDaycareDates, getDaycareDateCount } from 'src/repositories/daycare'
 import { updateDaycareDate } from 'src/repositories/daycare'
+import { addMonths, format } from 'date-fns'
 
 export const adminDaycareRoutes = ({
   // fastify,
@@ -88,7 +89,11 @@ export const adminDaycareRoutes = ({
     )
     .query(async ({ input }) => {
       const { status } = input
-      const count = await getDaycareDateCount(status)
+
+      const count = await getDaycareDateCount({
+        status,
+        maxDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd')
+      })
 
       return count
     })

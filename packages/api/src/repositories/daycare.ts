@@ -205,11 +205,18 @@ export async function updateDaycareDate(
   }
 }
 
-export async function getDaycareDateCount(status: DAYCARE_DATE_STATUS) {
+export async function getDaycareDateCount({
+  status,
+  maxDate
+}: {
+  status: DAYCARE_DATE_STATUS
+  maxDate?: string
+}) {
+  let query = db.selectFrom('daycareDates').where('status', '=', status)
+
+  if (maxDate) query = query.where('date', '<=', maxDate)
   const count = (
-    await db
-      .selectFrom('daycareDates')
-      .where('status', '=', status)
+    await query
       .select(({ fn }) => [fn.count<number>('daycareDates.id').as('count')])
       .executeTakeFirst()
   )?.count
