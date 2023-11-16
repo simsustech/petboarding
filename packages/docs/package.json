@@ -38,7 +38,7 @@
     "@fastify/middie": "8.3.0",
     "@fastify/static": "6.10.2",
     "@quasar/extras": "1.16.6",
-    "@simsustech/quasar-components": "^0.4.3",
+    "@simsustech/quasar-components": "^0.4.4",
     "quasar": "2.12.5",
     "vite-plugin-pwa": "^0.16.5",
     "vue": "3.3.4",

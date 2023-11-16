@@ -40,7 +40,7 @@
     "@fastify/static": "6.10.2",
     "@quasar/extras": "1.16.5",
     "@quasar/quasar-ui-qcalendar": "4.0.0-beta.16",
-    "@simsustech/quasar-components": "^0.4.3",
+    "@simsustech/quasar-components": "^0.4.4",
     "@trpc/client": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "@vueuse/core": "^10.3.0",
