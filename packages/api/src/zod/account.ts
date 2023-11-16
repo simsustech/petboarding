@@ -9,10 +9,10 @@ export enum PETBOARDING_ACCOUNT_ROLES {
 
 export const accountValidation = {
   id: z.number().optional(),
-  name: z.string(),
+  name: z.string().optional(),
   email: z.string(),
   verified: z.boolean(),
-  customFields: z.unknown(),
+  customFields: z.unknown().optional(),
   roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES))
 }
 
