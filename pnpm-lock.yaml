@@ -52,8 +52,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4)(vue@3.3.4)
       '@modular-api/fastify-oidc':
-        specifier: ^0.2.1
-        version: 0.2.1(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4)
+        specifier: ^0.2.2
+        version: 0.2.2(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4)
       '@petboarding/app':
         specifier: workspace:*
         version: link:../app
@@ -2444,7 +2444,7 @@ packages:
       '@fastify/formbody': 7.4.0
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.10.2
-      '@modular-api/fastify-oidc': 0.2.1(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4)
+      '@modular-api/fastify-oidc': 0.2.2(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4)
       '@trpc/server': 10.43.1
       '@types/compression': 1.7.5
       '@types/serve-static': 1.15.5
@@ -2493,8 +2493,8 @@ packages:
       - webdriverio
     dev: false
 
-  /@modular-api/fastify-oidc@0.2.1(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4):
-    resolution: {integrity: sha512-qz4i3gFTfUzkU7hvVkpi5ZoW73Tolz//lXtSzMtAJx75kr/krFrh4eU394zjUuhIF76A3rNsG5h7lVTFh1GnrQ==}
+  /@modular-api/fastify-oidc@0.2.2(@types/node@20.8.10)(bcrypt@5.1.1)(fastify@4.22.1)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.1.6)(vue-router@4.2.4):
+    resolution: {integrity: sha512-NGYrZlPcPnUFQKaJjbx37Vi7G52Xh72nazT4Pb4F6ojMGp3b1jJfBTQ0ZzZdEvltLqevQBiwGKld1F3RLIVmqw==}
     peerDependencies:
       bcrypt: ^5.1.1
       handlebars: ^4.7.7
