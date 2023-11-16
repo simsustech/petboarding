@@ -12,6 +12,7 @@ import type { FastifyInstance } from 'fastify'
 export const userCustomerValidation = customer.omit({
   comments: true,
   accountId: true,
+  account: true,
   rating: true,
   bookings: true,
   pets: true
