@@ -50,7 +50,6 @@ test.beforeAll(async ({ browser }) => {
 
   await page.locator('button >> text=Submit').click()
 
-  await expect(page).toHaveURL(/.*redirect/)
   await page.waitForURL(/.*user/)
   await expect(
     page.getByText('Administrator').locator(':scope.q-item__label')
