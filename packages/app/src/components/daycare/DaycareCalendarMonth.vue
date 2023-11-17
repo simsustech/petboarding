@@ -54,7 +54,11 @@
                     >
                       <q-item-section>
                         <q-item-label>
-                          {{ `${lang.open} ${lang.pet.title.toLowerCase()}` }}
+                          {{
+                            `${
+                              lang.daycare.messages.openPets
+                            } ${lang.pet.title.toLowerCase()}`
+                          }}
                         </q-item-label>
                       </q-item-section>
                     </q-item>

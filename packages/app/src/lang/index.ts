@@ -255,6 +255,7 @@ export interface Language {
       verifyApproval: string
       verifyRejection: string
       submitted: string
+      openPets: string
     }
     replies: {
       approve: string

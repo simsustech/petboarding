@@ -264,7 +264,8 @@ const lang: Language = {
       verifyApproval: 'Are you sure you want to approve the following dates?',
       verifyRejection: 'Are you sure you want to reject the following dates?',
       submitted:
-        'The dates have been submitted. Check the status on this page, you will not receive an email.'
+        'The dates have been submitted. Check the status on this page, you will not receive an email.',
+      openPets: 'Open pets'
     },
     replies: {
       approve: 'Approve dates',
