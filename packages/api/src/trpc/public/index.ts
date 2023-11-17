@@ -45,7 +45,12 @@ export const publicRoutes = ({
         expirationDate: format(new Date(), 'yyyy-MM-dd')
       }
     })
-    if (announcements) return announcements
+    if (announcements)
+      return announcements.sort((a, b) => {
+        if (a.type === 'important' && b.type !== 'important') return -1
+        if (b.type === 'important' && a.type !== 'important') return 1
+        return 0
+      })
     return []
   }),
   getPeriods: procedure.query(async () => {
