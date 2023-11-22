@@ -21,7 +21,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, toRefs } from 'vue'
-import { QFile } from 'quasar'
+import { QFile, QFileProps } from 'quasar'
 import { useLang } from '../lang/index.js'
 
 export interface Props {
@@ -53,8 +53,14 @@ const open = () => {
 }
 const image = ref<File>()
 
-const setImage = async () => {
-  const base64 = await toBase64(image.value)
-  emit('update:modelValue', base64)
+const setImage: QFileProps['onUpdate:modelValue'] = async (file) => {
+  if (!import.meta.env.SSR) {
+    const { readAndCompressImage } = await import('browser-image-resizer')
+    const resizedImage = await readAndCompressImage(file, {
+      maxHeight: 1000
+    })
+    const base64 = await toBase64(resizedImage)
+    emit('update:modelValue', base64)
+  }
 }
 </script>

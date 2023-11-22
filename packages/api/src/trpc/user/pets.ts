@@ -19,7 +19,9 @@ export const userPetValidation = pet.omit({
 
 export const convertPetImage = async (uri: string) => {
   const buffer = sharp(Buffer.from(uri, 'base64'))
-    .resize(PET_IMAGE_SIZE.width, PET_IMAGE_SIZE.height)
+    .resize(PET_IMAGE_SIZE.width, PET_IMAGE_SIZE.height, {
+      fit: 'inside'
+    })
     .toFormat('jpeg', { mozjpeg: true })
     .toBuffer()
   return buffer

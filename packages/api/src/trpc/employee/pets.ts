@@ -26,7 +26,9 @@ const employeePetValidation = pet.omit({
 
 export const convertVaccinationImage = async (uri: string) => {
   const buffer = await sharp(Buffer.from(uri, 'base64'))
-    .resize(VACCINATION_IMAGE_SIZE.width, VACCINATION_IMAGE_SIZE.height)
+    .resize(VACCINATION_IMAGE_SIZE.width, VACCINATION_IMAGE_SIZE.height, {
+      fit: 'inside'
+    })
     .toFormat('jpeg', { mozjpeg: true })
     .toBuffer()
   return buffer
