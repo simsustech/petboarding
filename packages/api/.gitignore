@@ -4,3 +4,4 @@ dist
 playwright-report
 components.d.ts
 test-results
+src/jwks

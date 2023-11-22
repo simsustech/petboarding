@@ -5,24 +5,9 @@ services:
     build:
       context: .
       secrets:
-        - POSTGRES_PASSWORD
-        - OTP_SECRET
         - SIMSUSTECH_NPM_TOKEN
       dockerfile: Dockerfile
       target: api
-      # args:
-      # App env variables
-      # - VITE_API_HOSTNAME=${HOSTNAME}
-      # - VITE_API_HOSTNAME=vitrify.test
-      # - VITE_OIDC_ISSUER=https://${HOSTNAME}/oidc
-      # - VITE_OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
-      # - VITE_OIDC_REDIRECT_URI=https://${HOSTNAME}/redirect
-      # - VITE_OIDC_EMAIL_CHANGE_URI=https://${HOSTNAME}/interaction/email/change
-      # - VITE_OIDC_EMAIL_VERIFY_URI=https://${HOSTNAME}/interaction/email/verify
-      # - VITE_OIDC_PASSWORD_CHANGE_URI=https://${HOSTNAME}/interaction/password/change
-      # - VITE_TITLE=Petboarding
-      # - VITE_LANG=nl
-      # - VITE_ALLOWED_SPECIES=dog
     # volumes:
     # - ./termsandconditions.pdf:/app/node_modules/@petboarding/app/dist/ssr/client/termsandconditions.pdf
     labels:

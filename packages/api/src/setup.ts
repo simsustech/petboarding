@@ -72,7 +72,7 @@ export default async function (fastify: FastifyInstance) {
       issuer: `https://${hostname}`,
       accountMethods,
       firstPartyClients: ['petboarding'],
-      jwksPath: new URL('jwks.json', import.meta.url).pathname,
+      jwksURL: new URL('./jwks/jwks.json', import.meta.url),
       // federated: {
       //   microsoft: {
       //     clientId: 'someId',
