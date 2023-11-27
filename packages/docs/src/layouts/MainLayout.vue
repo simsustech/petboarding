@@ -15,6 +15,17 @@
         </q-avatar>
 
         <q-toolbar-title> Petboarding </q-toolbar-title>
+
+        <q-tabs v-model="tab" class="gt-sm">
+          <q-route-tab
+            v-for="page in pages[$q.lang.isoName]"
+            :key="page.id"
+            :name="page.label"
+            :to="page.id"
+            :label="page.label"
+          ></q-route-tab>
+        </q-tabs>
+        <q-space horizontal />
         <q-language-select
           v-model="language"
           :language-imports="languageImports"
@@ -28,16 +39,41 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <!-- <q-footer reveal>
+      <q-toolbar>
+        <q-space horizontal />
+        <div class="column">
+          <div class="row">
+            <a class="text-subtitle1"> Copyright © 2023 simsustech </a>
+          </div>
+          <div class="row">
+            <a href="https://www.simsus.tech"> https://www.simsus.tech </a>
+          </div>
+        </div>
+        <q-space horizontal />
+      </q-toolbar>
+    </q-footer> -->
+
+    <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item to="/">
+        <q-item v-for="page in pages[$q.lang.isoName]" :to="page.id">
+          <q-item-section avatar>
+            <q-icon v-if="page.icon" :name="page.icon" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ page.label }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <!-- <q-item to="/">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
           <q-item-section>
             <q-item-label> Home </q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
         <!-- <q-item to="/documentation">
 
         </q-item> -->
@@ -46,6 +82,18 @@
 
     <q-page-container>
       <router-view />
+      <q-toolbar>
+        <q-space horizontal />
+        <div class="column">
+          <div class="row">
+            <a class="text-subtitle1"> Copyright © 2023 simsustech </a>
+          </div>
+          <div class="row">
+            <a href="https://www.simsus.tech"> https://www.simsus.tech </a>
+          </div>
+        </div>
+        <q-space horizontal />
+      </q-toolbar>
     </q-page-container>
   </q-layout>
 </template>
@@ -79,4 +127,42 @@ const leftDrawerOpen = ref(false)
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+const tab = ref('')
+const pages = ref({
+  nl: [
+    {
+      id: 'Home',
+      label: 'Home',
+      icon: 'home'
+    },
+    {
+      id: 'pricing',
+      label: 'Prijzen',
+      icon: 'euro'
+    },
+    {
+      id: 'contact',
+      label: 'Contact',
+      icon: 'person'
+    }
+  ],
+  'en-US': [
+    {
+      id: 'Home',
+      label: 'Home',
+      icon: 'home'
+    },
+    {
+      id: 'pricing',
+      label: 'Pricing',
+      icon: 'euro'
+    },
+    {
+      id: 'contact',
+      label: 'Contact',
+      icon: 'person'
+    }
+  ]
+})
 </script>
