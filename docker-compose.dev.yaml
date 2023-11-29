@@ -29,6 +29,7 @@ services:
 
   dev:
     image: "ghcr.io/simsustech/petboarding:staging"
+    # image: petboarding
     labels:
       caddy: ${HOSTNAME}.local
       caddy.reverse_proxy: "{{upstreams 80}}"

@@ -18,11 +18,14 @@ export const publicRoutes = ({
 }) => ({
   getCategories: procedure.query(async () => {
     const categories = await findCategories({ criteria: {} })
-    return categories.reduce((acc, cur) => {
-      if (!acc[cur.species]) acc[cur.species] = {}
-      acc[cur.species][cur.id] = cur
-      return acc
-    }, {} as Record<string, Record<string, Category>>)
+    return categories.reduce(
+      (acc, cur) => {
+        if (!acc[cur.species]) acc[cur.species] = {}
+        acc[cur.species][cur.id] = cur
+        return acc
+      },
+      {} as Record<string, Record<string, Category>>
+    )
   }),
   getOpeningTimes: procedure.query(async () => {
     const openingTimes = await findOpeningTimes({

@@ -278,9 +278,8 @@ const getNumberOfDaycarePets = (date: string) =>
     }, 0)
 
 const formatBooking = (booking: Booking) =>
-  `${dateUtil.formatDate(new Date(booking.startDate), 'D MMMM YYYY')} ${
-    booking.startTime?.name
-  } ${lang.value.booking.until} ${dateUtil.formatDate(
+  `${dateUtil.formatDate(new Date(booking.startDate), 'D MMMM YYYY')} ${booking
+    .startTime?.name} ${lang.value.booking.until} ${dateUtil.formatDate(
     new Date(booking.endDate),
     'D MMMM YYYY'
   )} ${booking.endTime?.name}`

@@ -42,19 +42,22 @@ export const adminOccupancyRoutes = ({
       })
 
       const occupancy: Record<string, number> =
-        bookings?.reduce((acc, cur) => {
-          const dates = eachDayOfInterval({
-            start: parseISO(cur.startDate),
-            end: parseISO(cur.endDate)
-          })
-          for (const date of dates) {
-            const dateString = format(date, 'yyyy-MM-dd')
-            acc[dateString] = acc[dateString]
-              ? acc[dateString] + cur.pets.length
-              : cur.pets.length
-          }
-          return acc
-        }, {} as Record<string, number>) || {}
+        bookings?.reduce(
+          (acc, cur) => {
+            const dates = eachDayOfInterval({
+              start: parseISO(cur.startDate),
+              end: parseISO(cur.endDate)
+            })
+            for (const date of dates) {
+              const dateString = format(date, 'yyyy-MM-dd')
+              acc[dateString] = acc[dateString]
+                ? acc[dateString] + cur.pets.length
+                : cur.pets.length
+            }
+            return acc
+          },
+          {} as Record<string, number>
+        ) || {}
       return occupancy
     }),
   getDaycareOccupancy: procedure
@@ -79,12 +82,15 @@ export const adminOccupancyRoutes = ({
       })
 
       const occupancy: Record<string, number> =
-        daycareDates?.reduce((acc, cur) => {
-          acc[cur.date] = acc[cur.date]
-            ? acc[cur.date] + cur.pets.length
-            : cur.pets.length
-          return acc
-        }, {} as Record<string, number>) || {}
+        daycareDates?.reduce(
+          (acc, cur) => {
+            acc[cur.date] = acc[cur.date]
+              ? acc[cur.date] + cur.pets.length
+              : cur.pets.length
+            return acc
+          },
+          {} as Record<string, number>
+        ) || {}
       return occupancy
     })
 })

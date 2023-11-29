@@ -31,7 +31,8 @@ RUN pnpm run build
 
 FROM build-stage as api-deploy
 # Remove circular dependency
-RUN pnpm -C packages/app remove @petboarding/api
+# RUN pnpm -C packages/app remove @petboarding/api
+RUN pnpm prune --prod
 RUN pnpm --filter @petboarding/api deploy api --prod
 RUN pnpm --filter @petboarding/app deploy app --prod
 RUN rm ~/.npmrc

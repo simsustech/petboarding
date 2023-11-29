@@ -76,17 +76,18 @@ const { data, execute } = useQuery('admin.getDaycareDates', {
 const $q = useQuasar()
 const lang = useLang()
 
-const events = computed(() =>
-  data.value?.map((daycareDate) => ({
-    id: daycareDate.id,
-    bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
-    title: daycareDate.pets.map((pet) => pet.name).join(', '),
-    petIds: daycareDate.pets.map((pet) => pet.id),
-    date: daycareDate.date,
-    details: daycareDate.customer.lastName,
-    // details: lang.value.daycare.status[daycareDate.status],
-    icon: DAYCARE_DATE_ICONS[daycareDate.status]
-  }))
+const events = computed(
+  () =>
+    data.value?.map((daycareDate) => ({
+      id: daycareDate.id,
+      bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
+      title: daycareDate.pets.map((pet) => pet.name).join(', '),
+      petIds: daycareDate.pets.map((pet) => pet.id),
+      date: daycareDate.date,
+      details: daycareDate.customer.lastName,
+      // details: lang.value.daycare.status[daycareDate.status],
+      icon: DAYCARE_DATE_ICONS[daycareDate.status]
+    }))
 )
 const selectedEvents = ref<number[]>([])
 const onClickEvent = (event: QCalendarEvent) => {
@@ -100,12 +101,15 @@ const onClickEvent = (event: QCalendarEvent) => {
 
 const numberOfPets = computed(() => {
   return (
-    data.value?.reduce((acc, cur) => {
-      acc[cur.date] = acc[cur.date]
-        ? acc[cur.date] + cur.pets.length
-        : cur.pets.length
-      return acc
-    }, {} as Record<string, number>) || {}
+    data.value?.reduce(
+      (acc, cur) => {
+        acc[cur.date] = acc[cur.date]
+          ? acc[cur.date] + cur.pets.length
+          : cur.pets.length
+        return acc
+      },
+      {} as Record<string, number>
+    ) || {}
   )
 })
 

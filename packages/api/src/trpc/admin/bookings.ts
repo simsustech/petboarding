@@ -285,17 +285,20 @@ export const adminBookingRoutes = ({
       })
 
       const occupancy: Record<string, number> =
-        bookings?.reduce((acc, cur) => {
-          const dates = eachDayOfInterval({
-            start: parseISO(cur.startDate),
-            end: parseISO(cur.endDate)
-          })
-          for (const date of dates) {
-            const dateString = format(date, 'yyyy-MM-dd')
-            acc[dateString] = acc[dateString] ? acc[dateString] + 1 : 1
-          }
-          return acc
-        }, {} as Record<string, number>) || {}
+        bookings?.reduce(
+          (acc, cur) => {
+            const dates = eachDayOfInterval({
+              start: parseISO(cur.startDate),
+              end: parseISO(cur.endDate)
+            })
+            for (const date of dates) {
+              const dateString = format(date, 'yyyy-MM-dd')
+              acc[dateString] = acc[dateString] ? acc[dateString] + 1 : 1
+            }
+            return acc
+          },
+          {} as Record<string, number>
+        ) || {}
       return occupancy
     }),
   updateBookingService: procedure

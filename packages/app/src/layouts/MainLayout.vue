@@ -319,11 +319,14 @@ const quasarLang = import.meta.glob<QuasarLanguage>(
 )
 
 const languageImports = ref(
-  Object.entries(quasarLang).reduce((acc, [key, value]) => {
-    const langKey = key.split('/').at(-1)?.split('.').at(0)
-    if (langKey) acc[langKey] = value
-    return acc
-  }, {} as Record<string, () => Promise<QuasarLanguage>>)
+  Object.entries(quasarLang).reduce(
+    (acc, [key, value]) => {
+      const langKey = key.split('/').at(-1)?.split('.').at(0)
+      if (langKey) acc[langKey] = value
+      return acc
+    },
+    {} as Record<string, () => Promise<QuasarLanguage>>
+  )
 )
 
 if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
