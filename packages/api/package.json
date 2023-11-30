@@ -34,7 +34,7 @@
     "dev": "vitrify dev -m fastify",
     "build:migrations": "tsc -p tsconfig.migrations.json",
     "build:api": "vitrify build -m fastify",
-    "build": "run-s build:api build:migrations",
+    "build": "run-s build:api build:migrations seed:fake:generate",
     "test": "vitrify test",
     "test:e2e": "playwright test",
     "lint": "eslint --ext .vue --ext .ts src",
