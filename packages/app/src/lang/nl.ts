@@ -220,6 +220,7 @@ const lang: Language = {
     replies: {
       approve: 'Reservering goedkeuren',
       reject: 'Reservering weigeren',
+      standby: 'Reservering op reservelijst plaatsen',
       reply: 'Reactie op reservering',
       cancel: 'Reservering annuleren'
     },
@@ -265,13 +266,16 @@ const lang: Language = {
         'Weet u zeker dat u de volgende datums wilt annuleren?',
       verifyApproval: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
       verifyRejection: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
+      verifyStandby:
+        'Weet u zeker dat u de volgende datums op de reserve lijst wil plaatsen?',
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.',
       openPets: 'Huisdieren openen'
     },
     replies: {
       approve: 'Datumns goedkeuren',
-      reject: 'Datums weigeren'
+      reject: 'Datums weigeren',
+      standby: 'Datums op reserve lijst'
     },
     status: {
       pending: 'Wacht op goedkeuring.',

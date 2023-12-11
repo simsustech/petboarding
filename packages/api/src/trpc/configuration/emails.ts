@@ -17,7 +17,12 @@ export const configurationEmailRoutes = ({
   getBookingEmailReplies: procedure.query(async () => {
     const templates = findEmailTemplates({
       criteria: {
-        names: ['approveBooking', 'rejectBooking', 'replyBooking']
+        names: [
+          'approveBooking',
+          'rejectBooking',
+          'standbyBooking',
+          'replyBooking'
+        ]
       }
     })
 

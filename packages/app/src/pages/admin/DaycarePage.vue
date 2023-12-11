@@ -30,6 +30,12 @@
       color="red"
       @click="rejectDaycareDates"
     />
+    <q-btn
+      :label="lang.daycare.replies.standby"
+      color="yellow"
+      text-color="black"
+      @click="standbyDaycareDates"
+    />
   </div>
 </template>
 
@@ -154,6 +160,31 @@ const rejectDaycareDates = async () => {
       .join('<br />')}</b>`
   }).onOk(async () => {
     const { immediatePromise } = useMutation('admin.rejectDaycareDateIds', {
+      args: selectedEvents.value,
+      immediate: true
+    })
+    await immediatePromise
+    await execute()
+    selectedEvents.value = []
+  })
+}
+
+const standbyDaycareDates = async () => {
+  $q.dialog({
+    html: true,
+    message: `${
+      lang.value.daycare.messages.verifyStandby
+    } <br /> <b>${events.value
+      ?.filter((ev) => selectedEvents.value.includes(ev.id))
+      .map((event) => {
+        return `${event.title} ${dateUtil.formatDate(
+          new Date(event.date),
+          'D MMM YYYY'
+        )}`
+      })
+      .join('<br />')}</b>`
+  }).onOk(async () => {
+    const { immediatePromise } = useMutation('admin.standbyDaycareDateIds', {
       args: selectedEvents.value,
       immediate: true
     })

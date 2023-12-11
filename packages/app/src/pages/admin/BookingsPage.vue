@@ -6,11 +6,14 @@
         v-for="booking in bookingsData"
         :key="booking.id"
         :model-value="booking"
-        :show-approval-buttons="booking.status.status === 'pending'"
+        :show-approval-buttons="
+          ['pending', 'standby'].includes(booking.status.status)
+        "
         show-booking-services-edit-button
         show-history
         @approve="approve"
         @reject="reject"
+        @standby="standby"
         @reply="reply"
         @edit-pet="openUpdatePetDialog"
         @edit-booking-service="openUpdateBookingServiceDialog"
@@ -72,11 +75,12 @@ import PetForm from '../../components/pet/PetForm.vue'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
 import { useRouter } from 'vue-router'
 
-type REPLY_TYPES = ['approve', 'reject', 'reply']
+type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
 enum MUTATION_NAMES {
   approve = 'admin.approveBooking',
   reject = 'admin.rejectBooking',
+  standby = 'admin.standbyBooking',
   reply = 'admin.replyBooking'
 }
 const router = useRouter()
@@ -196,6 +200,21 @@ const reject: InstanceType<typeof BookingItem>['$props']['onReject'] = async ({
   }
 }
 
+const standby: InstanceType<
+  typeof BookingItem
+>['$props']['onStandby'] = async ({ data, done }) => {
+  if (data.id) {
+    const { subject, body } = await getBookingEmail({
+      type: 'standby',
+      id: data.id
+    })
+    replyType.value = 'standby'
+    replyEmailBody.value = body
+    replyEmailSubject.value = subject
+    replyBookingId.value = data.id
+    openEditor()
+  }
+}
 const reply: InstanceType<typeof BookingItem>['$props']['onReply'] = async ({
   data,
   done

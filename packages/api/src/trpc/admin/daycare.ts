@@ -81,6 +81,27 @@ export const adminDaycareRoutes = ({
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
+  standbyDaycareDateIds: procedure
+    .input(z.number().array())
+    .mutation(async ({ input }) => {
+      const ids = input
+
+      if (ids?.length) {
+        await updateDaycareDate(
+          {
+            ids
+          },
+          {
+            daycareDate: {
+              status: DAYCARE_DATE_STATUS.STANDBY
+            }
+          }
+        )
+
+        return true
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   getDaycareCount: procedure
     .input(
       z.object({

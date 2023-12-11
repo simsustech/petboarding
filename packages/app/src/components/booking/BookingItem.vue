@@ -10,6 +10,7 @@
       @cancel="($event) => emit('cancel', $event)"
       @approve="($event) => emit('approve', $event)"
       @reject="($event) => emit('reject', $event)"
+      @standby="($event) => emit('standby', $event)"
       @reply="($event) => emit('reply', $event)"
     />
 

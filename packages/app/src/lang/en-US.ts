@@ -218,6 +218,7 @@ const lang: Language = {
     replies: {
       approve: 'Approve booking',
       reject: 'Reject booking',
+      standby: 'Place booking on reserve list',
       reply: 'Reply to booking',
       cancel: 'Cancel booking'
     },
@@ -263,13 +264,16 @@ const lang: Language = {
         'Are you sure you want to cancel the following dates?',
       verifyApproval: 'Are you sure you want to approve the following dates?',
       verifyRejection: 'Are you sure you want to reject the following dates?',
+      verifyStandby:
+        'Are you sure you want to place the following dates on the reserve list?',
       submitted:
         'The dates have been submitted. Check the status on this page, you will not receive an email.',
       openPets: 'Open pets'
     },
     replies: {
       approve: 'Approve dates',
-      reject: 'Reject dates'
+      reject: 'Reject dates',
+      standby: 'Dates on reserve list'
     },
     status: {
       pending: 'Pending',

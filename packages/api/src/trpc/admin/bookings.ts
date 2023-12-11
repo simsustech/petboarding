@@ -103,7 +103,7 @@ export const adminBookingRoutes = ({
     .input(
       z.object({
         id: z.number(),
-        type: z.enum(['approve', 'reject', 'reply']),
+        type: z.enum(['approve', 'reject', 'reply', 'standby']),
         localeCode: z.string().optional()
       })
     )
@@ -202,6 +202,49 @@ export const adminBookingRoutes = ({
         await createBookingStatus({
           booking,
           status: BOOKING_STATUS.REJECTED,
+          petIds: booking.pets.map((pet) => pet.id)
+        })
+        if (booking?.customerId) {
+          const customer = await findCustomer({
+            criteria: {
+              id: booking.customerId
+            }
+          })
+          if (customer?.account?.email) {
+            if (fastify?.mailer) {
+              await fastify.mailer.sendMail({
+                to: customer.account.email,
+                subject: emailSubject,
+                html: emailText
+              })
+            }
+            return true
+          }
+        }
+
+        return true
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  standbyBooking: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        emailText: z.string(),
+        emailSubject: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, emailText, emailSubject } = input
+      const booking = await findBooking({
+        criteria: {
+          id
+        }
+      })
+      if (booking) {
+        await createBookingStatus({
+          booking,
+          status: BOOKING_STATUS.STANDBY,
           petIds: booking.pets.map((pet) => pet.id)
         })
         if (booking?.customerId) {

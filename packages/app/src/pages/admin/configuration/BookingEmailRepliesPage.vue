@@ -43,6 +43,7 @@ import { EmailTemplate } from '@petboarding/api/zod'
 const EMAIL_TEMPLATES = {
   approveBooking: 'approve',
   rejectBooking: 'reject',
+  standbyBooking: 'standby',
   replyBooking: 'reply'
 } as const
 

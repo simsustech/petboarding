@@ -194,6 +194,23 @@ const seed = async () => {
       </p>`
     },
     {
+      name: 'standbyBooking',
+      subject: 'Your booking has been placed on the reserve list.',
+      body: c`<p>
+        Dear {{customer.firstName}} {{customer.lastName}},
+      </p>
+      <p>
+          Your booking from
+          <b>{{startDate}} {{startTime}}</b> until
+          <b>{{endDate}} {{endTime}}</b> for your pets
+          <b>{{pets}}</b> has been placed on the reserve list.
+          We advise you to find an alternative.
+      </p>
+      <p>
+          Kind regards
+      </p>`
+    },
+    {
       name: 'replyBooking',
       subject: 'With regard to your booking.',
       body: ''

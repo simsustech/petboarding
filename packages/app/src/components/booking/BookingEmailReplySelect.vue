@@ -37,6 +37,10 @@ const options = ref([
     value: 'replyBooking'
   },
   {
+    label: lang.value.booking.replies.standby,
+    value: 'standbyBooking'
+  },
+  {
     label: lang.value.booking.replies.cancel,
     value: 'cancelBooking'
   }

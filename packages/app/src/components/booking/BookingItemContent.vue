@@ -53,29 +53,35 @@
   </q-item-section>
   <q-item-section side>
     <div v-if="showApprovalButtons">
-      <q-item-label>
+      <div class="row">
         <q-btn
           icon="check"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="green"
           @click.stop="approve(modelValue)"
         />
-      </q-item-label>
-      <q-item-label>
         <q-btn
           icon="cancel"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="red"
           @click.stop="reject(modelValue)"
         />
-      </q-item-label>
-      <q-item-label>
+      </div>
+      <div class="row">
+        <q-btn
+          v-if="modelValue.status.status !== 'standby'"
+          icon="hourglass_full"
+          :size="$q.screen.lt.sm ? 'sm' : 'md'"
+          color="yellow"
+          @click.stop="standby(modelValue)"
+        />
+
         <q-btn
           icon="reply"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           @click.stop="reply(modelValue)"
         />
-      </q-item-label>
+      </div>
     </div>
     <q-item-label v-if="showEditButton">
       <q-btn @click.stop icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'">
@@ -176,6 +182,16 @@ const emit = defineEmits<{
     }
   ): void
   (
+    e: 'standby',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
     e: 'reply',
     {
       data,
@@ -249,6 +265,13 @@ const reject = (booking: Booking) =>
     }
   })
 
+const standby = (booking: Booking) =>
+  emit('standby', {
+    data: booking,
+    done: () => {
+      //
+    }
+  })
 const reply = (booking: Booking) =>
   emit('reply', {
     data: booking,

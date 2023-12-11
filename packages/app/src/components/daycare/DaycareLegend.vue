@@ -20,11 +20,11 @@
         lang.daycare.status.rejected
       }}</a>
     </div>
-    <!-- <div class="col-12 col-sm">
+    <div class="col-12 col-sm">
       <q-badge rounded :color="DAYCARE_DATE_COLORS.standby" /><a>{{
         lang.daycare.status.standby
       }}</a>
-    </div> -->
+    </div>
   </div>
 </template>
 

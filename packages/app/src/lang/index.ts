@@ -211,6 +211,7 @@ export interface Language {
     replies: {
       approve: string
       reject: string
+      standby: string
       reply: string
       cancel: string
     }
@@ -254,12 +255,14 @@ export interface Language {
       verifyCancellation: string
       verifyApproval: string
       verifyRejection: string
+      verifyStandby: string
       submitted: string
       openPets: string
     }
     replies: {
       approve: string
       reject: string
+      standby: string
     }
     status: {
       pending: string
