@@ -125,7 +125,7 @@ test.beforeAll(async ({ browser }) => {
   await page.locator('text="Email"').fill(email)
   await page.locator('text="Password"').fill(password)
 
-  await page.locator('button >> text=Submit').click()
+  await page.locator('button >> text=Login').click()
 
   await page.waitForURL(/.*user/)
   await expect(
