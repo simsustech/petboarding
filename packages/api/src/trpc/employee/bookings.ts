@@ -137,13 +137,8 @@ export const employeeBookingRoutes = ({
       if (input.id) {
         const { id, reason } = input
 
-        const booking = await findBooking({
-          criteria: {
-            id
-          }
-        })
-        if (booking) {
-          await cancelBooking(booking, reason)
+        if (id) {
+          await cancelBooking({ id }, reason)
           return true
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })
