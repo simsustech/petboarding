@@ -16,19 +16,32 @@
 
     <q-menu touch-position context-menu>
       <q-list dense>
-        <q-item clickable :to="`/employee/customers/${modelValue.customerId}`">
+        <q-item
+          v-if="modelValue.customerId && onOpenCustomer"
+          clickable
+          @click="emit('openCustomer', { id: modelValue.customerId })"
+        >
           <q-item-section>
             <q-item-label>{{
               lang.booking.messages.openCustomer
             }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable :to="`/employee/bookings/${modelValue.id}`">
+        <q-item
+          v-if="modelValue.id && onOpenBooking"
+          clickable
+          @click="
+            emit('openBooking', {
+              id: modelValue.id
+            })
+          "
+        >
           <q-item-section>
             <q-item-label>{{ lang.booking.messages.openBooking }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
+          v-if="(modelValue.petIds || modelValue.pets) && onOpenPets"
           clickable
           :to="`/employee/pets/${(
             modelValue.petIds || modelValue.pets?.map((pet) => pet.id)
@@ -62,6 +75,9 @@ export interface Props {
   showApprovalButtons?: boolean
   showEditButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
+  onOpenCustomer?: unknown
+  onOpenBooking?: unknown
+  onOpenPets?: unknown
 }
 
 const props = defineProps<Props>()
@@ -111,6 +127,16 @@ const emit = defineEmits<{
     }
   ): void
   (
+    e: 'standby',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
     e: 'reply',
     {
       data,
@@ -118,6 +144,14 @@ const emit = defineEmits<{
     }: {
       data: Booking
       done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'openCustomer',
+    {
+      id
+    }: {
+      id: number
     }
   ): void
   (

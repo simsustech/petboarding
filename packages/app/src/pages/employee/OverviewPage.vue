@@ -77,6 +77,9 @@
                 )"
                 :key="booking.id"
                 :model-value="booking"
+                @open-customer="
+                  ({ id }) => router.push(`/employee/customers/${id}`)
+                "
                 @open-booking="
                   ({ id }) => router.push(`/employee/bookings/${id}`)
                 "
