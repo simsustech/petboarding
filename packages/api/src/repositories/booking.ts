@@ -313,6 +313,35 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
         'bookingStatus.createdAt',
         'bookingStatus.bookingId'
       ])
+      .select(({ eb: eb1 }) => [
+        jsonObjectFrom(
+          eb1
+            .selectFrom('openingTimes')
+            .select([
+              'openingTimes.id',
+              'openingTimes.name',
+              'openingTimes.startTime',
+              'openingTimes.endTime'
+            ])
+            .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
+        ).as('startTime'),
+        jsonObjectFrom(
+          eb1
+            .selectFrom('openingTimes')
+            .select([
+              'openingTimes.id',
+              'openingTimes.name',
+              'openingTimes.startTime',
+              'openingTimes.endTime'
+            ])
+            .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
+        ).as('endTime'),
+        sql<number>`booking_status.end_date - 
+          booking_status.start_date - 1
+          + (select "opening_times"."start_day_counted" from "opening_times" where "booking_status"."start_time_id" = "opening_times"."id")
+          + (select "opening_times"."end_day_counted" from "opening_times" where "booking_status"."end_time_id" = "opening_times"."id")
+          `.as('days')
+      ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
   ).as('statuses')
 }
