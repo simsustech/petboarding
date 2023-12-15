@@ -337,7 +337,8 @@ const lang: Language = {
     },
     type: {
       general: 'General',
-      important: 'Important'
+      important: 'Important',
+      priority: 'Priority'
     },
     messages: {
       verifyDeletion:

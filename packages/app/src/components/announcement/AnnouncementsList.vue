@@ -47,7 +47,7 @@ import { useLang } from '../../lang/index.js'
 export interface Announcement {
   title: string
   message: string
-  type: 'general' | 'important'
+  type: 'general' | 'important' | 'priority'
 }
 
 export interface Props {
@@ -84,10 +84,12 @@ const lang = useLang()
 
 const icon = {
   general: 'info',
-  important: 'priority_high'
+  important: 'warning',
+  priority: 'priority_high'
 }
 const iconColor = {
   general: 'blue',
-  important: 'red'
+  important: 'yellow',
+  priority: 'red'
 }
 </script>

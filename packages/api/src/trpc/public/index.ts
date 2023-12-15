@@ -49,11 +49,17 @@ export const publicRoutes = ({
       }
     })
     if (announcements)
-      return announcements.sort((a, b) => {
-        if (a.type === 'important' && b.type !== 'important') return -1
-        if (b.type === 'important' && a.type !== 'important') return 1
-        return 0
-      })
+      return [
+        ...announcements.filter(
+          (announcement) => announcement.type === 'priority'
+        ),
+        ...announcements.filter(
+          (announcement) => announcement.type === 'important'
+        ),
+        ...announcements.filter(
+          (announcement) => announcement.type === 'general'
+        )
+      ]
     return []
   }),
   getPeriods: procedure.query(async () => {

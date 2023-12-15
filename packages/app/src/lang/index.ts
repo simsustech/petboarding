@@ -324,6 +324,7 @@ export interface Language {
     type: {
       general: string
       important: string
+      priority: string
     }
     messages: {
       verifyDeletion: string

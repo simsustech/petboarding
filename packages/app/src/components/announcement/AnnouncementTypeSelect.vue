@@ -37,6 +37,10 @@ const options = [
   {
     label: lang.value.announcement.type[ANNOUNCEMENT_TYPE.IMPORTANT],
     value: ANNOUNCEMENT_TYPE.IMPORTANT
+  },
+  {
+    label: lang.value.announcement.type[ANNOUNCEMENT_TYPE.PRIORITY],
+    value: ANNOUNCEMENT_TYPE.PRIORITY
   }
 ]
 </script>
