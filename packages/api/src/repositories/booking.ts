@@ -734,7 +734,8 @@ export async function updateBooking(
 
 export async function cancelBooking(
   criteria: Partial<Booking>,
-  reason: string
+  reason: string,
+  ignoreCancellationPeriod?: boolean
 ) {
   const booking = await findBooking({ criteria })
   if (
@@ -775,10 +776,9 @@ export async function cancelBooking(
           0
       )
 
-      status =
-        isBefore(new Date(), maxCancellationDate) || ignoreCancellationPeriod
-          ? BOOKING_STATUS.CANCELLED
-          : BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+      status = isBefore(new Date(), maxCancellationDate)
+        ? BOOKING_STATUS.CANCELLED
+        : BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
     }
 
     const petIds = booking.pets.map((pet) => pet.id)
@@ -789,8 +789,9 @@ export async function cancelBooking(
         comments: reason
       },
       petIds,
-      status
+      status: ignoreCancellationPeriod ? BOOKING_STATUS.CANCELLED : status
     })
+    return true
   }
 }
 

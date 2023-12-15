@@ -12,6 +12,7 @@
       @reject="($event) => emit('reject', $event)"
       @standby="($event) => emit('standby', $event)"
       @reply="($event) => emit('reply', $event)"
+      @settle-cancellation="($event) => emit('settleCancellation', $event)"
     />
 
     <q-menu touch-position context-menu>
@@ -138,6 +139,16 @@ const emit = defineEmits<{
   ): void
   (
     e: 'reply',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'settleCancellation',
     {
       data,
       done

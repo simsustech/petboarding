@@ -204,7 +204,9 @@ const lang: Language = {
       openCustomer: 'Open klantgegevens',
       openBooking: 'Reservering openen',
       openPets: 'Huisdieren openen',
-      possibleDoubleBooking: 'Deze reservering is mogelijk dubbel geboekt.'
+      possibleDoubleBooking: 'Deze reservering is mogelijk dubbel geboekt.',
+      settleCancellation:
+        'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?'
     },
     helpers: {
       status: {

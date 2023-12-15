@@ -9,12 +9,16 @@
         :show-approval-buttons="
           ['pending', 'standby'].includes(booking.status.status)
         "
+        :show-handle-cancellation-button="
+          booking.status.status === 'cancelledoutsideperiod'
+        "
         show-booking-services-edit-button
         show-history
         @approve="approve"
         @reject="reject"
         @standby="standby"
         @reply="reply"
+        @settle-cancellation="settleCancellation"
         @edit-pet="openUpdatePetDialog"
         @edit-booking-service="openUpdateBookingServiceDialog"
         @open-customer="openCustomer"
@@ -62,7 +66,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, nextTick } from 'vue'
-import { extend } from 'quasar'
+import { extend, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
@@ -85,6 +89,8 @@ enum MUTATION_NAMES {
 }
 const router = useRouter()
 const lang = useLang()
+const $q = useQuasar()
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 const status = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
@@ -327,6 +333,33 @@ const openCustomer: InstanceType<
 >['$props']['onOpenCustomer'] = ({ id }) =>
   router.push(`/employee/customers/${id}`)
 
+const settleCancellation: InstanceType<
+  typeof BookingItem
+>['$props']['onSettleCancellation'] = async ({ data, done }) => {
+  if (data.id) {
+    $q.dialog({
+      message: `${lang.value.booking.messages.settleCancellation}<br />
+      ${data.pets?.map((pet) => pet.name).join(', ')}<br />
+      ${data.startDate} ${data.startTime.name} - ${data.endDate} ${
+        data.endTime.name
+      }`,
+      html: true
+    }).onOk(async () => {
+      const result = useMutation('admin.settleBookingCancellation', {
+        args: {
+          id: data.id
+        },
+        immediate: true
+      })
+
+      await result.immediatePromise
+      if (!result.error.value) {
+        handledBookingIds.value.push(data.id)
+      }
+      if (done) done(!result.error.value)
+    })
+  }
+}
 onMounted(async () => {
   await executeCategories()
   await executeBookings()

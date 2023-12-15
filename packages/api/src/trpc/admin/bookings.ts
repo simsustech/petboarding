@@ -17,7 +17,8 @@ import {
   findBooking,
   findBookings,
   getBookingsCount,
-  updateBookingService
+  updateBookingService,
+  cancelBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findEmailTemplate } from 'src/repositories/emailTemplate.js'
@@ -374,6 +375,18 @@ export const adminBookingRoutes = ({
         const count = await getBookingsCount(status)
         return count
       }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  settleBookingCancellation: procedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id } = input
+      const success = await cancelBooking({ id }, '', true)
+      if (success) return true
       throw new TRPCError({ code: 'BAD_REQUEST' })
     })
 })

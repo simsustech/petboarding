@@ -202,7 +202,9 @@ const lang: Language = {
       openCustomer: 'Open customer details',
       openBooking: 'Open booking',
       openPets: 'Open pets',
-      possibleDoubleBooking: 'This possibly is a double booking.'
+      possibleDoubleBooking: 'This possibly is a double booking.',
+      settleCancellation:
+        'Are you sure you want to settle the cancellation of the following booking?'
     },
     helpers: {
       status: {
