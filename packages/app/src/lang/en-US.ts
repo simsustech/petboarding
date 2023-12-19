@@ -23,6 +23,7 @@ const lang: Language = {
   updateAvailable: 'An update is available.',
   refresh: 'Refresh',
   boarding: 'Boarding',
+  update: 'Update',
   account: {
     title: 'Account',
     fields: {

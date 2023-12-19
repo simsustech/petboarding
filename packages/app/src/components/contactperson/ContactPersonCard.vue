@@ -1,5 +1,14 @@
 <template>
   <q-styled-card>
+    <template #title>
+      <div class="row justify-end">
+        <q-btn outline rounded icon="edit" @click="update">
+          <q-tooltip>
+            {{ lang.update }}
+          </q-tooltip></q-btn
+        >
+      </div>
+    </template>
     <q-list>
       <form-item field="firstName" :model-value="modelValue.firstName" />
       <form-item field="lastName" :model-value="modelValue.lastName" />
@@ -10,9 +19,9 @@
     </q-list>
 
     <template #actions>
-      <div class="row full-width justify-center">
+      <!-- <div class="row full-width justify-center">
         <q-btn icon="edit" label="Update" @click="update" />
-      </div>
+      </div> -->
     </template>
   </q-styled-card>
 </template>

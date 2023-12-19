@@ -21,6 +21,7 @@ export interface Language {
   updateAvailable: string
   refresh: string
   boarding: string
+  update: string
   account: {
     title: string
     fields: {

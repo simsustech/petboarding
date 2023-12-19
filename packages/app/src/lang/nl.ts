@@ -23,6 +23,7 @@ const lang: Language = {
   updateAvailable: 'Er is een update beschikbaar.',
   refresh: 'Vernieuwen',
   boarding: 'Pension',
+  update: 'Update',
   account: {
     title: 'Account',
     fields: {

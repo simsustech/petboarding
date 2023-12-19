@@ -2,8 +2,24 @@
   <div>
     <q-styled-card v-bind="attrs" :class="{ 'bg-grey-5': modelValue.deceased }">
       <template #title>
-        <div class="row justify-center">
+        <div class="row justify-between">
           <pet-avatar :model-value="modelValue.image" @open="openImage" />
+          <div class="col text-right">
+            <q-btn outline rounded icon="edit" @click="update(modelValue)">
+              <q-tooltip>
+                {{ lang.update }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-if="onOpenCustomer"
+              outline
+              rounded
+              icon="person"
+              @click="$emit('openCustomer', { id: modelValue.customerId })"
+            >
+              <q-tooltip>{{ lang.customer.title }}</q-tooltip>
+            </q-btn>
+          </div>
         </div>
         <div class="row justify-center">
           <q-rating
@@ -96,7 +112,7 @@
         />
       </q-list>
       <template #actions>
-        <div class="row full-width justify-center q-mb-md">
+        <!-- <div class="row full-width justify-center q-mb-md">
           <q-btn icon="edit" label="Update" @click="update(modelValue)" />
         </div>
         <div v-if="onOpenCustomer" class="row full-width justify-center">
@@ -104,7 +120,7 @@
             :label="lang.customer.title"
             @click="$emit('openCustomer', { id: modelValue.customerId })"
           />
-        </div>
+        </div> -->
       </template>
     </q-styled-card>
 
