@@ -13,6 +13,9 @@
     @filter="filterFn"
     @update:model-value="$emit('update:model-value', $event)"
   >
+    <template #before>
+      <slot name="before" />
+    </template>
     <template #option="{ itemProps, opt }">
       <q-item v-bind="itemProps">
         <q-item-section>
