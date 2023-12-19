@@ -1,12 +1,14 @@
 <template>
-  <q-page>
-    <pet-select
-      :model-value="ids"
-      multiple
-      clearable
-      @update:model-value="setParam"
-    />
+  <pet-select
+    :model-value="ids"
+    multiple
+    clearable
+    @update:model-value="setParam"
+  >
+    <template #before> <q-icon name="search" /> </template>
+  </pet-select>
 
+  <q-page padding>
     <div class="row">
       <pet-card
         v-for="pet in data"
