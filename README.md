@@ -1,6 +1,6 @@
 # Petboarding
 
-> Software for your pet boarding business
+> Booking system for your pet boarding business
 
 ## Website
 

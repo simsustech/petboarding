@@ -22,7 +22,7 @@
         </p>
       </div>
       <div v-if="lang === 'en-US'">
-        <a class="text-h5"> Software for your pet boarding business. </a>
+        <a class="text-h5"> Booking system for your pet boarding business. </a>
         <br />
         <p>
           Let your customers place their bookings online and save time on your
