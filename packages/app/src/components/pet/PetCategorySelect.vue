@@ -4,6 +4,8 @@
     :model-value="modelValue"
     :options="options"
     :label="`${lang.pet.fields.category}${required ? '*' : ''}`"
+    :rules="validations"
+    lazy-rules
     emit-value
     map-options
     @update:model-value="$emit('update:model-value', $event)"
@@ -18,7 +20,7 @@ export default {
 
 <script setup lang="ts">
 import { watch, useAttrs, ref, toRefs } from 'vue'
-import { useQuasar } from 'quasar'
+import { ValidationRule, useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
 import { Category, Pet } from '@petboarding/api/zod'
 
@@ -57,4 +59,11 @@ watch(
     }))
   }
 )
+
+const validations = ref<ValidationRule[]>([])
+
+if (props.required)
+  validations.value.push(
+    (val: string) => !!val || lang.value.pet.validations.fieldRequired
+  )
 </script>

@@ -4,6 +4,8 @@
     :model-value="modelValue"
     :options="options"
     :label="`${lang.pet.fields.breed}${required ? '*' : ''}`"
+    :rules="validations"
+    lazy-rules
     emit-value
     map-options
     fill-input
@@ -25,7 +27,7 @@ export default {
 import { PET_SPECIES } from '@petboarding/api/zod'
 import speciesList from '../../assets/breeds.js'
 import { ref, toRefs, useAttrs, watch } from 'vue'
-import { QSelect, useQuasar } from 'quasar'
+import { QSelect, ValidationRule, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 
 export interface Props {
@@ -60,4 +62,11 @@ const filterFn = (val, update) => {
     }
   })
 }
+
+const validations = ref<ValidationRule[]>([])
+
+if (props.required)
+  validations.value.push(
+    (val: string) => !!val || lang.value.pet.validations.fieldRequired
+  )
 </script>

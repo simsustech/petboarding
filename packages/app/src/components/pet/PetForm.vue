@@ -127,8 +127,9 @@
       />
       <pet-category-select
         v-if="useCategory"
-        class="col-md-6 col-12"
         v-model="modelValue.categoryId"
+        class="col-md-6 col-12"
+        required
         :categories="categories"
         :species="modelValue.species"
         name="category"
