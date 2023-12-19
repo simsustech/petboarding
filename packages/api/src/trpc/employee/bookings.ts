@@ -66,17 +66,19 @@ export const employeeBookingRoutes = ({
       z.object({
         from: z.string(),
         until: z.string(),
-        status: z.nativeEnum(BOOKING_STATUS)
+        status: z.nativeEnum(BOOKING_STATUS).optional(),
+        customerId: z.number().optional()
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status } = input
+      const { from, until, status, customerId } = input
       if (from && until) {
         const bookings = findBookings({
           criteria: {
             from,
             until,
-            status
+            status,
+            customerId
           }
         })
         return bookings

@@ -1,5 +1,6 @@
 import { employeePetRoutes } from './pets.js'
 import { employeeCustomerRoutes } from './customers.js'
+import { employeeContactPeopleRoutes } from './contactpeople.js'
 import { employeeBookingRoutes } from './bookings.js'
 import { employeeDaycareRoutes } from './daycare.js'
 import { t } from '../index.js'
@@ -14,6 +15,7 @@ export const employeeRoutes = ({
 }) => ({
   ...employeePetRoutes({ fastify, procedure }),
   ...employeeCustomerRoutes({ fastify, procedure }),
+  ...employeeContactPeopleRoutes({ fastify, procedure }),
   ...employeeBookingRoutes({ fastify, procedure }),
   ...employeeDaycareRoutes({ fastify, procedure })
 })

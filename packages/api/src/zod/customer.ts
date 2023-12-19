@@ -12,7 +12,7 @@ export const customerValidation = {
   city: z.string(),
   telephoneNumber: z.string(),
   veterinarian: z.string(),
-  comments: z.string().optional(),
+  comments: z.string().nullable().optional(),
   accountId: z.number().optional(),
   account: account.optional(),
   bookings: z

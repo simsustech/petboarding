@@ -1,16 +1,66 @@
 <template>
-  <customer-select :model-value="id" @update:model-value="setParam" />
+  <customer-select :model-value="id" @update:model-value="setParam">
+    <template #before> <q-icon name="search" /> </template>
+  </customer-select>
+  <q-page padding>
+    <div class="row q-gutter-md">
+      <customer-card
+        v-if="data"
+        :model-value="data"
+        :categories="categories"
+        show-edit-button
+        use-rating
+        @update="openUpdateDialog"
+      />
 
-  <customer-card
-    v-if="data"
-    :model-value="data"
-    :categories="categories"
-    show-edit-button
-    use-rating
-    @update="openUpdateDialog"
-    @open-bookings="openBookings"
-    @open-pets="openPets"
-  />
+      <q-list v-if="contactPeople">
+        <q-item>
+          <q-item-section>
+            <q-item-label header>
+              {{ lang.contactPerson.title }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <contact-person-item
+          v-for="contactPerson in contactPeople"
+          :key="contactPerson.id"
+          :model-value="contactPerson"
+        />
+      </q-list>
+
+      <q-list v-if="pets">
+        <q-item>
+          <q-item-section>
+            <q-item-label header>{{ lang.pet.title }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn flat icon="open_in_new" @click="openPets" />
+          </q-item-section>
+        </q-item>
+        <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
+      </q-list>
+    </div>
+    <div class="row">
+      <q-list v-if="bookings">
+        <q-item>
+          <q-item-section>
+            <q-item-label header>{{
+              `${lang.booking.title} ${fromFormatted} -> ${untilFormatted}`
+            }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-btn flat icon="open_in_new" @click="openBookings" />
+          </q-item-section>
+        </q-item>
+        <booking-item
+          v-for="booking in bookings"
+          :key="booking.id"
+          show-icon
+          :model-value="booking"
+        />
+      </q-list>
+    </div>
+  </q-page>
   <responsive-dialog ref="updateDialogRef" persistent @submit="update">
     <customer-form
       ref="updateCustomerFormRef"
@@ -31,19 +81,23 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import CustomerSelect from '../../components/employee/CustomerSelect.vue'
 import CustomerCard from '../../components/customer/CustomerCard.vue'
 import CustomerForm from '../../components/customer/CustomerForm.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { extend } from 'quasar'
+import { date as dateUtil, extend } from 'quasar'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
-
+import BookingItem from '../../components/booking/BookingItem.vue'
+import PetItem from '../../components/pet/PetItem.vue'
+import ContactPersonItem from '../../components/contactperson/ContactPersonItem.vue'
+import { useLang } from '../../lang/index.js'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const route = useRoute()
 const router = useRouter()
+const lang = useLang()
 const { useQuery, useMutation } = await createUseTrpc()
 
 const id = ref(Number(route.params.id))
@@ -61,6 +115,45 @@ const { data, execute } = useQuery('employee.getCustomer', {
   }
 })
 
+const from = dateUtil.formatDate(
+  dateUtil.subtractFromDate(new Date(), { years: 2 }),
+  'YYYY-MM-DD'
+)
+const until = dateUtil.formatDate(
+  dateUtil.addToDate(new Date(), { years: 1 }),
+  'YYYY-MM-DD'
+)
+const fromFormatted = computed(() => dateUtil.formatDate(from, 'DD-MM-YYYY'))
+const untilFormatted = computed(() => dateUtil.formatDate(until, 'DD-MM-YYYY'))
+const { data: bookings, execute: executeBookings } = useQuery(
+  'employee.getBookings',
+  {
+    args: reactive({ from, until, customerId: id }),
+    reactive: {
+      args: true
+    }
+  }
+)
+
+const { data: pets, execute: executePets } = useQuery(
+  'employee.getPetsByCustomerId',
+  {
+    args: reactive({ customerId: id }),
+    reactive: {
+      args: true
+    }
+  }
+)
+
+const { data: contactPeople, execute: executeContactPeople } = useQuery(
+  'employee.getContactPeopleByCustomerId',
+  {
+    args: reactive({ customerId: id }),
+    reactive: {
+      args: true
+    }
+  }
+)
 const { data: categories, execute: executeCategories } = useQuery(
   'public.getCategories',
   {
@@ -105,22 +198,25 @@ const updateCustomer: InstanceType<
   done(!result.error.value)
 }
 
-const openBookings: InstanceType<
-  typeof CustomerCard
->['$props']['onOpenBookings'] = ({ ids }) =>
+const openBookings = () =>
   router.push({
-    path: `/employee/bookings/${ids.join('/')}`
+    path: `/employee/bookings/${bookings.value
+      ?.map((booking) => booking.id)
+      .join('/')}`
   })
 
-const openPets: InstanceType<typeof CustomerCard>['$props']['onOpenPets'] = ({
-  ids
-}) =>
+const openPets = () =>
   router.push({
-    path: `/employee/pets/${ids.join('/')}`
+    path: `/employee/pets/${pets.value?.map((pet) => pet.id).join('/')}`
   })
 
 onMounted(async () => {
   await executeCategories()
-  if (route.params.id) execute()
+  if (route.params.id) {
+    execute()
+    executeContactPeople()
+    executePets()
+    executeBookings()
+  }
 })
 </script>

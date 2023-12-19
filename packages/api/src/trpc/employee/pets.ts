@@ -97,16 +97,16 @@ export const employeePetRoutes = ({
   getPetsByCustomerId: procedure
     .input(
       z.object({
-        id: z.number()
+        customerId: z.number()
       })
     )
     .query(async ({ input }) => {
-      const { id } = input
+      const { customerId } = input
 
-      if (id) {
+      if (customerId) {
         const pets = await findPets({
           criteria: {
-            customerId: id
+            customerId
           },
           select: ['rating', 'comments'],
           relations: {

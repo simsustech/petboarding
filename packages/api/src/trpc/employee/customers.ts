@@ -9,6 +9,10 @@ import {
 } from '../../repositories/customer.js'
 import type { FastifyInstance } from 'fastify'
 
+const customerInput = customer.omit({
+  account: true
+})
+
 export const employeeCustomerRoutes = ({
   // fastify,
   procedure
@@ -48,7 +52,7 @@ export const employeeCustomerRoutes = ({
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
-  updateCustomer: procedure.input(customer).mutation(async ({ input }) => {
+  updateCustomer: procedure.input(customerInput).mutation(async ({ input }) => {
     const { id } = input
     if (id) {
       const customer = await updateCustomer(

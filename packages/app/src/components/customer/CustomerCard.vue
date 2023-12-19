@@ -1,5 +1,20 @@
 <template>
   <q-styled-card>
+    <template #title>
+      <q-rating v-if="modelValue.rating" :model-value="modelValue.rating" />
+      <q-btn
+        v-if="showEditButton"
+        class="float-right"
+        rounded
+        outline
+        icon="edit"
+        @click="update(modelValue)"
+      >
+        <q-tooltip>
+          {{ lang.update }}
+        </q-tooltip></q-btn
+      >
+    </template>
     <q-list>
       <gender-item :model-value="modelValue.gender" />
       <form-item field="firstName" :model-value="modelValue.firstName" />
@@ -42,15 +57,15 @@
     </q-list>
 
     <template #actions>
-      <div class="row full-width justify-center q-mb-md">
+      <!-- <div class="row full-width justify-center q-mb-md">
         <q-btn
           v-if="showEditButton"
           icon="edit"
           label="Update"
           @click="update(modelValue)"
         />
-      </div>
-      <div class="row full-width justify-between">
+      </div> -->
+      <!-- <div class="row full-width justify-between">
         <q-btn
           v-if="modelValue.pets"
           :label="lang.pet.title"
@@ -61,7 +76,7 @@
           :label="lang.booking.title"
           @click="openBookings"
         />
-      </div>
+      </div> -->
     </template>
   </q-styled-card>
 </template>
@@ -125,15 +140,15 @@ const update = (customer: Customer) => {
   }
   emit('update', { data: customer, done })
 }
-const openBookings = () =>
-  emit('openBookings', {
-    ids: props.modelValue.bookings?.map((booking) => booking.id) || []
-  })
+// const openBookings = () =>
+//   emit('openBookings', {
+//     ids: props.modelValue.bookings?.map((booking) => booking.id) || []
+//   })
 
-const openPets = () =>
-  emit('openPets', {
-    ids: modelValue.value.pets?.map((pet) => pet.id) || []
-  })
+// const openPets = () =>
+//   emit('openPets', {
+//     ids: modelValue.value.pets?.map((pet) => pet.id) || []
+//   })
 
 const lang = useLang()
 </script>
