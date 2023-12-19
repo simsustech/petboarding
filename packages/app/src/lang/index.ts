@@ -348,6 +348,17 @@ export interface Language {
       verifyDeletion: string
     }
   }
+  errors: {
+    invalid_type: ({
+      path,
+      expected,
+      received
+    }: {
+      path: string
+      expected?: string
+      received?: string
+    }) => string
+  }
 }
 
 import type { Ref } from 'vue'

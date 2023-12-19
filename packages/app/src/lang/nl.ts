@@ -367,6 +367,22 @@ const lang: Language = {
       verifyDeletion:
         'Weet u zeker dat u de volgende categorie wilt verwijderen?'
     }
+  },
+  errors: {
+    invalid_type: ({
+      path,
+      expected,
+      received
+    }: {
+      path: string
+      expected?: string
+      received?: string
+    }) =>
+      `Ongeldig type in ${path}. ${
+        expected && received
+          ? `Verwacht ${expected}, ontvangen ${received}.`
+          : ''
+      }`
   }
 }
 

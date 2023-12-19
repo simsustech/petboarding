@@ -362,6 +362,22 @@ const lang: Language = {
     messages: {
       verifyDeletion: 'Are you sure you want to delete the following category?'
     }
+  },
+  errors: {
+    invalid_type: ({
+      path,
+      expected,
+      received
+    }: {
+      path: string
+      expected?: string
+      received?: string
+    }) =>
+      `Invalid type in ${path}. ${
+        expected && received
+          ? `Expected ${expected}, received ${received}.`
+          : ''
+      }`
   }
 }
 

@@ -26,11 +26,23 @@ export const createUseTrpc = async () => {
     return fetch(input, init).then(async (res) => {
       if (!res.ok) {
         const body = await res.json()
-        return Notify.create({
-          message: lang.value.serverError,
-          caption: body?.error?.message,
-          type: 'negative'
-        })
+
+        const serverErrors = JSON.parse(body?.error.message)
+        for (const index in serverErrors) {
+          let caption: string
+          const { message, code, path, expected, received } =
+            serverErrors[index]
+          if (lang.value.errors?.[code]) {
+            caption = lang.value.errors[code]({ path, expected, received })
+          } else {
+            caption = `${message}: ${path.join(':')}`
+          }
+          Notify.create({
+            message: lang.value.serverError,
+            caption,
+            type: 'negative'
+          })
+        }
       }
       return res
     })
