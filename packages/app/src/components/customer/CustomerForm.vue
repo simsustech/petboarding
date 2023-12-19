@@ -109,7 +109,8 @@
     <div class="col-12 text-center">
       <q-rating
         v-if="useRating && modelValue.rating !== void 0"
-        v-model="modelValue.rating"
+        :model-value="modelValue.rating || 0"
+        @update:model-value="($event) => (modelValue.rating = $event)"
         size="3em"
         icon="star_border"
         icon-selected="star"
