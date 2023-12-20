@@ -10,7 +10,7 @@ const lang: Language = {
   goTo: 'Go to',
   administrator: 'Administrator',
   employee: 'Employee',
-  overview: 'Overview',
+  overview: 'Day overview',
   customers: 'Customers',
   bookings: 'Bookings boarding',
   labels: 'Labels',

@@ -10,7 +10,7 @@ const lang: Language = {
   goTo: 'Ga naar',
   administrator: 'Administrator',
   employee: 'Medewerker',
-  overview: 'Overzicht',
+  overview: 'Dag overzicht',
   customers: 'Klanten',
   bookings: 'Reserveringen pension',
   labels: 'Labels',
