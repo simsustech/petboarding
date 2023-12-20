@@ -4,7 +4,6 @@
     :bookings="bookingsData"
     :daycare-dates="daycareDatesData"
     :opening-times="openingTimesData"
-    :selected-pets="selectedPets"
     @click-pet="onClickPet"
     @change-date="onChangeDate"
   >
