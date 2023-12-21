@@ -70,6 +70,10 @@
           :model-value="modelValue.food"
         />
         <form-item
+          :label="lang.pet.fields.weight"
+          :model-value="`${modelValue.weight} kg`"
+        />
+        <form-item
           :label="lang.pet.fields.chipNumber"
           :model-value="modelValue.chipNumber"
         />

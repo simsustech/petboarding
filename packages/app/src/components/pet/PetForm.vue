@@ -117,8 +117,20 @@
     <div class="row">
       <form-input
         v-bind="input"
+        v-model="modelValue.weight"
+        class="col-md-4 col-12"
+        :label="lang.pet.fields.weight"
+        suffix="kg"
+        mask="##.#"
+        reverse-fill-mask
+        bottom-slots
+        lazy-rules
+        name="weight"
+      />
+      <form-input
+        v-bind="input"
         v-model="modelValue.chipNumber"
-        class="col-md-6 col-12"
+        class="col-md-4 col-12"
         :label="lang.pet.fields.chipNumber"
         mask="###############"
         bottom-slots
@@ -128,7 +140,7 @@
       <pet-category-select
         v-if="useCategory"
         v-model="modelValue.categoryId"
-        class="col-md-6 col-12"
+        class="col-md-4 col-12"
         required
         :categories="categories"
         :species="modelValue.species"
