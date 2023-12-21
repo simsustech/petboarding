@@ -78,6 +78,10 @@ function find({
 
   let query = db.selectFrom('pets')
 
+  if (criteria.ids && !criteria.ids.length) {
+    throw new Error('ids array cannot be empty')
+  }
+
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
   } else if (criteria.ids) {

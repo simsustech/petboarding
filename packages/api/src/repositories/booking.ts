@@ -424,6 +424,10 @@ function find({
 
   let query = db.selectFrom('bookings')
 
+  if (criteria.ids && !criteria.ids.length) {
+    throw new Error('ids array cannot be empty')
+  }
+
   if (criteria.status) {
     query = query.where(({ eb, selectFrom }) =>
       eb(
