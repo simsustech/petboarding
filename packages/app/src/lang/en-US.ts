@@ -157,7 +157,9 @@ const lang: Language = {
       isChemicallySterilized: 'Pet is chemically sterilized.',
       showVaccinations: 'Show vaccinations',
       vaccinationsMissing:
-        'Pet does not have all mandatory vaccinations. Do not forget to bring the passport of your pet.'
+        'Pet does not have all mandatory vaccinations. Do not forget to bring the passport of your pet.',
+      delete:
+        'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.'
     }
   },
   booking: {

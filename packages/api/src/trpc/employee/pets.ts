@@ -80,7 +80,7 @@ export const employeePetRoutes = ({
     .query(async ({ input }) => {
       const { ids } = input
 
-      if (ids) {
+      if (ids && ids.length) {
         const pets = await findPets({
           criteria: {
             ids
@@ -92,7 +92,8 @@ export const employeePetRoutes = ({
         })
         return pets
       }
-      throw new TRPCError({ code: 'BAD_REQUEST' })
+      return []
+      // throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
   getPetsByCustomerId: procedure
     .input(

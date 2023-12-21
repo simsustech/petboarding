@@ -153,6 +153,7 @@ export interface Language {
       isChemicallySterilized: string
       showVaccinations: string
       vaccinationsMissing: string
+      delete: string
     }
   }
   booking: {

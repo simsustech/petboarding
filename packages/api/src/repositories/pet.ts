@@ -235,3 +235,7 @@ export async function searchPets(searchPhrase: string) {
   const results = await query.execute(db)
   return results.rows
 }
+
+export async function deletePet(id: number) {
+  return db.deleteFrom('pets').where('id', '=', id).executeTakeFirst()
+}

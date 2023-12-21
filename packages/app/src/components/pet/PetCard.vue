@@ -19,6 +19,14 @@
             >
               <q-tooltip>{{ lang.customer.title }}</q-tooltip>
             </q-btn>
+            <q-btn
+              v-if="onDelete && allowDelete"
+              outline
+              rounded
+              color="red"
+              icon="delete"
+              @click="deletePet(modelValue)"
+            />
           </div>
         </div>
         <div class="row justify-center">
@@ -166,7 +174,9 @@ export interface Props {
   categories: Record<string, Category>
   useRating?: boolean
   showAddVaccination?: boolean
+  allowDelete?: boolean
   onOpenCustomer?: unknown
+  onDelete?: unknown
 }
 const props = defineProps<Props>()
 
@@ -197,6 +207,16 @@ const emit = defineEmits<{
       id
     }: {
       id: number
+    }
+  ): void
+  (
+    e: 'delete',
+    {
+      data,
+      done
+    }: {
+      data: Pet
+      done: (success?: boolean) => void
     }
   ): void
 }>()
@@ -261,4 +281,11 @@ const hasMandatoryVaccinations = computed(() => {
   }
   return false
 })
+
+const deletePet = (pet: Pet) => {
+  function done() {}
+  if (pet.id) {
+    emit('delete', { data: pet, done })
+  }
+}
 </script>

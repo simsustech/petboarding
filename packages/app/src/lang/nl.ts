@@ -158,7 +158,9 @@ const lang: Language = {
       isChemicallySterilized: 'Huisdier is chemisch gesteriliseerd.',
       showVaccinations: 'Toon vaccinaties',
       vaccinationsMissing:
-        'Huisdier heeft niet alle verplichte vaccinaties. Vergeet niet het paspoort van uw huisdier mee te nemen.'
+        'Huisdier heeft niet alle verplichte vaccinaties. Vergeet niet het paspoort van uw huisdier mee te nemen.',
+      delete:
+        'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.'
     }
   },
   booking: {

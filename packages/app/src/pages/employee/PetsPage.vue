@@ -17,9 +17,11 @@
         :categories="categories"
         use-rating
         show-add-vaccination
+        :allow-delete="user?.roles.includes('administrator')"
         @add:vaccination="openCreateVaccinationDialog"
         @update="openUpdatePetDialog"
         @open-customer="openCustomer"
+        @delete="deletePet"
       />
     </div>
   </q-page>
@@ -61,14 +63,18 @@ import PetSelect from '../../components/employee/PetSelect.vue'
 import PetCard from '../../components/pet/PetCard.vue'
 import PetForm from '../../components/pet/PetForm.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { extend } from 'quasar'
+import { extend, useQuasar } from 'quasar'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import VaccinationForm from '../../components/vaccination/VaccinationForm.vue'
+import { useLang } from '../../lang/index.js'
+import { user } from '../../oauth.js'
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const route = useRoute()
 const router = useRouter()
+const $q = useQuasar()
+const lang = useLang()
 const { useQuery, useMutation } = await createUseTrpc()
 
 const ids = ref(((route.params.ids as string[]) || []).map((id) => Number(id)))
@@ -169,6 +175,34 @@ const openCustomer: InstanceType<
   typeof PetCard
 >['$props']['onOpenCustomer'] = ({ id }) =>
   router.push(`/employee/customers/${id}`)
+
+const deletePet: InstanceType<typeof PetCard>['$props']['onDelete'] = ({
+  data,
+  done
+}) => {
+  $q.dialog({
+    message: `${lang.value.pet.messages.delete}<br />
+    <b>${data.name} ${data.customer?.lastName}- ${data.breed}</b>`,
+    html: true,
+    cancel: true,
+    prompt: {
+      model: '',
+      type: 'text',
+      isValid: (val) => val.toLowerCase() === data.name.toLowerCase()
+    }
+  }).onOk(async (prompt) => {
+    if (data.id) {
+      const result = useMutation('admin.deletePet', {
+        args: { id: data.id },
+        immediate: true
+      })
+
+      await result.immediatePromise
+      setParam(ids.value.filter((id) => id !== data.id))
+      done(!result.error.value)
+    }
+  })
+}
 
 onMounted(async () => {
   await executeCategories()
