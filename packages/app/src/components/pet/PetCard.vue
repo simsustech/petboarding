@@ -79,7 +79,7 @@
         />
         <form-item
           :label="lang.pet.fields.weight"
-          :model-value="`${modelValue.weight} kg`"
+          :model-value="modelValue.weight ? `${modelValue.weight} kg` : null"
         />
         <form-item
           :label="lang.pet.fields.chipNumber"
