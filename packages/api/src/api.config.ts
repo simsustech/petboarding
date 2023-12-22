@@ -189,14 +189,24 @@ const bookingCostsHandler: BookingCostsHandler = ({
   withServices,
   dateFns: { getOverlappingDaysInIntervals, parse }
 }) => {
-  const items = pets.map((pet) => ({
-    name: pet.name,
-    price:
-      categories?.find((category) => category.id === pet.categoryId)?.price ||
-      NaN,
-    quantity: days,
-    discount: 0
-  }))
+  const items = pets
+    .map((pet) => {
+      const price =
+        categories?.find((category) => category.id === pet.categoryId)?.price ||
+        NaN
+
+      return {
+        name: pet.name,
+        price,
+        quantity: days,
+        discount: 0
+      }
+    })
+    .sort((a, b) => b.price - a.price)
+    .map((item) => ({
+      ...item,
+      discount: 0
+    }))
   if (withServices) {
     for (const service of services) {
       if (service.service && service.listPrice) {
