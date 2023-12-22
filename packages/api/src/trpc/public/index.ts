@@ -1,6 +1,5 @@
 import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
-import { format } from 'date-fns'
 import { findServices } from '../../repositories/service.js'
 import { findOpeningTimes } from '../../repositories/openingTime.js'
 import { findPeriods } from '../../repositories/period.js'
@@ -45,7 +44,7 @@ export const publicRoutes = ({
   getAnnouncements: procedure.query(async () => {
     const announcements = await findAnnouncements({
       criteria: {
-        expirationDate: format(new Date(), 'yyyy-MM-dd')
+        expirationDate: new Date().toISOString().slice(0, 10)
       }
     })
     if (announcements)
@@ -65,7 +64,7 @@ export const publicRoutes = ({
   getPeriods: procedure.query(async () => {
     const periods = await findPeriods({
       criteria: {
-        endDate: format(new Date(), 'yyyy-MM-dd')
+        endDate: new Date().toISOString().slice(0, 10)
       }
     })
     if (periods) return periods

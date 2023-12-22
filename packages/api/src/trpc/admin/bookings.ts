@@ -317,8 +317,8 @@ export const adminBookingRoutes = ({
     .query(async ({ input }) => {
       const { date, status } = input
       const parsedDate = parseISO(date)
-      const from = format(startOfMonth(parsedDate), 'yyyy-MM-dd')
-      const until = format(endOfMonth(parsedDate), 'yyyy-MM-dd')
+      const from = startOfMonth(parsedDate).toISOString().slice(0, 10)
+      const until = endOfMonth(parsedDate).toISOString().slice(0, 10)
 
       const bookings = await findBookings({
         criteria: {
@@ -336,7 +336,7 @@ export const adminBookingRoutes = ({
               end: parseISO(cur.endDate)
             })
             for (const date of dates) {
-              const dateString = format(date, 'yyyy-MM-dd')
+              const dateString = date.toISOString().slice(0, 10)
               acc[dateString] = acc[dateString] ? acc[dateString] + 1 : 1
             }
             return acc

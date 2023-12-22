@@ -7,8 +7,7 @@ import {
   isBefore,
   isWithinInterval,
   parseISO,
-  subMonths,
-  format
+  subMonths
 } from 'date-fns'
 import { findCategories } from './category.js'
 
@@ -744,7 +743,7 @@ export async function cancelBooking(
   const booking = await findBooking({ criteria })
   if (
     booking?.startDate &&
-    booking.startDate <= format(new Date(), 'yyyy-MM-dd')
+    booking.startDate <= new Date().toISOString().slice(0, 10)
   ) {
     throw new Error('You cannot cancel dates in the past')
   }

@@ -1,13 +1,7 @@
 import { t } from '../index.js'
 import * as z from 'zod'
 import { BOOKING_STATUS } from '../../zod/booking.js'
-import {
-  format,
-  parseISO,
-  eachDayOfInterval,
-  startOfMonth,
-  endOfMonth
-} from 'date-fns'
+import { parseISO, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
 
 import { findBookings } from 'src/repositories/booking'
 import { findDaycareDates } from 'src/repositories/daycare'
@@ -30,8 +24,8 @@ export const adminOccupancyRoutes = ({
     .query(async ({ input }) => {
       const { date, status } = input
       const parsedDate = parseISO(date)
-      const from = format(startOfMonth(parsedDate), 'yyyy-MM-dd')
-      const until = format(endOfMonth(parsedDate), 'yyyy-MM-dd')
+      const from = startOfMonth(parsedDate).toISOString().slice(0, 10)
+      const until = endOfMonth(parsedDate).toISOString().slice(0, 10)
 
       const bookings = await findBookings({
         criteria: {
@@ -49,7 +43,7 @@ export const adminOccupancyRoutes = ({
               end: parseISO(cur.endDate)
             })
             for (const date of dates) {
-              const dateString = format(date, 'yyyy-MM-dd')
+              const dateString = date.toISOString().slice(0, 10)
               acc[dateString] = acc[dateString]
                 ? acc[dateString] + cur.pets.length
                 : cur.pets.length
@@ -70,8 +64,8 @@ export const adminOccupancyRoutes = ({
     .query(async ({ input }) => {
       const { date, status } = input
       const parsedDate = parseISO(date)
-      const from = format(startOfMonth(parsedDate), 'yyyy-MM-dd')
-      const until = format(endOfMonth(parsedDate), 'yyyy-MM-dd')
+      const from = startOfMonth(parsedDate).toISOString().slice(0, 10)
+      const until = endOfMonth(parsedDate).toISOString().slice(0, 10)
 
       const daycareDates = await findDaycareDates({
         criteria: {

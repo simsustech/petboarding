@@ -5,7 +5,7 @@ import { pet } from '../../zod/pet.js'
 import { VACCINATION_IMAGE_SIZE } from '../../zod/vaccination.js'
 import { vaccination } from '../../zod/vaccination.js'
 import sharp from 'sharp'
-import { format, subYears } from 'date-fns'
+import { subYears } from 'date-fns'
 import {
   findPet,
   findPets,
@@ -201,7 +201,9 @@ export const employeePetRoutes = ({
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       const { id } = input
-      const threeYearsInThePast = format(subYears(new Date(), 3), 'yyyy-MM-dd')
+      const threeYearsInThePast = subYears(new Date(), 3)
+        .toISOString()
+        .slice(0, 10)
       const vaccinations = findVaccinations({
         criteria: {
           expirationDate: threeYearsInThePast,

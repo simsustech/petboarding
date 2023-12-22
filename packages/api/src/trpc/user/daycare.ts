@@ -10,7 +10,7 @@ import {
   updateDaycareDate
 } from 'src/repositories/daycare'
 import { findCustomer } from 'src/repositories/customer'
-import { format, addDays } from 'date-fns'
+import { addDays } from 'date-fns'
 
 export const userDaycareValidation = daycareDate.omit({
   customerId: true,
@@ -95,7 +95,8 @@ export const userDaycareRoutes = ({
         const daycareDateIds = daycareDates
           .filter(
             (daycareDate) =>
-              daycareDate.date > format(addDays(new Date(), 1), 'yyyy-MM-dd')
+              daycareDate.date >
+              addDays(new Date(), 1).toISOString().slice(0, 10)
           )
           .map((daycareDate) => daycareDate.id)
 

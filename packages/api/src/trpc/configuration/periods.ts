@@ -2,7 +2,6 @@ import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import { z } from 'zod'
 import { period } from '../../zod/period.js'
-import { format } from 'date-fns'
 import type { FastifyInstance } from 'fastify'
 import {
   createPeriod,
@@ -21,7 +20,7 @@ export const configurationPeriodRoutes = ({
   getPeriods: procedure.query(async () => {
     const periods = await findPeriods({
       criteria: {
-        from: format(new Date(), 'yyyy-MM-dd')
+        from: new Date().toISOString().slice(0, 10)
       }
     })
     if (periods) return periods
