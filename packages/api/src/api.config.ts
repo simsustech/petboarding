@@ -225,7 +225,7 @@ const bookingCostsHandler: BookingCostsHandler = ({
       items.push({
         name: 'Holiday surcharge',
         price: 100,
-        quantity: pets.length * days,
+        quantity: pets.length * (vacationDays + 1),
         discount: 0
       })
     }
