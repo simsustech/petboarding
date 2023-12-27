@@ -187,7 +187,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
   categories,
   services,
   withServices,
-  dateFns: { getOverlappingDaysInIntervals, parse }
+  dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
+  dateHolidays
 }) => {
   const items = pets
     .map((pet) => {
@@ -233,9 +234,31 @@ const bookingCostsHandler: BookingCostsHandler = ({
   )) {
     if (vacationDays > 0) {
       items.push({
-        name: 'Holiday surcharge',
+        name: 'Vacation surcharge',
         price: 100,
         quantity: pets.length * (vacationDays + 1),
+        discount: 0
+      })
+    }
+  }
+  if (dateHolidays && eachDayOfInterval) {
+    let holidayDays = 0
+    const holidays = new dateHolidays()
+    const surchargeHolidays: string[] = []
+    surchargeHolidays.forEach((holiday) => holidays.setHoliday(holiday, 'en'))
+    for (const date of eachDayOfInterval({
+      start: parse(startDate, 'yyyy-MM-dd', new Date()),
+      end: parse(endDate, 'yyyy-MM-dd', new Date())
+    })) {
+      if (holidays.isHoliday(date)) {
+        holidayDays++
+      }
+    }
+    if (holidayDays) {
+      items.push({
+        name: 'Holidays surcharge',
+        price: 500,
+        quantity: pets.length * holidayDays,
         discount: 0
       })
     }

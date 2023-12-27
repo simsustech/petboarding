@@ -2,6 +2,7 @@ import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import env from '@vitrify/tools/env'
 import {
+  eachDayOfInterval,
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
@@ -9,6 +10,7 @@ import {
   parseISO,
   subMonths
 } from 'date-fns'
+import Holidays from 'date-holidays'
 import { findCategories } from './category.js'
 
 import { BOOKING_STATUS } from '../zod/index.js'
@@ -167,9 +169,11 @@ async function calculateBookingCosts({
           categories,
           withServices,
           dateFns: {
+            eachDayOfInterval,
             getOverlappingDaysInIntervals,
             parse
-          }
+          },
+          dateHolidays: Holidays
         }))
       } catch (e) {
         console.error('Unable to load API config')
