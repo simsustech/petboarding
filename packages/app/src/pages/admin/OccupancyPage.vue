@@ -49,7 +49,7 @@
           column: true,
           'items-center': true,
           'text-bold': true,
-          ...getClasses(data[timestamp.date] + daycareOccupancy[timestamp.date])
+          ...getClasses(timestamp.date)
         }"
       >
         <div>
@@ -145,9 +145,10 @@ const { data: daycareOccupancy, execute: executeDaycareOccupancy } = useQuery(
 
 const lang = useLang()
 
-const getClasses = (occupancy: number) => {
+const getClasses = (date: string) => {
+  const occupancy =
+    (data.value?.[date] || 0) + (daycareOccupancy?.value?.[date] || 0)
   const percentage = Math.floor((occupancy / MAX_OCCUPANCY) * 100)
-
   if (percentage > 80) return { 'bg-red-4': true }
   if (percentage > 60) return { 'bg-orange-4': true }
   if (percentage > 40) return { 'bg-yellow-4': true }
