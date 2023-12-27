@@ -30,34 +30,32 @@
           </q-icon>
         </template>
       </q-input>
-      <q-btn label="Print labels">
-        <q-menu>
-          <q-list>
-            <q-item
-              :to="`/employee/labels/bookings/${arrivals
-                .map((booking) => booking.id)
-                .join('/')}`"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.title }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              :to="`/employee/labels/pets/${arrivals
-                .map((booking) => booking.pets.map((pet) => pet.id).join('/'))
-                .join('/')}`"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.pet.title }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
+      <q-btn-dropdown label="Print labels">
+        <q-list>
+          <q-item
+            :to="`/employee/labels/bookings/${arrivals
+              .map((booking) => booking.id)
+              .join('/')}`"
+          >
+            <q-item-section>
+              <q-item-label>
+                {{ lang.booking.title }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            :to="`/employee/labels/pets/${arrivals
+              .map((booking) => booking.pets.map((pet) => pet.id).join('/'))
+              .join('/')}`"
+          >
+            <q-item-section>
+              <q-item-label>
+                {{ lang.pet.title }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
     <div class="row">
       <div class="col col-md-6">
