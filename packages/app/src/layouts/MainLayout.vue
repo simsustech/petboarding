@@ -286,7 +286,6 @@ import type { QuasarLanguage } from 'quasar'
 import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 
 const configuration = useConfiguration()
-const USER_RETRIEVAL_INTERVAL = 1000 * 60 * 5 // ms
 
 const router = useRouter()
 const route = useRoute()
@@ -377,7 +376,7 @@ watch(user, async () => {
   }
 })
 
-const authenticatedRoutes = ['/account', '/employee', '/admin']
+const authenticatedRoutes = ['/account', '/employee', '/admin', '/user']
 const isAuthenticatedRoute = (route: string) => {
   return authenticatedRoutes.some((authenticatedRoute) =>
     route.includes(authenticatedRoute)
@@ -402,20 +401,5 @@ onMounted(async () => {
   }
 
   ready.value = true
-
-  setInterval(async () => {
-    try {
-      const expirationTimestamp = oAuthClient.value?.getAccessTokenExpires()
-      if (expirationTimestamp && expirationTimestamp < Date.now()) {
-        await oAuthClient.value?.getUserInfo()
-        oAuthClient.value?.getAccessToken()
-      }
-      user.value = await oAuthClient.value?.getUser()
-    } catch (e) {
-      router.push('/')
-    }
-    if (!user.value) router.push('/')
-    return
-  }, USER_RETRIEVAL_INTERVAL)
 })
 </script>

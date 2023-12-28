@@ -23,8 +23,17 @@ export const createUseTrpc = async () => {
   const lang = useLang()
   const fetch = getFetch()
   const handleErrorFetch = async (input, init) => {
+    if (
+      oAuthClient.value &&
+      oAuthClient.value.getAccessTokenExpires() > new Date().getTime()
+    ) {
+      await oAuthClient.value.getUser()
+    }
     return fetch(input, init).then(async (res) => {
       if (!res.ok) {
+        if (res.status === 401) {
+          await oAuthClient.value?.getUser()
+        }
         const body = await res.json()
 
         const serverErrors = JSON.parse(body?.error.message)
