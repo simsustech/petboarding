@@ -30,7 +30,7 @@ export const createOauthClient = async () => {
         import.meta.env.VITE_OIDC_REDIRECT_URI ||
         `${window.location.origin}/redirect`,
       scopes: ['openid', 'profile', 'email', 'api'],
-      tokenStorage: import.meta.env.DEV ? 'local' : 'session',
+      tokenStorage: import.meta.env.DEV ? 'session' : 'local',
       debug: import.meta.env.DEV
     })
     return oAuthClient
