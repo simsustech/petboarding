@@ -270,7 +270,7 @@ const lang: Language = {
       verifyCancellation:
         'Weet u zeker dat u de volgende datums wilt annuleren?',
       verifyApproval: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
-      verifyRejection: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
+      verifyRejection: 'Weet u zeker dat u de volgende datums wilt weigeren?',
       verifyStandby:
         'Weet u zeker dat u de volgende datums op de reserve lijst wil plaatsen?',
       submitted:
