@@ -30,8 +30,13 @@
           </q-icon>
         </template>
       </q-input>
-      <q-btn-dropdown label="Print labels">
+      <q-btn-dropdown label="Print">
         <q-list>
+          <q-item clickable @click="printPage">
+            <q-item-section>
+              <q-item-label> {{ lang.page }} </q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item
             :to="`/employee/labels/bookings/${arrivals
               .map((booking) => booking.id)
@@ -57,99 +62,104 @@
         </q-list>
       </q-btn-dropdown>
     </div>
-    <div class="row">
-      <div class="col col-md-6">
+    <div id="print-area">
+      <div class="row">
+        <div class="col col-md-6">
+          <q-styled-card>
+            <template #title> {{ lang.booking.arrivals }} </template>
+            <q-list>
+              <div
+                v-for="openingTime in sortedOpeningTimes"
+                :key="openingTime.id"
+              >
+                <q-item-label header>
+                  {{ openingTime.name }}
+                </q-item-label>
+                <booking-item
+                  v-for="booking in arrivals.filter(
+                    (booking) => booking.startTimeId === openingTime.id
+                  )"
+                  :key="booking.id"
+                  :model-value="booking"
+                  @open-customer="
+                    ({ id }) => router.push(`/employee/customers/${id}`)
+                  "
+                  @open-booking="
+                    ({ id }) => router.push(`/employee/bookings/${id}`)
+                  "
+                  @open-pets="
+                    ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
+                  "
+                ></booking-item>
+              </div>
+            </q-list>
+          </q-styled-card>
+        </div>
+        <div class="col col-md-6">
+          <q-styled-card>
+            <template #title> {{ lang.booking.departures }} </template>
+            <q-list>
+              <div
+                v-for="openingTime in sortedOpeningTimes"
+                :key="openingTime.id"
+              >
+                <q-item-label header>
+                  {{ openingTime.name }}
+                </q-item-label>
+                <booking-item
+                  v-for="booking in departures.filter(
+                    (booking) => booking.endTimeId === openingTime.id
+                  )"
+                  :key="booking.id"
+                  :model-value="booking"
+                  @open-booking="
+                    ({ id }) => router.push(`/employee/bookings/${id}`)
+                  "
+                  @open-pets="
+                    ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
+                  "
+                ></booking-item>
+              </div>
+            </q-list>
+          </q-styled-card>
+        </div>
+      </div>
+      <div class="row">
         <q-styled-card>
-          <template #title> {{ lang.booking.arrivals }} </template>
+          <template #title> {{ lang.daycare.title }} </template>
           <q-list>
-            <div
-              v-for="openingTime in sortedOpeningTimes"
-              :key="openingTime.id"
+            <q-item
+              v-for="daycareDate in daycareDatesData"
+              :key="daycareDate.id"
             >
-              <q-item-label header>
-                {{ openingTime.name }}
-              </q-item-label>
-              <booking-item
-                v-for="booking in arrivals.filter(
-                  (booking) => booking.startTimeId === openingTime.id
-                )"
-                :key="booking.id"
-                :model-value="booking"
-                @open-customer="
-                  ({ id }) => router.push(`/employee/customers/${id}`)
-                "
-                @open-booking="
-                  ({ id }) => router.push(`/employee/bookings/${id}`)
-                "
-                @open-pets="
-                  ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
-                "
-              ></booking-item>
-            </div>
+              <q-item-section>
+                <q-item-label>
+                  {{ getPetsFromDaycareDate(daycareDate.pets) }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ daycareDate.customer.lastName }}
+                </q-item-label>
+              </q-item-section>
+              <q-menu context-menu>
+                <q-list dense>
+                  <q-item
+                    clickable
+                    :to="`/employee/pets/${daycareDate.pets
+                      .map((pet) => pet.id)
+                      .join('/')}`"
+                  >
+                    <q-item-section>
+                      <q-item-label>{{
+                        lang.booking.messages.openPets
+                      }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-item>
           </q-list>
         </q-styled-card>
       </div>
-      <div class="col col-md-6">
-        <q-styled-card>
-          <template #title> {{ lang.booking.departures }} </template>
-          <q-list>
-            <div
-              v-for="openingTime in sortedOpeningTimes"
-              :key="openingTime.id"
-            >
-              <q-item-label header>
-                {{ openingTime.name }}
-              </q-item-label>
-              <booking-item
-                v-for="booking in departures.filter(
-                  (booking) => booking.endTimeId === openingTime.id
-                )"
-                :key="booking.id"
-                :model-value="booking"
-                @open-booking="
-                  ({ id }) => router.push(`/employee/bookings/${id}`)
-                "
-                @open-pets="
-                  ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
-                "
-              ></booking-item>
-            </div>
-          </q-list>
-        </q-styled-card>
-      </div>
-    </div>
-    <div class="row">
-      <q-styled-card>
-        <template #title> {{ lang.daycare.title }} </template>
-        <q-list>
-          <q-item v-for="daycareDate in daycareDatesData" :key="daycareDate.id">
-            <q-item-section>
-              <q-item-label>
-                {{ getPetsFromDaycareDate(daycareDate.pets) }}
-              </q-item-label>
-              <q-item-label caption>
-                {{ daycareDate.customer.lastName }}
-              </q-item-label>
-            </q-item-section>
-            <q-menu context-menu>
-              <q-list dense>
-                <q-item
-                  clickable
-                  :to="`/employee/pets/${daycareDate.pets
-                    .map((pet) => pet.id)
-                    .join('/')}`"
-                >
-                  <q-item-section>
-                    <q-item-label>{{
-                      lang.booking.messages.openPets
-                    }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-item>
-        </q-list>
-      </q-styled-card>
     </div>
   </q-page>
 </template>
@@ -255,6 +265,22 @@ const setDate = (date: string) =>
   router.push({
     path: `/employee/overview/${date.replaceAll('/', '-')}`
   })
+
+const printPage = async () => {
+  let html2pdf = (element, opt) => {
+    //
+  }
+  if (!import.meta.env.SSR) html2pdf = (await import('html2pdf.js')).default
+  var element = document.getElementById('print-area')
+  var opt = {
+    margin: 2,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 1 },
+    // jsPDF: { unit: 'mm', format: [62, 50], orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }
+  html2pdf(element, opt)
+}
 
 onMounted(async () => {
   await executeOpeningTimes()

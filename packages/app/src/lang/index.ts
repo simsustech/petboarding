@@ -22,6 +22,7 @@ export interface Language {
   refresh: string
   boarding: string
   update: string
+  page: string
   account: {
     title: string
     fields: {

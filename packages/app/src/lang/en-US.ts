@@ -24,6 +24,7 @@ const lang: Language = {
   refresh: 'Refresh',
   boarding: 'Boarding',
   update: 'Update',
+  page: 'Page',
   account: {
     title: 'Account',
     fields: {
