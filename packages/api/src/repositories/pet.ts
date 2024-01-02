@@ -146,6 +146,9 @@ export async function findPets({
 }
 
 export async function createPet(pet: NewPet) {
+  pet.name = pet.name.trim()
+  pet.breed = pet.breed.trim()
+
   return db
     .insertInto('pets')
     .values(pet)
@@ -163,6 +166,9 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
   if (criteria.customerId) {
     query = query.where('customerId', '=', criteria.customerId)
   }
+  if (updateWith.name) updateWith.name = updateWith.name.trim()
+  if (updateWith.breed) updateWith.breed = updateWith.breed.trim()
+
   return query.set(updateWith).returningAll().executeTakeFirstOrThrow()
 }
 

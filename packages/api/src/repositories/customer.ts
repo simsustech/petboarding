@@ -84,6 +84,9 @@ export async function findCustomer({
 }
 
 export async function createCustomer(customer: NewCustomer) {
+  customer.firstName = customer.firstName.trim()
+  customer.lastName = customer.lastName.trim()
+
   return db
     .insertInto('customers')
     .values(customer)
@@ -104,6 +107,9 @@ export async function updateCustomer(
   if (criteria.accountId) {
     query = query.where('accountId', '=', criteria.accountId)
   }
+  if (updateWith.firstName) updateWith.firstName = updateWith.firstName.trim()
+  if (updateWith.lastName) updateWith.lastName = updateWith.lastName.trim()
+
   return query.set(updateWith).executeTakeFirstOrThrow()
 }
 
