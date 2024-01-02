@@ -49,8 +49,8 @@ importers:
         specifier: ^0.3.4
         version: 0.3.4(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)(vue@3.3.9)
       '@modular-api/fastify-oidc':
-        specifier: ^0.3.3
-        version: 0.3.3(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
+        specifier: ^0.3.4
+        version: 0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
       '@petboarding/app':
         specifier: workspace:*
         version: link:../app
@@ -185,8 +185,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.4.5
-        version: 0.4.6(quasar@2.14.0)
+        specifier: ^0.4.7
+        version: 0.4.7(quasar@2.14.0)
       '@trpc/client':
         specifier: ^10.44.1
         version: 10.44.1(@trpc/server@10.44.1)
@@ -303,8 +303,8 @@ importers:
         specifier: 1.16.6
         version: 1.16.6
       '@simsustech/quasar-components':
-        specifier: ^0.4.4
-        version: 0.4.6(quasar@2.12.5)
+        specifier: ^0.4.7
+        version: 0.4.7(quasar@2.12.5)
       quasar:
         specifier: 2.12.5
         version: 2.12.5
@@ -2287,7 +2287,7 @@ packages:
       '@fastify/formbody': 7.4.0
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.12.0
-      '@modular-api/fastify-oidc': 0.3.3(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
+      '@modular-api/fastify-oidc': 0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
       '@trpc/server': 10.44.1
       '@types/compression': 1.7.5
       '@types/serve-static': 1.15.5
@@ -2311,8 +2311,8 @@ packages:
       - vue
     dev: false
 
-  /@modular-api/fastify-oidc@0.3.3(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3):
-    resolution: {integrity: sha512-zSJSsNdLuIiCop4qtCNlo1q1mGVDAXgHHtOXRmTyn9wCnhk2lSDfbTLM1R7OJtn2azOwugjNQ6nMENRpPhR9Mw==}
+  /@modular-api/fastify-oidc@0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3):
+    resolution: {integrity: sha512-RfjdlTQKQvqhogcrVMloFQCYVBFwFcC7iEidxuZTmdpdd95JhSjUxEz88pf5Afk856Ib3YNoDhT55WWLy9sr5g==}
     peerDependencies:
       bcrypt: ^5.1.1
       handlebars: ^4.7.7
@@ -2321,7 +2321,7 @@ packages:
     dependencies:
       '@fastify/cookie': 9.2.0
       '@fastify/middie': 8.3.0
-      '@modular-api/oidc-interactions': 0.2.3(@fastify/static@6.12.0)(fastify@4.24.3)
+      '@modular-api/oidc-interactions': 0.2.4(@fastify/static@6.12.0)(fastify@4.24.3)
       bcrypt: 5.1.1
       fastify-plugin: 4.5.1
       handlebars: 4.7.8
@@ -2337,8 +2337,8 @@ packages:
       - typescript
     dev: false
 
-  /@modular-api/oidc-interactions@0.2.3(@fastify/static@6.12.0)(fastify@4.24.3):
-    resolution: {integrity: sha512-3Ce3GkublE/72+1H0o+0bVUty0xcDu5i5mBf3ND8eAa9nltM4k8xrzoq+IiGpxqnZuVFvtdmLyJp/lm6N+kISw==}
+  /@modular-api/oidc-interactions@0.2.4(@fastify/static@6.12.0)(fastify@4.24.3):
+    resolution: {integrity: sha512-kQuaFpyB5dFoO1ixjGvC2oG4pwJDKMO2ezWuHElbQtYMRFw7pr1VEoAvXcVhHPcjofIpgyQUX566fyEZBjg6tg==}
     peerDependencies:
       '@fastify/static': ^6.12.0
       fastify: ^4.24.3
@@ -2593,8 +2593,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@simsustech/quasar-components@0.4.6(quasar@2.12.5):
-    resolution: {integrity: sha512-HQQcOIWP0QXZAud1qqmp844heWGO9xJqDhdeGzS1674BcvNiCCKmykNUUbLJXUF10Mvg3rpvY3YPFxjDR/9faA==}
+  /@simsustech/quasar-components@0.4.7(quasar@2.12.5):
+    resolution: {integrity: sha512-QTEfYAbl83FAncx6OMjyyObj88rnX+jRZrhmbf56oB6wAo/UvTuL1yBLIDI70R663YVmEOpngdMT/CsiogRAdQ==}
     peerDependencies:
       quasar: ^2.9.2
     dependencies:
@@ -2602,8 +2602,8 @@ packages:
       validator: 13.11.0
     dev: false
 
-  /@simsustech/quasar-components@0.4.6(quasar@2.14.0):
-    resolution: {integrity: sha512-HQQcOIWP0QXZAud1qqmp844heWGO9xJqDhdeGzS1674BcvNiCCKmykNUUbLJXUF10Mvg3rpvY3YPFxjDR/9faA==}
+  /@simsustech/quasar-components@0.4.7(quasar@2.14.0):
+    resolution: {integrity: sha512-QTEfYAbl83FAncx6OMjyyObj88rnX+jRZrhmbf56oB6wAo/UvTuL1yBLIDI70R663YVmEOpngdMT/CsiogRAdQ==}
     peerDependencies:
       quasar: ^2.9.2
     dependencies:
