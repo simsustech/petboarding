@@ -5,7 +5,7 @@
     </q-item-section>
     <q-item-section>
       <q-item-label overline>
-        <q-badge v-if="hasExpired">
+        <q-badge color="red" v-if="hasExpired">
           <q-icon name="warning" /> {{ lang.pet.vaccination.expired }}</q-badge
         >
       </q-item-label>
@@ -62,7 +62,7 @@ const openImage = () => {
 }
 
 const hasExpired = computed(() => {
-  const currentDate = dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+  const currentDate = dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
   return modelValue.value.expirationDate < currentDate
 })
 
