@@ -287,7 +287,7 @@ onMounted(async () => {
   await dateInputRef.value?.validate()
   if (!dateError.value) {
     executeGetBookings()
-    executeDaycareDates
+    executeDaycareDates()
   }
 })
 </script>
