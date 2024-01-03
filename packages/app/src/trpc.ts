@@ -1,4 +1,3 @@
-import { computed, reactive } from 'vue'
 import { useTRPC } from 'use-trpc'
 import { httpLink, getFetch } from '@trpc/client'
 import { useOAuthClient } from './oauth.js'
@@ -10,30 +9,17 @@ import type { AppRouter } from '@petboarding/api/trpc'
 export const createUseTrpc = async () => {
   const oAuthClient = await useOAuthClient()
 
-  const headers = reactive({
-    Authorization: computed(() => {
-      if (oAuthClient.value) {
-        oAuthClient.value.getUser()
-        return `Bearer ${oAuthClient.value.getAccessToken()}`
-      }
-      return ''
-    })
+  const headers = () => ({
+    Authorization: oAuthClient.value?.getAccessToken()
+      ? `Bearer ${oAuthClient.value.getAccessToken()}`
+      : ''
   })
 
   const lang = useLang()
   const fetch = getFetch()
   const handleErrorFetch = async (input, init) => {
-    if (
-      oAuthClient.value &&
-      oAuthClient.value.getAccessTokenExpires() > new Date().getTime()
-    ) {
-      await oAuthClient.value.getUser()
-    }
     return fetch(input, init).then(async (res) => {
       if (!res.ok) {
-        if (res.status === 401) {
-          await oAuthClient.value?.getUser()
-        }
         const body = await res.json()
 
         const serverErrors = JSON.parse(body?.error.message)
