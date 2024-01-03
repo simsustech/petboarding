@@ -201,6 +201,7 @@ export interface Language {
       openPets: string
       possibleDoubleBooking: string
       settleCancellation: string
+      bookingModified: string
     }
     helpers: {
       status: {

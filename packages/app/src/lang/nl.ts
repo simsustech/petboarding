@@ -210,7 +210,8 @@ const lang: Language = {
       openPets: 'Huisdieren openen',
       possibleDoubleBooking: 'Deze reservering is mogelijk dubbel geboekt.',
       settleCancellation:
-        'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?'
+        'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
+      bookingModified: 'Reservering is gewijzigd.'
     },
     helpers: {
       status: {

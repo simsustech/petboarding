@@ -208,7 +208,8 @@ const lang: Language = {
       openPets: 'Open pets',
       possibleDoubleBooking: 'This possibly is a double booking.',
       settleCancellation:
-        'Are you sure you want to settle the cancellation of the following booking?'
+        'Are you sure you want to settle the cancellation of the following booking?',
+      bookingModified: 'Booking has been modified.'
     },
     helpers: {
       status: {

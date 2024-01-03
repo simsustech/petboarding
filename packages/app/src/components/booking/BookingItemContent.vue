@@ -35,6 +35,10 @@
         {{ `${modelValue.days} ${lang.booking.days}` }}
       </a>
     </q-item-label>
+    <q-item-label v-if="showHistory && modelValue.statuses?.length > 1" caption>
+      <q-icon name="warning" color="red"> </q-icon>
+      {{ lang.booking.messages.bookingModified }}
+    </q-item-label>
     <q-item-label v-if="modelValue.isDoubleBooked" caption>
       <q-icon name="warning" color="red"> </q-icon
       >{{ lang.booking.messages.possibleDoubleBooking }}</q-item-label
@@ -142,6 +146,7 @@ export interface Props {
   showEditButton?: boolean
   showHandleCancellationButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
+  showHistory?: boolean
 }
 
 defineProps<Props>()

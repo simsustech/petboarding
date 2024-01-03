@@ -1,7 +1,11 @@
 <template>
   <q-expansion-item>
     <template #header>
-      <booking-item-content :model-value="modelValue" v-bind="attrs" />
+      <booking-item-content
+        :model-value="modelValue"
+        v-bind="attrs"
+        :show-history="showHistory"
+      />
       <q-menu v-if="onOpenCustomer" context-menu>
         <q-list>
           <q-item
