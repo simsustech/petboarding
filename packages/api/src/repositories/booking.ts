@@ -664,6 +664,9 @@ export async function updateBooking(
     petIds: number[]
     serviceIds: number[]
     status?: BOOKING_STATUS
+  },
+  options?: {
+    skipStatusUpdate?: boolean
   }
 ) {
   let query = db.updateTable('bookings')
@@ -730,11 +733,13 @@ export async function updateBooking(
         .execute()
   }
 
-  await createBookingStatus({
-    booking: updatedBooking,
-    petIds: updateWith.petIds,
-    status: updateWith.status || BOOKING_STATUS.PENDING
-  })
+  if (!options?.skipStatusUpdate) {
+    await createBookingStatus({
+      booking: updatedBooking,
+      petIds: updateWith.petIds,
+      status: updateWith.status || BOOKING_STATUS.PENDING
+    })
+  }
 
   return updatedBooking
 }

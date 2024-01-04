@@ -122,6 +122,9 @@ export const employeeBookingRoutes = ({
             },
             petIds: input.petIds,
             serviceIds: input.serviceIds!
+          },
+          {
+            skipStatusUpdate: true
           }
         )
         return booking
