@@ -15,7 +15,7 @@
     </div>
 
     <div class="row">
-      <div class="col-6 q-pr-xs">
+      <div class="col-12 q-pr-xs">
         <q-field :label="lang.pet.title" stack-label dense>
           <template #control>
             <div
@@ -29,7 +29,21 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-6 q-pr-xs">
+      <div class="col-12 q-pr-xs">
+        <q-field :label="lang.customer.fields.lastName" stack-label dense>
+          <template #control>
+            <div
+              class="self-center text-truncate text-subtitle2 full-width no-outline q-ma-none"
+              tabindex="0"
+            >
+              {{ modelValue.customer?.lastName }}
+            </div>
+          </template>
+        </q-field>
+      </div>
+    </div>
+    <div v-if="modelValue.services.length" class="row">
+      <div class="col-12 q-pr-xs">
         <q-field :label="lang.service.title" stack-label dense>
           <template #control>
             <div
