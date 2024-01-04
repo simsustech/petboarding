@@ -3,7 +3,7 @@ import { account } from './account.js'
 
 export const customerValidation = {
   id: z.number().optional(),
-  rating: z.number().optional(),
+  rating: z.number().nullable().optional(),
   gender: z.union([z.literal('male'), z.literal('female'), z.literal('other')]),
   firstName: z.string(),
   lastName: z.string(),
