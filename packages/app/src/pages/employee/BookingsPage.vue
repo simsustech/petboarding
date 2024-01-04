@@ -68,7 +68,7 @@ const customerId = ref<number>()
 const { data: petsData, execute: executePets } = useQuery(
   'employee.getPetsByCustomerId',
   {
-    args: reactive({ id: customerId }),
+    args: reactive({ customerId }),
     initialData: [],
     reactive: {
       args: true

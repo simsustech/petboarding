@@ -99,7 +99,7 @@ export const employeePetRoutes = ({
   getPetsByCustomerId: procedure
     .input(
       z.object({
-        customerId: z.number()
+        customerId: z.number().optional()
       })
     )
     .query(async ({ input }) => {
