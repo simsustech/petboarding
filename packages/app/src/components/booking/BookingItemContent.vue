@@ -35,7 +35,16 @@
         {{ `${modelValue.days} ${lang.booking.days}` }}
       </a>
     </q-item-label>
-    <q-item-label v-if="showHistory && modelValue.statuses?.length > 1" caption>
+    <q-item-label
+      v-if="
+        showHistory &&
+        modelValue.statuses &&
+        modelValue.status &&
+        modelValue.statuses?.length > 1 &&
+        modelValue.status.status === BOOKING_STATUS.PENDING
+      "
+      caption
+    >
       <q-icon name="warning" color="red"> </q-icon>
       {{ lang.booking.messages.bookingModified }}
     </q-item-label>
@@ -136,7 +145,7 @@ import {
   date as dateUtil
 } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
-import { Booking } from '@petboarding/api/zod'
+import { Booking, BOOKING_STATUS } from '@petboarding/api/zod'
 import { BOOKING_ICON, BOOKING_ICON_COLOR } from '../../configuration.js'
 import { useConfiguration } from '../../configuration.js'
 export interface Props {
