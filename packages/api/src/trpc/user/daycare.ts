@@ -56,30 +56,78 @@ export const userDaycareRoutes = ({
   createDaycareDates: procedure
     .input(userDaycareValidation.array())
     .mutation(async ({ input, ctx }) => {
-      if (ctx.account?.id) {
-        const customer = await findCustomer({
-          criteria: {
-            accountId: Number(ctx.account.id)
-          }
-        })
-        if (customer?.id) {
-          const daycareDates = await Promise.all(
-            input.map((daycareDate) =>
-              createDaycareDate({
-                daycareDate: {
-                  date: daycareDate.date,
-                  comments: daycareDate.comments,
-                  customerId: customer.id,
-                  status: DAYCARE_DATE_STATUS.PENDING
-                },
-                petIds: daycareDate.petIds
-              })
+      try {
+        if (ctx.account?.id) {
+          const customer = await findCustomer({
+            criteria: {
+              accountId: Number(ctx.account.id)
+            }
+          })
+          if (customer?.id) {
+            const currentDaycareDates = await findDaycareDates({
+              criteria: {
+                customerId: customer.id,
+                dates: input.map((daycareDate) => daycareDate.date)
+              }
+            })
+
+            const newDaycareDates = input.filter(
+              (daycareDate) =>
+                !currentDaycareDates.some(
+                  (currentDaycareDate) =>
+                    daycareDate.date === currentDaycareDate.date
+                )
             )
-          )
-          return daycareDates
+
+            const updatedDaycareDates = currentDaycareDates
+              .filter(
+                (daycareDate) =>
+                  daycareDate.status === DAYCARE_DATE_STATUS.CANCELLED
+              )
+              .map((daycareDate) => {
+                return {
+                  ...daycareDate,
+                  petIds:
+                    input.find((d) => d.date === daycareDate.date)?.petIds ||
+                    daycareDate.pets.map((pet) => pet.id)
+                }
+              })
+            await Promise.all([
+              ...newDaycareDates.map((daycareDate) =>
+                createDaycareDate({
+                  daycareDate: {
+                    date: daycareDate.date,
+                    comments: daycareDate.comments,
+                    customerId: customer.id,
+                    status: DAYCARE_DATE_STATUS.PENDING
+                  },
+                  petIds: daycareDate.petIds
+                })
+              ),
+              ...updatedDaycareDates.map((daycareDate) =>
+                updateDaycareDate(
+                  {
+                    date: daycareDate.date,
+                    customerId: customer.id
+                  },
+                  {
+                    daycareDate: {
+                      date: daycareDate.date,
+                      comments: daycareDate.comments,
+                      customerId: customer.id,
+                      status: DAYCARE_DATE_STATUS.PENDING
+                    },
+                    petIds: daycareDate.petIds
+                  }
+                )
+              )
+            ])
+            return true
+          }
         }
+      } catch (e) {
+        throw new TRPCError({ code: 'BAD_REQUEST' })
       }
-      throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
 
   cancelDaycareDates: procedure

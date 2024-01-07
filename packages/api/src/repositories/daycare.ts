@@ -74,7 +74,11 @@ function find({
   criteria,
   select
 }: {
-  criteria: Partial<DaycareDate> & { from?: string; until?: string }
+  criteria: Partial<DaycareDate> & {
+    from?: string
+    until?: string
+    dates?: string[]
+  }
   select?: (keyof DaycareDate)[]
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -101,6 +105,9 @@ function find({
   if (criteria.status) {
     query = query.where('status', '=', criteria.status)
   }
+  if (criteria.dates && criteria.dates.length) {
+    query = query.where('date', 'in', criteria.dates)
+  }
   return query.select(select).select([withCustomer, withPets])
 }
 
@@ -126,7 +133,11 @@ export async function findDaycareDates({
   criteria,
   select
 }: {
-  criteria: Partial<DaycareDate> & { from?: string; until?: string }
+  criteria: Partial<DaycareDate> & {
+    from?: string
+    until?: string
+    dates?: string[]
+  }
   select?: (keyof DaycareDate)[]
 }) {
   const query = find({
@@ -183,6 +194,9 @@ export async function updateDaycareDate(
     query = query.where('id', 'in', criteria.ids)
   }
 
+  if (criteria.date) {
+    query = query.where('date', '=', criteria.date)
+  }
   if (criteria.customerId) {
     query = query.where('customerId', '=', criteria.customerId)
   }
