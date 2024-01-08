@@ -31,8 +31,9 @@
       >
         <template #head-day-button="{ scope }">
           <q-btn
+            :disabled="!selectedDates"
+            @click="onClickDate({ scope })"
             class="q-mb-sm q-mt-sm"
-            disabled
             size="md"
             outline
             rounded
@@ -40,7 +41,7 @@
           />
         </template>
         <template #day="{ scope: { timestamp } }">
-          <div style="min-height: 30px">
+          <div v-if="Object.keys(eventsMap).length" style="min-height: 30px">
             <!-- <slot name="dayHeader" :timestamp="timestamp" /> -->
             <template
               v-for="event in eventsMap[timestamp.date]"

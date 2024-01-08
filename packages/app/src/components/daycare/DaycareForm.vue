@@ -20,9 +20,6 @@
   </q-form>
   <div class="row">
     <daycare-calendar-month
-      mini-mode
-      focusable
-      hoverable
       :selected-dates="selectedDates"
       :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
       @update:selected-dates="($event) => (selectedDates = $event)"
