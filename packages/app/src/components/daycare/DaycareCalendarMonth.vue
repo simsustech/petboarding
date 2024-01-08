@@ -29,44 +29,59 @@
         @click-head-workweek="onClickHeadWorkweek"
         @click-head-day="onClickHeadDay"
       >
+        <template #head-day-button="{ scope }">
+          <q-btn
+            class="q-mb-sm q-mt-sm"
+            disabled
+            size="md"
+            outline
+            rounded
+            :label="scope.dayLabel"
+          />
+        </template>
         <template #day="{ scope: { timestamp } }">
-          <q-separator />
-          <slot name="dayHeader" :timestamp="timestamp" />
-          <template v-for="event in eventsMap[timestamp.date]" :key="event.id">
-            <div class="text-center">
-              <q-chip
-                class="q-mt-none q-mb-none"
-                size="sm"
-                :color="event.bgcolor"
-                clickable
-                :selected="selectedEvents?.includes(event.id)"
-                @click="emit('click:event', event)"
-              >
-                {{ event.title }}
-                <q-tooltip v-if="event.details" :delay="800">
-                  {{ event.details }}
-                </q-tooltip>
-                <q-menu v-if="onOpenPets" context-menu>
-                  <q-list>
-                    <q-item
-                      clickable
-                      @click="$emit('openPets', { ids: event.petIds })"
-                    >
-                      <q-item-section>
-                        <q-item-label>
-                          {{
-                            `${
-                              lang.daycare.messages.openPets
-                            } ${lang.pet.title.toLowerCase()}`
-                          }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-chip>
-            </div>
-          </template>
+          <div style="min-height: 30px">
+            <!-- <slot name="dayHeader" :timestamp="timestamp" /> -->
+            <template
+              v-for="event in eventsMap[timestamp.date]"
+              :key="event.id"
+            >
+              <div class="text-center">
+                <q-chip
+                  class="q-mt-none q-mb-none"
+                  size="sm"
+                  :color="event.bgcolor"
+                  clickable
+                  :selected="selectedEvents?.includes(event.id)"
+                  @click="emit('click:event', event)"
+                >
+                  {{ event.title }}
+                  <q-tooltip v-if="event.details" :delay="800">
+                    {{ event.details }}
+                  </q-tooltip>
+                  <q-menu v-if="onOpenPets" context-menu>
+                    <q-list>
+                      <q-item
+                        clickable
+                        @click="$emit('openPets', { ids: event.petIds })"
+                      >
+                        <q-item-section>
+                          <q-item-label>
+                            {{
+                              `${
+                                lang.daycare.messages.openPets
+                              } ${lang.pet.title.toLowerCase()}`
+                            }}
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-chip>
+              </div>
+            </template>
+            <slot name="dayFooter" :timestamp="timestamp" />
+          </div>
         </template>
       </q-calendar-month>
     </div>

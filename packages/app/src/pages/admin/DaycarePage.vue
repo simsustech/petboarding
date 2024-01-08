@@ -10,7 +10,7 @@
     @change-date="onChangeDate"
     @open-pets="openPets"
   >
-    <template #dayHeader="{ timestamp }">
+    <template #dayFooter="{ timestamp }">
       <div
         v-if="status === DAYCARE_DATE_STATUS.APPROVED"
         class="text-bold text-center"
