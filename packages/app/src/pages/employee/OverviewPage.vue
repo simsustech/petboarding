@@ -275,8 +275,7 @@ const printPage = async () => {
   var opt = {
     margin: 2,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 1 },
-    // jsPDF: { unit: 'mm', format: [62, 50], orientation: 'portrait' }
+    html2canvas: { scale: 0.8 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }
   html2pdf(element, opt)
