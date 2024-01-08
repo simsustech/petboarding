@@ -1,7 +1,7 @@
 <template>
   <q-item>
     <q-item-section avatar>
-      <pet-avatar :model-value="modelValue.image" />
+      <image-avatar :model-value="modelValue.image" />
     </q-item-section>
     <q-item-section>
       <q-item-label overline>
@@ -77,7 +77,7 @@ import { ref, toRefs } from 'vue'
 import { QItem } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Pet as PetType } from '@petboarding/api/zod'
-import PetAvatar from './PetAvatar.vue'
+import ImageAvatar from '../ImageAvatar.vue'
 
 export interface Pet extends PetType {
   image?: string

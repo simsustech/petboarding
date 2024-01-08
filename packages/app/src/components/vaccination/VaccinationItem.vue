@@ -1,7 +1,7 @@
 <template>
   <q-item>
     <q-item-section side>
-      <image-avatar :model-value="modelValue.image" @open="openImage" />
+      <image-avatar :model-value="modelValue.image" />
     </q-item-section>
     <q-item-section>
       <q-item-label overline>
@@ -17,10 +17,6 @@
       }}</q-item-label>
     </q-item-section>
   </q-item>
-
-  <responsive-dialog ref="imageDialog" persistent display>
-    <base64-image class="text-center" :model-value="modelValue.image" />
-  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -30,12 +26,10 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Vaccination as VaccinationType } from '@petboarding/api/zod'
-import { ResponsiveDialog } from '@simsustech/quasar-components'
-import Base64Image from '../Base64Image.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 
 export interface Vaccination extends VaccinationType {
@@ -55,12 +49,6 @@ const formatDate = (date: string | null) => {
   if (date) return dateUtil.formatDate(new Date(date), 'DD MMM YYYY')
   return '-'
 }
-
-const imageDialog = ref<typeof ResponsiveDialog>()
-const openImage = () => {
-  imageDialog.value?.functions.open()
-}
-
 const hasExpired = computed(() => {
   const currentDate = dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
   return modelValue.value.expirationDate < currentDate

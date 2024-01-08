@@ -1,16 +1,32 @@
 <template>
-  <q-avatar :class="{ 'cursor-pointer': modelValue }" @click="open">
-    <img v-if="modelValue" :src="modelValue" />
-    <q-icon v-else :name="allowChange ? 'add_a_photo' : 'photo_camera'" />
-  </q-avatar>
-  <q-file
-    ref="fileSelector"
-    v-model="image"
-    :label="lang.image"
-    accept="image/png,image/jpeg"
-    style="display: none"
-    @update:model-value="setImage"
-  />
+  <div>
+    <q-avatar :class="{ 'cursor-pointer': modelValue }" @click="open">
+      <img v-if="modelValue" :src="modelValue" />
+      <q-icon v-else size="lg" name="photo_camera" />
+    </q-avatar>
+    <q-btn
+      v-if="allowChange"
+      color="white"
+      text-color="black"
+      rounded
+      size="xs"
+      padding="xs"
+      style="position: relative; right: 18px; bottom: -15px"
+      :icon="modelValue ? 'edit' : 'add'"
+      @click="pickFiles"
+    ></q-btn>
+    <q-file
+      ref="fileSelector"
+      v-model="image"
+      :label="lang.image"
+      accept="image/png,image/jpeg"
+      style="display: none"
+      @update:model-value="setImage"
+    />
+  </div>
+  <responsive-dialog ref="imageDialog" persistent display>
+    <base64-image class="text-center" :model-value="modelValue" />
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -23,7 +39,8 @@ export default {
 import { ref, toRefs } from 'vue'
 import { QFile, QFileProps } from 'quasar'
 import { useLang } from '../lang/index.js'
-
+import { ResponsiveDialog } from '@simsustech/quasar-components'
+import Base64Image from './Base64Image.vue'
 export interface Props {
   modelValue?: string
   allowChange?: boolean
@@ -47,9 +64,9 @@ const lang = useLang()
 
 const { allowChange, modelValue } = toRefs(props)
 const fileSelector = ref<typeof QFile>()
+const pickFiles = () => fileSelector.value?.pickFiles()
 const open = () => {
-  if (props.allowChange) fileSelector.value?.pickFiles()
-  else if (modelValue?.value) emit('open')
+  if (modelValue?.value) imageDialog.value.functions.open()
 }
 const image = ref<File>()
 
@@ -63,4 +80,6 @@ const setImage: QFileProps['onUpdate:modelValue'] = async (file) => {
     emit('update:modelValue', base64)
   }
 }
+
+const imageDialog = ref<typeof ResponsiveDialog>()
 </script>

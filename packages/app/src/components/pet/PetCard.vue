@@ -3,7 +3,7 @@
     <q-styled-card v-bind="attrs" :class="{ 'bg-grey-5': modelValue.deceased }">
       <template #title>
         <div class="row justify-between">
-          <pet-avatar :model-value="modelValue.image" @open="openImage" />
+          <image-avatar :model-value="modelValue.image" />
           <div class="col text-right">
             <q-btn outline rounded icon="edit" @click="update(modelValue)">
               <q-tooltip>
@@ -112,6 +112,7 @@
           <q-item-section side>
             <q-btn
               v-if="showAddVaccination"
+              rounded
               icon="add"
               @click="addVaccination(modelValue)"
             />
@@ -123,22 +124,7 @@
           :model-value="vaccination"
         />
       </q-list>
-      <template #actions>
-        <!-- <div class="row full-width justify-center q-mb-md">
-          <q-btn icon="edit" label="Update" @click="update(modelValue)" />
-        </div>
-        <div v-if="onOpenCustomer" class="row full-width justify-center">
-          <q-btn
-            :label="lang.customer.title"
-            @click="$emit('openCustomer', { id: modelValue.customerId })"
-          />
-        </div> -->
-      </template>
     </q-styled-card>
-
-    <responsive-dialog ref="imageDialog" persistent display>
-      <base64-image class="text-center" :model-value="modelValue.image" />
-    </responsive-dialog>
   </div>
 </template>
 
@@ -150,7 +136,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, useAttrs } from 'vue'
+import { computed, toRefs, useAttrs } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Pet as PetType, Category } from '@petboarding/api/zod'
@@ -160,10 +146,8 @@ import {
   GenderItem,
   BooleanItem
 } from '@simsustech/quasar-components/form'
-import { ResponsiveDialog } from '@simsustech/quasar-components'
 import PetCategoryItem from './PetCategoryItem.vue'
-import PetAvatar from './PetAvatar.vue'
-import Base64Image from '../Base64Image.vue'
+import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
 
 export interface Pet extends PetType {
@@ -245,11 +229,6 @@ const addVaccination = (pet: Pet) => {
 const formatDate = (date: string | null) => {
   if (date) return dateUtil.formatDate(new Date(date), 'DD MMM YYYY')
   return '-'
-}
-
-const imageDialog = ref<typeof ResponsiveDialog>()
-const openImage = () => {
-  imageDialog.value?.functions.open()
 }
 
 const mandatoryVaccinationsDog = import.meta.env.VITE_MANDATORY_VACCINATIONS_DOG

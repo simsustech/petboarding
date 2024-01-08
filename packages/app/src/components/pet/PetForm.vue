@@ -1,7 +1,7 @@
 <template>
   <q-form ref="formRef">
     <div class="row justify-center">
-      <pet-avatar v-model="modelValue.image" allow-change />
+      <image-avatar v-model="modelValue.image" allow-change />
     </div>
     <div class="row">
       <pet-species-select
@@ -224,7 +224,7 @@ import type { Pet as PetType, Category } from '@petboarding/api/zod'
 import PetSpeciesSelect from './PetSpeciesSelect.vue'
 import PetBreedSelect from './PetBreedSelect.vue'
 import PetCategorySelect from './PetCategorySelect.vue'
-import PetAvatar from './PetAvatar.vue'
+import ImageAvatar from '../ImageAvatar.vue'
 export interface Pet extends PetType {
   image?: string
 }
