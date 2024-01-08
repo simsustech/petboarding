@@ -152,9 +152,11 @@ const createDaycare: InstanceType<
 
   await result.immediatePromise
 
-  $q.dialog({
-    message: lang.value.daycare.messages.submitted
-  })
+  if (!result.error.value) {
+    $q.dialog({
+      message: lang.value.daycare.messages.submitted
+    })
+  }
   done(!result.error.value)
 }
 
