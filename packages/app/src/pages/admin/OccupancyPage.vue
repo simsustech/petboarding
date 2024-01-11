@@ -42,6 +42,16 @@
     :day-min-height="60"
     :day-height="0"
   >
+    <template #head-day-button="{ scope: { dayLabel, timestamp } }">
+      <q-btn
+        class="q-mb-sm q-mt-sm"
+        size="md"
+        outline
+        rounded
+        :label="dayLabel"
+        :to="`/employee/agenda/${timestamp.date}`"
+      />
+    </template>
     <template #day="{ scope: { timestamp } }">
       <div
         v-if="data && daycareOccupancy"
@@ -67,18 +77,6 @@
             </q-tooltip>
           </a>
         </div>
-
-        <q-menu context-menu>
-          <q-list>
-            <q-item clickable :to="`/employee/agenda/${timestamp.date}`">
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.open }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
       </div>
     </template>
   </q-calendar-month>
