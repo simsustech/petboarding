@@ -15,16 +15,18 @@ export const employeeDaycareRoutes = ({
   getDaycareDates: procedure
     .input(
       z.object({
+        customerId: z.number().optional(),
         from: z.string(),
         until: z.string(),
         status: z.nativeEnum(DAYCARE_DATE_STATUS)
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status } = input
+      const { customerId, from, until, status } = input
       if (from && until) {
         const daycareDates = await findDaycareDates({
           criteria: {
+            customerId,
             from,
             until,
             status

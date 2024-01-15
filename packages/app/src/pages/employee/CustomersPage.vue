@@ -60,6 +60,11 @@
         />
       </q-list>
     </div>
+    <div v-show="id" class="row">
+      <daycare-calendar-month :events="events" @change-date="onChangeDate">
+      </daycare-calendar-month>
+      <daycare-status-select v-model="daycareDatesStatus" />
+    </div>
   </q-page>
   <responsive-dialog ref="updateDialogRef" persistent @submit="update">
     <customer-form
@@ -81,7 +86,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick, computed } from 'vue'
+import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import CustomerSelect from '../../components/employee/CustomerSelect.vue'
 import CustomerCard from '../../components/customer/CustomerCard.vue'
@@ -93,6 +98,10 @@ import BookingItem from '../../components/booking/BookingItem.vue'
 import PetItem from '../../components/pet/PetItem.vue'
 import ContactPersonItem from '../../components/contactperson/ContactPersonItem.vue'
 import { useLang } from '../../lang/index.js'
+import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
+import { DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
+import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from 'src/configuration'
+import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const route = useRoute()
@@ -159,6 +168,59 @@ const { data: categories, execute: executeCategories } = useQuery(
   {
     // immediate: true
   }
+)
+
+const daycareDatesFrom = ref('')
+const daycareDatesUntil = ref('')
+const daycareDatesStatus = ref(DAYCARE_DATE_STATUS.APPROVED)
+const onChangeDate: InstanceType<
+  typeof DaycareCalendarMonth
+>['$props']['onChangeDate'] = (data) => {
+  daycareDatesFrom.value = data.start
+  daycareDatesUntil.value = data.end
+}
+const { data: daycareDates, execute: executeDaycareDates } = useQuery(
+  'employee.getDaycareDates',
+  {
+    args: reactive({
+      customerId: id,
+      from: daycareDatesFrom,
+      until: daycareDatesUntil,
+      status: daycareDatesStatus
+    }),
+    reactive: false
+  }
+)
+watch(
+  [id, daycareDatesFrom, daycareDatesUntil, daycareDatesStatus],
+  ([
+    newId,
+    newDaycareDatesFrom,
+    newDaycareDatesUntil,
+    newDaycareDatesStatus
+  ]) => {
+    console.log(newDaycareDatesFrom)
+    if (
+      newId &&
+      newDaycareDatesFrom &&
+      newDaycareDatesUntil &&
+      newDaycareDatesStatus
+    )
+      executeDaycareDates()
+  }
+)
+const events = computed(
+  () =>
+    daycareDates.value?.map((daycareDate) => ({
+      id: daycareDate.id,
+      bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
+      title: daycareDate.pets.map((pet) => pet.name).join(', '),
+      petIds: daycareDate.pets.map((pet) => pet.id),
+      date: daycareDate.date,
+      details: daycareDate.customer.lastName,
+      // details: lang.value.daycare.status[daycareDate.status],
+      icon: DAYCARE_DATE_ICONS[daycareDate.status]
+    }))
 )
 
 const updateDialogRef = ref<typeof ResponsiveDialog>()
