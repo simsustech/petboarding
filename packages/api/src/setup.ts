@@ -153,6 +153,14 @@ export default async function (fastify: FastifyInstance) {
       )
         ?.split(',')
         .map(Number),
+      MANDATORY_VACCINATIONS_DOG: (
+        env.read('MANDATORY_VACCINATIONS_DOG') ||
+        env.read('VITE_MANDATORY_VACCINATIONS_DOG')
+      )?.split(','),
+      MANDATORY_VACCINATIONS_CAT: (
+        env.read('MANDATORY_VACCINATIONS_CAT') ||
+        env.read('VITE_MANDATORY_VACCINATIONS_CAT')
+      )?.split(','),
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
       SASS_VARIABLES: sassVariables
     })

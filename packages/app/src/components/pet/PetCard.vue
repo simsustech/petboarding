@@ -150,6 +150,7 @@ import {
 import PetCategoryItem from './PetCategoryItem.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
+import { useConfiguration } from '../../configuration.js'
 
 export interface Pet extends PetType {
   image?: string
@@ -208,6 +209,7 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 const lang = useLang()
+const configuration = useConfiguration()
 
 const { modelValue } = toRefs(props)
 
@@ -232,9 +234,9 @@ const formatDate = (date: string | null) => {
   return '-'
 }
 
-const mandatoryVaccinationsDog = import.meta.env.VITE_MANDATORY_VACCINATIONS_DOG
-  ? import.meta.env.VITE_MANDATORY_VACCINATIONS_DOG.split(',')
-  : ['parvo', 'distemper']
+const mandatoryVaccinationsDog = configuration.value.MANDATORY_VACCINATIONS_DOG
+  ? configuration.value.MANDATORY_VACCINATIONS_DOG
+  : ['parvo', 'distemper', 'hepatitis']
 
 const mandatoryVaccinations = {
   dog: mandatoryVaccinationsDog,
