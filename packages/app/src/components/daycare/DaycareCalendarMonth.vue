@@ -1,7 +1,7 @@
 <template>
   <div class="subcontent" style="width: 100%">
     <div class="row justify-center">
-      <a>{{ getSelectedMonthName() }} </a>
+      <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
     </div>
     <div class="row justify-center">
       <q-btn icon="arrow_left" @click="onPrev" />
