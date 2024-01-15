@@ -122,6 +122,7 @@
           v-for="vaccination in modelValue.vaccinations"
           :key="vaccination.id"
           :model-value="vaccination"
+          :hide-expiration-date="!showAddVaccination"
         />
       </q-list>
     </q-styled-card>

@@ -12,7 +12,7 @@
       <q-item-label>
         {{ vaccinationsLabel }}
       </q-item-label>
-      <q-item-label caption>{{
+      <q-item-label v-if="!hideExpirationDate" caption>{{
         formatDate(modelValue.expirationDate)
       }}</q-item-label>
     </q-item-section>
@@ -38,6 +38,7 @@ export interface Vaccination extends VaccinationType {
 
 export interface Props {
   modelValue: Vaccination
+  hideExpirationDate?: boolean
 }
 
 const props = defineProps<Props>()
