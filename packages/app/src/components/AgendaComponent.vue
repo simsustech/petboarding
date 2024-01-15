@@ -114,6 +114,8 @@
               type="arrival"
               :selected-pets="selectedPets"
               @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
             >
               <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
             </agenda-chip>
@@ -128,6 +130,8 @@
               type="departure"
               :selected-pets="selectedPets"
               @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
             >
               <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
             </agenda-chip>
@@ -142,6 +146,8 @@
               type="stay"
               :selected-pets="selectedPets"
               @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
             >
               <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
             </agenda-chip>
@@ -187,7 +193,7 @@ import { onMounted, ref, toRefs, watch } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { BOOKING_SERVICE_COLORS } from '../configuration.js'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 export interface Props {
@@ -225,6 +231,7 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
+const router = useRouter()
 const lang = useLang()
 
 const selectedDate = ref(today())
@@ -295,6 +302,14 @@ const onClickPet: InstanceType<typeof AgendaChip>['$props']['onClick'] = ({
 }) => {
   emit('clickPet', { data, done })
 }
+
+const onOpenBooking: InstanceType<
+  typeof AgendaChip
+>['$props']['onOpenBooking'] = (id) => router.push(`/employee/bookings/${id}`)
+
+const onOpenPets: InstanceType<typeof AgendaChip>['$props']['onOpenPets'] = (
+  petIds
+) => router.push(`/employee/pets/${petIds.join('/')}`)
 
 const onChange = (data) => {
   emit('changeDate', {

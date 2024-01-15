@@ -38,14 +38,22 @@
 
       <q-menu context-menu>
         <q-list>
-          <q-item clickable :to="`/employee/bookings/${modelValue.id}`">
+          <q-item
+            v-if="onOpenBooking && modelValue.id"
+            clickable
+            @click="emit('openBooking', modelValue.id)"
+          >
             <q-item-section>
               <q-item-label>
                 {{ lang.booking.messages.openBooking }}
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item clickable :to="`/employee/pets/${petIds?.join('/')}`">
+          <q-item
+            v-if="onOpenPets && petIds"
+            clickable
+            @click="emit('openPets', petIds)"
+          >
             <q-item-section>
               <q-item-label>
                 {{ lang.booking.messages.openPets }}
@@ -78,6 +86,8 @@ export interface Props {
   modelValue: Booking | DaycareDate
   type: 'arrival' | 'departure' | 'stay' | 'daycare'
   selectedPets?: number[]
+  onOpenPets?: unknown
+  onOpenBooking?: unknown
 }
 
 const props = defineProps<Props>()
@@ -93,6 +103,8 @@ const emit = defineEmits<{
       done: () => void
     }
   ): void
+  (e: 'openPets', ids: number[]): void
+  (e: 'openBooking', id: number): void
 }>()
 const lang = useLang()
 
