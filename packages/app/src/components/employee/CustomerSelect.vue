@@ -69,9 +69,12 @@ const { data, execute } = useQuery('employee.searchCustomers', {
 
 const options = ref([])
 
-const filterFn = (val, update) => {
+const filterFn = (val, update, abort) => {
   if (val === '') {
     options.value = []
+  } else if (val.length < 2) {
+    abort()
+    return
   } else {
     searchPhrase.value = val.toLowerCase()
     execute().then(() => {
