@@ -8,6 +8,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', component: () => import('../pages/IndexPage.vue') },
       {
+        path: 'availability',
+        alias: ['beschikbaarheid'],
+        component: () => import('../pages/AvailabilityPage.vue')
+      },
+      {
         path: 'redirect',
         name: redirectRouteKey,
         component: () => import('../pages/RedirectPage.vue')
