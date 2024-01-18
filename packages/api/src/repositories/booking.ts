@@ -15,7 +15,11 @@ import { findCategories } from './category.js'
 
 import { BOOKING_STATUS } from '../zod/index.js'
 import type { OpeningTime } from './openingTime.js'
-import type { ParsedPet } from './pet.js'
+import {
+  withValidVaccinations,
+  checkVaccinations,
+  type ParsedPet
+} from './pet.js'
 import type { Category } from './category.js'
 import {
   type Insertable,
@@ -242,11 +246,13 @@ function withPets(eb: ExpressionBuilder<Database, 'bookings'>) {
       .innerJoin('customers', 'pets.customerId', 'customers.id')
       .select(({ eb: ceb }) => [
         'pets.id',
+        'pets.species',
         'pets.name',
         'pets.categoryId',
         'pets.breed',
         'pets.sterilized',
         'pets.gender',
+        withValidVaccinations,
         jsonObjectFrom(
           ceb
             .selectFrom('customers')
@@ -510,6 +516,16 @@ export async function findBooking({
   if (result) {
     const days = calculateBookingDays(result)
 
+    result.pets.map((pet) => {
+      return {
+        ...pet,
+        hasMandatoryVaccinations: checkVaccinations({
+          species: pet.species,
+          validVaccinations: pet.validVaccinations
+        })
+      }
+    })
+
     const categories = await db.selectFrom('categories').selectAll().execute()
     return {
       ...result,
@@ -551,6 +567,19 @@ export async function findBookings({
 
   const categories = await db.selectFrom('categories').selectAll().execute()
 
+  if (results) {
+    results.forEach((booking) => {
+      booking.pets.map((pet) => {
+        return {
+          ...pet,
+          hasMandatoryVaccinations: checkVaccinations({
+            species: pet.species,
+            validVaccinations: pet.validVaccinations
+          })
+        }
+      })
+    })
+  }
   const parsedResults = await Promise.all(
     results.map(async (result) => {
       const days = calculateBookingDays(result)

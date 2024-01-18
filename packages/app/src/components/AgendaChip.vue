@@ -20,20 +20,20 @@
       @click="emit('click', { data: pet.id })"
     >
       <slot name="default" />
-      <q-badge v-if="modelValue.isDoubleBooked" color="red" rounded floating />
-
-      <q-badge
-        v-else-if="
-          modelValue.services?.some(
-            (service) => service.service.type === 'appointment'
-          ) && index === 0
-        "
-        :color="BOOKING_SERVICE_COLORS.appointment"
-        text-color="black"
-        rounded
-        floating
+      <q-badge style="top: -8px" floating color="transparent">
+        <q-badge
+          v-if="
+            modelValue.services?.some(
+              (service) => service.service.type === 'appointment'
+            ) && index === 0
+          "
+          :color="BOOKING_SERVICE_COLORS.appointment"
+          text-color="black"
+          rounded
+        >
+        </q-badge>
       >
-        !
+        <q-badge v-if="!pet.hasMandatoryVaccinations" color="red" rounded />
       </q-badge>
 
       <q-menu context-menu>

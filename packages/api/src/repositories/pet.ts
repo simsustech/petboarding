@@ -2,7 +2,7 @@ import { Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
 import type { Pets } from '../kysely/types.d.ts'
-
+import env from '@vitrify/tools/env'
 import {
   type Insertable,
   type Selectable,
@@ -10,12 +10,45 @@ import {
   type ExpressionBuilder,
   sql
 } from 'kysely'
+import { Vaccination } from 'src/zod'
 export type Pet = Selectable<Pets>
 type NewPet = Insertable<Pets>
 type PetUpdate = Updateable<Pets>
 
 export interface ParsedPet extends Omit<Pet, 'image'> {
   image: string | null
+  vaccinations?: Vaccination[]
+  validVaccinations?: string[]
+  hasMandatoryVaccinations?: boolean
+}
+
+const mandatoryVaccinations: Record<string, string[]> = {
+  dog: (
+    env.read('MANDATORY_VACCINATIONS_DOG') ||
+    env.read('VITE_MANDATORY_VACCINATIONS_DOG')
+  )?.split(',') || ['parvo', 'distemper', 'hepatitis'],
+  cat:
+    (
+      env.read('MANDATORY_VACCINATIONS_CAT') ||
+      env.read('VITE_MANDATORY_VACCINATIONS_CAT')
+    )?.split(',') || []
+}
+export const checkVaccinations = ({
+  species,
+  validVaccinations
+}: {
+  species: string
+  validVaccinations?: string[] | null
+}) => {
+  if (
+    validVaccinations &&
+    mandatoryVaccinations[species].every((val) =>
+      validVaccinations.includes(val)
+    )
+  ) {
+    return true
+  }
+  return false
 }
 
 const defaultSelect = [
@@ -51,6 +84,22 @@ function withVaccinations(eb: ExpressionBuilder<Database, 'pets'>) {
       ])
       .whereRef('vaccinations.petId', '=', 'pets.id')
   ).as('vaccinations')
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function withValidVaccinations(eb: ExpressionBuilder<Database, any>) {
+  return eb
+    .selectFrom('vaccinations')
+    .select(sql<string[]>`json_agg(v)`.as('validVaccinations'))
+    .where(
+      'vaccinations.expirationDate',
+      '>',
+      new Date().toISOString().slice(0, 10)
+    )
+    .whereRef('vaccinations.petId', '=', 'pets.id')
+    .leftJoinLateral(sql`json_array_elements(types)`.as('v'), (join) =>
+      join.onTrue()
+    )
+    .as('validVaccinations')
 }
 
 function withCustomer(eb: ExpressionBuilder<Database, 'pets'>) {
@@ -97,7 +146,7 @@ function find({
   }
 
   if (relations?.vaccinations) {
-    query = query.select((eb) => [withVaccinations(eb)])
+    query = query.select([withVaccinations, withValidVaccinations])
   }
 
   return query
@@ -121,6 +170,12 @@ export async function findPet({
 
   const result = (await query.executeTakeFirst()) as ParsedPet
 
+  if (result.vaccinations) {
+    result.hasMandatoryVaccinations = checkVaccinations({
+      species: result.species,
+      validVaccinations: result.validVaccinations
+    })
+  }
   return result
 }
 
@@ -140,8 +195,17 @@ export async function findPets({
     select,
     relations
   })
-  const results = (await query.execute()) as ParsedPet[]
+  let results = (await query.execute()) as ParsedPet[]
 
+  results = results.map((pet) => {
+    if (pet.vaccinations) {
+      pet.hasMandatoryVaccinations = checkVaccinations({
+        species: pet.species,
+        validVaccinations: pet.validVaccinations
+      })
+    }
+    return pet
+  })
   return results
 }
 

@@ -98,7 +98,11 @@
       <q-list v-if="modelValue.vaccinations || showAddVaccination">
         <q-item>
           <q-item-section avatar>
-            <q-icon v-if="!hasMandatoryVaccinations" name="warning" color="red">
+            <q-icon
+              v-if="!modelValue.hasMandatoryVaccinations"
+              name="warning"
+              color="red"
+            >
               <q-tooltip>
                 {{ lang.pet.messages.vaccinationsMissing }}
               </q-tooltip></q-icon
@@ -137,7 +141,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, toRefs, useAttrs } from 'vue'
+import { toRefs, useAttrs } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Pet as PetType, Category } from '@petboarding/api/zod'
@@ -150,7 +154,6 @@ import {
 import PetCategoryItem from './PetCategoryItem.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
-import { useConfiguration } from '../../configuration.js'
 
 export interface Pet extends PetType {
   image?: string
@@ -209,7 +212,6 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 const lang = useLang()
-const configuration = useConfiguration()
 
 const { modelValue } = toRefs(props)
 
@@ -233,36 +235,6 @@ const formatDate = (date: string | null) => {
   if (date) return dateUtil.formatDate(new Date(date), 'DD MMM YYYY')
   return '-'
 }
-
-const mandatoryVaccinationsDog = configuration.value.MANDATORY_VACCINATIONS_DOG
-  ? configuration.value.MANDATORY_VACCINATIONS_DOG
-  : ['parvo', 'distemper', 'hepatitis']
-
-const mandatoryVaccinations = {
-  dog: mandatoryVaccinationsDog,
-  cat: []
-}
-const hasMandatoryVaccinations = computed(() => {
-  const validVaccinations: string[] = []
-  if (modelValue.value?.vaccinations) {
-    for (let vaccination of modelValue.value.vaccinations) {
-      if (
-        vaccination.expirationDate >
-        dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
-      ) {
-        validVaccinations.push(...vaccination.types)
-      }
-    }
-  }
-  if (
-    mandatoryVaccinations[modelValue.value.species].every((val) =>
-      validVaccinations.includes(val)
-    )
-  ) {
-    return true
-  }
-  return false
-})
 
 const deletePet = (pet: Pet) => {
   function done() {}

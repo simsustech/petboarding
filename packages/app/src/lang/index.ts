@@ -126,6 +126,7 @@ export interface Language {
       title: string
       expirationDate: string
       expired: string
+      missingVaccinations: string
       dog: {
         smallCocktail: string
         largeCocktail: string

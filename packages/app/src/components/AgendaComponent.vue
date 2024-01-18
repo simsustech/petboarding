@@ -42,8 +42,10 @@
         rounded
         text-color="black"
         :color="BOOKING_SERVICE_COLORS.appointment"
-        >!</q-badge
+      ></q-badge
       ><a>{{ lang.service.type.appointment }}</a>
+      <q-badge class="q-ml-lg" rounded text-color="black" color="red"></q-badge
+      ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
     </div>
   </div>
   <q-scroll-area style="width: 100%; height: 100vh">

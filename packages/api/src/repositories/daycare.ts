@@ -1,5 +1,6 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
+import { withValidVaccinations, checkVaccinations } from './pet.js'
 import type { DaycareDates } from '../kysely/types.d.ts'
 
 import type {
@@ -34,11 +35,13 @@ function withPets(eb: ExpressionBuilder<Database, 'daycareDates'>) {
       .innerJoin('customers', 'pets.customerId', 'customers.id')
       .select(({ eb: ceb }) => [
         'pets.id',
+        'pets.species',
         'pets.name',
         'pets.categoryId',
         'pets.breed',
         'pets.sterilized',
         'pets.gender',
+        withValidVaccinations,
         jsonObjectFrom(
           ceb
             .selectFrom('customers')
@@ -120,7 +123,20 @@ export async function findDaycareDate({
 }) {
   const query = find({ criteria, select })
 
-  return query.executeTakeFirst()
+  const result = await query.executeTakeFirst()
+
+  if (result?.pets) {
+    result.pets.map((pet) => {
+      return {
+        ...pet,
+        hasMandatoryVaccinations: checkVaccinations({
+          species: pet.species,
+          validVaccinations: pet.validVaccinations
+        })
+      }
+    })
+  }
+  return result
 }
 
 export async function findDaycareDatesByIds(ids: number[]) {
@@ -144,7 +160,22 @@ export async function findDaycareDates({
     criteria,
     select
   })
-  return query.execute()
+  const results = await query.execute()
+
+  if (results) {
+    results.forEach((daycareDate) => {
+      daycareDate.pets.map((pet) => {
+        return {
+          ...pet,
+          hasMandatoryVaccinations: checkVaccinations({
+            species: pet.species,
+            validVaccinations: pet.validVaccinations
+          })
+        }
+      })
+    })
+  }
+  return results
 }
 
 export async function createDaycareDate({
