@@ -44,6 +44,15 @@
         :color="BOOKING_SERVICE_COLORS.appointment"
       ></q-badge
       ><a>{{ lang.service.type.appointment }}</a>
+
+      <q-badge
+        class="q-ml-lg"
+        rounded
+        text-color="black"
+        color="orange"
+      ></q-badge
+      ><a>{{ lang.booking.messages.isDoubleBooked }}</a>
+
       <q-badge class="q-ml-lg" rounded text-color="black" color="red"></q-badge
       ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
     </div>

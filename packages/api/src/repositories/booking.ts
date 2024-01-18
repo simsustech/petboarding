@@ -416,6 +416,42 @@ function withServices(eb: ExpressionBuilder<Database, 'bookings'>) {
   ).as('services')
 }
 
+function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
+  return eb
+    .exists(
+      eb
+        .selectFrom('daycareDates')
+        .select([
+          'daycareDates.date',
+          'daycareDates.status',
+          'daycareDates.customerId'
+        ])
+        .where('daycareDates.status', '=', 'approved')
+        .whereRef('daycareDates.customerId', '=', 'bookings.customerId')
+        .whereRef('daycareDates.date', '>=', 'bookings.startDate')
+        .whereRef('daycareDates.date', '<=', 'bookings.endDate')
+    )
+    .or(
+      eb.exists(
+        eb
+          .selectFrom('bookings as b')
+          .select(['b.id', 'b.startDate', 'b.endDate', 'b.customerId'])
+          .leftJoin('bookingStatus', 'b.id', 'bookingStatus.bookingId')
+          .whereRef(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql`(select max(modified_at) from booking_status where booking_status.booking_id = b.id)`
+          )
+          .where('bookingStatus.status', '=', 'approved')
+          .whereRef('bookings.id', '!=', 'b.id')
+          .whereRef('bookings.customerId', '=', 'b.customerId')
+          .whereRef('bookings.startDate', '<=', 'b.endDate')
+          .whereRef('bookings.endDate', '>=', 'b.startDate')
+      )
+    )
+    .as('isDoubleBooked')
+}
+
 function find({
   criteria,
   select
@@ -489,6 +525,7 @@ function find({
     withServices,
     withStatuses,
     withStatus,
+    withIsDoubleBooked,
     sql<number>`bookings.end_date - 
       bookings.start_date - 1
       + (select "opening_times"."start_day_counted" from "opening_times" where "bookings"."start_time_id" = "opening_times"."id")

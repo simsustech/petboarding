@@ -209,7 +209,8 @@ const lang: Language = {
       openCustomer: 'Open klantgegevens',
       openBooking: 'Reservering openen',
       openPets: 'Huisdieren openen',
-      possibleDoubleBooking: 'Deze reservering is mogelijk dubbel geboekt.',
+      isDoubleBooked:
+        'Deze reservering overlapt met een andere reservering of dagopvang.',
       settleCancellation:
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
       bookingModified: 'Reservering is gewijzigd.'

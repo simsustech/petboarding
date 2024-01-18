@@ -200,7 +200,7 @@ export interface Language {
       openCustomer: string
       openBooking: string
       openPets: string
-      possibleDoubleBooking: string
+      isDoubleBooked: string
       settleCancellation: string
       bookingModified: string
     }

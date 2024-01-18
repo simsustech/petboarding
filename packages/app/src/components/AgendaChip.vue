@@ -32,7 +32,7 @@
           rounded
         >
         </q-badge>
-      >
+        <q-badge v-if="modelValue.isDoubleBooked" color="orange" rounded />
         <q-badge v-if="!pet.hasMandatoryVaccinations" color="red" rounded />
       </q-badge>
 
