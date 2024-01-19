@@ -7,7 +7,7 @@
         :key="booking.id"
         :model-value="booking"
         :show-approval-buttons="
-          ['pending', 'standby'].includes(booking.status.status)
+          ['pending', 'standby', 'rejected'].includes(booking.status.status)
         "
         :show-handle-cancellation-button="
           booking.status.status === 'cancelledoutsideperiod'

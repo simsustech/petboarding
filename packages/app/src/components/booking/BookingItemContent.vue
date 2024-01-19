@@ -76,12 +76,14 @@
     <div v-if="showApprovalButtons">
       <div class="row">
         <q-btn
+          v-if="modelValue.status.status !== 'approved'"
           icon="check"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="green"
           @click.stop="approve(modelValue)"
         />
         <q-btn
+          v-if="modelValue.status.status !== 'rejected'"
           icon="cancel"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="red"
