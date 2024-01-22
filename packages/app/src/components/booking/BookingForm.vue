@@ -156,7 +156,7 @@ watch($q.lang, (val) => {
 })
 
 const formRef = ref<QForm>()
-
+const initialStartDate = ref<string | null>('')
 const setValue = (newValue: Booking) => {
   modelValue.value = extend({}, initialValue, {
     ...newValue,
@@ -175,6 +175,7 @@ const setValue = (newValue: Booking) => {
     from: newValue.startDate.replaceAll('-', '/'),
     to: newValue.endDate.replaceAll('-', '/')
   }
+  initialStartDate.value = newValue.startDate.replaceAll('-', '/')
 }
 
 const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
@@ -201,9 +202,14 @@ const limitDateOptionsFn = (date: string) => {
   return (
     date >
       dateUtil.formatDate(
-        dateUtil.subtractFromDate(new Date(), {
-          days: allowPastDates?.value ? 14 : 2
-        }),
+        dateUtil.subtractFromDate(
+          initialStartDate.value
+            ? dateUtil.extractDate(initialStartDate.value, 'YYYY/MM/DD')
+            : new Date(),
+          {
+            days: allowPastDates?.value ? 14 : 2
+          }
+        ),
         'YYYY/MM/DD'
       ) &&
     date <
