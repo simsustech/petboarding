@@ -41,7 +41,7 @@ jobs:
         run: pnpm i
 
       - name: Run Playwright tests
-        uses: docker://mcr.microsoft.com/playwright:v1.39.0-jammy
+        uses: docker://mcr.microsoft.com/playwright:v1.41.1-jammy
         with:
           args: /bin/bash -c "npm install -g pnpm && cd packages/api && pnpx playwright install && HOME=/root pnpm run test:e2e"
         env:
