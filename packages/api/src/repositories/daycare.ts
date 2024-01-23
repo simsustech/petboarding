@@ -126,7 +126,7 @@ export async function findDaycareDate({
   const result = await query.executeTakeFirst()
 
   if (result?.pets) {
-    result.pets.map((pet) => {
+    result.pets = result.pets.map((pet) => {
       return {
         ...pet,
         hasMandatoryVaccinations: checkVaccinations({
@@ -164,15 +164,17 @@ export async function findDaycareDates({
 
   if (results) {
     results.forEach((daycareDate) => {
-      daycareDate.pets.map((pet) => {
-        return {
-          ...pet,
-          hasMandatoryVaccinations: checkVaccinations({
-            species: pet.species,
-            validVaccinations: pet.validVaccinations
-          })
-        }
-      })
+      if (daycareDate.pets) {
+        daycareDate.pets = daycareDate.pets.map((pet) => {
+          return {
+            ...pet,
+            hasMandatoryVaccinations: checkVaccinations({
+              species: pet.species,
+              validVaccinations: pet.validVaccinations
+            })
+          }
+        })
+      }
     })
   }
   return results
