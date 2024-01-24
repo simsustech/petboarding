@@ -44,7 +44,8 @@
   "pnpm": {
     "overrides": {
       "@petboarding/app": "workspace:*",
-      "@petboarding/api": "workspace:*"
+      "@petboarding/api": "workspace:*",
+      "vite": "5.0.11"
     }
   }
 }
