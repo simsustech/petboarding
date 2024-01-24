@@ -174,7 +174,11 @@
             :key="daycareDate.id"
             class="row text-center justify-center"
           >
-            <agenda-chip :model-value="daycareDate" type="daycare">
+            <agenda-chip
+              :model-value="daycareDate"
+              type="daycare"
+              @open-pets="onOpenPets"
+            >
             </agenda-chip>
           </div>
         </template>
