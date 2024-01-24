@@ -78,7 +78,19 @@ export const userPetRoutes = ({
             if (uri) {
               image = await convertPetImage(uri)
               pet = await createPet({
-                ...input,
+                name: input.name,
+                birthDate: input.birthDate,
+                breed: input.breed,
+                gender: input.gender,
+                species: input.species,
+                sterilized: input.sterilized,
+                chemicalSterilizationDate: input.chemicalSterilizationDate,
+                chipNumber: input.chipNumber,
+                color: input.color,
+                food: input.food,
+                medicines: input.medicines,
+                particularities: input.particularities,
+                weight: input.weight,
                 customerId: customer.id,
                 image
               })
@@ -86,7 +98,19 @@ export const userPetRoutes = ({
             }
           } else {
             pet = await createPet({
-              ...input,
+              name: input.name,
+              birthDate: input.birthDate,
+              breed: input.breed,
+              gender: input.gender,
+              species: input.species,
+              sterilized: input.sterilized,
+              chemicalSterilizationDate: input.chemicalSterilizationDate,
+              chipNumber: input.chipNumber,
+              color: input.color,
+              food: input.food,
+              medicines: input.medicines,
+              particularities: input.particularities,
+              weight: input.weight,
               customerId: customer.id,
               image: null
             })
@@ -119,7 +143,19 @@ export const userPetRoutes = ({
                   id: input.id
                 },
                 {
-                  ...input,
+                  name: input.name,
+                  birthDate: input.birthDate,
+                  breed: input.breed,
+                  gender: input.gender,
+                  species: input.species,
+                  sterilized: input.sterilized,
+                  chemicalSterilizationDate: input.chemicalSterilizationDate,
+                  chipNumber: input.chipNumber,
+                  color: input.color,
+                  food: input.food,
+                  medicines: input.medicines,
+                  particularities: input.particularities,
+                  weight: input.weight,
                   image,
                   customerId: customer.id
                 }
@@ -132,7 +168,19 @@ export const userPetRoutes = ({
                 id: input.id
               },
               {
-                ...input,
+                name: input.name,
+                birthDate: input.birthDate,
+                breed: input.breed,
+                gender: input.gender,
+                species: input.species,
+                sterilized: input.sterilized,
+                chemicalSterilizationDate: input.chemicalSterilizationDate,
+                chipNumber: input.chipNumber,
+                color: input.color,
+                food: input.food,
+                medicines: input.medicines,
+                particularities: input.particularities,
+                weight: input.weight,
                 image: null,
                 customerId: customer.id
               }
