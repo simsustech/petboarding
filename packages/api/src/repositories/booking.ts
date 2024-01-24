@@ -553,7 +553,7 @@ export async function findBooking({
   if (result) {
     const days = calculateBookingDays(result)
 
-    result.pets.map((pet) => {
+    result.pets = result.pets.map((pet) => {
       return {
         ...pet,
         hasMandatoryVaccinations: checkVaccinations({
@@ -606,7 +606,7 @@ export async function findBookings({
 
   if (results) {
     results.forEach((booking) => {
-      booking.pets.map((pet) => {
+      booking.pets = booking.pets.map((pet) => {
         return {
           ...pet,
           hasMandatoryVaccinations: checkVaccinations({
