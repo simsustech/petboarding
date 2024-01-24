@@ -7,6 +7,7 @@ settings:
 overrides:
   '@petboarding/app': workspace:*
   '@petboarding/api': workspace:*
+  vite: 5.0.11
 
 importers:
 
@@ -116,8 +117,8 @@ importers:
         specifier: ^8.3.1
         version: 8.3.1
       '@playwright/test':
-        specifier: 1.40.1
-        version: 1.40.1
+        specifier: 1.41.1
+        version: 1.41.1
       '@quasar/extras':
         specifier: 1.16.8
         version: 1.16.8
@@ -138,7 +139,7 @@ importers:
         version: 6.13.1(eslint@8.54.0)(typescript@5.3.3)
       '@vitejs/plugin-vue':
         specifier: 4.5.0
-        version: 4.5.0(vite@5.0.10)(vue@3.3.9)
+        version: 4.5.0(vite@5.0.11)(vue@3.3.9)
       critters:
         specifier: 0.0.20
         version: 0.0.20
@@ -164,8 +165,8 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
       vite:
-        specifier: ^5.0.2
-        version: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+        specifier: 5.0.11
+        version: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vitrify:
         specifier: ^0.14.0
         version: 0.14.0(@fastify/static@6.12.0)(@types/node@20.10.5)(fastify@4.24.3)(quasar@2.14.0)(rollup@2.79.1)(typescript@5.3.3)(vue-router@4.2.5)(vue@3.3.9)(workbox-build@7.0.0)
@@ -222,7 +223,7 @@ importers:
         version: 2.0.0-beta.1(vue@3.3.9)
       vite-plugin-pwa:
         specifier: ^0.17.2
-        version: 0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        version: 0.17.4(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vue:
         specifier: 3.3.9
         version: 3.3.9(typescript@5.3.2)
@@ -247,7 +248,7 @@ importers:
         version: 6.13.1(eslint@8.54.0)(typescript@5.3.2)
       '@vitejs/plugin-vue':
         specifier: 4.5.0
-        version: 4.5.0(vite@5.0.10)(vue@3.3.9)
+        version: 4.5.0(vite@5.0.11)(vue@3.3.9)
       critters:
         specifier: 0.0.20
         version: 0.0.20
@@ -279,8 +280,8 @@ importers:
         specifier: 5.3.2
         version: 5.3.2
       vite:
-        specifier: ^5.0.2
-        version: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+        specifier: 5.0.11
+        version: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vitrify:
         specifier: ^0.14.0
         version: 0.14.0(@fastify/static@6.12.0)(@types/node@20.10.5)(fastify@4.24.3)(quasar@2.14.0)(rollup@2.79.1)(typescript@5.3.2)(vue-router@4.2.5)(vue@3.3.9)(workbox-build@7.0.0)
@@ -310,7 +311,7 @@ importers:
         version: 2.12.5
       vite-plugin-pwa:
         specifier: ^0.16.5
-        version: 0.16.7(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
+        version: 0.16.7(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0)
       vue:
         specifier: 3.3.4
         version: 3.3.4
@@ -326,7 +327,7 @@ importers:
         version: 6.5.0(eslint@8.48.0)(typescript@5.2.2)
       '@vitejs/plugin-vue':
         specifier: 4.3.4
-        version: 4.3.4(vite@5.0.10)(vue@3.3.4)
+        version: 4.3.4(vite@5.0.11)(vue@3.3.4)
       '@vitrify/tools':
         specifier: ^0.1.4
         version: 0.1.4
@@ -358,8 +359,8 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
       vite:
-        specifier: ^5.0.2
-        version: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+        specifier: 5.0.11
+        version: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vitrify:
         specifier: ^0.14.0
         version: 0.14.0(@fastify/static@6.10.2)(@types/node@20.10.5)(fastify@4.22.1)(quasar@2.12.5)(rollup@2.79.1)(typescript@5.2.2)(vue-router@4.2.4)(vue@3.3.4)(workbox-build@7.0.0)
@@ -2417,12 +2418,12 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@playwright/test@1.40.1:
-    resolution: {integrity: sha512-EaaawMTOeEItCRvfmkI9v6rBkF1svM8wjl/YPRrg2N2Wmp+4qJYkWtJsbew1szfKKDm6fPLy4YAanBhIlf9dWw==}
+  /@playwright/test@1.41.1:
+    resolution: {integrity: sha512-9g8EWTjiQ9yFBXc6HjCWe41msLpxEX0KhmfmPl9RPLJdfzL4F0lg2BdJ91O9azFdl11y1pmpwdjBiSxvqc+btw==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright: 1.40.1
+      playwright: 1.41.1
     dev: true
 
   /@quasar/extras@1.16.6:
@@ -3284,36 +3285,36 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@vitejs/plugin-vue@4.3.4(vite@5.0.10)(vue@3.3.4):
+  /@vitejs/plugin-vue@4.3.4(vite@5.0.11)(vue@3.3.4):
     resolution: {integrity: sha512-ciXNIHKPriERBisHFBvnTbfKa6r9SAesOYXeGDzgegcvy9Q4xdScSHAmKbNT0M3O0S9LKhIf5/G+UYG4NnnzYw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: ^4.0.0
+      vite: 5.0.11
       vue: ^3.2.25
     dependencies:
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vue: 3.3.4
     dev: true
 
-  /@vitejs/plugin-vue@4.5.0(vite@5.0.10)(vue@3.3.4):
+  /@vitejs/plugin-vue@4.5.0(vite@5.0.11)(vue@3.3.4):
     resolution: {integrity: sha512-a2WSpP8X8HTEww/U00bU4mX1QpLINNuz/2KMNpLsdu3BzOpak3AGI1CJYBTXcc4SPhaD0eNRUp7IyQK405L5dQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: ^4.0.0 || ^5.0.0
+      vite: 5.0.11
       vue: ^3.2.25
     dependencies:
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vue: 3.3.4
     dev: true
 
-  /@vitejs/plugin-vue@4.5.0(vite@5.0.10)(vue@3.3.9):
+  /@vitejs/plugin-vue@4.5.0(vite@5.0.11)(vue@3.3.9):
     resolution: {integrity: sha512-a2WSpP8X8HTEww/U00bU4mX1QpLINNuz/2KMNpLsdu3BzOpak3AGI1CJYBTXcc4SPhaD0eNRUp7IyQK405L5dQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
-      vite: ^4.0.0 || ^5.0.0
+      vite: 5.0.11
       vue: ^3.2.25
     dependencies:
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vue: 3.3.9(typescript@5.3.2)
     dev: true
 
@@ -7710,18 +7711,18 @@ packages:
       pathe: 1.1.1
     dev: true
 
-  /playwright-core@1.40.1:
-    resolution: {integrity: sha512-+hkOycxPiV534c4HhpfX6yrlawqVUzITRKwHAmYfmsVreltEl6fAZJ3DPfLMOODw0H3s1Itd6MDCWmP1fl/QvQ==}
+  /playwright-core@1.41.1:
+    resolution: {integrity: sha512-/KPO5DzXSMlxSX77wy+HihKGOunh3hqndhqeo/nMxfigiKzogn8kfL0ZBDu0L1RKgan5XHCPmn6zXd2NUJgjhg==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
 
-  /playwright@1.40.1:
-    resolution: {integrity: sha512-2eHI7IioIpQ0bS1Ovg/HszsN/XKNwEG1kbzSDDmADpclKc7CyqkHw7Mg2JCz/bbCxg25QUPcjksoMW7JcIFQmw==}
+  /playwright@1.41.1:
+    resolution: {integrity: sha512-gdZAWG97oUnbBdRL3GuBvX3nDDmUOuqzV/D24dytqlKt+eI5KbwusluZRGljx1YoJKZ2NRPaeWiFTeGZO7SosQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright-core: 1.40.1
+      playwright-core: 1.41.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -9427,7 +9428,7 @@ packages:
       mlly: 1.4.2
       pathe: 1.1.1
       picocolors: 1.0.0
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9439,43 +9440,43 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-pwa@0.16.7(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0):
+  /vite-plugin-pwa@0.16.7(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0):
     resolution: {integrity: sha512-4WMA5unuKlHs+koNoykeuCfTcqEGbiTRr8sVYUQMhc6tWxZpSRnv9Ojk4LKmqVhoPGHfBVCdGaMo8t9Qidkc1Q==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0-0
+      vite: 5.0.11
       workbox-build: ^7.0.0
       workbox-window: ^7.0.0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /vite-plugin-pwa@0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0):
+  /vite-plugin-pwa@0.17.4(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0):
     resolution: {integrity: sha512-j9iiyinFOYyof4Zk3Q+DtmYyDVBDAi6PuMGNGq6uGI0pw7E+LNm9e+nQ2ep9obMP/kjdWwzilqUrlfVRj9OobA==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0
+      vite: 5.0.11
       workbox-build: ^7.0.0
       workbox-window: ^7.0.0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       workbox-build: 7.0.0
       workbox-window: 7.0.0
     transitivePeerDependencies:
       - supports-color
 
-  /vite@5.0.10(@types/node@20.10.5)(sass@1.69.5):
-    resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}
+  /vite@5.0.11(@types/node@20.10.5)(sass@1.69.5):
+    resolution: {integrity: sha512-XBMnDjZcNAw/G1gEiskiM1v6yzM4GE5aMGvhWTlHAYYhxb7S3/V1s3m2LDHa8Vh6yIWYYB0iJwsEaS523c4oYA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -9510,15 +9511,15 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
 
-  /vitefu@0.2.5(vite@5.0.10):
+  /vitefu@0.2.5(vite@5.0.11):
     resolution: {integrity: sha512-SgHtMLoqaeeGnd2evZ849ZbACbnwQCIwRH57t18FxcXoZop0uQu0uzlIhJBlF/eWVzuce0sHeqPcDo+evVcg8Q==}
     peerDependencies:
-      vite: ^3.0.0 || ^4.0.0 || ^5.0.0
+      vite: 5.0.11
     peerDependenciesMeta:
       vite:
         optional: true
     dependencies:
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
     dev: true
 
   /vitest@0.34.6(happy-dom@12.10.3)(sass@1.69.5):
@@ -9574,7 +9575,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.7.0
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
       vite-node: 0.34.6(@types/node@20.10.5)(sass@1.69.5)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -9601,7 +9602,7 @@ packages:
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.10.2
       '@quasar/extras': 1.16.8
-      '@vitejs/plugin-vue': 4.5.0(vite@5.0.10)(vue@3.3.4)
+      '@vitejs/plugin-vue': 4.5.0(vite@5.0.11)(vue@3.3.4)
       ajv: 8.12.0
       builtin-modules: 3.3.0
       cac: 6.7.14
@@ -9621,9 +9622,9 @@ packages:
       sass: 1.69.5
       ts-node: 10.9.2(@types/node@20.10.5)(typescript@5.2.2)
       unplugin-vue-components: 0.25.2(rollup@2.79.1)(vue@3.3.4)
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
-      vite-plugin-pwa: 0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitefu: 0.2.5(vite@5.0.10)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
+      vite-plugin-pwa: 0.17.4(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vitefu: 0.2.5(vite@5.0.11)
       vitest: 0.34.6(happy-dom@12.10.3)(sass@1.69.5)
       vue: 3.3.4
       vue-router: 4.2.4(vue@3.3.4)
@@ -9666,7 +9667,7 @@ packages:
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.12.0
       '@quasar/extras': 1.16.8
-      '@vitejs/plugin-vue': 4.5.0(vite@5.0.10)(vue@3.3.9)
+      '@vitejs/plugin-vue': 4.5.0(vite@5.0.11)(vue@3.3.9)
       ajv: 8.12.0
       builtin-modules: 3.3.0
       cac: 6.7.14
@@ -9686,9 +9687,9 @@ packages:
       sass: 1.69.5
       ts-node: 10.9.2(@types/node@20.10.5)(typescript@5.3.2)
       unplugin-vue-components: 0.25.2(rollup@2.79.1)(vue@3.3.9)
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
-      vite-plugin-pwa: 0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitefu: 0.2.5(vite@5.0.10)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
+      vite-plugin-pwa: 0.17.4(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vitefu: 0.2.5(vite@5.0.11)
       vitest: 0.34.6(happy-dom@12.10.3)(sass@1.69.5)
       vue: 3.3.9(typescript@5.3.2)
       vue-router: 4.2.5(vue@3.3.9)
@@ -9731,7 +9732,7 @@ packages:
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.12.0
       '@quasar/extras': 1.16.8
-      '@vitejs/plugin-vue': 4.5.0(vite@5.0.10)(vue@3.3.9)
+      '@vitejs/plugin-vue': 4.5.0(vite@5.0.11)(vue@3.3.9)
       ajv: 8.12.0
       builtin-modules: 3.3.0
       cac: 6.7.14
@@ -9751,9 +9752,9 @@ packages:
       sass: 1.69.5
       ts-node: 10.9.2(@types/node@20.10.5)(typescript@5.3.3)
       unplugin-vue-components: 0.25.2(rollup@2.79.1)(vue@3.3.9)
-      vite: 5.0.10(@types/node@20.10.5)(sass@1.69.5)
-      vite-plugin-pwa: 0.17.4(vite@5.0.10)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitefu: 0.2.5(vite@5.0.10)
+      vite: 5.0.11(@types/node@20.10.5)(sass@1.69.5)
+      vite-plugin-pwa: 0.17.4(vite@5.0.11)(workbox-build@7.0.0)(workbox-window@7.0.0)
+      vitefu: 0.2.5(vite@5.0.11)
       vitest: 0.34.6(happy-dom@12.10.3)(sass@1.69.5)
       vue: 3.3.9(typescript@5.3.3)
       vue-router: 4.2.5(vue@3.3.9)
