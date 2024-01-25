@@ -130,6 +130,7 @@ export interface Language {
       dog: {
         smallCocktail: string
         largeCocktail: string
+        cocktail: string
       }
       types: {
         kennelcough: string

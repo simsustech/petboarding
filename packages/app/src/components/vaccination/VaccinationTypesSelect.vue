@@ -2,13 +2,8 @@
   <q-btn-group v-if="species === 'dog'" push>
     <q-btn
       push
-      :label="lang.pet.vaccination.dog.smallCocktail"
-      @click="setSmallCocktail"
-    />
-    <q-btn
-      push
-      :label="lang.pet.vaccination.dog.largeCocktail"
-      @click="setLargeCocktail"
+      :label="lang.pet.vaccination.dog.cocktail"
+      @click="setCocktail"
     />
   </q-btn-group>
   <q-select
@@ -57,11 +52,7 @@ const options = VACCINATION_TYPES[species.value].map((val) => {
   }
 })
 
-const setSmallCocktail = () => {
-  emit('update:model-value', ['leptospirosis'])
-}
-
-const setLargeCocktail = () => {
+const setCocktail = () => {
   emit('update:model-value', [
     'leptospirosis',
     'distemper',

@@ -132,7 +132,8 @@ const lang: Language = {
       missingVaccinations: 'Missing vaccinations',
       dog: {
         smallCocktail: 'Small cocktail',
-        largeCocktail: 'Large cocktail'
+        largeCocktail: 'Large cocktail',
+        cocktail: 'Cocktail'
       },
       types: {
         kennelcough: 'Kennelcough',
