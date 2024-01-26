@@ -50,8 +50,8 @@ importers:
         specifier: ^0.3.4
         version: 0.3.4(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)(vue@3.3.9)
       '@modular-api/fastify-oidc':
-        specifier: ^0.3.4
-        version: 0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
+        specifier: ^0.3.5
+        version: 0.3.5(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
       '@petboarding/app':
         specifier: workspace:*
         version: link:../app
@@ -2288,7 +2288,7 @@ packages:
       '@fastify/formbody': 7.4.0
       '@fastify/middie': 8.3.0
       '@fastify/static': 6.12.0
-      '@modular-api/fastify-oidc': 0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
+      '@modular-api/fastify-oidc': 0.3.5(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3)
       '@trpc/server': 10.44.1
       '@types/compression': 1.7.5
       '@types/serve-static': 1.15.5
@@ -2312,8 +2312,8 @@ packages:
       - vue
     dev: false
 
-  /@modular-api/fastify-oidc@0.3.4(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3):
-    resolution: {integrity: sha512-RfjdlTQKQvqhogcrVMloFQCYVBFwFcC7iEidxuZTmdpdd95JhSjUxEz88pf5Afk856Ib3YNoDhT55WWLy9sr5g==}
+  /@modular-api/fastify-oidc@0.3.5(@fastify/static@6.12.0)(bcrypt@5.1.1)(fastify@4.24.3)(handlebars@4.7.8)(kysely@0.26.3)(otplib@12.0.1)(typescript@5.3.3):
+    resolution: {integrity: sha512-ns9ph7FdBEtW9bWDdu0JDLrtDPIU1FzbxL9eFByhDGMOzMGf5ldg7CT11k7LS/eZV1TCJIvGHeUgtuqrWSouAg==}
     peerDependencies:
       bcrypt: ^5.1.1
       handlebars: ^4.7.7
