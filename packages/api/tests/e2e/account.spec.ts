@@ -228,7 +228,7 @@ test.describe('Account', async () => {
     await page.locator('button >> text=Add').click()
 
     await page.locator('.q-date__calendar-item--in').first().click()
-    await page.locator('div:nth-child(3) > .q-btn').click()
+    await page.locator('div:nth-child(3) > .q-btn').first().click()
     await page.locator('.q-date__calendar-item--in').first().click()
 
     await page.getByLabel('Pets').click()
