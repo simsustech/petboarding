@@ -142,7 +142,8 @@ export const employeePetRoutes = ({
           medicines: input.medicines,
           particularities: input.particularities,
           species: input.species,
-          weight: input.weight
+          weight: input.weight,
+          insured: input.insured
         }
 
         if (input.image) {

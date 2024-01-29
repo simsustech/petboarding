@@ -67,6 +67,7 @@ const defaultSelect = [
   'particularities',
   'species',
   'weight',
+  'insured',
   'customerId',
   'categoryId'
 ] as (keyof Pet)[]

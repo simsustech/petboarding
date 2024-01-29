@@ -114,7 +114,8 @@ const lang: Language = {
       weight: 'Weight',
       deceased: 'Deceased',
       particularities: 'Particularities',
-      comments: 'Comments'
+      comments: 'Comments',
+      insured: 'Pet insurance'
     },
     species: {
       dog: 'Dog',

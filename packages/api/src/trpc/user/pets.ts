@@ -112,7 +112,8 @@ export const userPetRoutes = ({
               particularities: input.particularities,
               weight: input.weight,
               customerId: customer.id,
-              image: null
+              image: null,
+              insured: input.insured
             })
             return pet
           }
@@ -156,6 +157,7 @@ export const userPetRoutes = ({
                   medicines: input.medicines,
                   particularities: input.particularities,
                   weight: input.weight,
+                  insured: input.insured,
                   image,
                   customerId: customer.id
                 }
@@ -181,6 +183,7 @@ export const userPetRoutes = ({
                 medicines: input.medicines,
                 particularities: input.particularities,
                 weight: input.weight,
+                insured: input.insured,
                 image: null,
                 customerId: customer.id
               }

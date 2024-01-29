@@ -224,6 +224,7 @@ export interface Pets {
   food: string | null
   weight: string | null
   deceased: Generated<boolean | null>
+  insured: Generated<boolean>
   particularities: string | null
   comments: string | null
   customerId: number

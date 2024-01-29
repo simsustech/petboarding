@@ -137,6 +137,15 @@
         lazy-rules
         name="chipNumber"
       />
+      <boolean-select
+        v-model="modelValue.insured"
+        :label="lang.pet.fields.insured"
+        class="col-md-4 col-12"
+        name="insured"
+      />
+    </div>
+
+    <div class="row">
       <pet-category-select
         v-if="useCategory"
         v-model="modelValue.categoryId"

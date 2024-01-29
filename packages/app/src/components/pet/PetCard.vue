@@ -94,6 +94,10 @@
           :categories="categories"
           :species="modelValue.species"
         />
+        <boolean-item
+          :label="lang.pet.fields.insured"
+          :model-value="modelValue.insured"
+        />
       </q-list>
       <q-list v-if="modelValue.vaccinations || showAddVaccination">
         <q-item>

@@ -112,6 +112,7 @@ export interface Language {
       deceased: string
       particularities: string
       comments: string
+      insured: string
     }
     species: {
       dog: string
