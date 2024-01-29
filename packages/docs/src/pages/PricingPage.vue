@@ -94,6 +94,12 @@ const options = ref({
             'Persoonlijk aangepaste email templates voor het behandelen van reserveringen.'
         },
         {
+          message: 'Notificatie bij dubbele reserveringen.'
+        },
+        {
+          message: 'Notificatie bij verlopen reserveringen.'
+        },
+        {
           message: 'Persoonlijke ondersteuning.'
         }
       ],
@@ -137,6 +143,12 @@ const options = ref({
         },
         {
           message: 'Custom email templates for handling bookings.'
+        },
+        {
+          message: 'Notification on double bookings'
+        },
+        {
+          message: 'Notification on expired vaccinations.'
         },
         {
           message: 'Personal support.'

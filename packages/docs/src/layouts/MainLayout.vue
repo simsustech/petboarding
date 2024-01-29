@@ -56,27 +56,43 @@
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item v-for="page in pages[$q.lang.isoName]" :to="page.id">
-          <q-item-section avatar>
-            <q-icon v-if="page.icon" :name="page.icon" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ page.label }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <!-- <q-item to="/">
+        <q-item to="/home">
           <q-item-section avatar>
             <q-icon name="home" />
           </q-item-section>
           <q-item-section>
-            <q-item-label> Home </q-item-label>
+            <q-item-label>
+              {{ lang.home.title }}
+            </q-item-label>
           </q-item-section>
-        </q-item> -->
-        <!-- <q-item to="/documentation">
-
-        </q-item> -->
+        </q-item>
+        <q-item to="/pricing">
+          <q-item-section avatar>
+            <q-icon name="euro" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ lang.pricing.title }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item to="/contact">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ lang.contact.title }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item href="https://github.com/simsustech/petboarding">
+          <q-item-section>
+            <q-item-label>
+              {{ lang.developers.title }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -86,7 +102,7 @@
         <q-space horizontal />
         <div class="column">
           <div class="row">
-            <a class="text-subtitle1"> Copyright © 2023 simsustech </a>
+            <a class="text-subtitle1"> Copyright © 2024 simsustech </a>
           </div>
           <div class="row">
             <a href="https://www.simsus.tech"> https://www.simsus.tech </a>
@@ -105,9 +121,11 @@ import { matMenu } from '@quasar/extras/material-icons'
 import { fabGithub } from '@quasar/extras/fontawesome-v6'
 import logo from '../assets/logo.svg?url'
 import { QLanguageSelect } from '@simsustech/quasar-components'
+import { useLang } from '../lang/index.js'
 import type { QuasarLanguage } from 'quasar'
 const $q = useQuasar()
 
+const lang = useLang()
 const language = ref($q.lang.isoName)
 
 const quasarLang = import.meta.glob<QuasarLanguage>(
@@ -115,11 +133,14 @@ const quasarLang = import.meta.glob<QuasarLanguage>(
 )
 
 const languageImports = ref(
-  Object.entries(quasarLang).reduce((acc, [key, value]) => {
-    const langKey = key.split('/').at(-1)?.split('.').at(0)
-    if (langKey) acc[langKey] = value
-    return acc
-  }, {} as Record<string, () => Promise<QuasarLanguage>>)
+  Object.entries(quasarLang).reduce(
+    (acc, [key, value]) => {
+      const langKey = key.split('/').at(-1)?.split('.').at(0)
+      if (langKey) acc[langKey] = value
+      return acc
+    },
+    {} as Record<string, () => Promise<QuasarLanguage>>
+  )
 )
 
 const leftDrawerOpen = ref(false)
