@@ -50,7 +50,9 @@
     </q-item-label>
     <q-item-label v-if="modelValue.isDoubleBooked" caption>
       <q-icon name="warning" color="red"> </q-icon
-      >{{ lang.booking.messages.isDoubleBooked }}</q-item-label
+      >{{
+        `${lang.booking.messages.isDoubleBooked} ${lang.booking.messages.cancelDoubleBookings}`
+      }}</q-item-label
     >
     <q-item-label v-if="modelValue.comments" caption lines="2">
       {{ modelValue.comments }}

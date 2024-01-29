@@ -212,6 +212,8 @@ const lang: Language = {
       openPets: 'Huisdieren openen',
       isDoubleBooked:
         'Deze reservering overlapt met een andere reservering of dagopvang.',
+      cancelDoubleBookings:
+        'Voorkom onnodige kosten en annuleer de overlappende datums.',
       settleCancellation:
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
       bookingModified: 'Reservering is gewijzigd.'

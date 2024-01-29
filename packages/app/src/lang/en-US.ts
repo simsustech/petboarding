@@ -209,6 +209,8 @@ const lang: Language = {
       openBooking: 'Open booking',
       openPets: 'Open pets',
       isDoubleBooked: 'This booking overlaps with another booking or daycare.',
+      cancelDoubleBookings:
+        'Avoid unnecessary costs and cancel overlapping dates.',
       settleCancellation:
         'Are you sure you want to settle the cancellation of the following booking?',
       bookingModified: 'Booking has been modified.'
