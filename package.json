@@ -45,7 +45,7 @@
     "overrides": {
       "@petboarding/app": "workspace:*",
       "@petboarding/api": "workspace:*",
-      "vite": "5.0.11"
+      "vite": "5.0.12"
     }
   }
 }
