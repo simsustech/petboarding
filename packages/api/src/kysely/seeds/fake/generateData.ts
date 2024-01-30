@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { faker } from '@faker-js/faker'
-import datefns from 'date-fns'
-const { addDays } = datefns
+import { addDays } from 'date-fns'
 
 const NUMBER_OF_CUSTOMERS = 200
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2
