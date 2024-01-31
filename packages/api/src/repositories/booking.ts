@@ -818,7 +818,8 @@ export async function cancelBooking(
   const booking = await findBooking({ criteria })
   if (
     booking?.startDate &&
-    booking.startDate <= new Date().toISOString().slice(0, 10)
+    booking.startDate <= new Date().toISOString().slice(0, 10) &&
+    !ignoreCancellationPeriod
   ) {
     throw new Error('You cannot cancel dates in the past')
   }
