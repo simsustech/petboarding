@@ -32,7 +32,7 @@ export const BOOKING_ICON = ref({
   approved: 'check',
   rejected: 'block',
   cancelled: 'clear',
-  cancelledoutsideperiod: 'hourglass_top',
+  cancelledoutsideperiod: 'cancel',
   pending: 'hourglass_empty',
   standby: 'hourglass_full'
 })
