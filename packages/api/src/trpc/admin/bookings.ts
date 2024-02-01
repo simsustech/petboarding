@@ -39,12 +39,10 @@ export const compileEmail = async ({
 }) => {
   let locale
   try {
-    locale = (await import(`date-fns/locale/${localeCode}/index.js`)).default
+    locale = (await import(`date-fns/locale/${localeCode}`)).default
   } catch {
     locale = (
-      await import(
-        `date-fns/locale/${process.env.VITE_LANG || 'en-US'}/index.js`
-      )
+      await import(`date-fns/locale/${process.env.VITE_LANG || 'en-US'}`)
     ).default
   }
 
