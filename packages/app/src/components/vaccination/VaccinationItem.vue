@@ -1,6 +1,6 @@
 <template>
   <q-item>
-    <q-item-section side>
+    <q-item-section avatar>
       <image-avatar :model-value="modelValue.image" />
     </q-item-section>
     <q-item-section>
@@ -15,6 +15,15 @@
       <q-item-label v-if="!hideExpirationDate" caption>{{
         formatDate(modelValue.expirationDate)
       }}</q-item-label>
+    </q-item-section>
+    <q-item-section side>
+      <q-btn
+        v-if="showEditButton"
+        icon="edit"
+        flat
+        rounded
+        @click="updateVaccination"
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -39,9 +48,14 @@ export interface Vaccination extends VaccinationType {
 export interface Props {
   modelValue: Vaccination
   hideExpirationDate?: boolean
+  showEditButton?: boolean
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'update', vaccination: Vaccination): void
+}>()
 
 const lang = useLang()
 
@@ -60,4 +74,6 @@ const vaccinationsLabel = computed(() => {
     .map((vaccination) => lang.value.pet.vaccination.types[vaccination])
     .join(', ')
 })
+
+const updateVaccination = () => emit('update', modelValue.value)
 </script>

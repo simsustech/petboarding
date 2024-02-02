@@ -14,7 +14,8 @@ import {
 } from '../../repositories/pet.js'
 import {
   createVaccination,
-  findVaccinations
+  findVaccinations,
+  updateVaccination
 } from '../../repositories/vaccination.js'
 import { convertPetImage } from '../user/pets.js'
 import type { FastifyInstance } from 'fastify'
@@ -192,6 +193,33 @@ export const employeePetRoutes = ({
             petId: input.petId,
             image
           })
+
+          return vaccination
+        }
+      }
+
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  updateVaccination: procedure
+    .input(vaccination)
+    .mutation(async ({ input }) => {
+      let image: Buffer
+      const { id } = input
+
+      if (id && input.image) {
+        const uri = input.image.split(';base64,').pop()
+        if (uri) {
+          image = await convertVaccinationImage(uri)
+
+          const vaccination = updateVaccination(
+            { id },
+            {
+              expirationDate: input.expirationDate,
+              types: JSON.stringify(input.types),
+              petId: input.petId,
+              image
+            }
+          )
 
           return vaccination
         }

@@ -131,6 +131,8 @@
           :key="vaccination.id"
           :model-value="vaccination"
           :hide-expiration-date="!showAddVaccination"
+          :show-edit-button="showAddVaccination"
+          @update="updateVaccination"
         />
       </q-list>
     </q-styled-card>
@@ -158,6 +160,7 @@ import {
 import PetCategoryItem from './PetCategoryItem.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
+import type { Vaccination } from '../vaccination/VaccinationItem.vue'
 
 export interface Pet extends PetType {
   image?: string
@@ -191,6 +194,16 @@ const emit = defineEmits<{
       done
     }: {
       data: Pet
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'update:vaccination',
+    {
+      data,
+      done
+    }: {
+      data: Vaccination & { species: Pet['species'] }
       done: (success?: boolean) => void
     }
   ): void
@@ -232,6 +245,19 @@ const addVaccination = (pet: Pet) => {
   }
   if (pet.id) {
     emit('add:vaccination', { data: pet, done })
+  }
+}
+
+const updateVaccination = (vaccination: Vaccination) => {
+  function done() {
+    //
+  }
+  console.log(vaccination)
+  if (vaccination.id) {
+    emit('update:vaccination', {
+      data: { ...vaccination, species: modelValue.value.species },
+      done
+    })
   }
 }
 

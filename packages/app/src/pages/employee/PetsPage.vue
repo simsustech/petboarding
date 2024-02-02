@@ -19,6 +19,7 @@
         show-add-vaccination
         :allow-delete="user?.roles.includes('administrator')"
         @add:vaccination="openCreateVaccinationDialog"
+        @update:vaccination="openUpdateVaccinationDialog"
         @update="openUpdatePetDialog"
         @open-customer="openCustomer"
         @delete="deletePet"
@@ -46,6 +47,17 @@
     <vaccination-form
       ref="createVaccinationFormRef"
       @submit="createVaccination"
+    />
+  </responsive-dialog>
+
+  <responsive-dialog
+    ref="updateVaccinationDialogRef"
+    persistent
+    @submit="submitUpdateVaccination"
+  >
+    <vaccination-form
+      ref="updateVaccinationFormRef"
+      @submit="updateVaccination"
     />
   </responsive-dialog>
 </template>
@@ -161,6 +173,44 @@ const createVaccination: InstanceType<
   const vaccination = extend(true, {}, data)
 
   const result = useMutation('employee.createVaccination', {
+    args: vaccination,
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  if (!result.error.value) execute()
+  done(!result.error.value)
+}
+
+const updateVaccinationDialogRef = ref<typeof ResponsiveDialog>()
+const updateVaccinationFormRef = ref<typeof VaccinationForm>()
+const openUpdateVaccinationDialog: InstanceType<
+  typeof PetCard
+>['$props']['onUpdate:vaccination'] = ({ data }) => {
+  updateVaccinationDialogRef.value?.functions.open()
+  nextTick(() => {
+    updateVaccinationFormRef.value?.functions.setValue({
+      id: data.id,
+      petId: data.petId,
+      types: data.types,
+      expirationDate: data.expirationDate,
+      image: data.image,
+      species: data.species
+    })
+  })
+}
+const submitUpdateVaccination: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = ({ done }) => {
+  updateVaccinationFormRef.value?.functions.submit({ done })
+}
+const updateVaccination: InstanceType<
+  typeof VaccinationForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  const vaccination = extend(true, {}, data)
+
+  const result = useMutation('employee.updateVaccination', {
     args: vaccination,
     immediate: true
   })
