@@ -115,19 +115,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { matMenu } from '@quasar/extras/material-icons'
 import { fabGithub } from '@quasar/extras/fontawesome-v6'
 import logo from '../assets/logo.svg?url'
 import { QLanguageSelect } from '@simsustech/quasar-components'
-import { useLang } from '../lang/index.js'
+import { loadLang, useLang } from '../lang/index.js'
 import type { QuasarLanguage } from 'quasar'
 const $q = useQuasar()
 
 const lang = useLang()
 const language = ref($q.lang.isoName)
-
+watch($q.lang, () => {
+  loadLang($q.lang.isoName)
+})
 const quasarLang = import.meta.glob<QuasarLanguage>(
   '../../node_modules/quasar/lang/*.mjs'
 )
@@ -153,7 +155,7 @@ const tab = ref('')
 const pages = ref({
   nl: [
     {
-      id: 'Home',
+      id: 'home',
       label: 'Home',
       icon: 'home'
     },

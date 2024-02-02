@@ -12,36 +12,48 @@
         />
       </div>
     </div> -->
-    <div class="row justify-center q-ma-md">
+    <div class="row q-mt-xl justify-center q-ma-md">
       <div v-if="lang === 'nl'">
-        <a class="text-h5"> Software voor uw dierenpension </a>
+        <a class="text-h5">
+          Vergemakkelijk de administratie van uw dierenpension.
+        </a>
         <br />
-        <p>
-          Laat uw klanten online reserveren en bespaar tijd met uw
-          administratie.
-        </p>
+        <p>Laat uw klanten online reserveren en bespaar tijd en geld.</p>
       </div>
       <div v-if="lang === 'en-US'">
-        <a class="text-h5"> Booking system for your pet boarding business. </a>
+        <a class="text-h5">
+          Ease the administration of your pet boarding business.
+        </a>
         <br />
         <p>
-          Let your customers place their bookings online and save time on your
-          administration.
+          Let your customers place their bookings online and save time and
+          money.
         </p>
       </div>
     </div>
 
-    <div class="row justify-center q-col-gutter-x-md q-ma-md">
-      <feature-card
-        v-for="(feature, index) in features[lang]"
-        class="col-4"
-        :key="index"
-        :title="feature.title"
-        :content="feature.content"
-        :img-src="feature.imgSrc"
-      />
+    <div class="row full-width justify-center q-pb-lg q-ma-md">
+      <q-carousel
+        v-model="slide"
+        class="full-width"
+        animated
+        arrows
+        infinite
+        control-color="primary"
+        style="height: 100%"
+      >
+        <q-carousel-slide
+          v-for="(slide, index) in slides[lang]"
+          :key="index"
+          :name="index"
+        >
+          <q-img :src="slide.imgSrc" style="height: 400px" fit="contain" />
+          <div class="text-subtitle1 text-center">
+            {{ slide.title }}
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
     </div>
-
     <div
       class="row full-width justify-center bg-primary q-pb-lg q-pt-lg q-mt-lg q-ma-md"
     >
@@ -74,6 +86,39 @@
         </div>
       </div>
     </div>
+    <div class="row justify-center q-col-gutter-x-md q-ma-md">
+      <feature-card
+        v-for="(feature, index) in features[lang]"
+        class="col-12 col-md-4"
+        :key="index"
+        :title="feature.title"
+        :content="feature.content"
+        :img-src="feature.imgSrc"
+      />
+    </div>
+
+    <div class="row full-width justify-center q-pb-lg q-ma-md">
+      <q-carousel
+        v-model="responsiveSlide"
+        class="full-width"
+        animated
+        arrows
+        infinite
+        control-color="primary"
+        style="min-height: 470px"
+      >
+        <q-carousel-slide
+          v-for="(slide, index) in responsiveSlides[lang]"
+          :key="index"
+          :name="index"
+        >
+          <q-img :src="slide.imgSrc" style="height: 350px" fit="contain" />
+          <div class="q-mt-md text-subtitle1 text-center">
+            {{ slide.title }}
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
+    </div>
   </q-page>
 </template>
 
@@ -85,7 +130,6 @@ export default {
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import ComparisonCard from '../components/ComparisonCard.vue'
 import FeatureCard from '../components/FeatureCard.vue'
 import { useQuasar } from 'quasar'
 
@@ -94,6 +138,73 @@ const $q = useQuasar()
 const lang = ref($q.lang.isoName)
 watch($q.lang, (newVal) => {
   lang.value = newVal.isoName
+})
+
+const slide = ref(0)
+const slides = ref({
+  nl: [
+    {
+      title: 'Klanten plaatsen hun reserveringen online.',
+      imgSrc: '/landing/nl/bookingpending.png'
+    },
+    {
+      title: 'Beheerders behandelen de nieuwe reserveringen.',
+      imgSrc: '/landing/nl/approvebooking.png'
+    },
+    {
+      title:
+        'Klanten krijgen een bevestiging per email en zien de status online.',
+      imgSrc: '/landing/nl/bookingapproved.png'
+    },
+    {
+      title:
+        'Medewerkers zien de reserveringen terug in het dag- en weekoverzicht.',
+      imgSrc: '/landing/nl/dayoverview.png'
+    }
+  ],
+  'en-US': [
+    {
+      title: 'Customers place their bookings online.',
+      imgSrc: '/landing/en-US/bookingpending.png'
+    },
+    {
+      title: 'Administrators handle the new bookings.',
+      imgSrc: '/landing/en-US/approvebooking.png'
+    },
+    {
+      title:
+        'Customers receive a confirmation email and can see the status online.',
+      imgSrc: '/landing/en-US/bookingapproved.png'
+    },
+    {
+      title: 'Employees will see the bookings in the day- and week overviews.',
+      imgSrc: '/landing/en-US/dayoverview.png'
+    }
+  ]
+})
+
+const responsiveSlide = ref(0)
+const responsiveSlides = ref({
+  nl: [
+    {
+      title: 'Petboarding werkt op de browser van uw PC.',
+      imgSrc: '/landing/nl/browser.png'
+    },
+    {
+      title: 'En natuurlijk ook up uw tablet.',
+      imgSrc: '/landing/nl/tablet.png'
+    }
+  ],
+  'en-US': [
+    {
+      title: 'Petboarding works on the browser of your PC.',
+      imgSrc: '/landing/en-US/browser.png'
+    },
+    {
+      title: 'And naturally also on your tablet.',
+      imgSrc: '/landing/en-US/tablet.png'
+    }
+  ]
 })
 
 const features = ref({
