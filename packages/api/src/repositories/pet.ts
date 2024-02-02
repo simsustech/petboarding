@@ -83,6 +83,7 @@ function withVaccinations(eb: ExpressionBuilder<Database, 'pets'>) {
         'vaccinations.petId',
         convertImageSql.as('image')
       ])
+      .orderBy('vaccinations.expirationDate', 'desc')
       .whereRef('vaccinations.petId', '=', 'pets.id')
   ).as('vaccinations')
 }
