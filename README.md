@@ -1,6 +1,6 @@
 # Petboarding
 
-> Booking system for your pet boarding business
+> Ease the administration of your pet boarding business
 
 ## Website
 
@@ -37,8 +37,10 @@ https://demo.petboarding.app
 
 
 ## Development
-Petboarding is built on top of [Modular API](https://www.simsus.tech/modularapi). You will need an API key for private NPM access.
+Petboarding is built on top of [Modular API](https://www.simsus.tech/modularapi). You will need an account for private NPM access.
 ```
+git clone https://github.com/simsustech/petboarding.git
+cd petboarding
 pnpm i
 docker compose -f docker-compose.dev.yaml up
 cd packages/api
