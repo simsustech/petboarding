@@ -285,7 +285,8 @@ const initialValue: Pet = {
   medicines: '',
   food: '',
   weight: '',
-  particularities: ''
+  particularities: '',
+  insured: false
 }
 
 const modelValue = ref<Pet>(initialValue)
