@@ -346,6 +346,21 @@ importers:
       '@vitrify/tools':
         specifier: ^0.1.5
         version: 0.1.5
+      '@vue/reactivity':
+        specifier: ^3.4.15
+        version: 3.4.15
+      '@vue/runtime-core':
+        specifier: ^3.4.15
+        version: 3.4.15
+      '@vue/runtime-dom':
+        specifier: ^3.4.15
+        version: 3.4.15
+      '@vue/server-renderer':
+        specifier: ^3.4.15
+        version: 3.4.15(vue@3.4.15)
+      '@vue/shared':
+        specifier: ^3.4.15
+        version: 3.4.15
       critters:
         specifier: 0.0.20
         version: 0.0.20
