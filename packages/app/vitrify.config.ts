@@ -60,7 +60,7 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
   }
   if (mode === 'development') {
     config.server = {
-      https: await certificateFor('vitrify.test')
+      https: await certificateFor('vitrify.local')
     }
   }
   return config

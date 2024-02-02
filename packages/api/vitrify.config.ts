@@ -36,31 +36,10 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       },
       manualChunks: ['api.config', 'zod', 'date-fns']
     }
-    // quasar: {
-    //   extras: ['material-icons'],
-    //   framework: {
-    //     components: [
-    //       // Deprecated
-    //     ],
-    //     plugins: ['Dialog', 'Notify']
-    //   }
-    // },
-    // resolve: {
-    //   dedupe: ['objection']
-    // }
-    // resolve: {
-    //   alias: [
-    //     {
-    //       find: 'objection',
-    //       replacement: new URL('node_modules/objection', import.meta.url)
-    //         .pathname
-    //     }
-    //   ]
-    // }
   }
   if (mode === 'development') {
     config.server = {
-      https: await certificateFor('vitrify.test')
+      https: await certificateFor('vitrify.local')
     }
   }
   return config
