@@ -38,6 +38,7 @@
     focusable
     hoverable
     no-active-date
+    :locale="$q.lang.isoName"
     :weekdays="[1, 2, 3, 4, 5, 6, 0]"
     :day-min-height="60"
     :day-height="0"
