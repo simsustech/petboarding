@@ -115,17 +115,21 @@
     </div>
 
     <div class="row">
-      <form-input
+      <q-input
         v-bind="input"
-        v-model="modelValue.weight"
+        :model-value="modelValue.weight"
         class="col-md-4 col-12"
         :label="lang.pet.fields.weight"
         suffix="kg"
-        mask="##.#"
-        reverse-fill-mask
+        type="number"
+        step="0.1"
         bottom-slots
         lazy-rules
         name="weight"
+        @update:model-value="
+          (val) =>
+            (modelValue.weight = (Math.round(Number(val) * 10) / 10).toString())
+        "
       />
       <form-input
         v-bind="input"
