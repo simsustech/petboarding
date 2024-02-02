@@ -19,7 +19,8 @@
         :date="{
           noUnset: true,
           defaultView: 'Years',
-          firstDayOfWeek: '1'
+          firstDayOfWeek: '1',
+          options: limitDateOptionsFn
         }"
       />
     </div>
@@ -34,7 +35,7 @@ export default {
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { QForm, extend } from 'quasar'
+import { QForm, extend, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
@@ -88,6 +89,17 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
     }
   })
   done(false)
+}
+
+const limitDateOptionsFn = (date: string) => {
+  return (
+    date > dateUtil.formatDate(new Date(), 'YYYY/MM/DD') &&
+    date <
+      dateUtil.formatDate(
+        dateUtil.addToDate(new Date(), { years: 4 }),
+        'YYYY/MM/DD'
+      )
+  )
 }
 
 const variables = ref({
