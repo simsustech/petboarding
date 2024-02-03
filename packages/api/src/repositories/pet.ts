@@ -11,6 +11,7 @@ import {
   sql
 } from 'kysely'
 import { Vaccination } from 'src/zod'
+import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
 type NewPet = Insertable<Pets>
 type PetUpdate = Updateable<Pets>
@@ -84,6 +85,11 @@ function withVaccinations(eb: ExpressionBuilder<Database, 'pets'>) {
         convertImageSql.as('image')
       ])
       .orderBy('vaccinations.expirationDate', 'desc')
+      .where(
+        'vaccinations.expirationDate',
+        '>',
+        subYears(new Date(), 2).toISOString().slice(0, 10)
+      )
       .whereRef('vaccinations.petId', '=', 'pets.id')
   ).as('vaccinations')
 }

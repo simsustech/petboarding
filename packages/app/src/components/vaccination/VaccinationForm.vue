@@ -93,7 +93,11 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 
 const limitDateOptionsFn = (date: string) => {
   return (
-    date > dateUtil.formatDate(new Date(), 'YYYY/MM/DD') &&
+    date >
+      dateUtil.formatDate(
+        dateUtil.subtractFromDate(new Date(), { years: 2 }),
+        'YYYY/MM/DD'
+      ) &&
     date <
       dateUtil.formatDate(
         dateUtil.addToDate(new Date(), { years: 4 }),
