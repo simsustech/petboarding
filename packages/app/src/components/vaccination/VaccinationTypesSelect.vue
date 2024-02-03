@@ -5,6 +5,16 @@
       :label="lang.pet.vaccination.dog.cocktail"
       @click="setCocktail"
     />
+    <q-btn
+      push
+      :label="lang.pet.vaccination.types.kennelcough"
+      @click="setKennelcough"
+    />
+    <q-btn
+      push
+      :label="`${lang.pet.vaccination.dog.cocktail} + ${lang.pet.vaccination.types.kennelcough}`"
+      @click="setCocktailKennelcough"
+    />
   </q-btn-group>
   <q-select
     v-bind="attrs"
@@ -44,7 +54,7 @@ const emit = defineEmits<{
 }>()
 const lang = useLang()
 
-const { species } = toRefs(props)
+const { modelValue, species } = toRefs(props)
 const options = VACCINATION_TYPES[species.value].map((val) => {
   return {
     label: lang.value.pet.vaccination.types[val],
@@ -53,11 +63,37 @@ const options = VACCINATION_TYPES[species.value].map((val) => {
 })
 
 const setCocktail = () => {
-  emit('update:model-value', [
+  const cocktail = ['leptospirosis', 'distemper', 'hepatitis', 'parvo']
+  const newValue = modelValue.value.some((vaccination) =>
+    cocktail.includes(vaccination)
+  )
+    ? modelValue.value.filter((vaccination) => !cocktail.includes(vaccination))
+    : [...modelValue.value, ...cocktail]
+  emit('update:model-value', newValue)
+}
+
+const setKennelcough = () => {
+  const newValue = modelValue.value.includes('kennelcough')
+    ? modelValue.value.filter((vaccination) => vaccination !== 'kennelcough')
+    : [...modelValue.value, 'kennelcough']
+  emit('update:model-value', newValue)
+}
+
+const setCocktailKennelcough = () => {
+  const cocktailKennelcough = [
     'leptospirosis',
     'distemper',
     'hepatitis',
-    'parvo'
-  ])
+    'parvo',
+    'kennelcough'
+  ]
+  const newValue = modelValue.value.some((vaccination) =>
+    cocktailKennelcough.includes(vaccination)
+  )
+    ? modelValue.value.filter(
+        (vaccination) => !cocktailKennelcough.includes(vaccination)
+      )
+    : [...modelValue.value, ...cocktailKennelcough]
+  emit('update:model-value', newValue)
 }
 </script>
