@@ -186,8 +186,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.4.7
-        version: 0.4.7(quasar@2.14.3)
+        specifier: ^0.4.8
+        version: 0.4.8(quasar@2.14.3)
       '@trpc/client':
         specifier: ^10.45.0
         version: 10.45.0(@trpc/server@10.45.0)
@@ -3042,6 +3042,15 @@ packages:
 
   /@simsustech/quasar-components@0.4.7(quasar@2.14.3):
     resolution: {integrity: sha512-QTEfYAbl83FAncx6OMjyyObj88rnX+jRZrhmbf56oB6wAo/UvTuL1yBLIDI70R663YVmEOpngdMT/CsiogRAdQ==}
+    peerDependencies:
+      quasar: ^2.9.2
+    dependencies:
+      quasar: 2.14.3
+      validator: 13.11.0
+    dev: false
+
+  /@simsustech/quasar-components@0.4.8(quasar@2.14.3):
+    resolution: {integrity: sha512-g4hGRUjLYpWRYOdvXMQWGbH3AK/X7i7evIigDMi2+8RR8UTZJ5cKdWhMxpJIKAX3BY/o0PquCt8k+Lb7zbezxA==}
     peerDependencies:
       quasar: ^2.9.2
     dependencies:

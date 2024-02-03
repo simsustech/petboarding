@@ -290,7 +290,7 @@ const initialValue: Pet = {
   food: '',
   weight: '',
   particularities: '',
-  insured: false
+  insured: null
 }
 
 const modelValue = ref<Pet>(initialValue)
