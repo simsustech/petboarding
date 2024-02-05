@@ -60,7 +60,7 @@
         />
       </q-list>
     </div>
-    <div v-show="id" class="row">
+    <div v-show="id">
       <daycare-calendar-month :events="events" @change-date="onChangeDate">
       </daycare-calendar-month>
       <daycare-status-select v-model="daycareDatesStatus" />
@@ -215,6 +215,7 @@ const events = computed(
       id: daycareDate.id,
       bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
       title: daycareDate.pets.map((pet) => pet.name).join(', '),
+      petNames: daycareDate.pets.map((pet) => pet.name),
       petIds: daycareDate.pets.map((pet) => pet.id),
       date: daycareDate.date,
       details: daycareDate.customer.lastName,

@@ -18,13 +18,11 @@
       />
     </div>
   </q-form>
-  <div class="row">
-    <daycare-calendar-month
-      :selected-dates="selectedDates"
-      :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
-      @update:selected-dates="($event) => (selectedDates = $event)"
-    ></daycare-calendar-month>
-  </div>
+  <daycare-calendar-month
+    :selected-dates="selectedDates"
+    :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
+    @update:selected-dates="($event) => (selectedDates = $event)"
+  ></daycare-calendar-month>
 </template>
 
 <script lang="ts">

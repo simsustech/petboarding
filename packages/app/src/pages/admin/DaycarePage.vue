@@ -3,6 +3,7 @@
     <daycare-status-select v-model="status" />
   </div>
   <daycare-legend />
+  <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   <daycare-calendar-month
     :events="events"
     :selected-events="selectedEvents"
@@ -57,7 +58,7 @@ import type { QCalendarEvent } from '../../components/daycare/DaycareCalendarMon
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
-import { DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
+import { Customer, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 const { useQuery, useMutation } = await createUseTrpc()
 const router = useRouter()
 
@@ -82,12 +83,23 @@ const { data, execute } = useQuery('admin.getDaycareDates', {
 const $q = useQuasar()
 const lang = useLang()
 
+const showLastNames = ref(false)
+const getLastName = (customer: Customer) => {
+  if (customer?.lastName) {
+    const lastName = customer.lastName.substring(0, 8)
+    if (customer.lastName.length > 8) return lastName + '...'
+    return lastName
+  }
+}
+
 const events = computed(
   () =>
     data.value?.map((daycareDate) => ({
       id: daycareDate.id,
       bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
-      title: daycareDate.pets.map((pet) => pet.name).join(', '),
+      title: daycareDate.pets.map((pet) => pet.name).join('<br />'),
+      petNames: daycareDate.pets.map((pet) => pet.name),
+      lastName: showLastNames.value ? getLastName(daycareDate.customer) : null,
       petIds: daycareDate.pets.map((pet) => pet.id),
       date: daycareDate.date,
       details: daycareDate.customer.lastName,

@@ -192,6 +192,7 @@ const events = computed(() => {
       id: daycareDate.id,
       bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
       title: daycareDate.pets.map((pet) => pet.name).join(', '),
+      petNames: daycareDate.pets.map((pet) => pet.name),
       date: daycareDate.date,
       // details: lang.value.daycare.status[daycareDate.status],
       icon: DAYCARE_DATE_ICONS[daycareDate.status]

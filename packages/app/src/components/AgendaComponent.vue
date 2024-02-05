@@ -57,133 +57,134 @@
       ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
     </div>
   </div>
-  <q-scroll-area style="width: 100%; height: 100vh">
-    <div
-      class="row justify-center"
+  <div class="row">
+    <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
+  </div>
+  <q-scroll-area :style="contentSize">
+    <q-resize-observer @resize="onResize" />
+    <q-calendar-agenda
+      ref="calendar"
+      v-model="date"
+      :view="view"
+      :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+      column-options-id="id"
+      column-options-label="label"
+      :day-min-height="200"
+      :locale="$q.lang.isoName"
       :style="{
-        'min-width': view === 'day' ? '300px' : '700px'
+        height: '100%'
       }"
+      animated
+      bordered
+      @change="onChange"
     >
-      <q-calendar-agenda
-        ref="calendar"
-        v-model="date"
-        :view="view"
-        :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-        column-options-id="id"
-        column-options-label="label"
-        :day-min-height="200"
-        :locale="$q.lang.isoName"
-        animated
-        bordered
-        @change="onChange"
-      >
-        <template #day="{ scope: { timestamp } }">
-          <q-list>
-            <q-item
-              v-for="booking in getBookingDeparturesWithServices(
-                timestamp.date
-              )"
-              :key="booking.id"
-            >
-              <q-item-section>
-                <q-item-label
-                  v-for="service in booking.services"
-                  :key="service.id"
-                >
-                  {{ service.service?.name }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ booking.pets?.map((pet) => pet.name).join(',') }}
-                </q-item-label>
-                <q-menu context-menu>
-                  <q-list>
-                    <q-item clickable :to="`/employee/bookings/${booking.id}`">
-                      <q-item-section>
-                        <q-item-label>
-                          {{ lang.open }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator class="q-pt-none" inset />
-          <a class="text-center text-subtitle-1"
-            >{{ lang.booking.title }}
-            {{ getNumberOfBookingPets(timestamp.date) }}</a
-          >
-          <q-separator class="q-pt-none" inset />
-          <div
-            v-for="booking in getBookingArrivals(timestamp.date)"
+      <template #day="{ scope: { timestamp } }">
+        <q-list>
+          <q-item
+            v-for="booking in getBookingDeparturesWithServices(timestamp.date)"
             :key="booking.id"
-            class="row"
           >
-            <agenda-chip
-              :model-value="booking"
-              type="arrival"
-              :selected-pets="selectedPets"
-              @click="onClickPet"
-              @open-booking="onOpenBooking"
-              @open-pets="onOpenPets"
-            >
-              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-            </agenda-chip>
-          </div>
-          <div
-            v-for="booking in getBookingDepartures(timestamp.date)"
-            :key="booking.id"
-            class="row justify-end text-right"
+            <q-item-section>
+              <q-item-label
+                v-for="service in booking.services"
+                :key="service.id"
+              >
+                {{ service.service?.name }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ booking.pets?.map((pet) => pet.name).join(',') }}
+              </q-item-label>
+              <q-menu context-menu>
+                <q-list>
+                  <q-item clickable :to="`/employee/bookings/${booking.id}`">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.open }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <q-separator class="q-pt-none" inset />
+        <a class="text-center text-subtitle-1"
+          >{{ lang.booking.title }}
+          {{ getNumberOfBookingPets(timestamp.date) }}</a
+        >
+        <q-separator class="q-pt-none" inset />
+        <div
+          v-for="booking in getBookingArrivals(timestamp.date)"
+          :key="booking.id"
+        >
+          <agenda-chip
+            :model-value="booking"
+            :show-last-name="showLastNames"
+            type="arrival"
+            :selected-pets="selectedPets"
+            @click="onClickPet"
+            @open-booking="onOpenBooking"
+            @open-pets="onOpenPets"
           >
-            <agenda-chip
-              :model-value="booking"
-              type="departure"
-              :selected-pets="selectedPets"
-              @click="onClickPet"
-              @open-booking="onOpenBooking"
-              @open-pets="onOpenPets"
-            >
-              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-            </agenda-chip>
-          </div>
-          <div
-            v-for="booking in getBookingStays(timestamp.date)"
-            :key="booking.id"
-            class="row justify-center text-center"
+            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+          </agenda-chip>
+        </div>
+        <div
+          v-for="booking in getBookingDepartures(timestamp.date)"
+          :key="booking.id"
+          class="justify-end text-right"
+        >
+          <agenda-chip
+            :model-value="booking"
+            :show-last-name="showLastNames"
+            type="departure"
+            :selected-pets="selectedPets"
+            @click="onClickPet"
+            @open-booking="onOpenBooking"
+            @open-pets="onOpenPets"
           >
-            <agenda-chip
-              :model-value="booking"
-              type="stay"
-              :selected-pets="selectedPets"
-              @click="onClickPet"
-              @open-booking="onOpenBooking"
-              @open-pets="onOpenPets"
-            >
-              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-            </agenda-chip>
-          </div>
+            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+          </agenda-chip>
+        </div>
+        <div
+          v-for="booking in getBookingStays(timestamp.date)"
+          :key="booking.id"
+          class="justify-center text-center"
+        >
+          <agenda-chip
+            :model-value="booking"
+            :show-last-name="showLastNames"
+            type="stay"
+            :selected-pets="selectedPets"
+            @click="onClickPet"
+            @open-booking="onOpenBooking"
+            @open-pets="onOpenPets"
+          >
+            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+          </agenda-chip>
+        </div>
 
-          <a class="text-center text-subtitle-1"
-            >{{ lang.daycare.title }}
-            {{ getNumberOfDaycarePets(timestamp.date) }}</a
+        <a class="text-center text-subtitle-1"
+          >{{ lang.daycare.title }}
+          {{ getNumberOfDaycarePets(timestamp.date) }}</a
+        >
+        <q-separator class="q-pt-none" inset />
+        <div
+          v-for="daycareDate in getDaycareDates(timestamp.date)"
+          :key="daycareDate.id"
+          class="text-center justify-center"
+        >
+          <agenda-chip
+            :model-value="daycareDate"
+            :show-last-name="showLastNames"
+            type="daycare"
+            @open-pets="onOpenPets"
           >
-          <q-separator class="q-pt-none" inset />
-          <div
-            v-for="daycareDate in getDaycareDates(timestamp.date)"
-            :key="daycareDate.id"
-            class="row text-center justify-center"
-          >
-            <agenda-chip
-              :model-value="daycareDate"
-              type="daycare"
-              @open-pets="onOpenPets"
-            >
-            </agenda-chip>
-          </div>
-        </template>
-      </q-calendar-agenda>
-    </div>
+          </agenda-chip>
+        </div>
+      </template>
+    </q-calendar-agenda>
   </q-scroll-area>
 </template>
 
@@ -205,7 +206,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.sass'
 
 import AgendaChip from './AgendaChip.vue'
 import { onMounted, ref, toRefs, watch } from 'vue'
-import { date as dateUtil } from 'quasar'
+import { QResizeObserver, date as dateUtil } from 'quasar'
 import { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
@@ -334,6 +335,16 @@ const onChange = (data) => {
 }
 
 const getMonthYear = (date: string) => dateUtil.formatDate(date, 'MMMM YYYY')
+
+const contentSize = ref({
+  width: '100%',
+  height: '200px'
+})
+const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
+  size
+) => (contentSize.value.height = `${size.height}px`)
+
+const showLastNames = ref(false)
 
 defineExpose({
   setDate

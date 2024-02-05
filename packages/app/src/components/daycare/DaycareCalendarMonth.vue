@@ -1,5 +1,5 @@
 <template>
-  <div class="subcontent" style="width: 100%">
+  <div class="column col">
     <div class="row justify-center">
       <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
     </div>
@@ -7,84 +7,95 @@
       <q-btn icon="arrow_left" @click="onPrev" />
       <q-btn icon="arrow_right" @click="onNext" />
     </div>
-    <div class="row justify-center">
-      <q-calendar-month
-        ref="calendarRef"
-        v-model="selectedDate"
-        animated
-        bordered
-        :focusable="focusable"
-        :hoverable="hoverable"
-        no-active-date
-        month-label-size="xl"
-        :weekdays="weekdays"
-        :selected-dates="selectedDates"
-        :locale="$q.lang.isoName"
-        :disabled-before="disabledBefore"
-        :disabled-after="disabledAfter"
-        @change="onChange"
-        @moved="onMoved"
-        @click-date="onClickDate"
-        @click-workweek="onClickWorkweek"
-        @click-head-workweek="onClickHeadWorkweek"
-        @click-head-day="onClickHeadDay"
-      >
-        <template #head-day-button="{ scope }">
-          <q-btn
-            :disabled="!selectedDates"
-            @click="onClickDate({ scope })"
-            class="q-mb-sm q-mt-sm"
-            size="md"
-            outline
-            rounded
-            :label="scope.dayLabel"
-          />
-        </template>
-        <template #day="{ scope: { timestamp } }">
-          <div v-if="Object.keys(eventsMap).length" style="min-height: 30px">
-            <!-- <slot name="dayHeader" :timestamp="timestamp" /> -->
-            <template
-              v-for="event in eventsMap[timestamp.date]"
-              :key="event.id"
-            >
-              <div class="text-center">
-                <q-chip
-                  class="q-mt-none q-mb-none"
-                  size="sm"
-                  :color="event.bgcolor"
-                  clickable
-                  :selected="selectedEvents?.includes(event.id)"
-                  @click="emit('click:event', event)"
-                >
-                  {{ event.title }}
-                  <q-tooltip v-if="event.details" :delay="800">
-                    {{ event.details }}
-                  </q-tooltip>
-                  <q-menu v-if="onOpenPets" context-menu>
-                    <q-list>
-                      <q-item
-                        clickable
-                        @click="$emit('openPets', { ids: event.petIds })"
+    <div class="row">
+      <q-scroll-area :style="{ height: contentSize.height, width: '100%' }">
+        <q-resize-observer @resize="onResize" />
+        <q-calendar-month
+          ref="calendarRef"
+          v-model="selectedDate"
+          animated
+          bordered
+          :focusable="focusable"
+          :hoverable="hoverable"
+          no-active-date
+          month-label-size="xl"
+          :weekdays="weekdays"
+          :selected-dates="selectedDates"
+          :locale="$q.lang.isoName"
+          :disabled-before="disabledBefore"
+          :disabled-after="disabledAfter"
+          :style="{
+            height: '100%'
+          }"
+          @change="onChange"
+          @moved="onMoved"
+          @click-date="onClickDate"
+          @click-workweek="onClickWorkweek"
+          @click-head-workweek="onClickHeadWorkweek"
+          @click-head-day="onClickHeadDay"
+        >
+          <template #head-day-button="{ scope }">
+            <q-btn
+              :disabled="!selectedDates"
+              @click="onClickDate({ scope })"
+              class="q-mb-sm q-mt-sm"
+              size="md"
+              outline
+              rounded
+              :label="scope.dayLabel"
+            />
+          </template>
+          <template #day="{ scope: { timestamp } }">
+            <div v-if="Object.keys(eventsMap).length" style="min-height: 30px">
+              <!-- <slot name="dayHeader" :timestamp="timestamp" /> -->
+              <template
+                v-for="event in eventsMap[timestamp.date]"
+                :key="event.id"
+              >
+                <div class="text-center">
+                  <q-chip
+                    class="q-mt-none q-mb-none"
+                    size="sm"
+                    :color="event.bgcolor"
+                    clickable
+                    :selected="selectedEvents?.includes(event.id)"
+                    style="height: 100%"
+                    @click="emit('click:event', event)"
+                  >
+                    <div>
+                      <div
+                        v-for="(petName, index) in event.petNames"
+                        :key="index"
                       >
-                        <q-item-section>
-                          <q-item-label>
-                            {{
-                              `${
-                                lang.daycare.messages.openPets
-                              } ${lang.pet.title.toLowerCase()}`
-                            }}
-                          </q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-menu>
-                </q-chip>
-              </div>
-            </template>
-            <slot name="dayFooter" :timestamp="timestamp" />
-          </div>
-        </template>
-      </q-calendar-month>
+                        {{ petName }}
+                      </div>
+                      <i v-if="event.lastName">{{ event.lastName }}</i>
+                    </div>
+                    <q-tooltip v-if="event.details" :delay="800">
+                      {{ event.details }}
+                    </q-tooltip>
+                    <q-menu v-if="onOpenPets" context-menu>
+                      <q-list>
+                        <q-item
+                          clickable
+                          @click="$emit('openPets', { ids: event.petIds })"
+                        >
+                          <q-item-section>
+                            <q-item-label>
+                              {{ lang.daycare.messages.openPets }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-chip>
+                </div>
+              </template>
+              <slot name="dayFooter" :timestamp="timestamp" />
+            </div>
+          </template>
+        </q-calendar-month>
+      </q-scroll-area>
     </div>
   </div>
 </template>
@@ -106,7 +117,7 @@ import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.sass'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.sass'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass'
-import { QChip, date as dateUtil } from 'quasar'
+import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 
@@ -114,6 +125,8 @@ export interface QCalendarEvent {
   id: number
   title?: string
   details?: string
+  petNames: string
+  lastName?: string | null
   date: Timestamp | string
   bgcolor?: string
 }
@@ -239,4 +252,12 @@ const disabledAfter = computed(() => {
 
 const getSelectedMonthName = () =>
   dateUtil.formatDate(new Date(selectedDate.value), 'MMMM YYYY')
+
+const contentSize = ref({
+  width: '100%',
+  height: '200px'
+})
+const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
+  size
+) => (contentSize.value.height = `${size.height}px`)
 </script>

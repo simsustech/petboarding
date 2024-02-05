@@ -4,7 +4,7 @@
       v-for="(pet, index) in modelValue.pets"
       v-bind="attrs"
       :key="pet.id"
-      class="row q-mt-none q-mb-xs q-pr-sm"
+      class="q-mt-none q-mb-xs q-pr-sm"
       :class="{
         'text-strike':
           (modelValue.status?.status || modelValue.status) === 'cancelled'
@@ -17,6 +17,7 @@
           : colors[type]
       "
       :selected="selectedPets?.includes(pet.id)"
+      style="height: 100%"
       @click="emit('click', { data: pet.id })"
     >
       <slot name="default" />
@@ -63,7 +64,10 @@
         </q-list>
       </q-menu>
       <div>
-        {{ pet.name }}
+        <div>
+          {{ pet.name }}
+        </div>
+        <i v-if="showLastName">{{ getLastName(pet) }}</i>
       </div>
     </q-chip>
   </div>
@@ -77,7 +81,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Booking, DaycareDate } from '@petboarding/api/zod'
+import { Booking, DaycareDate, Pet } from '@petboarding/api/zod'
 import { QChip } from 'quasar'
 import { computed, ref, toRefs, useAttrs } from 'vue'
 import { useLang } from '../lang/index.js'
@@ -88,6 +92,7 @@ export interface Props {
   selectedPets?: number[]
   onOpenPets?: unknown
   onOpenBooking?: unknown
+  showLastName?: boolean
 }
 
 const props = defineProps<Props>()
@@ -110,6 +115,14 @@ const lang = useLang()
 
 const { modelValue } = toRefs(props)
 const petIds = computed(() => modelValue.value.pets?.map((pet) => pet.id))
+
+const getLastName = (pet: Pet) => {
+  if (pet.customer?.lastName) {
+    const lastName = pet.customer.lastName.substring(0, 8)
+    if (pet.customer.lastName.length > 8) return lastName + '...'
+    return lastName
+  }
+}
 
 const icons = ref({
   arrival: 'add',
