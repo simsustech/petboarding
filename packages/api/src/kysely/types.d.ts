@@ -4,6 +4,8 @@ import type {
   OidcPayloadsTable,
   AuthenticationMethodsTable
 } from '@modular-api/fastify-oidc/kysely'
+
+import type { Database as CartDatabase } from '@modular-api/fastify-cart/kysely'
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
@@ -59,6 +61,7 @@ export interface Bookings {
   comments: string | null
   customerId: number
   createdAt: Generated<string>
+  orderId: number | null
 }
 
 export interface BookingService {
@@ -253,7 +256,7 @@ export interface Vaccinations {
   createdAt: Generated<string>
 }
 
-export interface DB {
+export interface DB extends CartDatabase {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
   // oidcPayloads: OidcPayloads

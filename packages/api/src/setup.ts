@@ -6,6 +6,8 @@ import env from '@vitrify/tools/env'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
 import { onRendered as appOnRendered } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
+import { createMolliePaymentHandler } from '@modular-api/fastify-checkout'
+import { createOrderHandler } from '@modular-api/fastify-cart'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -54,6 +56,21 @@ export default async function (fastify: FastifyInstance) {
     },
     env.read('VITE_LANG') || 'en-US'
   )
+
+  const mollie = createMolliePaymentHandler({
+    fastify,
+    kysely,
+    options: {
+      apiKey: env.read('MOLLIE_API_KEY') || env.read('VITE_MOLLIE_API_KEY'),
+      hostname
+    }
+  })
+
+  const orderHandler = createOrderHandler({
+    fastify,
+    kysely,
+    options: {}
+  })
 
   fastify.register(modularapiPlugin, {
     kysely,
@@ -163,7 +180,13 @@ export default async function (fastify: FastifyInstance) {
       )?.split(','),
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
       SASS_VARIABLES: sassVariables
-    })
+    }),
+    cart: {
+      orderHandler
+    },
+    checkout: {
+      mollie
+    }
   })
 
   fastify.register(appSsrPlugin, {

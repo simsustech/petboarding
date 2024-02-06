@@ -33,23 +33,24 @@ import type {
   Bookings,
   BookingStatus as BookingStatusDb
 } from '../kysely/types.d.ts'
-
+import type {
+  OrderDiscount,
+  OrderLine,
+  OrderSurcharge
+} from '@modular-api/fastify-cart'
+import { computedOrderSelect } from '@modular-api/fastify-cart'
+import { BookingCostsHandler } from 'src/petboarding'
+import { FastifyInstance } from 'fastify'
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
 type BookingUpdate = Updateable<Bookings>
 
 type BookingStatus = Selectable<BookingStatusDb>
 
-export interface BookingCostItem {
-  name: string
-  price: number | null
-  quantity?: number
-  discount?: number
-}
-
 export interface BookingCosts {
-  items: BookingCostItem[]
-  total: number
+  orderLines: OrderLine[]
+  discounts: OrderDiscount[]
+  surcharges: OrderSurcharge[]
 }
 
 export interface BookingService {
@@ -142,9 +143,10 @@ async function calculateBookingCosts({
   booking: Omit<ParsedBooking, 'costs' | 'status'>
   categories: Category[]
   withServices?: boolean
-}) {
-  let items: BookingCostItem[] = []
-  let total = 0
+}): Promise<BookingCosts | null> {
+  let orderLines: OrderLine[] = []
+  let discounts: OrderDiscount[] = []
+  let surcharges: OrderSurcharge[] = []
   if (
     booking.startDate &&
     booking.endDate &&
@@ -159,10 +161,14 @@ async function calculateBookingCosts({
     }
     const days = booking.days
     if (days && booking.pets && categories) {
-      let bookingCostsHandler
+      if (!booking.pets.every((pet) => pet.categoryId)) {
+        return null
+      }
+
+      let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
-        ;({ items, total } = bookingCostsHandler({
+        ;({ orderLines, discounts, surcharges } = bookingCostsHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -181,40 +187,39 @@ async function calculateBookingCosts({
         }))
       } catch (e) {
         console.error('Unable to load API config')
-        items = booking.pets.map((pet) => ({
-          name: pet.name,
-          price:
+        orderLines = booking.pets.map((pet) => ({
+          description: pet.name,
+          listPrice:
             categories?.find((category) => category.id === pet.categoryId)
               ?.price || NaN,
-          quantity: days,
-          discount: 0
+          listPriceIncludesTax: true,
+          quantity: days * 1000,
+          quantityPerMille: true,
+          discount: 0,
+          taxRate: 21
         }))
         if (withServices) {
           for (const service of booking.services) {
             if (service.service && service.listPrice) {
-              items.push({
-                name: service.service?.name,
-                price: service.listPrice,
+              orderLines.push({
+                description: service.service?.name,
+                listPrice: service.listPrice,
+                listPriceIncludesTax: true,
                 quantity: 1,
-                discount: 0
+                quantityPerMille: false,
+                discount: 0,
+                taxRate: 21
               })
             }
-          }
-        }
-        for (const item of items) {
-          if (item.price && item.quantity) {
-            total += (item.price / 100) * item.quantity - (item.discount || 0)
-          } else {
-            total = 0
-            break
           }
         }
       }
     }
   }
   return {
-    items,
-    total
+    orderLines,
+    discounts,
+    surcharges
   }
 }
 
@@ -452,9 +457,20 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
     .as('isDoubleBooked')
 }
 
+function withOrder(eb: ExpressionBuilder<Database, 'bookings'>) {
+  return jsonObjectFrom(
+    eb
+      .selectFrom('cart.orders')
+      .whereRef('bookings.orderId', '=', 'cart.orders.id')
+      .selectAll()
+      .select(computedOrderSelect)
+  ).as('order')
+}
+
 function find({
   criteria,
-  select
+  select,
+  relations
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -463,6 +479,9 @@ function find({
     until?: string
   }
   select?: (keyof Booking)[]
+  relations?: {
+    order?: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -509,6 +528,12 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
+  if (relations) {
+    if (relations.order) {
+      query = query.select([withOrder])
+    }
+  }
+
   return query.select(select).select(({ selectFrom }) => [
     selectFrom('openingTimes')
       .select('openingTimes.startDayCounted')
@@ -536,7 +561,8 @@ function find({
 
 export async function findBooking({
   criteria,
-  select
+  select,
+  relations
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -545,8 +571,11 @@ export async function findBooking({
     until?: string
   }
   select?: (keyof Booking)[]
+  relations?: {
+    order?: boolean
+  }
 }): Promise<ParsedBooking | undefined> {
-  const query = find({ criteria, select })
+  const query = find({ criteria, select, relations })
 
   const result = await query.executeTakeFirst()
 
@@ -580,7 +609,8 @@ export async function findBooking({
 export async function findBookings({
   criteria,
   select,
-  limit
+  limit,
+  relations
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -590,10 +620,14 @@ export async function findBookings({
   }
   select?: (keyof Booking)[]
   limit?: number
+  relations?: {
+    order?: boolean
+  }
 }): Promise<ParsedBooking[]> {
   let query = find({
     criteria,
-    select
+    select,
+    relations
   })
 
   if (limit) {
@@ -911,4 +945,44 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
   )?.count
 
   return count
+}
+
+export async function createOrUpdateBookingOrder({
+  booking,
+  fastify
+}: {
+  booking: ParsedBooking
+  fastify: FastifyInstance
+}) {
+  await createBookingOrder({ booking, fastify })
+}
+
+async function createBookingOrder({
+  booking,
+  fastify
+}: {
+  booking: ParsedBooking
+  fastify: FastifyInstance
+}) {
+  const accountId = booking.customer?.accountId
+  const bookingId = booking.id
+  console.log(booking.costs)
+  if (accountId && booking.costs && fastify.cart?.order) {
+    const result = await fastify.cart.order.createOrder({
+      accountId,
+      currency: 'EUR',
+      ...booking.costs
+    })
+    if (result.success) {
+      const orderId = result.order.id
+      console.log(result.order)
+      await db
+        .updateTable('bookings')
+        .where('bookings.id', '=', bookingId)
+        .set('bookings.orderId', orderId)
+        .execute()
+
+      return orderId
+    }
+  }
 }

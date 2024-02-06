@@ -18,7 +18,8 @@ import {
   findBookings,
   getBookingsCount,
   updateBookingService,
-  cancelBooking
+  cancelBooking,
+  createOrUpdateBookingOrder
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findEmailTemplate } from 'src/repositories/emailTemplate.js'
@@ -166,6 +167,10 @@ export const adminBookingRoutes = ({
             criteria: {
               id: booking.customerId
             }
+          })
+          await createOrUpdateBookingOrder({
+            booking,
+            fastify
           })
           if (customer?.account?.email) {
             if (fastify?.mailer) {

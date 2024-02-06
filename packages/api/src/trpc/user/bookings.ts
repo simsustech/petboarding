@@ -84,6 +84,9 @@ export const userBookingRoutes = ({
         const bookings = await findBookings({
           criteria: {
             customerId: customer.id
+          },
+          relations: {
+            order: true
           }
         })
         return bookings

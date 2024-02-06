@@ -59,7 +59,7 @@
         />
       </q-expansion-item>
       <q-expansion-item
-        v-if="modelValue.costs?.total"
+        v-if="modelValue.costs"
         :header-inset-level="1"
         :content-inset-level="2"
       >
@@ -68,19 +68,20 @@
             <q-item-label> {{ lang.booking.costs.title }} </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-item-label>
+            <!-- <q-item-label>
               {{
                 modelValue.costs.total
                   ? configuration.CURRENCY + modelValue.costs.total.toFixed(2)
                   : lang.tbd
               }}
-            </q-item-label>
+            </q-item-label> -->
           </q-item-section>
         </template>
-        <booking-costs
+        <!-- <booking-costs
           v-if="modelValue.costs"
           :model-value="modelValue.costs"
-        />
+        /> -->
+        <!-- <order-card v-if="booking.order" :model-value="booking.order" /> -->
       </q-expansion-item>
       <q-expansion-item
         v-if="modelValue.services?.length"
@@ -118,9 +119,9 @@ import { Booking, BookingService } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
 import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'
-import { useConfiguration } from '../../configuration.js'
+// import { useConfiguration } from '../../configuration.js'
 import BookingServicesList from './BookingServicesList.vue'
-
+// import { OrderCard } from '@modular-api/quasar-components/cart'
 export interface Props {
   modelValue: Booking
   showBookingServicesEditButton?: boolean
@@ -154,7 +155,7 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
-const configuration = useConfiguration()
+// const configuration = useConfiguration()
 
 const editBookingService: InstanceType<
   typeof BookingServicesList

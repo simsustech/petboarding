@@ -1,6 +1,5 @@
 import type { Category } from './zod/category.js'
 import type { BookingPets, BookingService } from './repositories/booking.js'
-import type { BookingCostsItem } from './models/Booking.js'
 import type { BOOKING_STATUS } from './zod/booking.js'
 import type {
   eachDayOfInterval,
@@ -12,6 +11,11 @@ import type {
   subMonths
 } from 'date-fns'
 import type Holidays from 'date-holidays'
+import type {
+  OrderLine,
+  OrderDiscount,
+  OrderSurcharge
+} from '@modular-api/fastify-cart'
 
 export type BookingCostsHandler = (params: {
   period: {
@@ -34,8 +38,9 @@ export type BookingCostsHandler = (params: {
   }
   dateHolidays?: typeof Holidays
 }) => {
-  items: BookingCostsItem[]
-  total: number
+  orderLines: OrderLine[]
+  discounts: OrderDiscount[]
+  surcharges: OrderSurcharge[]
 }
 
 export type BookingCancellationHandler = (params: {

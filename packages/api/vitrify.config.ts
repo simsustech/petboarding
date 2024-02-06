@@ -31,7 +31,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           'otplib',
           'date-holidays',
           'pg',
-          'sharp'
+          'sharp',
+          'axios'
         ]
       },
       manualChunks: ['api.config', 'zod', 'date-fns']
