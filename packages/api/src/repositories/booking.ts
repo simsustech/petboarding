@@ -821,7 +821,11 @@ export async function cancelBooking(
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
     !ignoreCancellationPeriod
   ) {
-    throw new Error('You cannot cancel dates in the past')
+    throw new Error('You cannot cancel dates in the past.')
+  }
+
+  if (booking?.status?.status === 'rejected') {
+    throw new Error('You cannot cancel rejected bookings.')
   }
 
   if (booking) {
