@@ -96,7 +96,8 @@ const defaultSelect = [
   'endDate',
   'endTimeId',
   'comments',
-  'customerId'
+  'customerId',
+  'orderId'
 ] as (keyof Booking)[]
 
 export const findIds = ({
@@ -954,7 +955,8 @@ export async function createOrUpdateBookingOrder({
   booking: ParsedBooking
   fastify: FastifyInstance
 }) {
-  await createBookingOrder({ booking, fastify })
+  if (booking.orderId) await updateBookingOrder({ booking, fastify })
+  else await createBookingOrder({ booking, fastify })
 }
 
 async function createBookingOrder({
@@ -966,8 +968,10 @@ async function createBookingOrder({
 }) {
   const accountId = booking.customer?.accountId
   const bookingId = booking.id
-  console.log(booking.costs)
-  if (accountId && booking.costs && fastify.cart?.order) {
+  if (accountId && fastify.cart?.order) {
+    if (!booking.costs) {
+      throw new Error('No costs available for booking')
+    }
     const result = await fastify.cart.order.createOrder({
       accountId,
       currency: 'EUR',
@@ -975,14 +979,37 @@ async function createBookingOrder({
     })
     if (result.success) {
       const orderId = result.order.id
-      console.log(result.order)
       await db
         .updateTable('bookings')
         .where('bookings.id', '=', bookingId)
-        .set('bookings.orderId', orderId)
+        .set('orderId', orderId)
         .execute()
 
       return orderId
+    }
+  }
+}
+
+async function updateBookingOrder({
+  booking,
+  fastify
+}: {
+  booking: ParsedBooking
+  fastify: FastifyInstance
+}) {
+  const accountId = booking.customer?.accountId
+  const orderId = booking.orderId
+  if (orderId && accountId && fastify.cart?.order) {
+    if (!booking.costs) {
+      throw new Error('No costs available for booking')
+    }
+    const orderLines = await fastify.cart.order.getOrderLines({ orderId })
+    for (const orderLine of orderLines) {
+      fastify.cart.order.removeOrderLine({ id: orderLine.id! })
+    }
+
+    for (const orderLine of booking.costs.orderLines) {
+      fastify.cart.order.addOrderLine({ ...orderLine, orderId })
     }
   }
 }

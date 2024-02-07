@@ -1,9 +1,10 @@
 import type { VitrifyConfig } from 'vitrify'
 import { certificateFor } from 'devcert'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
+import ModularApiComponentsPlugin from '@modular-api/quasar-components/vite-plugin'
 export default async function ({ mode, command }): Promise<VitrifyConfig> {
   const config: VitrifyConfig = {
-    plugins: [QuasarComponentsPlugin()],
+    plugins: [QuasarComponentsPlugin(), ModularApiComponentsPlugin()],
     vitrify: {
       lang: process.env.VITE_LANG,
       productName: 'Petboarding',

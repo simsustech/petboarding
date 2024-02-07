@@ -8,10 +8,7 @@
       />
       <q-menu v-if="onOpenCustomer" context-menu>
         <q-list>
-          <q-item
-            clickable
-            @click="$emit('openCustomer', { id: modelValue.customerId })"
-          >
+          <q-item clickable @click="openCustomer">
             <q-item-section>
               <q-item-label>
                 {{ `${lang.open} ${lang.customer.title.toLowerCase()}` }}
@@ -81,7 +78,11 @@
           v-if="modelValue.costs"
           :model-value="modelValue.costs"
         /> -->
-        <!-- <order-card v-if="booking.order" :model-value="booking.order" /> -->
+        <order-card
+          v-if="modelValue.order"
+          :model-value="modelValue.order"
+          disable
+        />
       </q-expansion-item>
       <q-expansion-item
         v-if="modelValue.services?.length"
@@ -112,8 +113,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, useAttrs } from 'vue'
-import { QExpansionItem } from 'quasar'
+import { ref, toRefs, useAttrs } from 'vue'
+import { QBtn, QExpansionItem } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Booking, BookingService } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
@@ -121,14 +122,14 @@ import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'
 // import { useConfiguration } from '../../configuration.js'
 import BookingServicesList from './BookingServicesList.vue'
-// import { OrderCard } from '@modular-api/quasar-components/cart'
+import { OrderCard } from '@modular-api/quasar-components/cart'
 export interface Props {
   modelValue: Booking
   showBookingServicesEditButton?: boolean
   showHistory?: boolean
   onOpenCustomer?: unknown
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 const attrs = useAttrs()
 const emit = defineEmits<{
   (
@@ -154,6 +155,7 @@ const emit = defineEmits<{
   (e: 'openCustomer', { id }: { id: number }): void
 }>()
 
+const { modelValue } = toRefs(props)
 const lang = useLang()
 // const configuration = useConfiguration()
 
@@ -161,6 +163,12 @@ const editBookingService: InstanceType<
   typeof BookingServicesList
 >['$props']['onEdit'] = ({ data, done }) =>
   emit('editBookingService', { data, done })
+
+const openCustomer: InstanceType<typeof QBtn>['$props']['onClick'] = (evt) => {
+  if (modelValue.value.customerId) {
+    emit('openCustomer', { id: modelValue.value.customerId })
+  }
+}
 
 const variables = ref({})
 const functions = ref({})

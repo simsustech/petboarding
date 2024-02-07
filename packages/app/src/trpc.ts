@@ -19,18 +19,21 @@ export const createUseTrpc = async () => {
   const fetch = getFetch()
   const handleErrorFetch = async (input, init) => {
     return fetch(input, init).then(async (res) => {
-      if (!res.ok) {
-        const body = await res.json()
+      try {
+        if (!res.ok) {
+          const body = await res.json()
 
-        const serverErrors = JSON.parse(body?.error.message)
-        for (const index in serverErrors) {
+          const serverErrors = body?.error
           let caption: string
-          const { message, code, path, expected, received } =
-            serverErrors[index]
-          if (lang.value.errors?.[code]) {
+          const { message, code, path, expected, received } = serverErrors
+          if (message) {
+            caption = message
+          } else if (path && lang.value.errors?.[code]) {
             caption = lang.value.errors[code]({ path, expected, received })
-          } else {
+          } else if (path) {
             caption = `${message}: ${path.join(':')}`
+          } else {
+            caption = ''
           }
           Notify.create({
             message: lang.value.serverError,
@@ -38,8 +41,10 @@ export const createUseTrpc = async () => {
             type: 'negative'
           })
         }
+        return res
+      } catch (e) {
+        console.error(e)
       }
-      return res
     })
   }
   return useTRPC<AppRouter>({

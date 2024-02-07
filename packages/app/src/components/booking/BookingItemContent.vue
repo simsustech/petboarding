@@ -67,6 +67,13 @@
     </q-item-label>
   </q-item-section>
   <q-item-section side>
+    <div v-if="showCreateOrderButton">
+      <q-btn
+        icon="payments"
+        :size="$q.screen.lt.sm ? 'sm' : 'md'"
+        @click.stop="createOrder(modelValue)"
+      />
+    </div>
     <div v-if="showHandleCancellationButton">
       <q-btn
         icon="check"
@@ -160,6 +167,7 @@ export interface Props {
   showHandleCancellationButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
   showHistory?: boolean
+  showCreateOrderButton?: boolean
 }
 
 defineProps<Props>()
@@ -230,6 +238,16 @@ const emit = defineEmits<{
   ): void
   (
     e: 'settleCancellation',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'createOrder',
     {
       data,
       done
@@ -319,6 +337,12 @@ const reply = (booking: Booking) =>
 
 const settleCancellation = (booking: Booking) =>
   emit('settleCancellation', {
+    data: booking,
+    done: () => {}
+  })
+
+const createOrder = (booking: Booking) =>
+  emit('createOrder', {
     data: booking,
     done: () => {}
   })

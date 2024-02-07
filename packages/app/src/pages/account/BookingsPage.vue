@@ -1,10 +1,5 @@
 <template>
-  <resource-page
-    type="create"
-    :disabled="disabled"
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
+  <resource-page type="create" :disabled="disabled" @create="openCreateDialog">
     <template #header>
       {{ lang.booking.title }}
     </template>
@@ -17,8 +12,10 @@
             :model-value="booking"
             show-icon
             show-edit-button
+            show-create-order-button
             @update="openUpdateDialog"
             @cancel="cancelBooking"
+            @create-order="onCreateOrder"
           />
         </q-list>
       </div>
@@ -60,11 +57,12 @@ import { ref, nextTick, onMounted } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../components/booking/BookingForm.vue'
-import BookingItem from 'src/components/booking/BookingItem.vue'
+import BookingItem from '../../components/booking/BookingItem.vue'
 import { useLang } from '../../lang/index.js'
 import { extend } from 'quasar'
 import { computed } from 'vue'
 import { useConfiguration } from '../../configuration.js'
+import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
 const configuration = useConfiguration()
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
@@ -95,7 +93,7 @@ const updateDialogRef = ref<typeof ResponsiveDialog>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
 // const updateDialogOpened = ref(false)
 const openUpdateDialog: InstanceType<
-  typeof ResourcePage
+  typeof BookingItem
 >['$props']['onUpdate'] = ({ data }) => {
   updateDialogRef.value?.functions.open()
   nextTick(() => {
@@ -178,6 +176,26 @@ const createBooking: InstanceType<
   await result.immediatePromise
 
   done(!result.error.value)
+}
+
+const onCreateOrder: InstanceType<
+  typeof BookingItem
+>['$props']['onCreateOrder'] = async ({ data, done }) => {
+  if (data.id) {
+    const result = useMutation('user.createOrderForBooking', {
+      args: {
+        id: data.id
+      },
+      immediate: true
+    })
+    await result.immediatePromise
+
+    if (!result.error.value) {
+      execute()
+    }
+    // if (result.data.value) modelValue.value = result.data.value
+    done(!result.error.value)
+  }
 }
 
 const ready = ref<boolean>(false)

@@ -13,6 +13,7 @@
       @standby="($event) => emit('standby', $event)"
       @reply="($event) => emit('reply', $event)"
       @settle-cancellation="($event) => emit('settleCancellation', $event)"
+      @create-order="($event) => emit('createOrder', $event)"
     />
 
     <q-menu touch-position context-menu>
@@ -75,6 +76,7 @@ export interface Props {
   showIcon?: boolean
   showApprovalButtons?: boolean
   showEditButton?: boolean
+  showCreateOrderButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
   onOpenCustomer?: unknown
   onOpenBooking?: unknown
@@ -179,6 +181,16 @@ const emit = defineEmits<{
       ids
     }: {
       ids: number[]
+    }
+  ): void
+  (
+    e: 'createOrder',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
     }
   ): void
 }>()

@@ -7,6 +7,7 @@ import { findOpeningTimes } from '../../repositories/openingTime'
 import {
   cancelBooking,
   createBooking,
+  createOrUpdateBookingOrder,
   findBooking,
   findBookings,
   updateBooking
@@ -220,5 +221,44 @@ export const userBookingRoutes = ({
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
+    }),
+  createOrderForBooking: procedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (fastify?.cart && input.id && ctx.account?.id) {
+        const { id } = input
+        const customer = await findCustomer({
+          criteria: {
+            accountId: Number(ctx.account.id)
+          }
+        })
+
+        const booking = await findBooking({
+          criteria: {
+            id
+          }
+        })
+
+        if (booking && customer && booking?.customerId === customer?.id) {
+          try {
+            await createOrUpdateBookingOrder({
+              booking,
+              fastify
+            })
+          } catch (e) {
+            console.error(e)
+            throw new TRPCError({
+              code: 'CONFLICT',
+              message: 'No costs available for booking'
+            })
+          }
+          return true
+        }
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
     })
 })
