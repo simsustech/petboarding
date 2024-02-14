@@ -8,7 +8,7 @@
       <q-btn icon="arrow_right" @click="onNext" />
     </div>
     <div class="row">
-      <q-scroll-area :style="{ height: contentSize.height, width: '100%' }">
+      <q-scroll-area :style="contentSize">
         <q-resize-observer @resize="onResize" />
         <q-calendar-month
           ref="calendarRef"
@@ -257,7 +257,11 @@ const contentSize = ref({
   width: '100%',
   height: '200px'
 })
+const minWidth = 600
 const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   size
-) => (contentSize.value.height = `${size.height}px`)
+) => {
+  contentSize.value.width = size.width > minWidth ? '100%' : `${minWidth}px`
+  contentSize.value.height = `${size.height}px`
+}
 </script>

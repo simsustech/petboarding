@@ -340,9 +340,13 @@ const contentSize = ref({
   width: '100%',
   height: '200px'
 })
+const minWidth = 600
 const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   size
-) => (contentSize.value.height = `${size.height}px`)
+) => {
+  contentSize.value.width = size.width > minWidth ? '100%' : `${minWidth}px`
+  contentSize.value.height = `${size.height}px`
+}
 
 const showLastNames = ref(false)
 
