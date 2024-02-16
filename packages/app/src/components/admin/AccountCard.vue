@@ -110,6 +110,11 @@ const addRole = () => {
         {
           label: lang.value.account.roles[PETBOARDING_ACCOUNT_ROLES.INTERN],
           value: PETBOARDING_ACCOUNT_ROLES.INTERN
+        },
+        {
+          label:
+            lang.value.account.roles[PETBOARDING_ACCOUNT_ROLES.POINT_OF_SALE],
+          value: PETBOARDING_ACCOUNT_ROLES.POINT_OF_SALE
         }
       ]
     },

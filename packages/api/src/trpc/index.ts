@@ -8,6 +8,8 @@ import { publicRoutes } from './public/index.js'
 import { PETBOARDING_ACCOUNT_ROLES } from '../zod/account.js'
 import { adminRoutes } from './admin/index.js'
 import { employeeRoutes } from './employee/index.js'
+import { pointOfSaleRoutes } from './pointofsale/index.js'
+
 export const t = initTRPC.context<Context>().create()
 
 const isLoggedIn = t.middleware(({ next, ctx }) => {
@@ -34,9 +36,18 @@ const isEmployee = t.middleware(({ next, ctx }) => {
     ctx
   })
 })
+const isPointOfSale = t.middleware(({ next, ctx }) => {
+  if (!ctx.account?.roles?.includes(PETBOARDING_ACCOUNT_ROLES.POINT_OF_SALE)) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' })
+  }
+  return next({
+    ctx
+  })
+})
 export const userProcedure = t.procedure.use(isLoggedIn)
 export const adminProcedure = t.procedure.use(isAdministrator)
 export const employeeProcedure = t.procedure.use(isEmployee)
+export const pointOfSaleProcedure = t.procedure.use(isPointOfSale)
 
 const userRouter = (fastify: FastifyInstance) =>
   t.router({
@@ -63,6 +74,11 @@ const employeeRouter = (fastify: FastifyInstance) =>
     ...employeeRoutes({ fastify, procedure: employeeProcedure })
   })
 
+const pointOfSaleRouter = (fastify: FastifyInstance) =>
+  t.router({
+    ...pointOfSaleRoutes({ fastify, procedure: pointOfSaleProcedure })
+  })
+
 export const createRouter = (fastify: FastifyInstance) => {
   const t = initTRPC.create()
 
@@ -71,7 +87,8 @@ export const createRouter = (fastify: FastifyInstance) => {
     configuration: configurationRouter(fastify),
     public: publicRouter(fastify),
     employee: employeeRouter(fastify),
-    admin: adminRouter(fastify)
+    admin: adminRouter(fastify),
+    pointofsale: pointOfSaleRouter(fastify)
   })
 
   return router

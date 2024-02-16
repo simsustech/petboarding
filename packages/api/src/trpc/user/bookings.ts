@@ -6,6 +6,7 @@ import type { FastifyInstance } from 'fastify'
 import { findOpeningTimes } from '../../repositories/openingTime'
 import {
   cancelBooking,
+  checkIfBookingCostsMatchOrder,
   createBooking,
   createOrUpdateBookingOrder,
   findBooking,
@@ -50,11 +51,26 @@ export const userBookingValidation = booking.omit({
   days: true
 })
 
+// const getAmountDue = ({
+//   order,
+//   payments
+// }: {
+//   order: Order
+//   payments: PaymentPayload[]
+// }) => {
+//   const paidAmount = payments.reduce((acc, cur) => {
+//     acc += Number(cur.amount)
+//     return acc
+//   }, 0)
+//   if (order.totalIncludingTax) return order.totalIncludingTax - paidAmount * 100
+//   return 0
+// }
+
 export const userBookingRoutes = ({
   fastify,
   procedure
 }: {
-  fastify?: FastifyInstance
+  fastify: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
   getOpeningTimes: procedure
@@ -90,6 +106,13 @@ export const userBookingRoutes = ({
             order: true
           }
         })
+
+        for (const booking of bookings) {
+          if (!checkIfBookingCostsMatchOrder(booking)) {
+            fastify.log.info(`Updating order for booking ${booking.id}`)
+            createOrUpdateBookingOrder({ booking, fastify })
+          }
+        }
         return bookings
       }
     }
@@ -225,12 +248,12 @@ export const userBookingRoutes = ({
   createOrderForBooking: procedure
     .input(
       z.object({
-        id: z.number()
+        bookingId: z.number()
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (fastify?.cart && input.id && ctx.account?.id) {
-        const { id } = input
+      if (fastify?.cart && input.bookingId && ctx.account?.id) {
+        const { bookingId } = input
         const customer = await findCustomer({
           criteria: {
             accountId: Number(ctx.account.id)
@@ -239,7 +262,7 @@ export const userBookingRoutes = ({
 
         const booking = await findBooking({
           criteria: {
-            id
+            id: bookingId
           }
         })
 
@@ -257,6 +280,155 @@ export const userBookingRoutes = ({
             })
           }
           return true
+        }
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  payAmountDueOnline: procedure
+    .input(
+      z.object({
+        bookingId: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { bookingId } = input
+      const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+      const redirectUrl = `https://${hostname}/checkout/success`
+
+      const accountId = Number(ctx.account?.id)
+      if (accountId) {
+        const customer = await findCustomer({
+          criteria: {
+            accountId
+          }
+        })
+
+        const booking = await findBooking({
+          criteria: {
+            id: bookingId
+          },
+          relations: {
+            order: true
+          }
+        })
+        if (customer?.id !== booking?.customerId) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Booking does not belong to customer.'
+          })
+        }
+
+        if (
+          booking &&
+          booking.orderId &&
+          fastify?.cart?.order &&
+          fastify?.paymentHandlers?.mollie
+        ) {
+          const amountDue = booking.amountDue
+
+          const orders = await fastify.cart.order.getOrders({
+            accountId,
+            ids: [booking.orderId]
+          })
+          const order = orders[0]
+
+          if (amountDue > 0 && booking.orderId) {
+            const payment = await fastify.paymentHandlers.mollie.createPayment({
+              orderId: booking.orderId,
+              amount: {
+                value: amountDue,
+                currency: 'EUR'
+              },
+              description: `#${order.uuid}`,
+              redirectUrl,
+              metadata: {
+                vendor: 'petboarding',
+                tenant: 'petboarding'
+              }
+            })
+            if (payment.success) {
+              return payment.checkoutUrl
+            } else {
+              throw new TRPCError({
+                code: 'UNPROCESSABLE_CONTENT',
+                message: payment.errorMessage
+              })
+            }
+          }
+        }
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  payCash: procedure
+    .input(
+      z.object({
+        bookingId: z.number(),
+        amount: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { bookingId, amount } = input
+      const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+      const redirectUrl = `https://${hostname}/checkout/success`
+
+      const accountId = Number(ctx.account?.id)
+      if (accountId) {
+        const customer = await findCustomer({
+          criteria: {
+            accountId
+          }
+        })
+
+        const booking = await findBooking({
+          criteria: {
+            id: bookingId
+          },
+          relations: {
+            order: true
+          }
+        })
+        if (customer?.id !== booking?.customerId) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Booking does not belong to customer.'
+          })
+        }
+
+        if (
+          booking &&
+          booking.orderId &&
+          fastify?.cart?.order &&
+          fastify?.paymentHandlers?.mollie
+        ) {
+          const orders = await fastify.cart.order.getOrders({
+            accountId,
+            ids: [booking.orderId]
+          })
+          const order = orders[0]
+
+          if (amount > 0 && booking.orderId && fastify.paymentHandlers.cash) {
+            const payment = await fastify.paymentHandlers.cash.createPayment({
+              orderId: booking.orderId,
+              amount: {
+                value: amount,
+                currency: 'EUR'
+              },
+              description: `#${order.uuid}`,
+              redirectUrl,
+              metadata: {
+                vendor: 'petboarding',
+                tenant: 'petboarding'
+              }
+            })
+            if (payment.success) {
+              return payment.checkoutUrl
+            } else {
+              throw new TRPCError({
+                code: 'UNPROCESSABLE_CONTENT',
+                message: payment.errorMessage
+              })
+            }
+          }
         }
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })

@@ -60,7 +60,7 @@ const seed = async () => {
     .values([
       {
         email: 'admin@petboarding.app',
-        roles: `["administrator", "employee"]`
+        roles: `["administrator", "employee", 'pointofsale']`
       }
     ])
     .returning('id')

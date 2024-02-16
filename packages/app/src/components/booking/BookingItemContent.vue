@@ -62,17 +62,29 @@
         modelValue.services.map((service) => service.service?.name).join(', ')
       }}
     </q-item-label>
-    <q-item-label v-if="modelValue.costs?.total" caption>
-      {{ configuration.CURRENCY + modelValue.costs.total.toFixed(2) }}
+    <q-item-label v-if="modelValue.amountDue" caption>
+      {{ lang.checkout.amountDue }}
+      {{ configuration.CURRENCY + (modelValue.amountDue / 100).toFixed(2) }}
     </q-item-label>
   </q-item-section>
   <q-item-section side>
-    <div v-if="showCreateOrderButton">
-      <q-btn
-        icon="payments"
-        :size="$q.screen.lt.sm ? 'sm' : 'md'"
-        @click.stop="createOrder(modelValue)"
-      />
+    <div v-if="showPayButton">
+      <q-btn icon="payment">
+        <q-menu>
+          <q-list>
+            <q-item
+              v-if="onPayCash"
+              v-close-popup
+              clickable
+              @click="onClickPayCash(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label> Cash </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
     </div>
     <div v-if="showHandleCancellationButton">
       <q-btn
@@ -85,14 +97,14 @@
     <div v-if="showApprovalButtons">
       <div class="row">
         <q-btn
-          v-if="modelValue.status.status !== 'approved'"
+          v-if="modelValue.status?.status !== 'approved'"
           icon="check"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="green"
           @click.stop="approve(modelValue)"
         />
         <q-btn
-          v-if="modelValue.status.status !== 'rejected'"
+          v-if="modelValue.status?.status !== 'rejected'"
           icon="cancel"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="red"
@@ -101,7 +113,7 @@
       </div>
       <div class="row">
         <q-btn
-          v-if="modelValue.status.status !== 'standby'"
+          v-if="modelValue.status?.status !== 'standby'"
           icon="hourglass_full"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="yellow"
@@ -165,9 +177,10 @@ export interface Props {
   showApprovalButtons?: boolean
   showEditButton?: boolean
   showHandleCancellationButton?: boolean
+  showPayButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
   showHistory?: boolean
-  showCreateOrderButton?: boolean
+  onPayCash?: unknown
 }
 
 defineProps<Props>()
@@ -256,6 +269,16 @@ const emit = defineEmits<{
       done: (success?: boolean) => void
     }
   ): void
+  (
+    e: 'payCash',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done?: (success?: boolean) => void
+    }
+  ): void
 }>()
 
 const lang = useLang()
@@ -341,9 +364,15 @@ const settleCancellation = (booking: Booking) =>
     done: () => {}
   })
 
-const createOrder = (booking: Booking) =>
-  emit('createOrder', {
-    data: booking,
-    done: () => {}
+const onClickPayCash = (booking: Booking) => {
+  emit('payCash', {
+    data: booking
   })
+}
+
+// const createOrder = (booking: Booking) =>
+//   emit('createOrder', {
+//     data: booking,
+//     done: () => {}
+//   })
 </script>

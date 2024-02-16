@@ -362,7 +362,15 @@ export const adminBookingRoutes = ({
             price: input.price || null
           }
         )
-        if (updatedBookingService) return bookingService
+        if (updatedBookingService) {
+          const booking = await findBooking({
+            criteria: {
+              id: updatedBookingService.bookingId
+            }
+          })
+          if (booking) createOrUpdateBookingOrder({ booking, fastify })
+          return bookingService
+        }
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),

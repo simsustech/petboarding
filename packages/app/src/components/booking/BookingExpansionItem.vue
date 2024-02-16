@@ -56,11 +56,17 @@
         />
       </q-expansion-item>
       <q-expansion-item
-        v-if="modelValue.costs"
+        v-if="
+          modelValue.order &&
+          modelValue.status?.status !== BOOKING_STATUS.PENDING
+        "
         :header-inset-level="1"
         :content-inset-level="2"
       >
         <template #header>
+          <q-item-section avatar>
+            <q-icon name="priority_high" />
+          </q-item-section>
           <q-item-section>
             <q-item-label> {{ lang.booking.costs.title }} </q-item-label>
           </q-item-section>
@@ -81,6 +87,10 @@
         <order-card
           v-if="modelValue.order"
           :model-value="modelValue.order"
+          :payments="modelValue.payments"
+          :amount-due="modelValue.amountDue"
+          @pay-amount-due-online="onPayAmountDueOnline"
+          @pay-amount-due-cash="onPayAmountDueCash"
           disable
         />
       </q-expansion-item>
@@ -123,10 +133,12 @@ import BookingStatusItem from './BookingStatusItem.vue'
 // import { useConfiguration } from '../../configuration.js'
 import BookingServicesList from './BookingServicesList.vue'
 import { OrderCard } from '@modular-api/quasar-components/cart'
+import { BOOKING_STATUS } from '@petboarding/api/zod'
 export interface Props {
   modelValue: Booking
   showBookingServicesEditButton?: boolean
   showHistory?: boolean
+  amountDue?: number
   onOpenCustomer?: unknown
 }
 const props = defineProps<Props>()
@@ -153,6 +165,8 @@ const emit = defineEmits<{
     }
   ): void
   (e: 'openCustomer', { id }: { id: number }): void
+  (e: 'payAmountDueOnline', amountDue: number): void
+  (e: 'payAmountDueCash', amountDue: number): void
 }>()
 
 const { modelValue } = toRefs(props)
@@ -168,6 +182,18 @@ const openCustomer: InstanceType<typeof QBtn>['$props']['onClick'] = (evt) => {
   if (modelValue.value.customerId) {
     emit('openCustomer', { id: modelValue.value.customerId })
   }
+}
+
+const onPayAmountDueOnline: InstanceType<
+  typeof OrderCard
+>['$props']['onPayAmountDueOnline'] = (amountDue) => {
+  emit('payAmountDueOnline', amountDue)
+}
+
+const onPayAmountDueCash: InstanceType<
+  typeof OrderCard
+>['$props']['onPayAmountDueCash'] = (amountDue) => {
+  emit('payAmountDueCash', amountDue)
 }
 
 const variables = ref({})

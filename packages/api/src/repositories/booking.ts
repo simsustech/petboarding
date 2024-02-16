@@ -34,13 +34,15 @@ import type {
   BookingStatus as BookingStatusDb
 } from '../kysely/types.d.ts'
 import type {
+  Order,
   OrderDiscount,
   OrderLine,
   OrderSurcharge
 } from '@modular-api/fastify-cart'
 import { computedOrderSelect } from '@modular-api/fastify-cart'
-import { BookingCostsHandler } from 'src/petboarding'
-import { FastifyInstance } from 'fastify'
+import type { BookingCostsHandler } from '../petboarding.js'
+import type { FastifyInstance } from 'fastify'
+import type { PaymentPayload } from '@modular-api/fastify-checkout'
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
 type BookingUpdate = Updateable<Bookings>
@@ -79,7 +81,7 @@ interface BookingCustomer {
 
 export interface ParsedBooking extends Booking {
   days: number
-  costs: BookingCosts
+  costs: BookingCosts | null
   startTime: OpeningTime | null
   endTime: OpeningTime | null
   customer: BookingCustomer | null
@@ -87,6 +89,9 @@ export interface ParsedBooking extends Booking {
   services: BookingService[]
   status: BookingStatus | null
   statuses: BookingStatus[]
+  amountDue?: number | null
+  order?: Order | null
+  payments?: PaymentPayload[]
 }
 
 const defaultSelect = [
@@ -120,7 +125,10 @@ export const findIds = ({
 }
 
 function calculateBookingDays(
-  booking: Omit<ParsedBooking, 'costs' | 'days' | 'status'>
+  booking: Omit<
+    ParsedBooking,
+    'costs' | 'days' | 'status' | 'order' | 'payments'
+  >
 ) {
   if (booking.startTime && booking.endTime) {
     return (
@@ -463,10 +471,104 @@ function withOrder(eb: ExpressionBuilder<Database, 'bookings'>) {
     eb
       .selectFrom('cart.orders')
       .whereRef('bookings.orderId', '=', 'cart.orders.id')
-      .selectAll()
-      .select(computedOrderSelect)
+      .select([
+        'cart.orders.accountId',
+        'cart.orders.billingAddress',
+        'cart.orders.currency',
+        'cart.orders.date',
+        'cart.orders.id',
+        'cart.orders.shippingAddress',
+        'cart.orders.status',
+        'cart.orders.uuid',
+        'cart.orders.customFields',
+        'cart.orders.createdAt',
+        ...computedOrderSelect
+      ])
   ).as('order')
 }
+
+function withPayments(eb: ExpressionBuilder<Database, 'bookings'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('checkout.payments')
+      .whereRef('checkout.payments.orderId', '=', 'bookings.orderId')
+      .selectAll()
+  ).as('payments')
+}
+
+function withAmountDue(eb: ExpressionBuilder<Database, 'bookings'>) {
+  return eb
+    .selectFrom([
+      eb
+        .selectFrom('cart.orders')
+        .whereRef('cart.orders.id', '=', 'bookings.orderId')
+        .select(computedOrderSelect)
+        .as('bookingOrder'),
+      eb
+        .selectFrom('checkout.payments')
+        .whereRef('checkout.payments.orderId', '=', 'bookings.orderId')
+        .select(({ fn }) =>
+          fn.coalesce(fn.sum('amount'), sql<number>`0`).as('paidAmount')
+        )
+        .as('payments')
+    ])
+    .select(
+      sql<number>`(booking_order.total_including_tax - payments.paid_amount)::integer`.as(
+        'amountDue'
+      )
+    )
+    .as('amountDue')
+}
+
+function calculateBookingCostsTotal(costs?: BookingCosts | null) {
+  const orderLinesTotalIncludingTax =
+    costs?.orderLines.reduce((acc, cur) => {
+      const quantity = cur.quantityPerMille ? cur.quantity / 1000 : cur.quantity
+      acc = acc + (cur.listPrice || 0) * quantity
+      return acc
+    }, 0) || 0
+  const surchargesTotalIncludingTax =
+    costs?.surcharges.reduce((acc, cur) => (acc += cur.listPrice || 0), 0) || 0
+  const discountsTotalIncludingTax =
+    costs?.discounts.reduce((acc, cur) => (acc += cur.listPrice || 0), 0) || 0
+  return {
+    totalIncludingTax:
+      orderLinesTotalIncludingTax +
+      surchargesTotalIncludingTax -
+      discountsTotalIncludingTax
+  }
+}
+
+export const checkIfBookingCostsMatchOrder = ({
+  costs,
+  order
+}: {
+  costs?: BookingCosts | null
+  order?: Order | null
+}) => {
+  const { totalIncludingTax } = calculateBookingCostsTotal(costs)
+  if (order?.totalIncludingTax === totalIncludingTax) return true
+  return false
+}
+
+// function calculateAmountDue({
+//   order,
+//   payments
+// }: {
+//   order?: Order
+//   payments?: Payment[]
+// }) {
+//   if (order && payments) {
+//     const paidAmount = payments
+//       .filter((payment) => payment.status === 'paid')
+//       .reduce((acc, cur) => {
+//         acc += Number(cur.amount)
+//         return acc
+//       }, 0)
+//     if (order.totalIncludingTax) return order.totalIncludingTax - paidAmount
+//   }
+//   return 0
+// }
 
 function find({
   criteria,
@@ -503,7 +605,7 @@ function find({
           .where(
             'bookingStatus.modifiedAt',
             '=',
-            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
           )
           .where('bookingStatus.status', '=', criteria.status!)
           .select('bookingStatus.bookingId')
@@ -529,35 +631,39 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
+  const relationSelect = []
   if (relations) {
     if (relations.order) {
-      query = query.select([withOrder])
+      relationSelect.push(withOrder, withPayments, withAmountDue)
     }
   }
 
-  return query.select(select).select(({ selectFrom }) => [
-    selectFrom('openingTimes')
-      .select('openingTimes.startDayCounted')
-      .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
-      .as('startDayCounted'),
-    selectFrom('openingTimes')
-      .select('openingTimes.endDayCounted')
-      .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
-      .as('endDayCounted'),
-    withCustomer,
-    withPets,
-    withStartTime,
-    withEndTime,
-    withServices,
-    withStatuses,
-    withStatus,
-    withIsDoubleBooked,
-    sql<number>`bookings.end_date - 
+  return query
+    .select(select)
+    .select(relationSelect)
+    .select(({ selectFrom }) => [
+      selectFrom('openingTimes')
+        .select('openingTimes.startDayCounted')
+        .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
+        .as('startDayCounted'),
+      selectFrom('openingTimes')
+        .select('openingTimes.endDayCounted')
+        .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
+        .as('endDayCounted'),
+      withCustomer,
+      withPets,
+      withStartTime,
+      withEndTime,
+      withServices,
+      withStatuses,
+      withStatus,
+      withIsDoubleBooked,
+      sql<number>`bookings.end_date - 
       bookings.start_date - 1
       + (select "opening_times"."start_day_counted" from "opening_times" where "bookings"."start_time_id" = "opening_times"."id")
       + (select "opening_times"."end_day_counted" from "opening_times" where "bookings"."end_time_id" = "opening_times"."id")
       `.as('days')
-  ])
+    ])
 }
 
 export async function findBooking({
@@ -594,13 +700,15 @@ export async function findBooking({
     })
 
     const categories = await db.selectFrom('categories').selectAll().execute()
+    const costs = await calculateBookingCosts({
+      booking: { ...result, days },
+      categories,
+      withServices: true
+    })
     return {
       ...result,
-      costs: await calculateBookingCosts({
-        booking: { ...result, days },
-        categories,
-        withServices: true
-      })
+      costs
+      // amountDue: calculateAmountDue(result)
     }
   } else {
     return result
@@ -661,10 +769,10 @@ export async function findBookings({
         categories,
         withServices: true
       })
-
       return {
         ...result,
         costs
+        // amountDue: calculateAmountDue(result)
       }
     })
   )
@@ -959,8 +1067,15 @@ export async function createOrUpdateBookingOrder({
   booking: ParsedBooking
   fastify: FastifyInstance
 }) {
-  if (booking.orderId) await updateBookingOrder({ booking, fastify })
-  else await createBookingOrder({ booking, fastify })
+  if (booking.orderId) {
+    if (
+      !checkIfBookingCostsMatchOrder({
+        costs: booking.costs,
+        order: booking.order
+      })
+    )
+      await updateBookingOrder({ booking, fastify })
+  } else await createBookingOrder({ booking, fastify })
 }
 
 async function createBookingOrder({

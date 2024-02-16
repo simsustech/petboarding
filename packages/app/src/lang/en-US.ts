@@ -37,7 +37,8 @@ const lang: Language = {
       administrator: 'Administrator',
       employee: 'Employee',
       intern: 'Intern',
-      manager: 'Manager'
+      manager: 'Manager',
+      pointofsale: 'Point of sale'
     },
     messages: {
       addRole: 'Add role',
@@ -370,6 +371,13 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion: 'Are you sure you want to delete the following category?'
+    }
+  },
+  checkout: {
+    success: 'Your payment has been received.',
+    amountDue: 'Amount due',
+    messages: {
+      amountPaid: 'Please enter the paid amount.'
     }
   },
   errors: {

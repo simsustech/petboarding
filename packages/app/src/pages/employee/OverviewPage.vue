@@ -81,6 +81,7 @@
                   )"
                   :key="booking.id"
                   :model-value="booking"
+                  :show-pay-button="user?.roles.includes('pointofsale')"
                   @open-customer="
                     ({ id }) => router.push(`/employee/customers/${id}`)
                   "
@@ -90,6 +91,7 @@
                   @open-pets="
                     ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
                   "
+                  @pay-cash="payCash"
                 ></booking-item>
               </div>
             </q-list>
@@ -118,6 +120,7 @@
                   @open-pets="
                     ({ ids }) => router.push(`/employee/pets/${ids.join('/')}`)
                   "
+                  @pay-cash="payCash"
                 ></booking-item>
               </div>
             </q-list>
@@ -174,14 +177,16 @@ export default {
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { QStyledCard } from '@simsustech/quasar-components'
 import { createUseTrpc } from '../../trpc.js'
-import { QInput, date as dateUtil } from 'quasar'
-import BookingItem from 'src/components/booking/BookingItem.vue'
+import { QInput, date as dateUtil, useQuasar } from 'quasar'
+import BookingItem from '../../components/booking/BookingItem.vue'
 import { BOOKING_STATUS, DAYCARE_DATE_STATUS, Pet } from '@petboarding/api/zod'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
-
+import { user } from '../../oauth.js'
+import PayCashDialog from '../../components/checkout/PayCashDialog.vue'
 const lang = useLang()
-const { useQuery } = await createUseTrpc()
+const $q = useQuasar()
+const { useQuery, useMutation } = await createUseTrpc()
 const router = useRouter()
 const route = useRoute()
 const selectedDate = ref(
@@ -214,7 +219,10 @@ const { data: bookingsData, execute: executeGetBookings } = useQuery(
       reactive({
         from: parsedDate.value,
         until: parsedDate.value,
-        status: BOOKING_STATUS.APPROVED
+        status: BOOKING_STATUS.APPROVED,
+        relations: {
+          order: true
+        }
       })
   }
 )
@@ -279,6 +287,36 @@ const printPage = async () => {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   }
   html2pdf(element, opt)
+}
+
+const payCash: InstanceType<
+  typeof BookingItem
+>['$props']['onPayCash'] = async ({ data, done }) => {
+  if (data.id) {
+    $q.dialog({
+      component: PayCashDialog
+      // message: lang.value.checkout.messages.amountPaid,
+      // prompt: {
+      //   model: '',
+      //   isValid: (val) => Math.round(Number(val) * 100) / 100 > 0,
+      //   type: 'number',
+      //   step: 0.01,
+
+      // },
+      // cancel: true
+    }).onOk(async (input) => {
+      const result = useMutation('pointofsale.payBookingCash', {
+        args: {
+          bookingId: data.id!,
+          amount: Math.round(Number(input) * 100)
+        },
+        immediate: true
+      })
+      await result.immediatePromise
+
+      if (!result.error.value) executeGetBookings()
+    })
+  }
 }
 
 onMounted(async () => {

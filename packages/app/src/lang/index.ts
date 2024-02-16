@@ -36,6 +36,7 @@ export interface Language {
       employee: string
       intern: string
       manager: string
+      pointofsale: string
     }
     messages: {
       addRole: string
@@ -353,6 +354,13 @@ export interface Language {
     }
     messages: {
       verifyDeletion: string
+    }
+  }
+  checkout: {
+    success: string
+    amountDue: string
+    messages: {
+      amountPaid: string
     }
   }
   errors: {

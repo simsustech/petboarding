@@ -12,10 +12,14 @@
             :model-value="booking"
             show-icon
             show-edit-button
-            show-create-order-button
+            :show-create-order-button="
+              booking.status?.status === BOOKING_STATUS.APPROVED &&
+              booking.costs &&
+              !booking.orderId
+            "
             @update="openUpdateDialog"
             @cancel="cancelBooking"
-            @create-order="onCreateOrder"
+            @pay-amount-due-online="onPayAmountDueOnline(booking)"
           />
         </q-list>
       </div>
@@ -63,6 +67,7 @@ import { extend } from 'quasar'
 import { computed } from 'vue'
 import { useConfiguration } from '../../configuration.js'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
+import { BOOKING_STATUS, Booking } from '@petboarding/api/zod'
 const configuration = useConfiguration()
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
@@ -178,26 +183,42 @@ const createBooking: InstanceType<
   done(!result.error.value)
 }
 
-const onCreateOrder: InstanceType<
-  typeof BookingItem
->['$props']['onCreateOrder'] = async ({ data, done }) => {
-  if (data.id) {
-    const result = useMutation('user.createOrderForBooking', {
+const onPayAmountDueOnline = async (booking: Booking) => {
+  if (booking.id) {
+    const result = useMutation('user.payAmountDueOnline', {
       args: {
-        id: data.id
+        bookingId: booking.id
       },
       immediate: true
     })
     await result.immediatePromise
 
-    if (!result.error.value) {
-      execute()
+    if (result.data.value) {
+      window.location.href = result.data.value
     }
-    // if (result.data.value) modelValue.value = result.data.value
-    done(!result.error.value)
   }
 }
 
+// const onPayAmountDueCash = async (booking: Booking) => {
+//   if (booking.id) {
+//     $q.dialog({
+//       message: 'amount',
+//       prompt: {
+//         model: '',
+//         isValid: (val) => Math.round(Number(val) * 100) / 100 > 0
+//       }
+//     }).onOk(async (input) => {
+//       const result = useMutation('user.payCash', {
+//         args: {
+//           bookingId: booking.id!,
+//           amount: Math.round(Number(input) * 100)
+//         },
+//         immediate: true
+//       })
+//       await result.immediatePromise
+//     })
+//   }
+// }
 const ready = ref<boolean>(false)
 onMounted(async () => {
   await executeCustomer()

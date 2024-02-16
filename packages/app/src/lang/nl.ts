@@ -37,7 +37,8 @@ const lang: Language = {
       administrator: 'Administrator',
       employee: 'Medewerker',
       intern: 'Stagair',
-      manager: 'Manager'
+      manager: 'Manager',
+      pointofsale: 'Verkooppunt'
     },
     messages: {
       addRole: 'Rol toevoegen',
@@ -376,6 +377,13 @@ const lang: Language = {
     messages: {
       verifyDeletion:
         'Weet u zeker dat u de volgende categorie wilt verwijderen?'
+    }
+  },
+  checkout: {
+    success: 'Uw betaling is ontvangen.',
+    amountDue: 'Openstaand bedrag',
+    messages: {
+      amountPaid: 'Vul het betaalde bedrag in.'
     }
   },
   errors: {

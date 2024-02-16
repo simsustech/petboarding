@@ -59,7 +59,9 @@ export const bookingValidation = {
   statuses: bookingStatus.array().optional(),
   services: bookingService.array().optional(),
   serviceIds: z.number().array().optional(),
-  isDoubleBooked: z.boolean().optional()
+  isDoubleBooked: z.boolean().optional(),
+  order: z.unknown().optional(),
+  amountDue: z.number().optional()
 }
 
 export const booking = z.object(bookingValidation)

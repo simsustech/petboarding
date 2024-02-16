@@ -54,6 +54,9 @@ export const employeeBookingRoutes = ({
         const bookings = findBookings({
           criteria: {
             ids
+          },
+          relations: {
+            order: true
           }
         })
 
@@ -67,11 +70,16 @@ export const employeeBookingRoutes = ({
         from: z.string(),
         until: z.string(),
         status: z.nativeEnum(BOOKING_STATUS).optional(),
-        customerId: z.number().optional()
+        customerId: z.number().optional(),
+        relations: z
+          .object({
+            order: z.boolean().optional()
+          })
+          .optional()
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status, customerId } = input
+      const { from, until, status, customerId, relations } = input
       if (from && until) {
         const bookings = findBookings({
           criteria: {
@@ -79,7 +87,8 @@ export const employeeBookingRoutes = ({
             until,
             status,
             customerId
-          }
+          },
+          relations
         })
         return bookings
       }

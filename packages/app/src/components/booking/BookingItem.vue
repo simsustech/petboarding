@@ -5,6 +5,7 @@
       :show-icon="showIcon"
       :show-approval-buttons="showApprovalButtons"
       :show-edit-button="showEditButton"
+      :show-pay-button="showPayButton"
       :status="status"
       @update="($event) => emit('update', $event)"
       @cancel="($event) => emit('cancel', $event)"
@@ -13,7 +14,7 @@
       @standby="($event) => emit('standby', $event)"
       @reply="($event) => emit('reply', $event)"
       @settle-cancellation="($event) => emit('settleCancellation', $event)"
-      @create-order="($event) => emit('createOrder', $event)"
+      @pay-cash="($event) => emit('payCash', $event)"
     />
 
     <q-menu touch-position context-menu>
@@ -77,6 +78,7 @@ export interface Props {
   showApprovalButtons?: boolean
   showEditButton?: boolean
   showCreateOrderButton?: boolean
+  showPayButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
   onOpenCustomer?: unknown
   onOpenBooking?: unknown
@@ -191,6 +193,16 @@ const emit = defineEmits<{
     }: {
       data: Booking
       done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'payCash',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done?: (success?: boolean) => void
     }
   ): void
 }>()

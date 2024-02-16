@@ -4,7 +4,8 @@ export enum PETBOARDING_ACCOUNT_ROLES {
   ADMINISTRATOR = 'administrator',
   MANAGER = 'manager',
   EMPLOYEE = 'employee',
-  INTERN = 'intern'
+  INTERN = 'intern',
+  POINT_OF_SALE = 'pointofsale'
 }
 
 export const accountValidation = {

@@ -6,6 +6,8 @@ import type {
 } from '@modular-api/fastify-oidc/kysely'
 
 import type { Database as CartDatabase } from '@modular-api/fastify-cart/kysely'
+import type { Database as CheckoutDatabase } from '@modular-api/fastify-checkout/kysely'
+
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>
@@ -256,7 +258,7 @@ export interface Vaccinations {
   createdAt: Generated<string>
 }
 
-export interface DB extends CartDatabase {
+export interface DB extends CartDatabase, CheckoutDatabase {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
   // oidcPayloads: OidcPayloads

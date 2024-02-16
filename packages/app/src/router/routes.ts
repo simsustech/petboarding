@@ -178,14 +178,21 @@ const routes: RouteRecordRaw[] = [
         ]
       },
       {
+        path: 'checkout',
+        component: () => import('../pages/CheckoutPage.vue'),
+        children: [
+          {
+            path: 'success',
+            component: import('../pages/checkout/SuccessPage.vue')
+          }
+        ]
+      },
+      {
         path: '/:catchAll(.*)*',
         component: () => import('src/pages/Error404Page.vue')
       }
     ]
   }
-
-  // Always leave this as last one,
-  // but you can also remove it
 ]
 
 export default routes
