@@ -6,7 +6,7 @@
       height: height - 4 + 'mm'
     }"
   >
-    <div class="row text-subtitle2">
+    <div class="row text-subtitle2 q-mt-md" style="line-height: 1em">
       {{ formatDate(modelValue.startDate, modelValue.startTime?.name) }}
       <br />
       {{ lang.booking.until }}
