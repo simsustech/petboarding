@@ -175,7 +175,7 @@ const setValue = (newValue: Booking) => {
     from: newValue.startDate.replaceAll('-', '/'),
     to: newValue.endDate.replaceAll('-', '/')
   }
-  initialStartDate.value = newValue.startDate.replaceAll('-', '/')
+  initialStartDate.value = newValue.startDate
 }
 
 const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
@@ -203,8 +203,9 @@ const limitDateOptionsFn = (date: string) => {
     date >
       dateUtil.formatDate(
         dateUtil.subtractFromDate(
-          initialStartDate.value
-            ? dateUtil.extractDate(initialStartDate.value, 'YYYY/MM/DD')
+          initialStartDate.value &&
+            initialStartDate.value < new Date().toISOString().slice(0, 10)
+            ? dateUtil.extractDate(initialStartDate.value, 'YYYY-MM-DD')
             : new Date(),
           {
             days: allowPastDates?.value ? 14 : 2
