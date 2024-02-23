@@ -151,7 +151,7 @@ import { toRefs, useAttrs } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Pet as PetType, Category } from '@petboarding/api/zod'
-import { useLang } from 'src/lang/index.js'
+import { useLang } from '../../lang/index.js'
 import {
   FormItem,
   GenderItem,

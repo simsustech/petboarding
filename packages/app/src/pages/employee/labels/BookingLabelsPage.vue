@@ -21,7 +21,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import BookingLabel from 'src/components/booking/BookingLabel.vue'
+import BookingLabel from '../../../components/booking/BookingLabel.vue'
 import { createUseTrpc } from '../../../trpc.js'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 

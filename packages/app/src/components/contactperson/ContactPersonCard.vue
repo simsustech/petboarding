@@ -35,7 +35,7 @@ export default {
 import { ref, toRefs } from 'vue'
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { ContactPerson } from '@petboarding/api/zod'
-import { useLang } from 'src/lang/index.js'
+import { useLang } from '../../lang/index.js'
 import { FormItem } from '@simsustech/quasar-components/form'
 
 export interface Props {

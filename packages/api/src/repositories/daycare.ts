@@ -9,7 +9,7 @@ import type {
   Selectable,
   Updateable
 } from 'kysely'
-import { DAYCARE_DATE_STATUS } from 'src/zod'
+import { DAYCARE_DATE_STATUS } from '../zod/index.js'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>

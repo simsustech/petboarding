@@ -9,7 +9,7 @@ import {
   findBookings,
   findBookingService,
   updateBooking
-} from 'src/repositories/booking'
+} from '../../repositories/booking.js'
 
 export const employeeBookingValidation = booking.omit({
   customerId: true,

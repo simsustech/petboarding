@@ -16,8 +16,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import AccountSelect from 'src/components/admin/AccountSelect.vue'
-import AccountCard from 'src/components/admin/AccountCard.vue'
+import AccountSelect from '../../components/admin/AccountSelect.vue'
+import AccountCard from '../../components/admin/AccountCard.vue'
 import { reactive, ref } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import { extend } from 'quasar'

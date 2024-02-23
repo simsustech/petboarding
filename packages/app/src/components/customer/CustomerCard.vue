@@ -90,7 +90,7 @@ export default {
 <script setup lang="ts">
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Customer } from '@petboarding/api/zod'
-import { useLang } from 'src/lang/index.js'
+import { useLang } from '../../lang/index.js'
 import { GenderItem, FormItem } from '@simsustech/quasar-components/form'
 import { toRefs } from 'vue'
 

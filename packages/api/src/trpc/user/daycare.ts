@@ -8,8 +8,8 @@ import {
   findDaycareDates,
   findDaycareDatesByIds,
   updateDaycareDate
-} from 'src/repositories/daycare'
-import { findCustomer } from 'src/repositories/customer'
+} from '../../repositories/daycare.js'
+import { findCustomer } from '../../repositories/customer.js'
 import { addDays } from 'date-fns'
 
 export const userDaycareValidation = daycareDate.omit({

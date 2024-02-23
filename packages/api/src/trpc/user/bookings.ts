@@ -13,7 +13,7 @@ import {
 } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer'
 import env from '@vitrify/tools/env'
-import { findEmailTemplate } from 'src/repositories/emailTemplate'
+import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { compileEmail } from '../admin/bookings'
 
 const MAIL_BCC = env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC')

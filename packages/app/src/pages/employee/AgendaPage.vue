@@ -21,9 +21,9 @@ export default {
 
 <script setup lang="ts">
 import { BOOKING_STATUS } from '@petboarding/api/zod'
-import AgendaComponent from 'src/components/AgendaComponent.vue'
+import AgendaComponent from '../../components/AgendaComponent.vue'
 import { onMounted, reactive, ref } from 'vue'
-import BookingStatusSelect from 'src/components/booking/BookingStatusSelect.vue'
+import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
 import { createUseTrpc } from '../../trpc.js'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useRouter } from 'vue-router'

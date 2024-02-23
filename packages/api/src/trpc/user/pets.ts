@@ -6,7 +6,7 @@ import { PET_IMAGE_SIZE } from '../../zod/pet.js'
 import { findPets, createPet, updatePet } from '../../repositories/pet.js'
 import type { Pet } from '../../repositories/pet.js'
 import type { FastifyInstance } from 'fastify'
-import { findCustomer } from 'src/repositories/customer'
+import { findCustomer } from '../../repositories/customer.js'
 
 export const userPetValidation = pet.omit({
   customerId: true,

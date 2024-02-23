@@ -10,7 +10,7 @@ import {
   type ExpressionBuilder,
   sql
 } from 'kysely'
-import { Vaccination } from 'src/zod'
+import { Vaccination } from '../zod/index.js'
 import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
 type NewPet = Insertable<Pets>

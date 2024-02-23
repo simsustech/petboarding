@@ -100,7 +100,7 @@ import ContactPersonItem from '../../components/contactperson/ContactPersonItem.
 import { useLang } from '../../lang/index.js'
 import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
 import { DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
-import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from 'src/configuration'
+import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
 import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 

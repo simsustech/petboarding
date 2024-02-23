@@ -2,8 +2,8 @@ import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
-import { findDaycareDates } from 'src/repositories/daycare'
-import { DAYCARE_DATE_STATUS } from 'src/zod'
+import { findDaycareDates } from '../../repositories/daycare.js'
+import { DAYCARE_DATE_STATUS } from '../../zod/index.js'
 
 export const employeeDaycareRoutes = ({
   // fastify,

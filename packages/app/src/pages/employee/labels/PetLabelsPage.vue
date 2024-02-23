@@ -27,7 +27,7 @@ export default {
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import PetLabel from 'src/components/pet/PetLabel.vue'
+import PetLabel from '../../../components/pet/PetLabel.vue'
 import { createUseTrpc } from '../../../trpc.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 

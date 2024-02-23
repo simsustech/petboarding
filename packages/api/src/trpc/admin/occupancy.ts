@@ -3,8 +3,8 @@ import * as z from 'zod'
 import { BOOKING_STATUS } from '../../zod/booking.js'
 import { parseISO, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
 
-import { findBookings } from 'src/repositories/booking'
-import { findDaycareDates } from 'src/repositories/daycare'
+import { findBookings } from '../../repositories/booking.js'
+import { findDaycareDates } from '../../repositories/daycare.js'
 import type { FastifyInstance } from 'fastify'
 
 export const adminOccupancyRoutes = ({

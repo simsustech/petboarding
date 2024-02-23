@@ -8,7 +8,7 @@ import {
   findPeriods,
   updatePeriod,
   deletePeriod
-} from 'src/repositories/period'
+} from '../../repositories/period.js'
 
 export const configurationPeriodRoutes = ({
   // fastify,

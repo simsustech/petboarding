@@ -21,8 +21,8 @@ import {
   cancelBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
-import { findEmailTemplate } from 'src/repositories/emailTemplate.js'
-import { findCustomer } from 'src/repositories/customer.js'
+import { findEmailTemplate } from '../../repositories/emailTemplate.js'
+import { findCustomer } from '../../repositories/customer.js'
 
 export const compileEmail = async ({
   booking,

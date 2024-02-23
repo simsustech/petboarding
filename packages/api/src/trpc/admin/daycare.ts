@@ -3,9 +3,12 @@ import { t } from '../index.js'
 import type { FastifyInstance } from 'fastify'
 
 import * as z from 'zod'
-import { DAYCARE_DATE_STATUS } from 'src/zod'
-import { findDaycareDates, getDaycareDateCount } from 'src/repositories/daycare'
-import { updateDaycareDate } from 'src/repositories/daycare'
+import { DAYCARE_DATE_STATUS } from '../../zod/index.js'
+import {
+  findDaycareDates,
+  getDaycareDateCount
+} from '../../repositories/daycare.js'
+import { updateDaycareDate } from '../../repositories/daycare'
 import { addMonths } from 'date-fns'
 
 export const adminDaycareRoutes = ({
