@@ -50,6 +50,7 @@ const options = ref<
 const filterFn = (val, update) => {
   if (val === '') {
     options.value = []
+    update()
   } else {
     email.value = val.toLowerCase()
     execute().then(() => {
