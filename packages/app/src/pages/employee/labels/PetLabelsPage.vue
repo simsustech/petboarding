@@ -72,7 +72,7 @@ const printLabels = async () => {
     html2canvas: { scale: 1 },
     jsPDF: {
       unit: 'mm',
-      format: [LABEL_WIDTH, LABEL_HEIGHT],
+      format: [LABEL_WIDTH, LABEL_HEIGHT + 4],
       orientation: 'portrait'
     },
     pagebreak: { after: '.label' }
