@@ -16,6 +16,7 @@
         :model-value="pet"
         :categories="categories"
         use-rating
+        use-comments
         show-add-vaccination
         :allow-delete="user?.roles.includes('administrator')"
         @add:vaccination="openCreateVaccinationDialog"

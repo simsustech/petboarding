@@ -98,6 +98,11 @@
           :label="lang.pet.fields.insured"
           :model-value="modelValue.insured"
         />
+        <form-item
+          v-if="useComments"
+          :label="lang.pet.fields.comments"
+          :model-value="modelValue.comments"
+        />
       </q-list>
       <q-list v-if="modelValue.vaccinations || showAddVaccination">
         <q-item>
@@ -169,6 +174,7 @@ export interface Props {
   modelValue: Pet
   categories: Record<string, Category>
   useRating?: boolean
+  useComments?: boolean
   showAddVaccination?: boolean
   allowDelete?: boolean
   onOpenCustomer?: unknown
