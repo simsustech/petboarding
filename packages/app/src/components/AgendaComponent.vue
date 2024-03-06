@@ -72,7 +72,8 @@
       :day-min-height="200"
       :locale="$q.lang.isoName"
       :style="{
-        height: '100%'
+        height: '100%',
+        'min-width': '600px'
       }"
       animated
       bordered
@@ -340,11 +341,10 @@ const contentSize = ref({
   width: '100%',
   height: '200px'
 })
-const minWidth = 600
 const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   size
 ) => {
-  contentSize.value.width = size.width > minWidth ? '100%' : `${minWidth}px`
+  contentSize.value.width = '100%'
   contentSize.value.height = `${size.height}px`
 }
 
