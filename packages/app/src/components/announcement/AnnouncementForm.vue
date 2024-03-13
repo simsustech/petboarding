@@ -34,6 +34,7 @@
       <date-input
         v-model="modelValue.expirationDate"
         :label="lang.announcement.fields.expirationDate"
+        format="DD-MM-YYYY"
         required
         clearable
         class="col-md-6 col-12"

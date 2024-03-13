@@ -13,6 +13,7 @@
       <date-input
         v-model="modelValue.expirationDate"
         :label="lang.pet.vaccination.expirationDate"
+        format="DD-MM-YYYY"
         clearable
         required
         class="col-12"

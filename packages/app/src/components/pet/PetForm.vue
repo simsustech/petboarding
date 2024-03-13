@@ -37,6 +37,7 @@
       <date-input
         v-model="modelValue.birthDate"
         :label="lang.pet.fields.birthDate"
+        format="DD-MM-YYYY"
         clearable
         required
         class="col-md-4 col-12"
@@ -73,6 +74,7 @@
         v-model="modelValue.chemicalSterilizationDate"
         :label="lang.pet.fields.chemicalSterilizationDate"
         :hint="lang.pet.messages.chemicalSterilizationDate"
+        format="DD-MM-YYYY"
         clearable
         class="col-md-4 col-12"
         :date="{
