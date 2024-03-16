@@ -509,29 +509,32 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
-  return query.select(select).select(({ selectFrom }) => [
-    selectFrom('openingTimes')
-      .select('openingTimes.startDayCounted')
-      .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
-      .as('startDayCounted'),
-    selectFrom('openingTimes')
-      .select('openingTimes.endDayCounted')
-      .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
-      .as('endDayCounted'),
-    withCustomer,
-    withPets,
-    withStartTime,
-    withEndTime,
-    withServices,
-    withStatuses,
-    withStatus,
-    withIsDoubleBooked,
-    sql<number>`bookings.end_date - 
+  return query
+    .select(select)
+    .select(({ selectFrom }) => [
+      selectFrom('openingTimes')
+        .select('openingTimes.startDayCounted')
+        .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
+        .as('startDayCounted'),
+      selectFrom('openingTimes')
+        .select('openingTimes.endDayCounted')
+        .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
+        .as('endDayCounted'),
+      withCustomer,
+      withPets,
+      withStartTime,
+      withEndTime,
+      withServices,
+      withStatuses,
+      withStatus,
+      withIsDoubleBooked,
+      sql<number>`bookings.end_date - 
       bookings.start_date - 1
       + (select "opening_times"."start_day_counted" from "opening_times" where "bookings"."start_time_id" = "opening_times"."id")
       + (select "opening_times"."end_day_counted" from "opening_times" where "bookings"."end_time_id" = "opening_times"."id")
       `.as('days')
-  ])
+    ])
+    .orderBy('startDate', 'asc')
 }
 
 export async function findBooking({
