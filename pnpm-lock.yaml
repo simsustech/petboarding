@@ -186,8 +186,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.5.2
-        version: 0.5.2(quasar@2.14.3)
+        specifier: ^0.5.3
+        version: 0.5.3(quasar@2.14.3)
       '@trpc/client':
         specifier: ^10.45.0
         version: 10.45.0(@trpc/server@10.45.0)
@@ -210,8 +210,8 @@ importers:
         specifier: 0.10.1
         version: 0.10.1
       lionel-oauth-client:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.6.0
+        version: 0.6.0
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -3039,8 +3039,8 @@ packages:
       validator: 13.11.0
     dev: false
 
-  /@simsustech/quasar-components@0.5.2(quasar@2.14.3):
-    resolution: {integrity: sha512-wE8EARosglND/mb6ppafLYlgmaUVns4phhwD9ZVRDYp7CxAciFNtmTwzWlMzVB5x+BnViHbkVkGqAnTQtX2prA==}
+  /@simsustech/quasar-components@0.5.3(quasar@2.14.3):
+    resolution: {integrity: sha512-xeih/GTNbbXYWUPGAiKEYh4k5yIVoVWuhDVBd/oD2wbHUK2375YQME3jYRimHgLNNtf58LD5trsqSNI08FGOPQ==}
     peerDependencies:
       quasar: ^2.9.2
     dependencies:
@@ -6701,8 +6701,8 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
-  /lionel-oauth-client@0.5.0:
-    resolution: {integrity: sha512-TkGjYOd0WdfXVtwz8TuR89ghLmD8pZKHY8ZOUIEuD9Jlb8FhvxaeKYQiPhDYgKDSJEzXHRJXakB1SJQIbjkkcQ==}
+  /lionel-oauth-client@0.6.0:
+    resolution: {integrity: sha512-6EdUcG8j01/+axyuO7ykKQHTM0GqO6xArgO+SiiQTl9oANmNNt3eHVRrHrV8FdoAHmlNnc1cV3AjT0e5/ORyTA==}
     dependencies:
       oauth-pkce: 0.0.6
     dev: false
