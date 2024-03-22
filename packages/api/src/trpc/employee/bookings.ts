@@ -143,7 +143,7 @@ export const employeeBookingRoutes = ({
         const { id, reason } = input
 
         if (id) {
-          await cancelBooking({ id }, reason)
+          await cancelBooking({ id }, reason, true)
           return true
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })
