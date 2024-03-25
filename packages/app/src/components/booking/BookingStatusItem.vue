@@ -45,6 +45,8 @@ import { useLang } from '..//../lang/index.js'
 import { BookingStatus, Pet } from '@petboarding/api/zod'
 import { computed } from 'vue'
 import { toRefs } from 'vue'
+import { formatBookingDates } from './BookingItemContent.vue'
+import { useQuasar } from 'quasar'
 
 export interface Props {
   modelValue: BookingStatus
@@ -53,6 +55,7 @@ export interface Props {
 const props = defineProps<Props>()
 
 const lang = useLang()
+const $q = useQuasar()
 
 const { modelValue, pets } = toRefs(props)
 const formatDates = (
@@ -61,13 +64,14 @@ const formatDates = (
   endDate: string,
   endTime: string
 ) => {
-  return `${dateUtil.formatDate(
-    new Date(startDate),
-    'D MMMM YYYY'
-  )} ${startTime} ${lang.value.booking.until} ${dateUtil.formatDate(
-    new Date(endDate),
-    'D MMMM YYYY'
-  )} ${endTime}`
+  return formatBookingDates({
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    lang: lang.value,
+    locale: $q.lang.isoName
+  })
 }
 
 const petNames = computed(() => {

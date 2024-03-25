@@ -46,7 +46,7 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { date as dateUtil } from 'quasar'
+import { useQuasar } from 'quasar'
 import type { PERIOD_TYPE } from '@petboarding/api/zod'
 export interface Period {
   startDate: string
@@ -62,6 +62,7 @@ export interface Props {
 }
 defineProps<Props>()
 
+const $q = useQuasar()
 const emit = defineEmits<{
   (
     e: 'update',
@@ -87,8 +88,13 @@ const emit = defineEmits<{
 
 const lang = useLang()
 
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: 'UTC'
+  }).format(date)
 const formatDate = (date: string | null) => {
-  if (date) return dateUtil.formatDate(new Date(date), 'DD MMMM YYYY')
+  if (date) return dateFormatter(new Date(date), $q.lang.isoName)
   return '-'
 }
 

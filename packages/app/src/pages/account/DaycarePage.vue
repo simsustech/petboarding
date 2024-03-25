@@ -70,7 +70,7 @@ import DaycareCalendarMonth, {
   QCalendarEvent
 } from '../../components/daycare/DaycareCalendarMonth.vue'
 import { useLang } from '../../lang/index.js'
-import { useQuasar, date as dateUtil } from 'quasar'
+import { useQuasar } from 'quasar'
 import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
 import {
   DAYCARE_DATE_COLORS,
@@ -160,6 +160,12 @@ const createDaycare: InstanceType<
   done(!result.error.value)
 }
 
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: 'UTC'
+  }).format(date)
+
 const cancelDaycareDates = async () => {
   $q.dialog({
     html: true,
@@ -169,7 +175,7 @@ const cancelDaycareDates = async () => {
     } <br /> <b>${events.value
       ?.filter((ev) => selectedEvents.value.includes(ev.id))
       .map((event) => {
-        return dateUtil.formatDate(new Date(event.date), 'D MMM YYYY')
+        return dateFormatter(new Date(event.date), $q.lang.isoName)
       })
       .join('<br />')}</b>`
   }).onOk(async () => {

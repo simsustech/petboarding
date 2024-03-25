@@ -74,7 +74,7 @@ export default {
 import { ref } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { Booking, Pet, Service } from '@petboarding/api/zod'
-import { date as dateUtil } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 
 export interface Props {
@@ -84,10 +84,17 @@ export interface Props {
 }
 defineProps<Props>()
 const lang = useLang()
+const $q = useQuasar()
 const configuration = useConfiguration()
 
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium',
+    timeZone: 'UTC'
+  }).format(date)
+
 const formatDate = (date: string, time?: string) => {
-  return `${dateUtil.formatDate(new Date(date), 'D MMMM YYYY')} ${time}`
+  return `${dateFormatter(new Date(date), $q.lang.isoName)} ${time}`
 }
 
 const getPetNames = (pets?: Pet[]) => {

@@ -207,11 +207,12 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.sass'
 
 import AgendaChip from './AgendaChip.vue'
 import { onMounted, ref, toRefs, watch } from 'vue'
-import { QResizeObserver, date as dateUtil } from 'quasar'
+import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
 import { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
 import { BOOKING_SERVICE_COLORS } from '../configuration.js'
+import { formatBookingDates } from './booking/BookingItemContent.vue'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 export interface Props {
   bookings?: Booking[]
@@ -221,6 +222,7 @@ export interface Props {
 }
 const props = defineProps<Props>()
 const { bookings, daycareDates, selectedPets } = toRefs(props)
+const $q = useQuasar()
 
 const emit = defineEmits<{
   (
@@ -307,11 +309,14 @@ const getNumberOfDaycarePets = (date: string) =>
     }, 0)
 
 const formatBooking = (booking: Booking) =>
-  `${dateUtil.formatDate(new Date(booking.startDate), 'D MMMM YYYY')} ${booking
-    .startTime?.name} ${lang.value.booking.until} ${dateUtil.formatDate(
-    new Date(booking.endDate),
-    'D MMMM YYYY'
-  )} ${booking.endTime?.name}`
+  formatBookingDates({
+    startDate: booking.startDate,
+    startTime: booking.startTime!.name,
+    endDate: booking.endDate,
+    endTime: booking.endTime!.name,
+    lang: lang.value,
+    locale: $q.lang.isoName
+  })
 
 const onClickPet: InstanceType<typeof AgendaChip>['$props']['onClick'] = ({
   data,

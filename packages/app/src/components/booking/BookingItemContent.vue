@@ -134,20 +134,40 @@
 </template>
 
 <script lang="ts">
+import type { Language } from '../../lang/index.js'
 export default {
   name: 'BookingItemContent'
+}
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'full',
+    timeZone: 'UTC'
+  }).format(date)
+
+export const formatBookingDates = ({
+  startDate,
+  startTime,
+  endDate,
+  endTime,
+  lang,
+  locale
+}: {
+  startDate: string
+  startTime: string
+  endDate: string
+  endTime: string
+  lang: Language
+  locale: string
+}) => {
+  return `${dateFormatter(new Date(startDate), locale)} ${startTime}
+  ${lang.booking.until}
+  ${dateFormatter(new Date(endDate), locale)} ${endTime}`
 }
 </script>
 
 <script setup lang="ts">
 import { watch } from 'vue'
-import {
-  QItem,
-  QItemLabel,
-  QItemSection,
-  useQuasar,
-  date as dateUtil
-} from 'quasar'
+import { QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
 import { Booking, BOOKING_STATUS } from '@petboarding/api/zod'
 import { BOOKING_ICON, BOOKING_ICON_COLOR } from '../../configuration.js'
@@ -255,13 +275,14 @@ const formatDates = (
   endDate: string,
   endTime: string
 ) => {
-  return `${dateUtil.formatDate(
-    new Date(startDate),
-    'D MMMM YYYY'
-  )} ${startTime} ${lang.value.booking.until} ${dateUtil.formatDate(
-    new Date(endDate),
-    'D MMMM YYYY'
-  )} ${endTime}`
+  return formatBookingDates({
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    lang: lang.value,
+    locale: $q.lang.isoName
+  })
 }
 
 const update = (booking: Booking) => {

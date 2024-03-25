@@ -48,7 +48,7 @@ export default {
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useQuasar, date as dateUtil } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { createUseTrpc } from '../../trpc.js'
 import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
@@ -131,6 +131,12 @@ const numberOfPets = computed(() => {
   )
 })
 
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: 'UTC'
+  }).format(date)
+
 const approveDaycareDates = async () => {
   $q.dialog({
     html: true,
@@ -139,9 +145,9 @@ const approveDaycareDates = async () => {
     } <br /> <b>${events.value
       ?.filter((ev) => selectedEvents.value.includes(ev.id))
       .map((event) => {
-        return `${event.title} ${dateUtil.formatDate(
+        return `${event.title} ${dateFormatter(
           new Date(event.date),
-          'D MMM YYYY'
+          $q.lang.isoName
         )}`
       })
       .join('<br />')}</b>`
@@ -164,9 +170,9 @@ const rejectDaycareDates = async () => {
     } <br /> <b>${events.value
       ?.filter((ev) => selectedEvents.value.includes(ev.id))
       .map((event) => {
-        return `${event.title} ${dateUtil.formatDate(
+        return `${event.title} ${dateFormatter(
           new Date(event.date),
-          'D MMM YYYY'
+          $q.lang.isoName
         )}`
       })
       .join('<br />')}</b>`
@@ -189,9 +195,9 @@ const standbyDaycareDates = async () => {
     } <br /> <b>${events.value
       ?.filter((ev) => selectedEvents.value.includes(ev.id))
       .map((event) => {
-        return `${event.title} ${dateUtil.formatDate(
+        return `${event.title} ${dateFormatter(
           new Date(event.date),
-          'D MMM YYYY'
+          $q.lang.isoName
         )}`
       })
       .join('<br />')}</b>`

@@ -153,7 +153,7 @@ export default {
 
 <script setup lang="ts">
 import { toRefs, useAttrs } from 'vue'
-import { date as dateUtil } from 'quasar'
+import { useQuasar } from 'quasar'
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Pet as PetType, Category } from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
@@ -235,6 +235,7 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 const lang = useLang()
+const $q = useQuasar()
 
 const { modelValue } = toRefs(props)
 
@@ -267,8 +268,13 @@ const updateVaccination = (vaccination: Vaccination) => {
   }
 }
 
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: 'UTC'
+  }).format(date)
 const formatDate = (date: string | null) => {
-  if (date) return dateUtil.formatDate(new Date(date), 'DD MMM YYYY')
+  if (date) return dateFormatter(new Date(date), $q.lang.isoName)
   return '-'
 }
 

@@ -36,7 +36,7 @@ export default {
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
-import { date as dateUtil } from 'quasar'
+import { date as dateUtil, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Vaccination as VaccinationType } from '@petboarding/api/zod'
 import ImageAvatar from '../ImageAvatar.vue'
@@ -58,12 +58,20 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
+const $q = useQuasar()
 
 const { modelValue } = toRefs(props)
+
+const dateFormatter = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    dateStyle: 'long',
+    timeZone: 'UTC'
+  }).format(date)
 const formatDate = (date: string | null) => {
-  if (date) return dateUtil.formatDate(new Date(date), 'DD MMM YYYY')
+  if (date) return dateFormatter(new Date(date), $q.lang.isoName)
   return '-'
 }
+
 const hasExpired = computed(() => {
   const currentDate = dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
   return modelValue.value.expirationDate < currentDate
