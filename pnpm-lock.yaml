@@ -186,8 +186,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.5.4
-        version: 0.5.4(quasar@2.14.3)
+        specifier: ^0.5.6
+        version: 0.5.6(quasar@2.14.3)
       '@trpc/client':
         specifier: ^10.45.0
         version: 10.45.0(@trpc/server@10.45.0)
@@ -319,8 +319,8 @@ importers:
         specifier: 1.16.9
         version: 1.16.9
       '@simsustech/quasar-components':
-        specifier: ^0.4.7
-        version: 0.4.7(quasar@2.14.3)
+        specifier: ^0.5.6
+        version: 0.5.6(quasar@2.14.3)
       quasar:
         specifier: 2.14.3
         version: 2.14.3
@@ -3030,17 +3030,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@simsustech/quasar-components@0.4.7(quasar@2.14.3):
-    resolution: {integrity: sha512-QTEfYAbl83FAncx6OMjyyObj88rnX+jRZrhmbf56oB6wAo/UvTuL1yBLIDI70R663YVmEOpngdMT/CsiogRAdQ==}
-    peerDependencies:
-      quasar: ^2.9.2
-    dependencies:
-      quasar: 2.14.3
-      validator: 13.11.0
-    dev: false
-
-  /@simsustech/quasar-components@0.5.4(quasar@2.14.3):
-    resolution: {integrity: sha512-TppzSkybH0Xr3ziYkIFHTjpVfppLdaQawEgar7D25kTQe/JdEIEPPKmaBVJI6yc7tXjkAJsEawUgOvte65B8Dw==}
+  /@simsustech/quasar-components@0.5.6(quasar@2.14.3):
+    resolution: {integrity: sha512-9uqoI1gu+eLM5bPqxNz3bYVGt7ihbKajFqcPoalvuaI4YreSq1gxvPgFytEOwfuWg5bCvWdGMWN5PdcZcH4P8A==}
     peerDependencies:
       quasar: ^2.9.2
     dependencies:
@@ -9831,6 +9822,7 @@ packages:
 
   /workbox-google-analytics@7.0.0:
     resolution: {integrity: sha512-MEYM1JTn/qiC3DbpvP2BVhyIH+dV/5BjHk756u9VbwuAhu0QHyKscTnisQuz21lfRpOwiS9z4XdqeVAKol0bzg==}
+    deprecated: It is not compatible with newer versions of GA starting with v4, as long as you are using GAv3 it should be ok, but the package is not longer being maintained
     dependencies:
       workbox-background-sync: 7.0.0
       workbox-core: 7.0.0
