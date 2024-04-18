@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
 
@@ -12,7 +11,7 @@ const createAccount = () => ({
   email: faker.internet.email()
 })
 
-const createCustomer = (accountId) => ({
+const createCustomer = (accountId: number) => ({
   gender: faker.person.sex(),
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
@@ -24,7 +23,7 @@ const createCustomer = (accountId) => ({
   accountId: accountId
 })
 
-const createContactPerson = (customerId) => ({
+const createContactPerson = (customerId: number) => ({
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   telephoneNumber: faker.phone.number(),
@@ -32,7 +31,7 @@ const createContactPerson = (customerId) => ({
 })
 
 let petId = 0
-const createPet = (customerId) => {
+const createPet = (customerId: number) => {
   const rating =
     faker.number.int({
       min: 0,
@@ -60,12 +59,18 @@ const createPet = (customerId) => {
   }
 }
 
-const getRandomInt = (max) => {
+const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max) + 1
 }
 
 let bookingId = 0
-const createBooking = ({ startDate, customerId }) => {
+const createBooking = ({
+  startDate,
+  customerId
+}: {
+  startDate: string
+  customerId: number
+}) => {
   const startFrom = new Date(startDate)
   startDate = faker.date
     .soon({
@@ -93,7 +98,13 @@ const createBooking = ({ startDate, customerId }) => {
 }
 
 let daycareDateId = 0
-const createDaycareDate = ({ startDate, customerId }) => {
+const createDaycareDate = ({
+  startDate,
+  customerId
+}: {
+  startDate: string
+  customerId: number
+}) => {
   const startFrom = addDays(new Date(startDate), 1)
   // const date = faker.date.soon(15, startFrom).toISOString().split('T')[0]
   const date = faker.date
@@ -121,15 +132,15 @@ const createDaycareDate = ({ startDate, customerId }) => {
 }
 
 export default () => {
-  const accounts = []
+  const accounts: unknown[] = []
   const customers = []
   const contactPeople = []
   const pets = []
   const bookings = []
-  const bookingPet = []
+  const bookingPet: unknown[] = []
   const bookingStatuses = []
   const daycareDates = []
-  const daycarePet = []
+  const daycarePet: unknown[] = []
 
   for (let i = 1; i < NUMBER_OF_CUSTOMERS + 1; i++) {
     accounts.push(createAccount())
@@ -155,14 +166,16 @@ export default () => {
       for (let j = 1; j <= getRandomInt(MAX_BOOKINGS_PER_CUSTOMER); j++) {
         booking = createBooking({ startDate: booking.endDate, customerId: i })
         const bookingStatus = {
-          ...booking,
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          startTimeId: booking.startTimeId,
+          endTimeId: booking.endTimeId,
           bookingId: booking.id,
           petIds: `[${ownedPets.map((pet) => pet.id).toString()}]`,
           modifiedAt: new Date().toISOString(),
           status: 'pending'
         }
-        delete bookingStatus.id
-        delete bookingStatus.customerId
+
         bookingStatuses.push(bookingStatus)
         if (getRandomInt(10) > 2) {
           bookingStatuses.push({
@@ -195,7 +208,8 @@ export default () => {
       let daycareDate = {
         date: new Date().toISOString().split('T')[0],
         customerId: i,
-        status: 'pending'
+        status: 'pending',
+        id: 0
       }
       for (let j = 1; j <= getRandomInt(MAX_DAYCARE_DATES_PER_CUSTOMER); j++) {
         daycareDate = createDaycareDate({

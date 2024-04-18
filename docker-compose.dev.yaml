@@ -28,14 +28,19 @@ services:
           - mailhog
 
   dev:
-    image: "ghcr.io/simsustech/petboarding:staging"
-    # image: petboarding
+    #image: "ghcr.io/simsustech/petboarding:staging"
+    build:
+      context: .
+      secrets:
+        - SIMSUSTECH_NPM_TOKEN
+      dockerfile: Dockerfile
+      target: api
     labels:
       caddy: ${HOSTNAME}.local
       caddy.reverse_proxy: "{{upstreams 80}}"
-    volumes:
-      - ./packages/app/dist:/packages/app/dist
-      - ./packages/api/dist:/app/dist
+    # volumes:
+      # - ./packages/app/dist:/packages/app/dist
+      # - ./packages/api/dist:/app/dist
     environment:
       POSTGRES_HOST: database
       POSTGRES_PASSWORD: ufgouifdgjdfg
@@ -56,11 +61,18 @@ services:
       OTP_VALIDITY_SECONDS: 3600
       EMAIL_FOOTER: "Petboarding dev"
 
+    secrets:
+      - SIMSUSTECH_NPM_TOKEN
+
     networks:
       dev:
         aliases:
           - database
       web:
+
+secrets:
+  SIMSUSTECH_NPM_TOKEN:
+    file: ./env/SIMSUSTECH_NPM_TOKEN
 
 networks:
   dev:
