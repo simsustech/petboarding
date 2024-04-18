@@ -38,12 +38,12 @@
           <template #head-day-button="{ scope }">
             <q-btn
               :disabled="!selectedDates"
-              @click="onClickDate({ scope })"
               class="q-mb-sm q-mt-sm"
               size="md"
               outline
               rounded
               :label="scope.dayLabel"
+              @click="onClickDate({ scope })"
             />
           </template>
           <template #day="{ scope: { timestamp } }">

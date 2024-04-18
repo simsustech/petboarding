@@ -5,7 +5,7 @@
     </q-item-section>
     <q-item-section>
       <q-item-label overline>
-        <q-badge color="red" v-if="hasExpired">
+        <q-badge v-if="hasExpired" color="red">
           <q-icon name="warning" /> {{ lang.pet.vaccination.expired }}</q-badge
         >
       </q-item-label>

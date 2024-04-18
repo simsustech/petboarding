@@ -12,8 +12,8 @@
         <q-popup-proxy cover transition-show="scale" transition-hide="scale">
           <q-date
             :model-value="parsedDate"
-            @update:model-value="updateDate"
             first-day-of-week="1"
+            @update:model-value="updateDate"
           >
             <div class="row items-center justify-end">
               <q-btn v-close-popup label="Close" color="primary" flat />

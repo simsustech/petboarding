@@ -109,7 +109,7 @@
       </div>
     </div>
     <q-item-label v-if="showEditButton">
-      <q-btn @click.stop icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'">
+      <q-btn icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'" @click.stop>
         <q-menu>
           <q-list>
             <q-item v-close-popup clickable @click.stop="update(modelValue)">

@@ -92,20 +92,19 @@ const getLastName = (customer: Customer) => {
   }
 }
 
-const events = computed(
-  () =>
-    data.value?.map((daycareDate) => ({
-      id: daycareDate.id,
-      bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
-      title: daycareDate.pets.map((pet) => pet.name).join('<br />'),
-      petNames: daycareDate.pets.map((pet) => pet.name),
-      lastName: showLastNames.value ? getLastName(daycareDate.customer) : null,
-      petIds: daycareDate.pets.map((pet) => pet.id),
-      date: daycareDate.date,
-      details: daycareDate.customer.lastName,
-      // details: lang.value.daycare.status[daycareDate.status],
-      icon: DAYCARE_DATE_ICONS[daycareDate.status]
-    }))
+const events = computed(() =>
+  data.value?.map((daycareDate) => ({
+    id: daycareDate.id,
+    bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
+    title: daycareDate.pets.map((pet) => pet.name).join('<br />'),
+    petNames: daycareDate.pets.map((pet) => pet.name),
+    lastName: showLastNames.value ? getLastName(daycareDate.customer) : null,
+    petIds: daycareDate.pets.map((pet) => pet.id),
+    date: daycareDate.date,
+    details: daycareDate.customer.lastName,
+    // details: lang.value.daycare.status[daycareDate.status],
+    icon: DAYCARE_DATE_ICONS[daycareDate.status]
+  }))
 )
 const selectedEvents = ref<number[]>([])
 const onClickEvent = (event: QCalendarEvent) => {

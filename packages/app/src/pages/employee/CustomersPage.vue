@@ -209,19 +209,18 @@ watch(
       executeDaycareDates()
   }
 )
-const events = computed(
-  () =>
-    daycareDates.value?.map((daycareDate) => ({
-      id: daycareDate.id,
-      bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
-      title: daycareDate.pets.map((pet) => pet.name).join(', '),
-      petNames: daycareDate.pets.map((pet) => pet.name),
-      petIds: daycareDate.pets.map((pet) => pet.id),
-      date: daycareDate.date,
-      details: daycareDate.customer.lastName,
-      // details: lang.value.daycare.status[daycareDate.status],
-      icon: DAYCARE_DATE_ICONS[daycareDate.status]
-    }))
+const events = computed(() =>
+  daycareDates.value?.map((daycareDate) => ({
+    id: daycareDate.id,
+    bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
+    title: daycareDate.pets.map((pet) => pet.name).join(', '),
+    petNames: daycareDate.pets.map((pet) => pet.name),
+    petIds: daycareDate.pets.map((pet) => pet.id),
+    date: daycareDate.date,
+    details: daycareDate.customer.lastName,
+    // details: lang.value.daycare.status[daycareDate.status],
+    icon: DAYCARE_DATE_ICONS[daycareDate.status]
+  }))
 )
 
 const updateDialogRef = ref<typeof ResponsiveDialog>()

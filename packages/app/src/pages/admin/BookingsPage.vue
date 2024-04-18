@@ -109,11 +109,10 @@ const { data, execute: executeBookings } = useQuery('admin.getBookings', {
   }
 })
 
-const bookingsData = computed(
-  () =>
-    data?.value?.filter(
-      (booking) => !handledBookingIds.value.includes(booking.id)
-    )
+const bookingsData = computed(() =>
+  data?.value?.filter(
+    (booking) => !handledBookingIds.value.includes(booking.id)
+  )
 )
 
 const replyBookingId = ref<number>()
