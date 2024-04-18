@@ -284,7 +284,7 @@ import { createUseTrpc } from '../trpc.js'
 
 import type { QuasarLanguage } from 'quasar'
 import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
-
+import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 const configuration = useConfiguration()
 
 const router = useRouter()
@@ -331,6 +331,7 @@ const languageImports = ref(
 if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
 watch($q.lang, () => {
   loadLang($q.lang.isoName)
+  loadComponentsFormLang($q.lang.isoName)
 })
 
 watch(route, (val) => {
