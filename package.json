@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "build": "run-s build:app build:api",
@@ -40,7 +40,6 @@
     "pre-commit": "pnpm run lint && pnpm run format:check",
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
-  "packageManager": "pnpm@9.0.5",
   "pnpm": {
     "overrides": {
       "@petboarding/app": "workspace:*",
