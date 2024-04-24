@@ -46,7 +46,7 @@
     "seed:fake": "node ./dist/seeds/fake.js",
     "seed:test": "node ./dist/seeds/test.js",
     "seed:data": "node ./dist/seeds/data.js",
-    "start": "run-s migrate:latest migrate:latest serve"
+    "start": "run-s migrate:latest serve"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
