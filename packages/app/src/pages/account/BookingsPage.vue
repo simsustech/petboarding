@@ -8,6 +8,12 @@
     <template #header>
       {{ lang.booking.title }}
     </template>
+    <q-banner class="q-mt-none q-pt-none" rounded>
+      <template v-slot:avatar>
+        <q-icon name="info" color="info" />
+      </template>
+      {{ lang.booking.messages.changeDaycareToBooking }}
+    </q-banner>
     <div v-if="ready">
       <div v-if="petsData?.length">
         <q-list>

@@ -206,6 +206,7 @@ export interface Language {
       cancelDoubleBookings: string
       settleCancellation: string
       bookingModified: string
+      changeDaycareToBooking: string
     }
     helpers: {
       status: {

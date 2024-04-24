@@ -217,7 +217,9 @@ const lang: Language = {
         'Voorkom onnodige kosten en annuleer de overlappende datums.',
       settleCancellation:
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
-      bookingModified: 'Reservering is gewijzigd.'
+      bookingModified: 'Reservering is gewijzigd.',
+      changeDaycareToBooking:
+        'Als u een dagopvang afspraak wenst te veranderen in een overnachting, annuleer dan eerst de dagopvang afspraak en plaats dan een reservering.'
     },
     helpers: {
       status: {

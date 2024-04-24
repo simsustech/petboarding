@@ -214,7 +214,9 @@ const lang: Language = {
         'Avoid unnecessary costs and cancel overlapping dates.',
       settleCancellation:
         'Are you sure you want to settle the cancellation of the following booking?',
-      bookingModified: 'Booking has been modified.'
+      bookingModified: 'Booking has been modified.',
+      changeDaycareToBooking:
+        'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.'
     },
     helpers: {
       status: {
