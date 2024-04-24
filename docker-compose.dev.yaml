@@ -2,7 +2,6 @@ version: "3.7"
 services:
   database:
     image: postgres:15
-    restart: always
     ports:
       - "5432:5432"
     environment:
@@ -16,7 +15,6 @@ services:
           - database
   mailhog:
     image: mailhog/mailhog:latest
-    restart: always
     logging:
       driver: "none"
     ports:
