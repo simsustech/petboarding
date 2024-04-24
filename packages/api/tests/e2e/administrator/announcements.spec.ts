@@ -61,6 +61,7 @@ test.describe('Announcements', async () => {
     await dialog.isVisible()
     await page.getByLabel('Title').fill('UpdatedTitle')
     await dialog.locator('text=Submit').click()
+    await delay(100)
     await expect(page.getByText('UpdatedTitle').first()).toBeVisible()
   })
 

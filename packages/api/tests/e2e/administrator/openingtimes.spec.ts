@@ -60,6 +60,7 @@ test.describe('Opening times', async () => {
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
     await dialog.locator('text=Submit').click()
+    await delay(100)
     await expect(page.getByText('UpdatedName').first()).toBeVisible()
   })
 

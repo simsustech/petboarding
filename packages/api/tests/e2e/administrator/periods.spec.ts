@@ -67,6 +67,7 @@ test.describe('Periods', async () => {
     await dialog.isVisible()
     await page.getByLabel('Comments').fill('UpdatedComments')
     await dialog.locator('text=Submit').click()
+    await delay(100)
     await expect(page.getByText('UpdatedComments').first()).toBeVisible()
   })
 
