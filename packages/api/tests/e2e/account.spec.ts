@@ -27,11 +27,8 @@ const contactPerson = {
 const pet = {
   name: faker.person.firstName(),
   breed: faker.animal.dog(),
-  birthDate: faker.date
-    .past({ years: 10 })
-    .toISOString()
-    .split('T')[0]
-    .replace('-', '/')
+  birthDate: faker.date.past({ years: 10 }).toISOString().split('T')[0]
+  // .replace('-', '/')
 }
 const newPetName = faker.person.firstName()
 
@@ -204,10 +201,15 @@ test.describe('Account', async () => {
     await page.locator('button >> text=Add').click()
     await page.getByLabel('Name').fill(pet.name)
     await page.getByLabel('Breed').fill(pet.breed)
-    await page.getByLabel('Birth date').fill(pet.birthDate)
+    // await page.getByLabel('Birth date').fill(pet.birthDate)
+    const [YYYY, MM, DD] = pet.birthDate.split('-')
+    await page.getByPlaceholder('DD').first().fill(DD)
+    await page.getByPlaceholder('MM').first().fill(MM)
+    await page.getByPlaceholder('YYYY').first().fill(YYYY)
+
     await page.locator('#gender').click()
     await page.getByRole('option', { name: 'Female' }).click()
-    await page.getByLabel('Sterilized').click()
+    await page.getByLabel('Sterilized').first().click()
     await page.getByRole('option', { name: 'Yes' }).click()
     await page.locator('text=Submit').click()
 
@@ -228,7 +230,10 @@ test.describe('Account', async () => {
     await page.locator('button >> text=Add').click()
 
     await page.locator('.q-date__calendar-item--in').first().click()
-    await page.locator('div:nth-child(3) > .q-btn').first().click()
+    await page
+      .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
+      .click()
+    // await page.locator('div:nth-child(3) > .q-btn').first().click()
     await page.locator('.q-date__calendar-item--in').first().click()
 
     await page.getByLabel('Pets').click()

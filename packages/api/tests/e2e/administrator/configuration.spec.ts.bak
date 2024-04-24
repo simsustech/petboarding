@@ -55,52 +55,6 @@ test.beforeAll(async ({ browser }) => {
     page.getByText('Administrator').locator(':scope.q-item__label')
   ).toBeVisible()
 })
-
-test.describe('Accounts', async () => {
-  test('Search account', async () => {
-    await page.goto('/admin/accounts')
-    await page.waitForLoadState('networkidle')
-
-    await page.getByLabel('Email').fill('admin')
-
-    await expect(page.locator(`text=admin@petboarding.app`)).toBeVisible()
-  })
-})
-
-test.describe('Bookings', async () => {
-  test('Check bookings', async () => {
-    await page.goto('admin/bookings')
-    await page.waitForLoadState('networkidle')
-
-    await expect(page.getByText('name1 lastName1')).toBeVisible()
-  })
-})
-test.describe('Occupancy', async () => {
-  test('Check booking occupancy', async () => {
-    await page.goto('admin/occupancy/2024-01-01')
-    await page.waitForLoadState('networkidle')
-
-    await page.getByText('2024/01/01').isVisible()
-    await expect(
-      page
-        .locator('div:nth-child(2) > .q-calendar-month__day--content > .column')
-        .first()
-    ).toHaveText('1 + 0')
-  })
-
-  test('Check daycare occupancy', async () => {
-    await page.goto('admin/occupancy/2024-02-01')
-    await page.waitForLoadState('networkidle')
-
-    await page.getByText('2024/02/01').isVisible()
-    await expect(
-      page
-        .locator('div:nth-child(5) > .q-calendar-month__day--content > .column')
-        .first()
-    ).toHaveText('0 + 1')
-  })
-})
-
 test.describe('Announcements', async () => {
   test('Create announcement', async () => {
     await page.goto('/admin/announcements')
@@ -109,7 +63,11 @@ test.describe('Announcements', async () => {
     await page.locator('button >> text=Add').click()
     await page.getByLabel('Title').fill(announcement.title)
     await page.getByLabel('Message').fill(announcement.message)
-    await page.getByLabel('Expiration date').fill('2040/01/01')
+    // await page.getByLabel('Expiration date').fill('2040/01/01')
+    const [YYYY, MM, DD] = '2040-01-01'.split('-')
+    await page.getByPlaceholder('DD').first().fill(DD)
+    await page.getByPlaceholder('MM').first().fill(MM)
+    await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
     await page.locator('text=Submit').click()
 
@@ -140,8 +98,12 @@ test.describe('Periods', async () => {
     await page.waitForLoadState('networkidle')
 
     await page.locator('button >> text=Add').click()
-    await page.getByLabel('Start date').fill(period.startDate)
-    await page.getByLabel('End date').fill(`${period.endDate}`)
+    // await page.getByLabel('Start date').fill(period.startDate)
+    // await page.getByLabel('End date').fill(`${period.endDate}`)
+    await page.locator('.q-date__calendar-item--in').first().click()
+    await page.locator('div:nth-child(3) > .q-btn').first().click()
+    await page.locator('.q-date__calendar-item--in').first().click()
+
     await page.getByLabel('Comments').fill(`${period.comments}`)
 
     await page.locator('text=Submit').click()
