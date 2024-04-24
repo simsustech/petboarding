@@ -44,6 +44,7 @@ RUN rm /build/app/dist/ssr/client/logo.svg.gz
 
 FROM node:20-slim as api
 LABEL "io.petboarding.vendor"="simsustech"
+RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 COPY --from=api-deploy /build/api /app
 COPY --from=api-deploy /build/app /packages/app

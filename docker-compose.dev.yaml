@@ -28,7 +28,6 @@ services:
           - mailhog
 
   dev:
-    #image: "ghcr.io/simsustech/petboarding:staging"
     build:
       context: .
       secrets:
@@ -38,9 +37,9 @@ services:
     labels:
       caddy: ${HOSTNAME}.local
       caddy.reverse_proxy: "{{upstreams 80}}"
-    # volumes:
-      # - ./packages/app/dist:/packages/app/dist
-      # - ./packages/api/dist:/app/dist
+    volumes:
+      - ./packages/app/dist:/packages/app/dist
+      - ./packages/api/dist:/app/dist
     environment:
       POSTGRES_HOST: database
       POSTGRES_PASSWORD: ufgouifdgjdfg
@@ -63,7 +62,6 @@ services:
 
     secrets:
       - SIMSUSTECH_NPM_TOKEN
-
     networks:
       dev:
         aliases:

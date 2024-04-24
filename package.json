@@ -40,7 +40,7 @@
     "pre-commit": "pnpm run lint && pnpm run format:check",
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
-  "packageManager": "pnpm@9.0.2",
+  "packageManager": "pnpm@9.0.5",
   "pnpm": {
     "overrides": {
       "@petboarding/app": "workspace:*",
