@@ -43,8 +43,7 @@
                 loading="eager"
                 style="max-width: 100px"
                 :img-style="{ overflow: 'visible', width: '100%' }"
-                :src="logoUrl"
-                placeholder-src="~assets/logo.svg"
+                :src="logo"
               />
             </div>
           </template>
@@ -100,14 +99,15 @@ import AnnouncementsList from '../components/announcement/AnnouncementsList.vue'
 import { useConfiguration } from '../configuration.js'
 import { useLang } from '../lang/index.js'
 import { createUseTrpc } from '../trpc.js'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AvailabilityCard from '../components/AvailabilityCard.vue'
+import petboardingLogo from '../assets/logo.svg'
 const { useQuery } = await createUseTrpc()
 const configuration = useConfiguration()
 const lang = useLang()
 
 const title = computed(() => configuration.value.TITLE)
-const logoUrl = `./logo.svg`
+const logo = ref(petboardingLogo)
 const login = () => {
   if (oAuthClient.value) oAuthClient.value.signIn({})
 }
@@ -116,6 +116,9 @@ const { data: announcements, execute } = useQuery('public.getAnnouncements')
 const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
 
 onMounted(async () => {
+  fetch('./logo.svg').then(() => {
+    logo.value = './logo.svg'
+  })
   execute()
   executePeriods()
 })
