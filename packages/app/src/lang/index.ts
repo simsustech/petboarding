@@ -302,6 +302,7 @@ export interface Language {
     }
     messages: {
       verifyDeletion: string
+      noOpeningTimesOnSelectedDate: string
     }
   }
   period: {

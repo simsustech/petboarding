@@ -322,7 +322,9 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion:
-        'Weet u zeker dat u de volgende openingstijd wilt verwijderen?'
+        'Weet u zeker dat u de volgende openingstijd wilt verwijderen?',
+      noOpeningTimesOnSelectedDate:
+        'Geen openingstijden op geselecteerde datum.'
     }
   },
   period: {

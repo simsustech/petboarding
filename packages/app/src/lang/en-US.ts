@@ -318,7 +318,8 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion:
-        'Are you sure you want to delete the following opening time?'
+        'Are you sure you want to delete the following opening time?',
+      noOpeningTimesOnSelectedDate: 'No opening times on selected date.'
     }
   },
   period: {

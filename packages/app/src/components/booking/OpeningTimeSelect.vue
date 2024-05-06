@@ -9,7 +9,15 @@
     map-options
     lazy-rules
     @update:model-value="$emit('update:modelValue', $event)"
-  ></q-select>
+  >
+    <template v-slot:no-option>
+      <q-item>
+        <q-item-section class="text-italic text-grey">
+          {{ lang.openingTime.messages.noOpeningTimesOnSelectedDate }}
+        </q-item-section>
+      </q-item>
+    </template>
+  </q-select>
 </template>
 
 <script lang="ts">
