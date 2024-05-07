@@ -1,7 +1,40 @@
 <template>
   <q-page>
     <div v-if="data">
-      <booking-expansion-item
+      <q-list v-if="upcomingBookings?.length">
+        <q-item-label header>{{
+          lang.booking.messages.upcomingBookings
+        }}</q-item-label>
+        <booking-expansion-item
+          v-for="booking in upcomingBookings"
+          :key="booking.id"
+          :model-value="booking"
+          show-edit-button
+          show-history
+          show-icon
+          @update="openUpdateDialog"
+          @cancel="cancelBooking"
+          @open-customer="openCustomer"
+        />
+      </q-list>
+      <q-list v-if="otherBookings?.length">
+        <q-item-label header>{{
+          lang.booking.messages.otherBookings
+        }}</q-item-label>
+        <booking-expansion-item
+          v-for="booking in otherBookings"
+          :key="booking.id"
+          :model-value="booking"
+          show-edit-button
+          show-history
+          show-icon
+          @update="openUpdateDialog"
+          @cancel="cancelBooking"
+          @open-customer="openCustomer"
+        />
+      </q-list>
+
+      <!-- <booking-expansion-item
         v-for="booking in data"
         :key="booking.id"
         :model-value="booking"
@@ -11,7 +44,7 @@
         @update="openUpdateDialog"
         @cancel="cancelBooking"
         @open-customer="openCustomer"
-      />
+      /> -->
     </div>
 
     <responsive-dialog ref="updateDialogRef" persistent @submit="update">
@@ -34,7 +67,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, onMounted, nextTick, computed } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { createUseTrpc } from '../../trpc.js'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
@@ -42,9 +75,11 @@ import BookingItem from '../../components/booking/BookingItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../components/booking/BookingForm.vue'
 import { extend } from 'quasar'
+import { useLang } from '../../lang/index.js'
 
 const { useQuery, useMutation } = await createUseTrpc()
 
+const lang = useLang()
 const route = useRoute()
 const router = useRouter()
 
@@ -61,6 +96,22 @@ const { data, execute } = useQuery('employee.getBookingsByIds', {
     args: true
   }
 })
+
+const upcomingBookings = computed(() =>
+  data.value?.filter(
+    (booking) =>
+      (booking.status?.status === 'approved' ||
+        booking.status?.status === 'pending') &&
+      booking.endDate > new Date().toISOString().slice(0, 10)
+  )
+)
+const otherBookings = computed(() =>
+  data.value?.filter(
+    (booking) =>
+      booking.status?.status !== 'approved' &&
+      booking.status?.status !== 'pending'
+  )
+)
 
 const updateBookingFormRef = ref<typeof BookingForm>()
 const updateDialogRef = ref<typeof ResponsiveDialog>()
