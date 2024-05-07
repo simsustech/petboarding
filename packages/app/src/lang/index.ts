@@ -207,6 +207,8 @@ export interface Language {
       settleCancellation: string
       bookingModified: string
       changeDaycareToBooking: string
+      upcomingBookings: string
+      otherBookings: string
     }
     helpers: {
       status: {

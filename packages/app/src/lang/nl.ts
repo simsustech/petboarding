@@ -219,7 +219,9 @@ const lang: Language = {
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
       bookingModified: 'Reservering is gewijzigd.',
       changeDaycareToBooking:
-        'Als u een dagopvang afspraak wenst te veranderen in een overnachting, annuleer dan eerst de dagopvang afspraak en plaats dan een reservering.'
+        'Als u een dagopvang afspraak wenst te veranderen in een overnachting, annuleer dan eerst de dagopvang afspraak en plaats dan een reservering.',
+      upcomingBookings: 'Komende reserveringen',
+      otherBookings: 'Overige reserveringen'
     },
     helpers: {
       status: {

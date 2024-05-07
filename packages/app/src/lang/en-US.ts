@@ -216,7 +216,9 @@ const lang: Language = {
         'Are you sure you want to settle the cancellation of the following booking?',
       bookingModified: 'Booking has been modified.',
       changeDaycareToBooking:
-        'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.'
+        'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.',
+      upcomingBookings: 'Upcoming bookings',
+      otherBookings: 'Other bookings'
     },
     helpers: {
       status: {

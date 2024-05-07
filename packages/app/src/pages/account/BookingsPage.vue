@@ -16,9 +16,26 @@
     </q-banner>
     <div v-if="ready">
       <div v-if="petsData?.length">
-        <q-list>
+        <q-list v-if="upcomingBookings?.length">
+          <q-item-label header>{{
+            lang.booking.messages.upcomingBookings
+          }}</q-item-label>
           <booking-expansion-item
-            v-for="booking in data"
+            v-for="booking in upcomingBookings"
+            :key="booking.id"
+            :model-value="booking"
+            show-icon
+            show-edit-button
+            @update="openUpdateDialog"
+            @cancel="cancelBooking"
+          />
+        </q-list>
+        <q-list v-if="otherBookings?.length">
+          <q-item-label header>{{
+            lang.booking.messages.otherBookings
+          }}</q-item-label>
+          <booking-expansion-item
+            v-for="booking in otherBookings"
             :key="booking.id"
             :model-value="booking"
             show-icon
@@ -84,6 +101,21 @@ const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
 const { data, execute } = useQuery('user.getBookings', {
   // immediate: true
 })
+const upcomingBookings = computed(() =>
+  data.value?.filter(
+    (booking) =>
+      (booking.status?.status === 'approved' ||
+        booking.status?.status === 'pending') &&
+      booking.endDate > new Date().toISOString().slice(0, 10)
+  )
+)
+const otherBookings = computed(() =>
+  data.value?.filter(
+    (booking) =>
+      booking.status?.status !== 'approved' &&
+      booking.status?.status !== 'pending'
+  )
+)
 
 const { data: servicesData, execute: executeServices } =
   useQuery('public.getServices')
