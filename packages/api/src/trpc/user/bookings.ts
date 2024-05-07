@@ -144,7 +144,7 @@ export const userBookingRoutes = ({
                 customerId: customer.id
               },
               petIds: input.petIds,
-              status: BOOKING_STATUS.PENDING,
+              // status: BOOKING_STATUS.PENDING,
               serviceIds: input.serviceIds || []
             }
           )

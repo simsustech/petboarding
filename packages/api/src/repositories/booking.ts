@@ -742,75 +742,97 @@ export async function updateBooking(
 
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
-  }
 
-  if (criteria.customerId) {
-    query = query.where('customerId', '=', criteria.customerId)
-  }
-  const updatedBooking = await query
-    .set(updateWith.booking)
-    .returningAll()
-    .executeTakeFirstOrThrow()
-
-  if (Array.isArray(updateWith.petIds)) {
-    await db
-      .deleteFrom('bookingPetKennel')
-      .where('bookingId', '=', updatedBooking.id)
+    if (criteria.customerId) {
+      query = query.where('customerId', '=', criteria.customerId)
+    }
+    const updatedBooking = await query
+      .set(updateWith.booking)
+      .returningAll()
       .executeTakeFirstOrThrow()
 
-    await db
-      .insertInto('bookingPetKennel')
-      .values(
-        updateWith.petIds.map((petId) => ({
-          petId,
-          bookingId: updatedBooking.id
-        }))
-      )
-      .executeTakeFirstOrThrow()
-  }
-
-  if (Array.isArray(updateWith.serviceIds)) {
-    const currentServiceIds = (
+    if (Array.isArray(updateWith.petIds)) {
       await db
-        .selectFrom('bookingService')
-        .select('id')
-        .where('bookingService.bookingId', '=', updatedBooking.id)
-        .execute()
-    ).map(({ id }) => id)
+        .deleteFrom('bookingPetKennel')
+        .where('bookingId', '=', updatedBooking.id)
+        .executeTakeFirstOrThrow()
 
-    const { createdIds: newServiceIds, deletedIds: deletedServiceIds } =
-      findIds({
-        currentIds: currentServiceIds,
-        newIds: updateWith.serviceIds
-      })
-
-    if (deletedServiceIds.length)
       await db
-        .deleteFrom('bookingService')
-        .where('id', 'in', deletedServiceIds)
-        .execute()
-
-    if (newServiceIds.length)
-      await db
-        .insertInto('bookingService')
+        .insertInto('bookingPetKennel')
         .values(
-          newServiceIds.map((id) => ({
-            serviceId: id,
+          updateWith.petIds.map((petId) => ({
+            petId,
             bookingId: updatedBooking.id
           }))
         )
-        .execute()
-  }
+        .executeTakeFirstOrThrow()
+    }
 
-  if (!options?.skipStatusUpdate) {
-    await createBookingStatus({
-      booking: updatedBooking,
-      petIds: updateWith.petIds,
-      status: updateWith.status || BOOKING_STATUS.PENDING
-    })
-  }
+    if (Array.isArray(updateWith.serviceIds)) {
+      const currentServiceIds = (
+        await db
+          .selectFrom('bookingService')
+          .select('id')
+          .where('bookingService.bookingId', '=', updatedBooking.id)
+          .execute()
+      ).map(({ id }) => id)
 
-  return updatedBooking
+      const { createdIds: newServiceIds, deletedIds: deletedServiceIds } =
+        findIds({
+          currentIds: currentServiceIds,
+          newIds: updateWith.serviceIds
+        })
+
+      if (deletedServiceIds.length)
+        await db
+          .deleteFrom('bookingService')
+          .where('id', 'in', deletedServiceIds)
+          .execute()
+
+      if (newServiceIds.length)
+        await db
+          .insertInto('bookingService')
+          .values(
+            newServiceIds.map((id) => ({
+              serviceId: id,
+              bookingId: updatedBooking.id
+            }))
+          )
+          .execute()
+    }
+
+    if (!options?.skipStatusUpdate) {
+      const lastApprovedStatus = await db
+        .selectFrom('bookingStatus')
+        .selectAll()
+        .where('bookingId', '=', criteria.id)
+        .where('status', '=', BOOKING_STATUS.APPROVED)
+        .orderBy('modifiedAt desc')
+        .limit(1)
+        .executeTakeFirstOrThrow()
+
+      if (
+        updatedBooking.startDate === lastApprovedStatus.startDate &&
+        updatedBooking.endDate === lastApprovedStatus.endDate &&
+        updatedBooking.startTimeId === lastApprovedStatus.startTimeId &&
+        updatedBooking.endTimeId === lastApprovedStatus.endTimeId
+      ) {
+        await createBookingStatus({
+          booking: updatedBooking,
+          petIds: updateWith.petIds,
+          status: updateWith.status || BOOKING_STATUS.APPROVED
+        })
+      } else {
+        await createBookingStatus({
+          booking: updatedBooking,
+          petIds: updateWith.petIds,
+          status: updateWith.status || BOOKING_STATUS.PENDING
+        })
+      }
+    }
+
+    return updatedBooking
+  }
 }
 
 export async function cancelBooking(
