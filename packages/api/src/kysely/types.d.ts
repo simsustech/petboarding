@@ -79,8 +79,8 @@ export interface BookingStatus {
   petIds: JSONColumnType<number[]>
   startDate: string
   endDate: string
-  startTimeId: number | null
-  endTimeId: number | null
+  startTimeId: number
+  endTimeId: number
   comments: string | null
   createdAt: Generated<string>
 }

@@ -8,10 +8,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('start_date', 'date', (col) => col.notNull())
     .addColumn('end_date', 'date', (col) => col.notNull())
     .addColumn('start_time_id', 'integer', (col) =>
-      col.references('opening_times.id').onDelete('restrict')
+      col.references('opening_times.id').onDelete('restrict').notNull()
     )
     .addColumn('end_time_id', 'integer', (col) =>
-      col.references('opening_times.id').onDelete('restrict')
+      col.references('opening_times.id').onDelete('restrict').notNull()
     )
     .addColumn('comments', 'text')
     .addColumn('customer_id', 'integer', (col) =>
