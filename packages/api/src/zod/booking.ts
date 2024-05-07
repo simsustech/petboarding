@@ -3,7 +3,9 @@ import { pet } from './pet.js'
 import { customer } from './customer.js'
 import { openingTime } from './openingtime.js'
 import { service } from './service.js'
+import { BOOKING_STATUS } from '../kysely/types.js'
 
+export { BOOKING_STATUS }
 export const bookingServiceValidation = {
   id: z.number().optional(),
   bookingId: z.number(),
@@ -15,14 +17,14 @@ export const bookingServiceValidation = {
 }
 export const bookingService = z.object(bookingServiceValidation).omit({})
 
-export enum BOOKING_STATUS {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  STANDBY = 'standby',
-  CANCELLED = 'cancelled',
-  CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
-}
+// export enum BOOKING_STATUS {
+//   PENDING = 'pending',
+//   APPROVED = 'approved',
+//   REJECTED = 'rejected',
+//   STANDBY = 'standby',
+//   CANCELLED = 'cancelled',
+//   CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+// }
 
 export const bookingStatusValidation = {
   bookingId: z.number(),

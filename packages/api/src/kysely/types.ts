@@ -4,6 +4,16 @@ import type {
   OidcPayloadsTable,
   AuthenticationMethodsTable
 } from '@modular-api/fastify-oidc/kysely'
+
+export enum BOOKING_STATUS {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  STANDBY = 'standby',
+  CANCELLED = 'cancelled',
+  CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -74,7 +84,7 @@ export interface BookingService {
 export interface BookingStatus {
   id: Generated<number>
   bookingId: number
-  status: string
+  status: BOOKING_STATUS
   modifiedAt: string
   petIds: JSONColumnType<number[]>
   startDate: string

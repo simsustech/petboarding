@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import * as compressTag from 'compress-tag'
 import { db } from '../index.js'
 import { sql } from 'kysely'
+import { BOOKING_STATUS } from '../types.js'
 const { c } = compressTag
 
 const seed = async () => {
@@ -52,11 +53,11 @@ const seed = async () => {
   }))
 
   const statuses = [
-    'pending',
-    'approved',
-    'rejected',
-    'cancelled',
-    'cancelledoutsideperiod'
+    BOOKING_STATUS.PENDING,
+    BOOKING_STATUS.APPROVED,
+    BOOKING_STATUS.REJECTED,
+    BOOKING_STATUS.CANCELLED,
+    BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
   ]
   const bookingStatuses = [1, 2, 3, 4, 5].map((nr) => ({
     ...bookings[nr - 1],
