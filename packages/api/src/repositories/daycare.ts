@@ -274,3 +274,67 @@ export async function getDaycareDateCount({
 
   return count
 }
+
+export async function createOrUpdateDaycareDates(
+  daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[]
+) {
+  const customerId = daycareDates[0].customerId
+  if (customerId) {
+    const currentDaycareDates = await findDaycareDates({
+      criteria: {
+        customerId,
+        dates: daycareDates.map((daycareDate) => daycareDate.date)
+      }
+    })
+
+    const newDaycareDates = daycareDates.filter(
+      (daycareDate) =>
+        !currentDaycareDates.some(
+          (currentDaycareDate) => daycareDate.date === currentDaycareDate.date
+        )
+    )
+
+    const updatedDaycareDates = currentDaycareDates
+      .filter(
+        (daycareDate) => daycareDate.status === DAYCARE_DATE_STATUS.CANCELLED
+      )
+      .map((daycareDate) => {
+        return {
+          ...daycareDate,
+          petIds:
+            daycareDates.find((d) => d.date === daycareDate.date)?.petIds ||
+            daycareDate.pets.map((pet) => pet.id)
+        }
+      })
+    await Promise.all([
+      ...newDaycareDates.map((daycareDate) =>
+        createDaycareDate({
+          daycareDate: {
+            date: daycareDate.date,
+            comments: daycareDate.comments,
+            customerId,
+            status: DAYCARE_DATE_STATUS.PENDING
+          },
+          petIds: daycareDate.petIds
+        })
+      ),
+      ...updatedDaycareDates.map((daycareDate) =>
+        updateDaycareDate(
+          {
+            date: daycareDate.date,
+            customerId
+          },
+          {
+            daycareDate: {
+              date: daycareDate.date,
+              comments: daycareDate.comments,
+              customerId,
+              status: DAYCARE_DATE_STATUS.PENDING
+            },
+            petIds: daycareDate.petIds
+          }
+        )
+      )
+    ])
+  }
+}

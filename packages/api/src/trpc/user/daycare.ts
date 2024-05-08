@@ -4,7 +4,7 @@ import { daycareDate, DAYCARE_DATE_STATUS } from '../../zod/daycare.js'
 import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
 import {
-  createDaycareDate,
+  createOrUpdateDaycareDates,
   findDaycareDates,
   findDaycareDatesByIds,
   updateDaycareDate
@@ -64,65 +64,11 @@ export const userDaycareRoutes = ({
             }
           })
           if (customer?.id) {
-            const currentDaycareDates = await findDaycareDates({
-              criteria: {
-                customerId: customer.id,
-                dates: input.map((daycareDate) => daycareDate.date)
-              }
-            })
-
-            const newDaycareDates = input.filter(
-              (daycareDate) =>
-                !currentDaycareDates.some(
-                  (currentDaycareDate) =>
-                    daycareDate.date === currentDaycareDate.date
-                )
-            )
-
-            const updatedDaycareDates = currentDaycareDates
-              .filter(
-                (daycareDate) =>
-                  daycareDate.status === DAYCARE_DATE_STATUS.CANCELLED
-              )
-              .map((daycareDate) => {
-                return {
-                  ...daycareDate,
-                  petIds:
-                    input.find((d) => d.date === daycareDate.date)?.petIds ||
-                    daycareDate.pets.map((pet) => pet.id)
-                }
-              })
-            await Promise.all([
-              ...newDaycareDates.map((daycareDate) =>
-                createDaycareDate({
-                  daycareDate: {
-                    date: daycareDate.date,
-                    comments: daycareDate.comments,
-                    customerId: customer.id,
-                    status: DAYCARE_DATE_STATUS.PENDING
-                  },
-                  petIds: daycareDate.petIds
-                })
-              ),
-              ...updatedDaycareDates.map((daycareDate) =>
-                updateDaycareDate(
-                  {
-                    date: daycareDate.date,
-                    customerId: customer.id
-                  },
-                  {
-                    daycareDate: {
-                      date: daycareDate.date,
-                      comments: daycareDate.comments,
-                      customerId: customer.id,
-                      status: DAYCARE_DATE_STATUS.PENDING
-                    },
-                    petIds: daycareDate.petIds
-                  }
-                )
-              )
-            ])
-            return true
+            const daycareDates = input.map((daycareDate) => ({
+              ...daycareDate,
+              customerId: customer.id
+            }))
+            await createOrUpdateDaycareDates(daycareDates)
           }
         }
       } catch (e) {
