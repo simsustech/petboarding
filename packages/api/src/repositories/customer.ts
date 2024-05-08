@@ -140,7 +140,9 @@ export async function searchCustomers(searchPhrase: string) {
       where 
         c.fulltext @@ to_tsquery(
           'english', ${sql.lit(
-            searchTerms.map((term) => term + ':*').join(' | ')
+            searchTerms
+              .map((term) => term + (term.length > 3 ? ':*' : ':'))
+              .join(' | ')
           )}
           )
     ), relation as (
@@ -166,7 +168,9 @@ export async function searchCustomers(searchPhrase: string) {
       where 
         p.fulltext @@ to_tsquery(
           'english', ${sql.lit(
-            searchTerms.map((term) => term + ':*').join(' | ')
+            searchTerms
+              .map((term) => term + (term.length > 3 ? ':*' : ':'))
+              .join(' | ')
           )}
         )
     )
