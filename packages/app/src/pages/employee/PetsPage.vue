@@ -1,14 +1,15 @@
 <template>
-  <pet-select
-    :model-value="ids"
-    multiple
-    clearable
-    @update:model-value="setParam"
-  >
-    <template #before> <q-icon name="search" /> </template>
-  </pet-select>
-
-  <q-page padding>
+  <resource-page>
+    <template #header>
+      <pet-select
+        :model-value="ids"
+        multiple
+        clearable
+        @update:model-value="setParam"
+      >
+        <template #before> <q-icon name="search" /> </template>
+      </pet-select>
+    </template>
     <div class="row">
       <pet-card
         v-for="pet in data"
@@ -26,7 +27,8 @@
         @delete="deletePet"
       />
     </div>
-  </q-page>
+  </resource-page>
+
   <responsive-dialog ref="updatePetDialogRef" persistent @submit="update">
     <pet-form
       ref="updatePetFormRef"
@@ -81,6 +83,7 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import VaccinationForm from '../../components/vaccination/VaccinationForm.vue'
 import { useLang } from '../../lang/index.js'
 import { user } from '../../oauth.js'
+import { ResourcePage } from '@simsustech/quasar-components'
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
