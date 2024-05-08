@@ -2,8 +2,20 @@ import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
-import { findDaycareDates } from '../../repositories/daycare.js'
-import { DAYCARE_DATE_STATUS } from '../../zod/index.js'
+import {
+  createOrUpdateDaycareDates,
+  findDaycareDates
+} from '../../repositories/daycare.js'
+import { DAYCARE_DATE_STATUS, daycareDate } from '../../zod/index.js'
+
+export const employeeDaycareValidation = daycareDate
+  .omit({
+    pets: true,
+    status: true
+  })
+  .required({
+    customerId: true
+  })
 
 export const employeeDaycareRoutes = ({
   // fastify,
@@ -36,5 +48,14 @@ export const employeeDaycareRoutes = ({
         return daycareDates
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  createDaycareDates: procedure
+    .input(employeeDaycareValidation.array())
+    .mutation(async ({ input }) => {
+      try {
+        await createOrUpdateDaycareDates(input)
+      } catch (e) {
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
     })
 })
