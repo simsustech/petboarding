@@ -53,12 +53,12 @@ function withBookings(eb: ExpressionBuilder<Database, 'customers'>) {
   ).as('bookings')
 }
 
-export async function findCustomer({
+function find({
   criteria,
   select,
   relations
 }: {
-  criteria: Partial<Customer>
+  criteria: Partial<Customer> & { ids?: number[]; searchPhrase?: string }
   select?: (keyof Customer)[]
   relations?: {
     pets?: boolean
@@ -72,6 +72,8 @@ export async function findCustomer({
 
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
+  } else if (criteria.ids) {
+    query = query.where('id', 'in', criteria.ids.length ? criteria.ids : [null])
   }
 
   if (criteria.accountId) {
@@ -80,7 +82,48 @@ export async function findCustomer({
 
   if (relations?.pets) query = query.select([withPets])
   if (relations?.bookings) query = query.select([withBookings])
-  return query.select(select).select([withAccount]).executeTakeFirst()
+  return query.select(select).select([withAccount])
+}
+
+export async function findCustomer({
+  criteria,
+  select,
+  relations
+}: {
+  criteria: Partial<Customer>
+  select?: (keyof Customer)[]
+  relations?: {
+    pets?: boolean
+    bookings?: boolean
+  }
+}) {
+  const query = find({
+    criteria,
+    select,
+    relations
+  })
+
+  return query.executeTakeFirst()
+}
+
+export async function findCustomers({
+  criteria,
+  select,
+  relations
+}: {
+  criteria: Partial<Customer> & { ids?: number[] }
+  select?: (keyof Customer)[]
+  relations?: {
+    pets?: boolean
+    bookings?: boolean
+  }
+}) {
+  const query = find({
+    criteria,
+    select,
+    relations
+  })
+  return query.limit(10).execute()
 }
 
 export async function createCustomer(customer: NewCustomer) {

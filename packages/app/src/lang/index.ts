@@ -64,6 +64,7 @@ export interface Language {
   }
   customer: {
     title: string
+    customer: string
     fields: {
       gender: string
       firstName: string

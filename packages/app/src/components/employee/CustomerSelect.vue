@@ -1,21 +1,12 @@
 <template>
-  <q-select
+  <filtered-model-select
     v-bind="attrs"
-    :model-value="modelValue"
-    :options="options"
-    :label="lang.search"
-    emit-value
-    map-options
-    fill-input
-    use-input
-    input-debounce="500"
-    hide-selected
-    @filter="filterFn"
-    @update:model-value="$emit('update:model-value', $event)"
+    :label="lang.customer.customer"
+    :filtered-options="filteredOptions"
+    label-key="name"
+    :label-function="labelFunction"
+    :extra-fields="['rating']"
   >
-    <template #before>
-      <slot name="before" />
-    </template>
     <template #option="{ itemProps, opt }">
       <q-item v-bind="itemProps">
         <q-item-section>
@@ -25,8 +16,8 @@
         </q-item-section>
         <q-item-section side>
           <q-rating
-            v-if="opt.rating"
-            :model-value="opt.rating"
+            v-if="opt.extraFields.rating"
+            :model-value="opt.extraFields.rating"
             icon="star_border"
             icon-selected="star"
             icon-half="star_half"
@@ -34,58 +25,34 @@
         </q-item-section>
       </q-item>
     </template>
-  </q-select>
+    <template v-for="(_, slot) in $slots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
+    </template>
+  </filtered-model-select>
 </template>
 
 <script lang="ts">
 export default {
-  name: 'EmployeeCustomerSelect'
+  name: 'CustomerSelect'
 }
 </script>
 
 <script setup lang="ts">
-import { QSelect } from 'quasar'
-import { createUseTrpc } from '../../trpc.js'
-import { ref, toRefs, useAttrs } from 'vue'
+import { FilteredModelSelect } from '@simsustech/quasar-components/form'
+import { ref, useAttrs } from 'vue'
 import { useLang } from '../../lang/index.js'
+import { Customer } from '@petboarding/api/zod'
 
 export interface Props {
-  modelValue?: number
+  filteredOptions: { id: number; [key: string]: unknown }[]
 }
-const props = defineProps<Props>()
+defineProps<Props>()
+
 const attrs = useAttrs()
-
 const lang = useLang()
-const { useQuery } = await createUseTrpc()
-const { modelValue } = toRefs(props)
-const searchPhrase = ref('')
 
-const { data, execute } = useQuery('employee.searchCustomers', {
-  args: () => searchPhrase.value,
-  reactive: {
-    args: true
-  }
-})
-
-const options = ref([])
-
-const filterFn = (val, update, abort) => {
-  if (val === '') {
-    options.value = []
-  } else if (val.length < 2) {
-    abort()
-    return
-  } else {
-    searchPhrase.value = val.toLowerCase()
-    execute().then(() => {
-      update(() => {
-        options.value = data.value.map((customer) => ({
-          label: `${customer.firstName} ${customer.lastName} - ${customer.address} - ${customer.city}`,
-          value: customer.id,
-          rating: customer.rating
-        }))
-      })
-    })
-  }
-}
+const labelFunction = ref(
+  (option: Customer) =>
+    `${option.firstName} ${option.lastName} - ${option.address} - ${option.city}`
+)
 </script>

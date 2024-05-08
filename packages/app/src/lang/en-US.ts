@@ -67,6 +67,7 @@ const lang: Language = {
   },
   customer: {
     title: 'Customer details',
+    customer: 'Customer',
     fields: {
       gender: 'Gender',
       firstName: 'First name',

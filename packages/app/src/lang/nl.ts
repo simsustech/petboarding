@@ -68,6 +68,7 @@ const lang: Language = {
   },
   customer: {
     title: 'Klantgegevens',
+    customer: 'Klant',
     fields: {
       gender: 'Geslacht',
       firstName: 'Voornaam',
