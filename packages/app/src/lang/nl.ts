@@ -170,6 +170,7 @@ const lang: Language = {
   },
   booking: {
     title: 'Reserveringen',
+    booking: 'Reservering',
     until: 'tot en met',
     days: 'dagen',
     history: 'Geschiedenis',
@@ -274,6 +275,7 @@ const lang: Language = {
   },
   daycare: {
     title: 'Dagopvang',
+    daycare: 'Dagopvang',
     fields: {
       status: 'Status'
     },

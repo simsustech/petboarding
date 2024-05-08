@@ -163,6 +163,7 @@ export interface Language {
   }
   booking: {
     title: string
+    booking: string
     until: string
     days: string
     history: string
@@ -259,6 +260,7 @@ export interface Language {
   }
   daycare: {
     title: string
+    daycare: string
     fields: {
       status: string
     }

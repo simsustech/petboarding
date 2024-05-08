@@ -169,6 +169,7 @@ const lang: Language = {
   },
   booking: {
     title: 'Bookings',
+    booking: 'Booking',
     until: 'until',
     days: 'days',
     history: 'History',
@@ -271,6 +272,7 @@ const lang: Language = {
   },
   daycare: {
     title: 'Daycare',
+    daycare: 'Daycare',
     fields: {
       status: 'Status'
     },
