@@ -5,23 +5,31 @@ import { booking, BOOKING_STATUS } from '../../zod/booking.js'
 import type { FastifyInstance } from 'fastify'
 import {
   cancelBooking,
+  createBooking,
   findBooking,
   findBookings,
   findBookingService,
   updateBooking
 } from '../../repositories/booking.js'
 
-export const employeeBookingValidation = booking.omit({
-  customerId: true,
-  customer: true,
-  orderId: true,
-  pets: true,
-  status: true,
-  statuses: true,
-  startTime: true,
-  endTime: true,
-  services: true,
-  days: true
+export const employeeBookingValidation = booking
+  .omit({
+    customer: true,
+    orderId: true,
+    pets: true,
+    status: true,
+    statuses: true,
+    startTime: true,
+    endTime: true,
+    services: true,
+    days: true
+  })
+  .required({
+    customerId: true
+  })
+
+export const employeeUpdateBookingValidation = employeeBookingValidation.omit({
+  customerId: true
 })
 
 export const employeeBookingRoutes = ({
@@ -31,6 +39,24 @@ export const employeeBookingRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
+  createBooking: procedure
+    .input(employeeBookingValidation)
+    .mutation(async ({ input }) => {
+      const booking = await createBooking({
+        booking: {
+          startDate: input.startDate,
+          endDate: input.endDate,
+          startTimeId: input.startTimeId,
+          endTimeId: input.endTimeId,
+          comments: input.comments,
+          customerId: input.customerId
+        },
+        serviceIds: input.serviceIds || [],
+        status: BOOKING_STATUS.PENDING,
+        petIds: input.petIds
+      })
+      return booking
+    }),
   getBooking: procedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
@@ -105,7 +131,7 @@ export const employeeBookingRoutes = ({
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
   updateBooking: procedure
-    .input(employeeBookingValidation.required({ id: true }))
+    .input(employeeUpdateBookingValidation.required({ id: true }))
     .mutation(async ({ input }) => {
       if (input.id) {
         const booking = await updateBooking(
