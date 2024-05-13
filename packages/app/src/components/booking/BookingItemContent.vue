@@ -54,15 +54,20 @@
         `${lang.booking.messages.isDoubleBooked} ${lang.booking.messages.cancelDoubleBookings}`
       }}</q-item-label
     >
-    <q-item-label v-if="modelValue.comments" caption lines="2">
+    <q-item-label
+      v-if="modelValue.comments"
+      class="text-bold"
+      caption
+      lines="2"
+    >
       {{ modelValue.comments }}
     </q-item-label>
-    <q-item-label v-if="modelValue.services?.length" caption>
+    <q-item-label v-if="modelValue.services?.length" class="text-bold" caption>
       {{
         modelValue.services.map((service) => service.service?.name).join(', ')
       }}
     </q-item-label>
-    <q-item-label v-if="modelValue.costs?.total" caption>
+    <q-item-label v-if="modelValue.costs?.total" class="text-bold" caption>
       {{ configuration.CURRENCY + modelValue.costs.total.toFixed(2) }}
     </q-item-label>
   </q-item-section>
