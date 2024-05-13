@@ -14,40 +14,50 @@
       >
     </div>
     <div class="row items-center">
-      <div class="col-6">
-        <a style="margin-bottom: -12px" class="text-subtitle1">
-          {{
-            truncate(`${modelValue.name} ${modelValue.customer?.lastName}`, 12)
-          }}
-        </a>
+      <div class="col-8">
+        <div class="row">
+          <a class="text-subtitle1">
+            {{
+              truncate(
+                `${modelValue.name} ${modelValue.customer?.lastName}`,
+                12
+              )
+            }}
+          </a>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <q-field :label="lang.pet.fields.gender" stack-label dense>
+              <template #control>
+                <div
+                  class="self-center text-subtitle2 text-truncate full-width no-outline q-ma-none"
+                  tabindex="0"
+                >
+                  {{ lang.pet.genders[modelValue.gender] }}
+                </div>
+              </template>
+            </q-field>
+          </div>
+          <div class="col-4">
+            <q-field :label="lang.pet.fields.sterilized" stack-label dense>
+              <template #control>
+                <div
+                  class="self-center full-width no-outline q-ma-none"
+                  tabindex="0"
+                >
+                  <q-icon
+                    size="sm"
+                    :color="modelValue.sterilized ? 'green' : 'red'"
+                    :name="modelValue.sterilized ? 'check' : 'close'"
+                  />
+                </div>
+              </template>
+            </q-field>
+          </div>
+        </div>
       </div>
-      <div class="col-4">
-        <q-field :label="lang.pet.fields.gender" stack-label dense>
-          <template #control>
-            <div
-              class="self-center text-subtitle2 text-truncate full-width no-outline q-ma-none"
-              tabindex="0"
-            >
-              {{ lang.pet.genders[modelValue.gender] }}
-            </div>
-          </template>
-        </q-field>
-      </div>
-      <div class="col-2">
-        <q-field :label="lang.pet.fields.sterilized" stack-label dense>
-          <template #control>
-            <div
-              class="self-center full-width no-outline q-ma-none"
-              tabindex="0"
-            >
-              <q-icon
-                size="sm"
-                :color="modelValue.sterilized ? 'green' : 'red'"
-                :name="modelValue.sterilized ? 'check' : 'close'"
-              />
-            </div>
-          </template>
-        </q-field>
+      <div class="col-4 text-center">
+        <div v-html="qrSvg" id="qrcode" style="width: 2cm; height: 2cm"></div>
       </div>
     </div>
     <div class="row">
@@ -150,19 +160,21 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { Pet } from '@petboarding/api/zod'
+import { renderSVG } from 'uqr'
 
 export interface Props {
   modelValue: Pet
   width: number
   height: number
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 const lang = useLang()
 
-function truncate(str, n) {
+const { modelValue } = toRefs(props)
+function truncate(str: string, n: number) {
   return str.length > n ? str.slice(0, n - 1) + '...' : str
 }
 
@@ -176,4 +188,8 @@ defineExpose({
   variables,
   functions
 })
+
+const qrSvg = ref(
+  renderSVG(`${window.location.origin}/employee/pets/${modelValue.value.id}`)
+)
 </script>

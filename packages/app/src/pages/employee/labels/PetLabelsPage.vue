@@ -69,7 +69,7 @@ const printLabels = async () => {
     margin: 1,
     filename: 'labels.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 1 },
+    html2canvas: { scale: 1.8 },
     jsPDF: {
       unit: 'mm',
       format: [LABEL_WIDTH, LABEL_HEIGHT + 4],

@@ -167,6 +167,9 @@ importers:
       '@fastify/static':
         specifier: 7.0.3
         version: 7.0.3
+      uqr:
+        specifier: ^0.1.2
+        version: 0.1.2
     devDependencies:
       '@petboarding/api':
         specifier: workspace:*
@@ -9490,6 +9493,10 @@ packages:
       escalade: 3.1.2
       picocolors: 1.0.0
     dev: true
+
+  /uqr@0.1.2:
+    resolution: {integrity: sha512-MJu7ypHq6QasgF5YRTjqscSzQp/W11zoUk6kvmlH+fmWEs63Y0Eib13hYFwAzagRJcVY8WVnlV+eBDUGMJ5IbA==}
+    dev: false
 
   /uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
