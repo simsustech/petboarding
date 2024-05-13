@@ -211,6 +211,7 @@ export interface Language {
       changeDaycareToBooking: string
       upcomingBookings: string
       otherBookings: string
+      overlapsWithUnavailablePeriod: string
     }
     helpers: {
       status: {

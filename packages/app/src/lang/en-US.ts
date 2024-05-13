@@ -220,7 +220,9 @@ const lang: Language = {
       changeDaycareToBooking:
         'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.',
       upcomingBookings: 'Upcoming bookings',
-      otherBookings: 'Other bookings'
+      otherBookings: 'Other bookings',
+      overlapsWithUnavailablePeriod:
+        'Booking overlaps with an unavailable period.'
     },
     helpers: {
       status: {

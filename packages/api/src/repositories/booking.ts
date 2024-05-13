@@ -13,7 +13,7 @@ import {
 import Holidays from 'date-holidays'
 import { findCategories } from './category.js'
 
-import { BOOKING_STATUS } from '../zod/index.js'
+import { BOOKING_STATUS, PERIOD_TYPE } from '../zod/index.js'
 import type { OpeningTime } from './openingTime.js'
 import {
   withValidVaccinations,
@@ -452,6 +452,25 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
     .as('isDoubleBooked')
 }
 
+function withOverlapsWithUnavailablePeriod(
+  eb: ExpressionBuilder<Database, 'bookings'>
+) {
+  return eb
+    .exists(
+      eb
+        .selectFrom('periods')
+        .where((web) =>
+          web.or([
+            web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_ALL),
+            web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_BOOKINGS)
+          ])
+        )
+        .whereRef('periods.startDate', '<=', 'bookings.endDate')
+        .whereRef('periods.endDate', '>=', 'bookings.startDate')
+    )
+    .as('overlapsWithUnavailablePeriod')
+}
+
 function find({
   criteria,
   select
@@ -528,6 +547,7 @@ function find({
       withStatuses,
       withStatus,
       withIsDoubleBooked,
+      withOverlapsWithUnavailablePeriod,
       sql<number>`bookings.end_date - 
       bookings.start_date - 1
       + (select "opening_times"."start_day_counted" from "opening_times" where "bookings"."start_time_id" = "opening_times"."id")
