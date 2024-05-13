@@ -456,18 +456,31 @@ function withOverlapsWithUnavailablePeriod(
   eb: ExpressionBuilder<Database, 'bookings'>
 ) {
   return eb
-    .exists(
-      eb
-        .selectFrom('periods')
-        .where((web) =>
-          web.or([
-            web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_ALL),
-            web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_BOOKINGS)
-          ])
-        )
-        .whereRef('periods.startDate', '<=', 'bookings.endDate')
-        .whereRef('periods.endDate', '>=', 'bookings.startDate')
-    )
+    .and([
+      eb.exists(
+        eb
+          .selectFrom('periods')
+          .where((web) =>
+            web.or([
+              web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_ALL),
+              web('periods.type', '=', PERIOD_TYPE.UNAVAILABLE_FOR_BOOKINGS)
+            ])
+          )
+          .whereRef('periods.startDate', '<=', 'bookings.endDate')
+          .whereRef('periods.endDate', '>=', 'bookings.startDate')
+      ),
+      eb.exists(
+        eb
+          .selectFrom('bookingStatus')
+          .whereRef('bookingStatus.bookingId', '=', 'bookings.id')
+          .whereRef(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+          )
+          .where('bookingStatus.status', '!=', BOOKING_STATUS.APPROVED)
+      )
+    ])
     .as('overlapsWithUnavailablePeriod')
 }
 
