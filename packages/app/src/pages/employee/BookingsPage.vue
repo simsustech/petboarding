@@ -54,6 +54,7 @@
         :services="servicesData"
         allow-hidden-services
         ignore-terms-and-conditions
+        allow-past-dates
         @submit="updateBooking"
       ></booking-form>
     </responsive-dialog>
