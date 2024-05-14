@@ -130,8 +130,10 @@
       ref="createBookingFormRef"
       :pets="pets"
       :services="services"
-      @submit="createBooking"
+      allow-hidden-services
       ignore-terms-and-conditions
+      allow-past-dates
+      @submit="createBooking"
     ></booking-form>
   </responsive-dialog>
 
