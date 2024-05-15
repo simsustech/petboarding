@@ -88,6 +88,7 @@ import { useLang } from '../../lang/index.js'
 import { extend } from 'quasar'
 import { computed } from 'vue'
 import { useConfiguration } from '../../configuration.js'
+import { BOOKING_STATUS } from '@petboarding/api/zod'
 const configuration = useConfiguration()
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
@@ -104,16 +105,17 @@ const { data, execute } = useQuery('user.getBookings', {
 const upcomingBookings = computed(() =>
   data.value?.filter(
     (booking) =>
-      (booking.status?.status === 'approved' ||
-        booking.status?.status === 'pending') &&
-      booking.endDate > new Date().toISOString().slice(0, 10)
+      (booking.status?.status === BOOKING_STATUS.APPROVED ||
+        booking.status?.status === BOOKING_STATUS.PENDING) &&
+      booking.endDate >= new Date().toISOString().slice(0, 10)
   )
 )
 const otherBookings = computed(() =>
   data.value?.filter(
     (booking) =>
-      booking.status?.status !== 'approved' &&
-      booking.status?.status !== 'pending'
+      !upcomingBookings.value
+        ?.map((upcomingBooking) => upcomingBooking.id)
+        .includes(booking.id)
   )
 )
 

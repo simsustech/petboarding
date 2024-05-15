@@ -77,6 +77,7 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../components/booking/BookingForm.vue'
 import { extend } from 'quasar'
 import { useLang } from '../../lang/index.js'
+import { BOOKING_STATUS } from '@petboarding/api/zod'
 
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -101,16 +102,17 @@ const { data, execute } = useQuery('employee.getBookingsByIds', {
 const upcomingBookings = computed(() =>
   data.value?.filter(
     (booking) =>
-      (booking.status?.status === 'approved' ||
-        booking.status?.status === 'pending') &&
-      booking.endDate > new Date().toISOString().slice(0, 10)
+      (booking.status?.status === BOOKING_STATUS.APPROVED ||
+        booking.status?.status === BOOKING_STATUS.PENDING) &&
+      booking.endDate >= new Date().toISOString().slice(0, 10)
   )
 )
 const otherBookings = computed(() =>
   data.value?.filter(
     (booking) =>
-      booking.status?.status !== 'approved' &&
-      booking.status?.status !== 'pending'
+      !upcomingBookings.value
+        ?.map((upcomingBooking) => upcomingBooking.id)
+        .includes(booking.id)
   )
 )
 
