@@ -125,11 +125,11 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <q-item :inset-level="1" to="/employee/bookings">
+                <!-- <q-item :inset-level="1" to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>
                   </q-item-section>
-                </q-item>
+                </q-item> -->
               </q-expansion-item>
             </q-list>
           </div>
