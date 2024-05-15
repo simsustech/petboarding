@@ -1,4 +1,6 @@
 import * as z from 'zod'
+import { OPENING_TIME_TYPE } from '../kysely/types.js'
+export { OPENING_TIME_TYPE }
 
 export const openingTimeValidation = {
   id: z.number().optional(),
@@ -9,7 +11,8 @@ export const openingTimeValidation = {
   unavailableHolidays: z.string().array(),
   startTime: z.string(),
   endTime: z.string(),
-  disabled: z.boolean()
+  disabled: z.boolean(),
+  type: z.nativeEnum(OPENING_TIME_TYPE)
 }
 
 export const openingTime = z.object(openingTimeValidation)

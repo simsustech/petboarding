@@ -16,7 +16,8 @@ const defaultSelect = [
   'daysOfWeek',
   'disabled',
   'unavailableHolidays',
-  'name'
+  'name',
+  'type'
 ] as (keyof OpeningTime)[]
 
 function checkAvailableOnDate({

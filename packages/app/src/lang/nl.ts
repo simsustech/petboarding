@@ -319,7 +319,13 @@ const lang: Language = {
       unavailableHolidays: 'Onbeschikbare feestdagen',
       startTime: 'Start tijd',
       endTime: 'Eind tijd',
-      disabled: 'Uitgeschakeld'
+      disabled: 'Uitgeschakeld',
+      type: 'Type'
+    },
+    type: {
+      all: 'Alle',
+      arrival: 'Aankomst',
+      departure: 'Vertrek'
     },
     helpers: {
       dayCountedHint:

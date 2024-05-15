@@ -14,6 +14,12 @@ export enum BOOKING_STATUS {
   CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
 }
 
+export enum OPENING_TIME_TYPE {
+  ALL = 'all',
+  ARRIVAL = 'arrival',
+  DEPARTURE = 'departure'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -205,6 +211,7 @@ export interface OpeningTimes {
   startTime: string
   endTime: string
   disabled: Generated<boolean | null>
+  type: OPENING_TIME_TYPE
   createdAt: Generated<string>
 }
 

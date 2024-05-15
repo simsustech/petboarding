@@ -36,7 +36,8 @@ export const configurationOpeningTimeRoutes = ({
         endDayCounted: input.endDayCounted,
         daysOfWeek: JSON.stringify(input.daysOfWeek),
         disabled: input.disabled,
-        unavailableHolidays: JSON.stringify(input.unavailableHolidays)
+        unavailableHolidays: JSON.stringify(input.unavailableHolidays),
+        type: input.type
       })
 
       if (openingTime) return true
@@ -59,7 +60,8 @@ export const configurationOpeningTimeRoutes = ({
             endDayCounted: input.endDayCounted,
             daysOfWeek: JSON.stringify(input.daysOfWeek),
             disabled: input.disabled,
-            unavailableHolidays: JSON.stringify(input.unavailableHolidays)
+            unavailableHolidays: JSON.stringify(input.unavailableHolidays),
+            type: input.type
           }
         )
 

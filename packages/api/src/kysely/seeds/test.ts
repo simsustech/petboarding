@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import * as compressTag from 'compress-tag'
 import { db } from '../index.js'
 import { sql } from 'kysely'
-import { BOOKING_STATUS } from '../types.js'
+import { BOOKING_STATUS, OPENING_TIME_TYPE } from '../types.js'
 const { c } = compressTag
 
 const seed = async () => {
@@ -95,7 +95,8 @@ const seed = async () => {
       daysOfWeek: '[0,1,2,3,4,5,6]',
       unavailableHolidays: '["01-01"]',
       startTime: '09:00',
-      endTime: '10:00'
+      endTime: '10:00',
+      type: OPENING_TIME_TYPE.ALL
     },
     {
       name: 'Evening',
@@ -104,7 +105,8 @@ const seed = async () => {
       daysOfWeek: '[1,2,3,4,5]',
       unavailableHolidays: '["01-01"]',
       startTime: '17:00',
-      endTime: '18:00'
+      endTime: '18:00',
+      type: OPENING_TIME_TYPE.ALL
     }
   ]
 

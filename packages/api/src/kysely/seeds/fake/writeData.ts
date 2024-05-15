@@ -1,6 +1,7 @@
 import generateData from './generateData.js'
 import { writeFileSync } from 'fs'
 import { c } from 'compress-tag'
+import { OPENING_TIME_TYPE } from '../../types.js'
 
 const {
   accounts,
@@ -29,7 +30,8 @@ const openingTimes = [
     daysOfWeek: '[0,1,2,3,4,5,6]',
     unavailableHolidays: '["01-01"]',
     startTime: '09:00',
-    endTime: '10:00'
+    endTime: '10:00',
+    type: OPENING_TIME_TYPE.ALL
   },
   {
     name: 'Evening',
@@ -38,7 +40,8 @@ const openingTimes = [
     daysOfWeek: '[1,2,3,4,5]',
     unavailableHolidays: '["01-01"]',
     startTime: '17:00',
-    endTime: '18:00'
+    endTime: '18:00',
+    type: OPENING_TIME_TYPE.ALL
   }
 ]
 

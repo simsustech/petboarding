@@ -316,7 +316,13 @@ const lang: Language = {
       unavailableHolidays: 'Unavailable holidays',
       startTime: 'Start time',
       endTime: 'End time',
-      disabled: 'Disabled'
+      disabled: 'Disabled',
+      type: 'Type'
+    },
+    type: {
+      all: 'All',
+      arrival: 'Arrival',
+      departure: 'Departure'
     },
     helpers: {
       dayCountedHint: 'Factor with which the price per day is multiplied.',

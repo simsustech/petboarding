@@ -301,6 +301,12 @@ export interface Language {
       daysOfWeek: string
       unavailableHolidays: string
       disabled: string
+      type: string
+    }
+    type: {
+      all: string
+      arrival: string
+      departure: string
     }
     helpers: {
       dayCountedHint: string

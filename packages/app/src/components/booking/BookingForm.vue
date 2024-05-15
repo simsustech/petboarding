@@ -27,6 +27,7 @@
           :label="lang.booking.fields.startTime"
           :date="modelValue.startDate"
           :disable="!modelValue.startDate"
+          :type="OPENING_TIME_TYPE.ARRIVAL"
           required
         />
 
@@ -35,6 +36,7 @@
           :label="lang.booking.fields.endTime"
           :date="modelValue.endDate"
           :disable="!modelValue.endDate"
+          :type="OPENING_TIME_TYPE.DEPARTURE"
           required
         />
 
@@ -90,6 +92,7 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import OpeningTimeSelect from './OpeningTimeSelect.vue'
 import BookingServicesSelect from './BookingServicesSelect.vue'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
+import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
 
 import type { Booking, Pet, Service } from '@petboarding/api/zod'
 export interface Props {

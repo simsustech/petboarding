@@ -31,17 +31,19 @@ import { watch, useAttrs, ref, toRefs, computed, reactive } from 'vue'
 import { QSelect, useQuasar, ValidationRule } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
 import { createUseTrpc } from '../../trpc.js'
+import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue?: string | number
   required?: boolean
   label: string
   date: string
+  type?: OPENING_TIME_TYPE
 }
 const props = defineProps<Props>()
 const { useQuery } = await createUseTrpc()
 
-const { date } = toRefs(props)
+const { date, type } = toRefs(props)
 const { data } = useQuery('user.getOpeningTimes', {
   args: reactive({ date }),
   immediate: true,
@@ -68,10 +70,16 @@ if (props.required)
 
 const openingTimeOptions = computed(() => {
   return (
-    data.value?.map((openingTime) => ({
-      label: openingTime.name,
-      value: openingTime.id
-    })) || []
+    data.value
+      ?.filter(
+        (openingTime) =>
+          openingTime.type === OPENING_TIME_TYPE.ALL ||
+          openingTime.type === type.value
+      )
+      .map((openingTime) => ({
+        label: openingTime.name,
+        value: openingTime.id
+      })) || []
   )
 })
 </script>

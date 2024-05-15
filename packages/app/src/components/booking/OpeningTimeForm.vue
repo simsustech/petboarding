@@ -5,12 +5,16 @@
         v-bind="input"
         id="name"
         v-model="modelValue.name"
-        class="col-12"
+        class="col-12 col-md-6"
         name="name"
         :label="lang.openingTime.fields.name"
         bottom-slots
       />
 
+      <opening-time-type-select
+        v-model="modelValue.type"
+        class="col-12 col-md-6"
+      />
       <q-input
         v-model="modelValue.startTime"
         class="col-12 col-md-6"
@@ -124,8 +128,9 @@ import { ref } from 'vue'
 import { useQuasar, extend, QForm } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { OpeningTime } from '@petboarding/api/zod'
+import { OPENING_TIME_TYPE, OpeningTime } from '@petboarding/api/zod'
 import { BooleanSelect } from '@simsustech/quasar-components/form'
+import OpeningTimeTypeSelect from './OpeningTimeTypeSelect.vue'
 import type { QFormProps, QInputProps } from 'quasar'
 
 export interface Props {
@@ -175,7 +180,8 @@ const initialValue = {
   endDayCounted: 0,
   daysOfWeek: [],
   unavailableHolidays: [],
-  disabled: false
+  disabled: false,
+  type: OPENING_TIME_TYPE.ALL
 }
 const modelValue = ref<OpeningTime>(initialValue)
 
