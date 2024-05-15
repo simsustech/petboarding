@@ -64,7 +64,7 @@
     <div class="row q-col-gutter-sm">
       {{ lang.openingTime.helpers.daysCountedMessage }}
       <q-input
-        v-model="modelValue.startDayCounted"
+        v-model.number="modelValue.startDayCounted"
         class="col-12 col-md-6"
         :label="lang.openingTime.fields.startDayCounted"
         type="number"
@@ -73,7 +73,7 @@
       />
 
       <q-input
-        v-model="modelValue.endDayCounted"
+        v-model.number="modelValue.endDayCounted"
         class="col-12 col-md-6"
         :label="lang.openingTime.fields.endDayCounted"
         type="number"
