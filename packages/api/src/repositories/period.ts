@@ -65,7 +65,7 @@ export async function findPeriods({
     criteria,
     select
   })
-  return query.execute()
+  return query.orderBy('startDate').execute()
 }
 
 export async function createPeriod(period: NewPeriod) {
