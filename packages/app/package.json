@@ -76,7 +76,7 @@
     "use-trpc": "2.0.0-beta.1",
     "vite": "^5.2.9",
     "vite-plugin-pwa": "^0.19.8",
-    "vitrify": "^0.14.4",
+    "vitrify": "^0.15.1",
     "vue": "3.4.23",
     "vue-eslint-parser": "^9.4.2",
     "vue-router": "4.3.2",
