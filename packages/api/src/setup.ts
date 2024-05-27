@@ -82,7 +82,9 @@ export default async function (fastify: FastifyInstance) {
       configuration: {
         cookies: {
           // https://github.com/panva/node-oidc-provider/blob/main/docs/README.md#cookieskeys
-          keys: ['secret1']
+          keys: (
+            env.read('OIDC_COOKIES_KEYS') || env.read('VITE_OIDC_COOKIES_KEYS')
+          ).split(',')
         },
         routes: {
           authorization: '/authorize',
