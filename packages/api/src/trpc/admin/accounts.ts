@@ -5,6 +5,7 @@ import { PETBOARDING_ACCOUNT_ROLES } from '../../zod/account.js'
 import {
   findAccount,
   findAccounts,
+  getAccountsCount,
   updateAccount
 } from '../../repositories/account.js'
 import type { FastifyInstance } from 'fastify'
@@ -34,18 +35,81 @@ export const adminAccountRoutes = ({
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
-  findAccounts: procedure
+  getAccounts: procedure
     .input(
       z.object({
-        email: z.string()
+        criteria: z
+          .object({
+            name: z.string().optional(),
+            email: z.string().optional(),
+            roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)).optional()
+          })
+          .optional(),
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([z.literal('id'), z.literal('email'), z.literal('name')])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
       })
     )
     .query(async ({ input }) => {
-      const { email } = input
-      if (email) {
+      const { criteria, pagination } = input
+      const audits = await findAccounts({
+        criteria: criteria || {},
+        pagination
+      })
+      if (audits) return audits
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  getAccountsCount: procedure
+    .input(
+      z
+        .object({
+          criteria: z
+            .object({
+              name: z.string().optional(),
+              email: z.string().optional(),
+              roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)).optional()
+            })
+            .optional()
+        })
+        .optional()
+    )
+    .query(async ({ input }) => {
+      const criteria = input?.criteria || {}
+      const count = await getAccountsCount({ criteria })
+      return count
+    }),
+  findAccounts: procedure
+    .input(
+      z.object({
+        ids: z.number().array().optional(),
+        email: z.string().optional(),
+        searchPhrase: z.string().optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const { ids, email, searchPhrase } = input
+      if (
+        (email && email.length > 2) ||
+        (searchPhrase && searchPhrase.length > 2)
+      ) {
         const accounts = await findAccounts({
           criteria: {
-            email
+            email,
+            searchPhrase
+          }
+        })
+        return accounts
+      } else if (ids) {
+        const accounts = await findAccounts({
+          criteria: {
+            ids
           }
         })
         return accounts

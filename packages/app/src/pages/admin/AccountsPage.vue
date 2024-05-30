@@ -1,11 +1,13 @@
 <template>
-  <account-select v-model="id"></account-select>
-
-  <account-card
-    v-if="data"
-    :model-value="data"
-    @add-role="addRole"
-    @remove-role="removeRole"
+  <accounts-table
+    v-if="accounts"
+    :model-value="accounts"
+    :mapped-roles="mappedRoles"
+    :count="count"
+    v-model:pagination="pagination"
+    v-model:criteria="criteria"
+    @add-role="onAddRole"
+    @remove-role="onRemoveRole"
   />
 </template>
 
@@ -16,48 +18,72 @@ export default {
 </script>
 
 <script setup lang="ts">
-import AccountSelect from '../../components/admin/AccountSelect.vue'
-import AccountCard from '../../components/admin/AccountCard.vue'
-import { reactive, ref } from 'vue'
+import { AccountsTable } from '@simsustech/quasar-components/authentication'
 import { createUseTrpc } from '../../trpc.js'
-import { extend } from 'quasar'
-
-export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
-
+import { computed, reactive, ref } from 'vue'
+import { useLang } from '../../lang/index.js'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/zod'
 const { useQuery, useMutation } = await createUseTrpc()
 
-const id = ref()
-const { data } = useQuery('admin.getAccount', {
-  args: reactive({ id })
+const lang = useLang()
+
+const pagination = ref({
+  limit: 5,
+  offset: 0,
+  sortBy: null as 'id' | 'email' | 'name' | null,
+  descending: false
 })
 
-const addRole: InstanceType<
-  typeof AccountCard
->['$props']['onAddRole'] = async ({ data, done }) => {
-  data = extend(true, {}, data)
+const criteria = ref({
+  name: '',
+  email: '',
+  roles: []
+})
 
+const { data: accounts, execute: executeAccounts } = useQuery(
+  'admin.getAccounts',
+  {
+    args: reactive({ pagination, criteria }),
+    immediate: true,
+    reactive: true
+  }
+)
+
+const { data: count } = useQuery('admin.getAccountsCount', {
+  args: reactive({ criteria }),
+  immediate: true,
+  initialData: 0
+})
+
+const mappedRoles = computed(() =>
+  Object.values(PETBOARDING_ACCOUNT_ROLES).reduce(
+    (acc, cur) => {
+      acc[cur] = lang.value.account.roles[cur]
+      return acc
+    },
+    {} as Record<PETBOARDING_ACCOUNT_ROLES, string>
+  )
+)
+
+const onAddRole = async ({ id, role }: { id: number; role: string }) => {
   const result = useMutation('admin.addRole', {
-    args: data as WithRequired<typeof data, 'id'>,
+    args: { id, role: role as PETBOARDING_ACCOUNT_ROLES },
     immediate: true
   })
 
   await result.immediatePromise
 
-  done(!result.error.value)
+  if (!result.error.value) executeAccounts()
 }
 
-const removeRole: InstanceType<
-  typeof AccountCard
->['$props']['onRemoveRole'] = async ({ data, done }) => {
-  data = extend(true, {}, data)
-
+const onRemoveRole = async ({ id, role }: { id: number; role: string }) => {
   const result = useMutation('admin.removeRole', {
-    args: data as WithRequired<typeof data, 'id'>,
+    args: { id, role: role as PETBOARDING_ACCOUNT_ROLES },
     immediate: true
   })
 
   await result.immediatePromise
 
-  done(!result.error.value)
+  if (!result.error.value) executeAccounts()
 }
 </script>
