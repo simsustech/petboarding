@@ -314,7 +314,7 @@ const title = computed(() => configuration.value.TITLE)
 const language = ref($q.lang.isoName)
 
 const quasarLang = import.meta.glob<QuasarLanguage>(
-  '../../node_modules/quasar/lang/*.mjs'
+  '../../node_modules/quasar/lang/*.js'
 )
 
 const languageImports = ref(
