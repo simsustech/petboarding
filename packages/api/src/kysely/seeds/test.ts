@@ -93,7 +93,8 @@ const seed = async () => {
       startDayCounted: 1,
       endDayCounted: 0.5,
       daysOfWeek: '[0,1,2,3,4,5,6]',
-      unavailableHolidays: '["01-01"]',
+      // unavailableHolidays: '["01-01"]',
+      unavailableHolidays: '[]',
       startTime: '09:00',
       endTime: '10:00',
       type: OPENING_TIME_TYPE.ALL
@@ -102,8 +103,9 @@ const seed = async () => {
       name: 'Evening',
       startDayCounted: 0.5,
       endDayCounted: 1.0,
-      daysOfWeek: '[1,2,3,4,5]',
-      unavailableHolidays: '["01-01"]',
+      daysOfWeek: '[0,1,2,3,4,5,6]',
+      unavailableHolidays: '[]',
+      // unavailableHolidays: '["01-01"]',
       startTime: '17:00',
       endTime: '18:00',
       type: OPENING_TIME_TYPE.ALL
