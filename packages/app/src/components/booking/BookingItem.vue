@@ -6,9 +6,6 @@
       :show-approval-buttons="showApprovalButtons"
       :show-edit-button="showEditButton"
       :status="status"
-      :class="{
-        'bg-grey-3': modelValue.endDate < currentDate
-      }"
       @update="($event) => emit('update', $event)"
       @cancel="($event) => emit('cancel', $event)"
       @approve="($event) => emit('approve', $event)"
@@ -199,6 +196,6 @@ const { status, modelValue } = toRefs(props)
 const getClasses = () => ({
   'bg-green-2': status?.value === 'arriving' || status?.value === 'staying',
   'bg-red-2': status?.value === 'departing',
-  'bg-grey-2': modelValue.value.endDate < currentDate
+  'bg-grey-3': modelValue.value.endDate < currentDate
 })
 </script>

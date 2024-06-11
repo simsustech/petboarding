@@ -1,5 +1,9 @@
 <template>
-  <q-expansion-item>
+  <q-expansion-item
+    :header-class="{
+      'bg-grey-3': modelValue.endDate < currentDate
+    }"
+  >
     <template #header>
       <booking-item-content
         :model-value="modelValue"
@@ -161,6 +165,7 @@ const editBookingService: InstanceType<
 >['$props']['onEdit'] = ({ data, done }) =>
   emit('editBookingService', { data, done })
 
+const currentDate = ref(new Date().toISOString().slice(0, 10))
 const variables = ref({})
 const functions = ref({})
 defineExpose({
