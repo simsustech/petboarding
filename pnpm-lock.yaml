@@ -184,8 +184,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.10.0
-        version: 0.10.0(quasar@2.16.4)
+        specifier: ^0.10.2
+        version: 0.10.2(quasar@2.16.4)
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
@@ -314,8 +314,8 @@ importers:
         specifier: 1.16.11
         version: 1.16.11
       '@simsustech/quasar-components':
-        specifier: ^0.10.0
-        version: 0.10.0(quasar@2.16.4)
+        specifier: ^0.10.2
+        version: 0.10.2(quasar@2.16.4)
       '@typescript-eslint/eslint-plugin':
         specifier: 7.12.0
         version: 7.12.0(@typescript-eslint/parser@7.12.0)(eslint@9.4.0)(typescript@5.4.5)
@@ -3238,8 +3238,8 @@ packages:
     dev: true
     optional: true
 
-  /@simsustech/quasar-components@0.10.0(quasar@2.16.4):
-    resolution: {integrity: sha512-LTYbxRN/KP0odIsI3Vk1ZIZLsy0RzXbuOQTjJDYVuMGC5CXUSEHKYONm/titqqmWH9M/lRCmhhgXnBq36AsfAw==}
+  /@simsustech/quasar-components@0.10.2(quasar@2.16.4):
+    resolution: {integrity: sha512-n8LMjPpS6/0dJ+w/9Z7hW6GDhG298dd6eTEs0zCrfwG9JRENMNrLHn67yHJZrVR8U38AWqzovUIbbeizcMy/gA==}
     peerDependencies:
       quasar: ^2.15.2
     dependencies:
