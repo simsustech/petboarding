@@ -2,12 +2,6 @@ version: "3.9"
 services:
   api:
     image: "ghcr.io/simsustech/petboarding"
-    build:
-      context: .
-      secrets:
-        - SIMSUSTECH_NPM_TOKEN
-      dockerfile: Dockerfile
-      target: api
     # volumes:
     # - ./termsandconditions.pdf:/app/node_modules/@petboarding/app/dist/ssr/client/termsandconditions.pdf
     labels:
@@ -25,21 +19,20 @@ services:
       MAIL_FROM: ${MAIL_FROM}
       MAIL_USER: ${MAIL_USER}
       MAIL_PASS: ${MAIL_PASS}
+      MAIL_SECURE: ${MAIL_SECURE}
       LICENSE_KEY: ${LICENSE_KEY}
       OIDC_COOKIES_KEYS: # openssl rand -base64 32
       OTP_SECRET_FILE: /run/secrets/OTP_SECRET
       OTP_VALIDITY_SECONDS: 3600
-      EMAIL_FOOTER: "Footer"
-      VITE_TITLE: Petboarding dev
+      EMAIL_FOOTER: "Petboarding"
+      VITE_TITLE: Petboarding
       VITE_LANG: en-US
       # VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
 
-    # entrypoint: ["/bin/sh", "-c", "tail -f /dev/null"]
     secrets:
       - POSTGRES_PASSWORD
-      - SIMSUSTECH_NPM_TOKEN
       - OTP_SECRET
     networks:
       web:
@@ -66,8 +59,6 @@ services:
 secrets:
   POSTGRES_PASSWORD:
     file: ./env/POSTGRES_PASSWORD
-  SIMSUSTECH_NPM_TOKEN:
-    file: ./env/SIMSUSTECH_NPM_TOKEN
   OTP_SECRET:
     file: ./env/OTP_SECRET
 

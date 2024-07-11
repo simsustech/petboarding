@@ -35,6 +35,16 @@ https://demo.petboarding.app
 📱 Fully responsive (mobile friendly).  
 🖨️ Create label printer friendly pet information cards.  
 
+## Self hosted
+```sh
+wget https://raw.githubusercontent.com/simsustech/petboarding/main/docker-compose.yaml
+wget https://raw.githubusercontent.com/simsustech/petboarding/main/.env.example -O .env
+mkdir env
+nano -L .env  # Change environment
+nano -L env/POSTGRES_PASSWORD # Enter postgress password
+nano -L env/OTP_SECRET  # Enter OTP secret, use openssl rand -base64 32
+docker compose up
+```
 
 ## Development
 Petboarding is built on top of [Modular API](https://www.simsus.tech/modularapi). You will need an account for private NPM access.
