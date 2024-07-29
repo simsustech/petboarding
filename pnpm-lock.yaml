@@ -47,11 +47,11 @@ importers:
         specifier: 7.0.4
         version: 7.0.4
       '@modular-api/api':
-        specifier: ^0.4.3
-        version: 0.4.3(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.3)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27)
+        specifier: ^0.4.12
+        version: 0.4.12(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27)
       '@modular-api/fastify-oidc':
-        specifier: ^0.5.2
-        version: 0.5.2(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.3)(otplib@12.0.1)(typescript@5.4.5)
+        specifier: ^0.5.4
+        version: 0.5.4(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.4.5)
       '@petboarding/app':
         specifier: workspace:*
         version: link:../app
@@ -80,8 +80,8 @@ importers:
         specifier: ^4.7.8
         version: 4.7.8
       kysely:
-        specifier: ^0.27.3
-        version: 0.27.3
+        specifier: ^0.27.4
+        version: 0.27.4
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -133,7 +133,7 @@ importers:
         version: 9.26.0(eslint@9.4.0)
       kysely-codegen:
         specifier: ^0.15.0
-        version: 0.15.0(kysely@0.27.3)(pg@8.12.0)
+        version: 0.15.0(kysely@0.27.4)(pg@8.12.0)
       quasar:
         specifier: 2.16.4
         version: 2.16.4
@@ -2826,10 +2826,10 @@ packages:
       - supports-color
     dev: false
 
-  /@modular-api/api@0.4.3(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.3)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27):
-    resolution: {integrity: sha512-vC65hAv4VQQPlfmXg32DFf2Z1R1JoiFI6F0Jqem88Marmt91zjNb0mLImAlPBMV69D55rqI5NiNaY0/b6y20eg==}
+  /@modular-api/api@0.4.12(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27):
+    resolution: {integrity: sha512-0Quoh2E2Wp7CYASixabVQ7blyh0mhjQsCLchvPyAs9T9YJh/TkdvaP1Q2M3bWHhGjQVmD/xt9j1dmsbdFo9H5g==}
     peerDependencies:
-      kysely: ^0.27.3
+      kysely: ^0.27.4
       openid-client: ^5.6.5
     dependencies:
       '@fastify/cookie': 9.3.1
@@ -2837,9 +2837,9 @@ packages:
       '@fastify/formbody': 7.4.0
       '@fastify/middie': 8.3.1
       '@fastify/static': 7.0.4
-      '@modular-api/fastify-cart': 0.2.1(kysely@0.27.3)
-      '@modular-api/fastify-checkout': 0.2.3(kysely@0.27.3)
-      '@modular-api/fastify-oidc': 0.5.2(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.3)(otplib@12.0.1)(typescript@5.4.5)
+      '@modular-api/fastify-cart': 0.2.4(kysely@0.27.4)
+      '@modular-api/fastify-checkout': 0.3.3(kysely@0.27.4)
+      '@modular-api/fastify-oidc': 0.5.4(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.4.5)
       '@trpc/server': 10.45.2
       '@types/compression': 1.7.5
       '@types/serve-static': 1.15.7
@@ -2847,8 +2847,8 @@ packages:
       compression: 1.7.4
       fastify-mailer: 2.3.1(nodemailer@6.9.13)
       fastify-plugin: 4.5.1
-      jose: 5.3.0
-      kysely: 0.27.3
+      jose: 5.6.3
+      kysely: 0.27.4
       nodemailer: 6.9.13
       openid-client: 5.6.5
       pg: 8.12.0
@@ -2865,10 +2865,10 @@ packages:
       - vue
     dev: false
 
-  /@modular-api/fastify-cart@0.2.1(kysely@0.27.3):
-    resolution: {integrity: sha512-mXW4P65DeIfF3rvF4bUf5+oVZtTUUkHGKNNdZmSj+Od/ruTQUUxNzjaef2F6QqFIbwXeO/aRptY1O7PRWmtSLg==}
+  /@modular-api/fastify-cart@0.2.4(kysely@0.27.4):
+    resolution: {integrity: sha512-Xpbk8yoiIoOaXI1JjVjm/eA8Eu3qmKFdmsvALICY0Nl3HtHk/wqif2+j4OIUj34/KgrpFmTVqRyzlPIbXa/Mfw==}
     peerDependencies:
-      kysely: ^0.27.3
+      kysely: ^0.27.4
     dependencies:
       '@fastify/cookie': 9.3.1
       '@fastify/middie': 8.3.1
@@ -2876,15 +2876,15 @@ packages:
       '@mollie/api-client': 3.7.0
       '@vitrify/tools': 0.1.7
       fastify-plugin: 4.5.1
-      kysely: 0.27.3
+      kysely: 0.27.4
     transitivePeerDependencies:
       - debug
     dev: false
 
-  /@modular-api/fastify-checkout@0.2.3(kysely@0.27.3):
-    resolution: {integrity: sha512-JZt0qxrCE5Su8TXOKp3OjcS/WyB8b/eEnJvdap8HDesw5Ec22kRHsFuIhOR+BBAHfu1VlzqJyPFg/2LB9a7CJg==}
+  /@modular-api/fastify-checkout@0.3.3(kysely@0.27.4):
+    resolution: {integrity: sha512-O7jC+ywjR+sl/aBC2DKXKzZf78ZCkjLM7t11cNXmXES+YS9VhgEb0fiXDZM2ilfbZk4Q3BcFvwB1FJ7tXUNOaQ==}
     peerDependencies:
-      kysely: ^0.27.3
+      kysely: ^0.27.4
     dependencies:
       '@fastify/cookie': 9.3.1
       '@fastify/middie': 8.3.1
@@ -2892,26 +2892,26 @@ packages:
       '@mollie/api-client': 3.7.0
       '@vitrify/tools': 0.1.7
       fastify-plugin: 4.5.1
-      kysely: 0.27.3
+      kysely: 0.27.4
     transitivePeerDependencies:
       - debug
     dev: false
 
-  /@modular-api/fastify-oidc@0.5.2(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.3)(otplib@12.0.1)(typescript@5.4.5):
-    resolution: {integrity: sha512-FR1svGDDBycOB6t4APDJlR8vMT9wcaxJiBrw79+FryALT1Bf9PcLd7urA81e3kIvDQfir7PXbHZTDHfqmxEjcA==}
+  /@modular-api/fastify-oidc@0.5.4(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.4.5):
+    resolution: {integrity: sha512-fO4Ale6MpptyDdwiJIrz4N4xvdkbg39jaNaQa73VU0qRuYm/7Xhbz3JFUn7iHOVcFvXIcQtxghysiR7zZRe7ZA==}
     peerDependencies:
       bcrypt: ^5.1.1
       handlebars: ^4.7.8
-      kysely: ^0.27.3
+      kysely: ^0.27.4
       otplib: ^12.0.1
     dependencies:
       '@fastify/cookie': 9.3.1
       '@fastify/middie': 8.3.1
-      '@modular-api/oidc-interactions': 0.4.2(@fastify/static@7.0.4)(fastify@4.27.0)
+      '@modular-api/oidc-interactions': 0.4.3(@fastify/static@7.0.4)(fastify@4.27.0)
       bcrypt: 5.1.1
       fastify-plugin: 4.5.1
       handlebars: 4.7.8
-      kysely: 0.27.3
+      kysely: 0.27.4
       oidc-provider: 8.4.6
       openid-client: 5.6.5
       otplib: 12.0.1
@@ -2923,8 +2923,8 @@ packages:
       - typescript
     dev: false
 
-  /@modular-api/oidc-interactions@0.4.2(@fastify/static@7.0.4)(fastify@4.27.0):
-    resolution: {integrity: sha512-ygS067XSUCJXMfH3Phg9ZzKm6vj7QPlVzBmyXl3QhhL7sI+14Jwa8zegP9qqRZjq7Rvhe7AS7gO2WyGCoMpsOA==}
+  /@modular-api/oidc-interactions@0.4.3(@fastify/static@7.0.4)(fastify@4.27.0):
+    resolution: {integrity: sha512-wiaDfgiM0Z1GV9rCGs82xfu29jszwOfRuHIg0gOLMJYPRI6YPbVy48Xu+j1ybp1jlEmeoTnkSutzuZWDTiYA/Q==}
     peerDependencies:
       '@fastify/static': ^7.0.3
       fastify: ^4.26.2
@@ -6666,6 +6666,10 @@ packages:
     resolution: {integrity: sha512-IChe9AtAE79ru084ow8jzkN2lNrG3Ntfiv65Cvj9uOCE2m5LNsdHG+9EbxWxAoWRF9TgDOqLN5jm08++owDVRg==}
     dev: false
 
+  /jose@5.6.3:
+    resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: true
@@ -6858,7 +6862,7 @@ packages:
       - supports-color
     dev: false
 
-  /kysely-codegen@0.15.0(kysely@0.27.3)(pg@8.12.0):
+  /kysely-codegen@0.15.0(kysely@0.27.4)(pg@8.12.0):
     resolution: {integrity: sha512-LPta2nQOyoEPDQ3w/Gsplc+2iyZPAsGvtWoS21VzOB0NDQ0B38Xy1gS8WlbGef542Zdw2eLJHxekud9DzVdNRw==}
     hasBin: true
     peerDependencies:
@@ -6893,14 +6897,14 @@ packages:
       dotenv: 16.4.5
       dotenv-expand: 11.0.6
       git-diff: 2.0.6
-      kysely: 0.27.3
+      kysely: 0.27.4
       micromatch: 4.0.7
       minimist: 1.2.8
       pg: 8.12.0
     dev: true
 
-  /kysely@0.27.3:
-    resolution: {integrity: sha512-lG03Ru+XyOJFsjH3OMY6R/9U38IjDPfnOfDgO3ynhbDr+Dz8fak+X6L62vqu3iybQnj+lG84OttBuU9KY3L9kA==}
+  /kysely@0.27.4:
+    resolution: {integrity: sha512-dyNKv2KRvYOQPLCAOCjjQuCk4YFd33BvGdf/o5bC7FiW+BB6snA81Zt+2wT9QDFzKqxKa5rrOmvlK/anehCcgA==}
     engines: {node: '>=14.0.0'}
 
   /lazy-cache@0.2.7:
