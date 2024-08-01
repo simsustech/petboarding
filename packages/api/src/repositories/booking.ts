@@ -444,7 +444,7 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
             '=',
             sql`(select max(modified_at) from booking_status where booking_status.booking_id = b.id)`
           )
-          .where('bookingStatus.status', '=', 'approved')
+          .where('bookingStatus.status', '=', BOOKING_STATUS.APPROVED)
           .whereRef('bookings.id', '!=', 'b.id')
           .whereRef('bookings.customerId', '=', 'b.customerId')
           .whereRef('bookings.startDate', '<=', 'b.endDate')
