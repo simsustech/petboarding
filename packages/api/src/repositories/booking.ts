@@ -278,6 +278,7 @@ function withStartTime(eb: ExpressionBuilder<Database, 'bookings'>) {
         'openingTimes.daysOfWeek',
         'openingTimes.disabled',
         'openingTimes.unavailableHolidays',
+        'openingTimes.type',
         'openingTimes.createdAt'
       ])
       .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
@@ -298,6 +299,7 @@ function withEndTime(eb: ExpressionBuilder<Database, 'bookings'>) {
         'openingTimes.daysOfWeek',
         'openingTimes.disabled',
         'openingTimes.unavailableHolidays',
+        'openingTimes.type',
         'openingTimes.createdAt'
       ])
       .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
