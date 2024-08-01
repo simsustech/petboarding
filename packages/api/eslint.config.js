@@ -5,6 +5,9 @@ import typescriptEslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
 export default typescriptEslint.config(
+  {
+    ignores: ['src/slimfact/slimfact.d.ts']
+  },
   ...typescriptEslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
 
@@ -20,7 +23,6 @@ export default typescriptEslint.config(
       }
     }
   },
-
   /**
    * end
    */

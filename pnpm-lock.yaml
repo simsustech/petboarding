@@ -47,14 +47,17 @@ importers:
         specifier: 7.0.4
         version: 7.0.4
       '@modular-api/api':
-        specifier: ^0.4.12
-        version: 0.4.12(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27)
+        specifier: ^0.4.13
+        version: 0.4.13(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27)
       '@modular-api/fastify-oidc':
         specifier: ^0.5.4
         version: 0.5.4(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.4.5)
       '@petboarding/app':
         specifier: workspace:*
         version: link:../app
+      '@trpc/client':
+        specifier: ^10.45.2
+        version: 10.45.2(@trpc/server@10.45.2)
       '@trpc/server':
         specifier: ^10.45.2
         version: 10.45.2
@@ -101,6 +104,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@modular-api/fastify-checkout':
+        specifier: ^0.3.3
+        version: 0.3.3(kysely@0.27.4)
       '@playwright/test':
         specifier: 1.44.1
         version: 1.44.1
@@ -458,7 +464,7 @@ packages:
       '@babel/traverse': 7.24.6
       '@babel/types': 7.24.6
       convert-source-map: 2.0.0
-      debug: 4.3.4
+      debug: 4.3.6
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -539,7 +545,7 @@ packages:
       '@babel/core': 7.24.6
       '@babel/helper-compilation-targets': 7.24.6
       '@babel/helper-plugin-utils': 7.24.6
-      debug: 4.3.4
+      debug: 4.3.6
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -1586,7 +1592,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.24.6
       '@babel/parser': 7.24.6
       '@babel/types': 7.24.6
-      debug: 4.3.4
+      debug: 4.3.6
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -2449,7 +2455,6 @@ packages:
     dependencies:
       cookie-signature: 1.2.1
       fastify-plugin: 4.5.1
-    dev: false
 
   /@fastify/cors@9.0.1:
     resolution: {integrity: sha512-YY9Ho3ovI+QHIL2hW+9X4XqQjXLjJqsU+sMV/xFsxZkE8p3GNnYVFpoOxF7SsP5ZL76gwvbo3V9L+FIekBGU4Q==}
@@ -2775,7 +2780,7 @@ packages:
     resolution: {integrity: sha512-ribfPYfHb+Uw3b27Eiw6NPqjhIhTpVFzEWLwyc/1Xp+DCdwRRyIlAUODX+9bPARF6aQtUu1+/PHzdNvRzcs/+Q==}
     engines: {node: '>= 12'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.6
       http-errors: 2.0.0
       koa-compose: 4.1.0
       methods: 1.1.2
@@ -2826,8 +2831,8 @@ packages:
       - supports-color
     dev: false
 
-  /@modular-api/api@0.4.12(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27):
-    resolution: {integrity: sha512-0Quoh2E2Wp7CYASixabVQ7blyh0mhjQsCLchvPyAs9T9YJh/TkdvaP1Q2M3bWHhGjQVmD/xt9j1dmsbdFo9H5g==}
+  /@modular-api/api@0.4.13(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27):
+    resolution: {integrity: sha512-rncdKJ57vUkjZvps111mJCIfE/qpiYKCJyHYF+98ikHyYf6NQFjlsGBXbbXhvVoPLPDLTIS+FgXOghz27ZiJ1w==}
     peerDependencies:
       kysely: ^0.27.4
       openid-client: ^5.6.5
@@ -2845,11 +2850,11 @@ packages:
       '@types/serve-static': 1.15.7
       '@vue/server-renderer': 3.4.27(vue@3.4.27)
       compression: 1.7.4
-      fastify-mailer: 2.3.1(nodemailer@6.9.13)
+      fastify-mailer: 2.3.1(nodemailer@6.9.14)
       fastify-plugin: 4.5.1
       jose: 5.6.3
       kysely: 0.27.4
-      nodemailer: 6.9.13
+      nodemailer: 6.9.14
       openid-client: 5.6.5
       pg: 8.12.0
       serve-static: 1.15.0
@@ -2895,7 +2900,6 @@ packages:
       kysely: 0.27.4
     transitivePeerDependencies:
       - debug
-    dev: false
 
   /@modular-api/fastify-oidc@0.5.4(@fastify/static@7.0.4)(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.4.5):
     resolution: {integrity: sha512-fO4Ale6MpptyDdwiJIrz4N4xvdkbg39jaNaQa73VU0qRuYm/7Xhbz3JFUn7iHOVcFvXIcQtxghysiR7zZRe7ZA==}
@@ -2912,7 +2916,7 @@ packages:
       fastify-plugin: 4.5.1
       handlebars: 4.7.8
       kysely: 0.27.4
-      oidc-provider: 8.4.6
+      oidc-provider: 8.5.1
       openid-client: 5.6.5
       otplib: 12.0.1
       vue: 3.4.27(typescript@5.4.5)
@@ -2940,7 +2944,6 @@ packages:
       axios: 0.27.2
     transitivePeerDependencies:
       - debug
-    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -3278,7 +3281,6 @@ packages:
       '@trpc/server': 10.45.2
     dependencies:
       '@trpc/server': 10.45.2
-    dev: true
 
   /@trpc/server@10.45.2:
     resolution: {integrity: sha512-wOrSThNNE4HUnuhJG6PfDRp4L2009KDVxsd+2VYH8ro6o/7/jwYZ8Uu5j+VaW+mOmc8EHerHzGcdbGNQSAUPgg==}
@@ -3346,8 +3348,8 @@ packages:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
 
-  /@types/express-serve-static-core@4.19.1:
-    resolution: {integrity: sha512-ej0phymbFLoCB26dbbq5PGScsf2JAJ4IJHjG10LalgUV36XKTmA4GdA+PVllKvRk0sEKt64X8975qFnkSi0hqA==}
+  /@types/express-serve-static-core@4.19.5:
+    resolution: {integrity: sha512-y6W03tvrACO72aijJ5uF02FRq5cgDR9lUxddQ8vyF+GvmjJQqbzDcJngEjURc+ZsG31VI3hODNZJ2URj86pzmg==}
     dependencies:
       '@types/node': 20.12.12
       '@types/qs': 6.9.15
@@ -3359,7 +3361,7 @@ packages:
     resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
     dependencies:
       '@types/body-parser': 1.19.5
-      '@types/express-serve-static-core': 4.19.1
+      '@types/express-serve-static-core': 4.19.5
       '@types/qs': 6.9.15
       '@types/serve-static': 1.15.7
     dev: false
@@ -4045,7 +4047,6 @@ packages:
 
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-    dev: false
 
   /at-least-node@1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
@@ -4081,7 +4082,6 @@ packages:
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
-    dev: false
 
   /b4a@1.6.6:
     resolution: {integrity: sha512-5Tk1HLk6b6ctmjIkAcU/Ujv/1WqiDl0F0JdRCR80VsOcUlHcu7pWeWRlOqQLHfDEsVx9YH/aif5AG4ehoCtTmg==}
@@ -4526,7 +4526,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: false
 
   /command-exists@1.2.9:
     resolution: {integrity: sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==}
@@ -4639,7 +4638,6 @@ packages:
   /cookie-signature@1.2.1:
     resolution: {integrity: sha512-78KWk9T26NhzXtuL26cIJ8/qNHANyJ/ZYrmEXFzUmhZdjpBv+DlWlOANRTGBt48YcyslsLrj0bMLFTmXvLRCOw==}
     engines: {node: '>=6.6.0'}
-    dev: false
 
   /cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
@@ -4913,6 +4911,17 @@ packages:
     dependencies:
       ms: 2.1.2
 
+  /debug@4.3.6:
+    resolution: {integrity: sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.2
+
   /decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
     engines: {node: '>=0.10.0'}
@@ -4991,7 +5000,6 @@ packages:
   /delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-    dev: false
 
   /delegates@1.0.0:
     resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
@@ -5658,14 +5666,14 @@ packages:
   /fast-uri@2.3.0:
     resolution: {integrity: sha512-eel5UKGn369gGEWOqBShmFJWfq/xSJvsgDzgLYC845GneayWvXBf0lJCBn5qTABfewy1ZDPoaR5OZCP+kssfuw==}
 
-  /fastify-mailer@2.3.1(nodemailer@6.9.13):
+  /fastify-mailer@2.3.1(nodemailer@6.9.14):
     resolution: {integrity: sha512-SKMkgws+nYXLW1wwZuStxfRZ/y+QFfAfIakv70VSyqxm8uHqelbDX8p8d7bFUNOTH8gg5VeQnXymrKjKD6hOJw==}
     engines: {node: '>=10'}
     peerDependencies:
       nodemailer: '>=6.0.0'
     dependencies:
       fastify-plugin: 3.0.1
-      nodemailer: 6.9.13
+      nodemailer: 6.9.14
     dev: false
 
   /fastify-plugin@3.0.1:
@@ -5792,7 +5800,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
 
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -5835,7 +5842,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: false
 
   /formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
@@ -6662,10 +6668,6 @@ packages:
     resolution: {integrity: sha512-jc7BFxgKPKi94uOvEmzlSWFFe2+vASyXaKUpdQKatWAESU2MWjDfFf0fdfc83CDKcA5QecabZeNLyfhe3yKNkg==}
     dev: false
 
-  /jose@5.3.0:
-    resolution: {integrity: sha512-IChe9AtAE79ru084ow8jzkN2lNrG3Ntfiv65Cvj9uOCE2m5LNsdHG+9EbxWxAoWRF9TgDOqLN5jm08++owDVRg==}
-    dev: false
-
   /jose@5.6.3:
     resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
     dev: false
@@ -6840,7 +6842,7 @@ packages:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.3.4
+      debug: 4.3.6
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -7179,14 +7181,12 @@ packages:
   /mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
     engines: {node: '>= 0.6'}
-    dev: false
 
   /mime-types@2.1.35:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.52.0
-    dev: false
 
   /mime@1.6.0:
     resolution: {integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==}
@@ -7414,8 +7414,8 @@ packages:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
     dev: true
 
-  /nodemailer@6.9.13:
-    resolution: {integrity: sha512-7o38Yogx6krdoBf3jCAqnIN4oSQFx+fMa0I7dK1D+me9kBxx12D+/33wSb+fhOCtIxvYJ+4x4IMEhmhCKfAiOA==}
+  /nodemailer@6.9.14:
+    resolution: {integrity: sha512-Dobp/ebDKBvz91sbtRKhcznLThrKxKt97GI2FAlAyy+fk19j73Uz3sBXolVtmcXjaorivqsbbbjDY+Jkt4/bQA==}
     engines: {node: '>=6.0.0'}
     dev: false
 
@@ -7526,15 +7526,15 @@ packages:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
     dev: true
 
-  /oidc-provider@8.4.6:
-    resolution: {integrity: sha512-liuHBXRaIjer6nPGWagrl5UjPhIZqahqLVPoYlc2WXsRR7XddwNCBUl1ks5r3Q3uCUfMdQTv1VsjmlaObdff8w==}
+  /oidc-provider@8.5.1:
+    resolution: {integrity: sha512-Bm3EyxN68/KS76IlciJ3+4pnVtfdRWL+NghWpIF0XQbiRT1gzc6Qf/cyFmpL9yieko/jXYZ/uLHUv77jD00qww==}
     dependencies:
       '@koa/cors': 5.0.0
       '@koa/router': 12.0.1
-      debug: 4.3.4
+      debug: 4.3.6
       eta: 3.4.0
       got: 13.0.0
-      jose: 5.3.0
+      jose: 5.6.3
       jsesc: 3.0.2
       koa: 2.15.3
       nanoid: 5.0.7

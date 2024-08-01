@@ -33,6 +33,12 @@ import type {
   Bookings,
   BookingStatus as BookingStatusDb
 } from '../kysely/types.d.ts'
+import type {
+  RawInvoiceLine,
+  RawInvoiceDiscount,
+  RawInvoiceSurcharge
+} from '@modular-api/fastify-checkout'
+import type { BookingCostsHandler } from '../petboarding.d.ts'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
@@ -48,8 +54,9 @@ export interface BookingCostItem {
 }
 
 export interface BookingCosts {
-  items: BookingCostItem[]
-  total: number
+  lines: RawInvoiceLine[]
+  discounts: RawInvoiceDiscount[]
+  surcharges: RawInvoiceSurcharge[]
 }
 
 export interface BookingService {
@@ -142,9 +149,10 @@ async function calculateBookingCosts({
   booking: Omit<ParsedBooking, 'costs' | 'status'>
   categories: Category[]
   withServices?: boolean
-}) {
-  let items: BookingCostItem[] = []
-  let total = 0
+}): Promise<BookingCosts | null> {
+  let lines: RawInvoiceLine[] = []
+  let discounts: RawInvoiceDiscount[] = []
+  let surcharges: RawInvoiceSurcharge[] = []
   if (
     booking.startDate &&
     booking.endDate &&
@@ -159,10 +167,14 @@ async function calculateBookingCosts({
     }
     const days = booking.days
     if (days && booking.pets && categories) {
-      let bookingCostsHandler
+      if (!booking.pets.every((pet) => pet.categoryId)) {
+        return null
+      }
+
+      let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
-        ;({ items, total } = bookingCostsHandler({
+        ;({ lines, discounts, surcharges } = bookingCostsHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -181,40 +193,39 @@ async function calculateBookingCosts({
         }))
       } catch (e) {
         console.error('Unable to load API config')
-        items = booking.pets.map((pet) => ({
-          name: pet.name,
-          price:
+        lines = booking.pets.map((pet) => ({
+          description: pet.name,
+          listPrice:
             categories?.find((category) => category.id === pet.categoryId)
               ?.price || NaN,
-          quantity: days,
-          discount: 0
+          listPriceIncludesTax: true,
+          quantity: days * 1000,
+          quantityPerMille: true,
+          discount: 0,
+          taxRate: 21
         }))
         if (withServices) {
           for (const service of booking.services) {
             if (service.service && service.listPrice) {
-              items.push({
-                name: service.service?.name,
-                price: service.listPrice,
+              lines.push({
+                description: service.service?.name,
+                listPrice: service.listPrice,
+                listPriceIncludesTax: true,
                 quantity: 1,
-                discount: 0
+                quantityPerMille: false,
+                discount: 0,
+                taxRate: 21
               })
             }
-          }
-        }
-        for (const item of items) {
-          if (item.price && item.quantity) {
-            total += (item.price / 100) * item.quantity - (item.discount || 0)
-          } else {
-            total = 0
-            break
           }
         }
       }
     }
   }
   return {
-    items,
-    total
+    lines,
+    discounts,
+    surcharges
   }
 }
 

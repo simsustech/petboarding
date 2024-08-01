@@ -30,7 +30,8 @@ services:
       # VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
-
+      # VITE_SLIMFACT_HOSTNAME: xyz.slimfact.app
+      # VITE_SLIMFACT_COMPANY_ID: 1
     secrets:
       - POSTGRES_PASSWORD
       - OTP_SECRET

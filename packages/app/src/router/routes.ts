@@ -82,6 +82,11 @@ const routes: RouteRecordRaw[] = [
                 path: 'openingtimes',
                 component: () =>
                   import('../pages/admin/configuration/OpeningTimesPage.vue')
+              },
+              {
+                path: 'integrations',
+                component: () =>
+                  import('../pages/admin/configuration/IntegrationsPage.vue')
               }
             ]
           }

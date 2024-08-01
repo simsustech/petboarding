@@ -6,6 +6,8 @@ import env from '@vitrify/tools/env'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
 import { onRendered as appOnRendered } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
+import { oidcClientPlugin } from '@modular-api/api'
+import { createSlimfactTrpcClient } from './slimfact/index.js'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -58,7 +60,7 @@ export default async function (fastify: FastifyInstance) {
   fastify.register(modularapiPlugin, {
     kysely,
     cors: {
-      origin: [`https://${hostname}`]
+      origin: [`https://${hostname}`, `https://localhost:3001`]
     },
     trpc: {
       createRouter,
@@ -167,6 +169,32 @@ export default async function (fastify: FastifyInstance) {
       SASS_VARIABLES: sassVariables
     })
   })
+
+  const slimfactHostname =
+    env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+
+  console.log(slimfactHostname)
+  if (slimfactHostname) {
+    await fastify.register(oidcClientPlugin, {
+      name: 'slimfact',
+      clientId: 'petboarding',
+      clientHostname: hostname,
+      serverHostname: slimfactHostname,
+      // serverHostname: 'demo.slimfact.app'
+      kysely
+    })
+
+    createSlimfactTrpcClient({
+      hostname: slimfactHostname,
+      fastify
+    })
+
+    try {
+      console.log(await fastify.slimfact.admin.healthcheck.query())
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   fastify.register(appSsrPlugin, {
     host,

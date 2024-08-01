@@ -230,6 +230,13 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item to="/admin/configuration/integrations">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.integrations }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-expansion-item>
               </q-expansion-item>
             </q-list>

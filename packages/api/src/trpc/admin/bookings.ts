@@ -23,6 +23,7 @@ import {
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { findCustomer } from '../../repositories/customer.js'
+import env from '@vitrify/tools/env'
 
 export const compileEmail = async ({
   booking,
@@ -176,6 +177,43 @@ export const adminBookingRoutes = ({
               })
             }
             return true
+          }
+
+          if (fastify.slimfact && customer?.account?.email) {
+            const companyDetails =
+              await fastify.slimfact.admin.getCompany.query({
+                id:
+                  env.read('SLIMFACT_COMPANY_ID') ||
+                  env.read('VITE_SLIMFACT_COMPANY_ID')
+              })
+
+            const clientDetails = {
+              address: customer.address,
+              city: customer.city,
+              email: customer.account.email,
+              postalCode: customer.postalCode,
+              contactPersonName: [customer.firstName, customer.lastName].join(
+                ' '
+              )
+            }
+
+            fastify.slimfact.admin.createInvoice.mutate({
+              companyDetails: companyDetails,
+              clientDetails,
+              companyPrefix: companyDetails.prefix,
+              numberPrefixTemplate: companyDetails.defaultNumberPrefixTemplate,
+              currency: 'EUR',
+              lines: input.lines,
+              discounts: input.discounts,
+              surcharges: input.surcharges,
+              paymentTermDays: input.paymentTermDays,
+              locale: input.locale,
+              notes: input.notes,
+              projectId: input.projectId,
+              status: input.status,
+              companyId: companyDetails.id,
+              clientId: clientDetails.id
+            })
           }
         }
         return true
