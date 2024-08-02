@@ -21,7 +21,7 @@ services:
       MAIL_PASS: ${MAIL_PASS}
       MAIL_SECURE: ${MAIL_SECURE}
       LICENSE_KEY: ${LICENSE_KEY}
-      OIDC_COOKIES_KEYS: # openssl rand -base64 32
+      OIDC_COOKIES_KEYS: /run/secrets/OIDC_COOKIES_KEYS
       OTP_SECRET_FILE: /run/secrets/OTP_SECRET
       OTP_VALIDITY_SECONDS: 3600
       EMAIL_FOOTER: "Petboarding"
@@ -30,10 +30,12 @@ services:
       # VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
-
+      # VITE_SLIMFACT_HOSTNAME: xyz.slimfact.app
+      # VITE_SLIMFACT_COMPANY_ID: 1
     secrets:
       - POSTGRES_PASSWORD
       - OTP_SECRET
+      - OIDC_COOKIES_KEYS
     networks:
       web:
       petboarding:
@@ -61,6 +63,8 @@ secrets:
     file: ./env/POSTGRES_PASSWORD
   OTP_SECRET:
     file: ./env/OTP_SECRET
+  OIDC_COOKIES_KEYS:
+    file: ./env/OIDC_COOKIES_KEYS
 
 networks:
   petboarding:
