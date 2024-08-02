@@ -43,8 +43,7 @@ mkdir env
 nano -L .env  # Change environment
 nano -L env/POSTGRES_PASSWORD # Enter postgress password
 nano -L env/OTP_SECRET  # Enter OTP secret, use openssl rand -base64 32
-nano -L env/OIDC_COOKIES_KEYS  # Enter OIDC cookies keys, comma separated, use openssl rand -base64 32
-
+nano -L env/OIDC_COOKIES_KEYS # Enter OIDC cookies keys, use openssl rand -base64 32, comma separated
 docker compose up
 ```
 
