@@ -1652,6 +1652,7 @@ export declare const createRouter: (
               }[]
               paymentTermDays: number
               id?: number | undefined
+              uuid?: string | undefined
               companyId?: number | undefined
               clientId?: number | null | undefined
               locale?: string | undefined
@@ -1733,6 +1734,7 @@ export declare const createRouter: (
               }[]
               paymentTermDays: number
               id?: number | undefined
+              uuid?: string | undefined
               companyId?: number | undefined
               clientId?: number | null | undefined
               locale?: string | undefined
@@ -1840,6 +1842,7 @@ export declare const createRouter: (
               }[]
               paymentTermDays: number
               id?: number | undefined
+              uuid?: string | undefined
               companyId?: number | undefined
               clientId?: number | null | undefined
               locale?: string | undefined
@@ -1921,6 +1924,7 @@ export declare const createRouter: (
               }[]
               paymentTermDays: number
               id?: number | undefined
+              uuid?: string | undefined
               companyId?: number | undefined
               clientId?: number | null | undefined
               locale?: string | undefined

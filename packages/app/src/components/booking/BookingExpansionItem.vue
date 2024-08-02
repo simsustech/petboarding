@@ -62,8 +62,8 @@
           :pets="modelValue.pets"
         />
       </q-expansion-item>
-      <q-expansion-item
-        v-if="modelValue.costs?.total"
+      <!-- <q-expansion-item
+        v-if="modelValue.costs"
         :header-inset-level="1"
         :content-inset-level="2"
       >
@@ -85,7 +85,7 @@
           v-if="modelValue.costs"
           :model-value="modelValue.costs"
         />
-      </q-expansion-item>
+      </q-expansion-item> -->
       <q-expansion-item
         v-if="modelValue.services?.length"
         :header-inset-level="1"
@@ -122,7 +122,7 @@ import { Booking, BookingService } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
 import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'
-import { useConfiguration } from '../../configuration.js'
+// import { useConfiguration } from '../../configuration.js'
 import BookingServicesList from './BookingServicesList.vue'
 
 export interface Props {
@@ -158,7 +158,7 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
-const configuration = useConfiguration()
+// const configuration = useConfiguration()
 
 const editBookingService: InstanceType<
   typeof BookingServicesList

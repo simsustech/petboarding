@@ -27,6 +27,11 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
     $info?: string
     $warning?: string
   }
+  INTEGRATIONS?: {
+    slimfact: {
+      hostname: string
+    }
+  }
 }
 export const BOOKING_ICON = ref({
   approved: 'check',

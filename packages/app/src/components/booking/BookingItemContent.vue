@@ -117,6 +117,17 @@
         />
       </div>
     </div>
+    <q-item-label
+      v-if="
+        configuration.INTEGRATIONS?.slimfact.hostname && modelValue.invoiceUuid
+      "
+    >
+      <q-btn
+        icon="receipt"
+        :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
+        target="_blank"
+      />
+    </q-item-label>
     <q-item-label v-if="showEditButton">
       <q-btn icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'" @click.stop>
         <q-menu>

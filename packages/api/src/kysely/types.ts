@@ -75,6 +75,7 @@ export interface Bookings {
   endTimeId: number
   comments: string | null
   customerId: number
+  invoiceUuid: string | null
   createdAt: Generated<string>
 }
 
@@ -132,7 +133,7 @@ export interface ContactPeople {
 export interface Customers {
   id: Generated<number>
   rating: number | null
-  gender: string
+  gender: 'male' | 'female' | 'other'
   firstName: string
   lastName: string
   address: string

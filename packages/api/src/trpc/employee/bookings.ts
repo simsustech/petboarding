@@ -148,10 +148,10 @@ export const employeeBookingRoutes = ({
             },
             petIds: input.petIds,
             serviceIds: input.serviceIds!
-          },
-          {
-            skipStatusUpdate: true
           }
+          // {
+          //   skipStatusUpdate: true
+          // }
         )
         return booking
       }

@@ -13,8 +13,8 @@ export const customerValidation = {
   telephoneNumber: z.string(),
   veterinarian: z.string(),
   comments: z.string().nullable().optional(),
-  accountId: z.number().optional(),
-  account: account.optional(),
+  accountId: z.number().nullable().optional(),
+  account: account.nullable().optional(),
   bookings: z
     .object({
       id: z.number()

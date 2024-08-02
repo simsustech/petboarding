@@ -8,21 +8,14 @@
   "author": "simsustech",
   "type": "module",
   "exports": {
+    ".": {
+      "types": "./src/index.ts"
+    },
     "./zod": {
       "import": "./src/zod/index.ts"
     },
     "./trpc": {
       "types": "./src/trpc/index.ts"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      "trpc": [
-        "./src/trpc/index.ts"
-      ],
-      "zod": [
-        "./src/zod/index.ts"
-      ]
     }
   },
   "files": [

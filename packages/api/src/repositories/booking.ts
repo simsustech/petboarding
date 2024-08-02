@@ -102,7 +102,8 @@ const defaultSelect = [
   'endDate',
   'endTimeId',
   'comments',
-  'customerId'
+  'customerId',
+  'invoiceUuid'
 ] as (keyof Booking)[]
 
 export const findIds = ({
@@ -793,7 +794,15 @@ export async function updateBooking(
       query = query.where('customerId', '=', criteria.customerId)
     }
     const updatedBooking = await query
-      .set(updateWith.booking)
+      .set({
+        startDate: updateWith.booking.startDate,
+        startTimeId: updateWith.booking.startTimeId,
+        endDate: updateWith.booking.endDate,
+        endTimeId: updateWith.booking.endTimeId,
+        comments: updateWith.booking.comments,
+        invoiceUuid: updateWith.booking.invoiceUuid,
+        customerId: updateWith.booking.customerId
+      })
       .returningAll()
       .executeTakeFirstOrThrow()
 

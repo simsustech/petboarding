@@ -57,6 +57,25 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_LANG') || 'en-US'
   )
 
+  const slimfactHostname =
+    env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+
+  if (slimfactHostname) {
+    await fastify.register(oidcClientPlugin, {
+      name: 'slimfact',
+      clientId: 'petboarding',
+      clientHostname: hostname,
+      serverHostname: slimfactHostname,
+      // serverHostname: 'demo.slimfact.app'
+      kysely
+    })
+
+    createSlimfactTrpcClient({
+      hostname: slimfactHostname,
+      fastify
+    })
+  }
+
   fastify.register(modularapiPlugin, {
     kysely,
     cors: {
@@ -166,35 +185,14 @@ export default async function (fastify: FastifyInstance) {
         env.read('VITE_MANDATORY_VACCINATIONS_CAT')
       )?.split(','),
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
-      SASS_VARIABLES: sassVariables
+      SASS_VARIABLES: sassVariables,
+      INTEGRATIONS: {
+        slimfact: {
+          hostname: slimfactHostname
+        }
+      }
     })
   })
-
-  const slimfactHostname =
-    env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
-
-  console.log(slimfactHostname)
-  if (slimfactHostname) {
-    await fastify.register(oidcClientPlugin, {
-      name: 'slimfact',
-      clientId: 'petboarding',
-      clientHostname: hostname,
-      serverHostname: slimfactHostname,
-      // serverHostname: 'demo.slimfact.app'
-      kysely
-    })
-
-    createSlimfactTrpcClient({
-      hostname: slimfactHostname,
-      fastify
-    })
-
-    try {
-      console.log(await fastify.slimfact.admin.healthcheck.query())
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   fastify.register(appSsrPlugin, {
     host,

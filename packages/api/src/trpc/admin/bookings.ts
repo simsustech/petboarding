@@ -18,12 +18,15 @@ import {
   findBookings,
   getBookingsCount,
   updateBookingService,
-  cancelBooking
+  cancelBooking,
+  updateBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { findCustomer } from '../../repositories/customer.js'
 import env from '@vitrify/tools/env'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+import type { Customer } from '../../zod/customer.js'
 
 export const compileEmail = async ({
   booking,
@@ -69,6 +72,107 @@ export const compileEmail = async ({
   return {
     subject,
     body
+  }
+}
+
+const createOrUpdateSlimfactInvoice = async ({
+  fastify,
+  booking,
+  customer,
+  locale = 'nl'
+}: {
+  fastify: FastifyInstance
+  booking: ParsedBooking
+  customer: Pick<
+    Customer,
+    'firstName' | 'lastName' | 'address' | 'postalCode' | 'city'
+  > & { account: { email: string } | null }
+  locale?: 'en-US' | 'nl'
+}) => {
+  if (!fastify.slimfact) throw new Error('SlimFact not configured')
+  if (!customer.account) throw new Error('Customer is not linked to an account')
+
+  const dateFormatter = (date: Date) =>
+    new Intl.DateTimeFormat(locale, {
+      dateStyle: 'full',
+      timeZone: 'UTC'
+    }).format(date)
+
+  const numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
+
+  const companyDetails = await fastify.slimfact.admin.getCompany.query({
+    id: Number(
+      env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
+    )
+  })
+
+  const clientDetails = {
+    address: customer.address,
+    postalCode: customer.postalCode,
+    city: customer.city,
+    email: customer.account.email,
+    contactPersonName: [customer.firstName, customer.lastName].join(' ')
+  }
+
+  const { lines, surcharges, discounts } = booking.costs
+
+  const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
+  →
+  ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
+
+  if (booking.invoiceUuid) {
+    const invoice = await fastify.slimfact.admin.updateInvoice.mutate({
+      uuid: booking.invoiceUuid ? booking.invoiceUuid : undefined,
+      companyDetails: companyDetails,
+      clientDetails,
+      companyPrefix: companyDetails.prefix,
+      numberPrefixTemplate:
+        numberPrefixes.at(0)?.template ||
+        companyDetails.defaultNumberPrefixTemplate,
+      currency: 'EUR',
+      lines,
+      discounts,
+      surcharges,
+      paymentTermDays: 14,
+      locale: 'nl',
+      companyId: companyDetails.id
+    })
+
+    return invoice
+  } else {
+    const invoice = await fastify.slimfact.admin.createInvoice.mutate({
+      companyDetails: companyDetails,
+      clientDetails,
+      companyPrefix: companyDetails.prefix,
+      numberPrefixTemplate:
+        numberPrefixes.at(0)?.template ||
+        companyDetails.defaultNumberPrefixTemplate,
+      currency: 'EUR',
+      lines,
+      discounts,
+      surcharges,
+      paymentTermDays: 14,
+      locale,
+      notes,
+      companyId: companyDetails.id,
+      status: InvoiceStatus.BILL
+    })
+
+    await updateBooking(
+      {
+        id: booking.id
+      },
+      {
+        booking: {
+          ...booking,
+          invoiceUuid: invoice.uuid
+        },
+        petIds: booking.pets.map((pet) => pet.id),
+        serviceIds: booking.services.map((service) => service.id)
+      }
+    )
+
+    return invoice
   }
 }
 
@@ -156,6 +260,7 @@ export const adminBookingRoutes = ({
           id
         }
       })
+
       if (booking) {
         await createBookingStatus({
           booking,
@@ -176,44 +281,14 @@ export const adminBookingRoutes = ({
                 html: emailText
               })
             }
-            return true
-          }
 
-          if (fastify.slimfact && customer?.account?.email) {
-            const companyDetails =
-              await fastify.slimfact.admin.getCompany.query({
-                id:
-                  env.read('SLIMFACT_COMPANY_ID') ||
-                  env.read('VITE_SLIMFACT_COMPANY_ID')
+            if (fastify.slimfact) {
+              await createOrUpdateSlimfactInvoice({
+                fastify,
+                booking,
+                customer
               })
-
-            const clientDetails = {
-              address: customer.address,
-              city: customer.city,
-              email: customer.account.email,
-              postalCode: customer.postalCode,
-              contactPersonName: [customer.firstName, customer.lastName].join(
-                ' '
-              )
             }
-
-            fastify.slimfact.admin.createInvoice.mutate({
-              companyDetails: companyDetails,
-              clientDetails,
-              companyPrefix: companyDetails.prefix,
-              numberPrefixTemplate: companyDetails.defaultNumberPrefixTemplate,
-              currency: 'EUR',
-              lines: input.lines,
-              discounts: input.discounts,
-              surcharges: input.surcharges,
-              paymentTermDays: input.paymentTermDays,
-              locale: input.locale,
-              notes: input.notes,
-              projectId: input.projectId,
-              status: input.status,
-              companyId: companyDetails.id,
-              clientId: clientDetails.id
-            })
           }
         }
         return true
@@ -395,6 +470,26 @@ export const adminBookingRoutes = ({
             price: input.price || null
           }
         )
+
+        const booking = await findBooking({
+          criteria: {
+            id: updatedBookingService.bookingId
+          }
+        })
+        const customer = await findCustomer({
+          criteria: {
+            id: booking?.customerId
+          }
+        })
+
+        if (fastify.slimfact && booking && customer) {
+          createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+        }
+
         if (updatedBookingService) return bookingService
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })

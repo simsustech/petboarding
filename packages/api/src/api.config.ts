@@ -1,3 +1,8 @@
+import {
+  RawInvoiceDiscount,
+  RawInvoiceLine,
+  RawInvoiceSurcharge
+} from '@modular-api/fastify-checkout'
 import type {
   BookingCancellationHandler,
   BookingCostsHandler
@@ -190,32 +195,33 @@ const bookingCostsHandler: BookingCostsHandler = ({
   dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
   dateHolidays
 }) => {
-  const items = pets
-    .map((pet) => {
-      const price =
-        categories?.find((category) => category.id === pet.categoryId)?.price ||
-        NaN
+  let lines: RawInvoiceLine[] = []
+  const discounts: RawInvoiceDiscount[] = []
+  const surcharges: RawInvoiceSurcharge[] = []
 
-      return {
-        name: pet.name,
-        price,
-        quantity: days,
-        discount: 0
-      }
-    })
-    .sort((a, b) => b.price - a.price)
-    .map((item) => ({
-      ...item,
-      discount: 0
-    }))
+  lines = pets.map((pet) => ({
+    description: pet.name,
+    listPrice:
+      categories?.find((category) => category.id === pet.categoryId)?.price ||
+      NaN,
+    listPriceIncludesTax: true,
+    quantity: days * 1000,
+    quantityPerMille: true,
+    discount: 0,
+    taxRate: 21
+  }))
+
   if (withServices) {
     for (const service of services) {
       if (service.service && service.listPrice) {
-        items.push({
-          name: service.service?.name,
-          price: service.listPrice,
+        lines.push({
+          description: service.service?.name,
+          listPrice: service.listPrice,
+          listPriceIncludesTax: true,
           quantity: 1,
-          discount: 0
+          quantityPerMille: false,
+          discount: 0,
+          taxRate: 21
         })
       }
     }
@@ -233,11 +239,14 @@ const bookingCostsHandler: BookingCostsHandler = ({
     )
   )) {
     if (vacationDays > 0) {
-      items.push({
-        name: 'Vacation surcharge',
-        price: 100,
+      lines.push({
+        description: 'Vacation surcharge',
+        listPrice: 100,
+        listPriceIncludesTax: true,
         quantity: pets.length * (vacationDays + 1),
-        discount: 0
+        quantityPerMille: false,
+        discount: 0,
+        taxRate: 21
       })
     }
   }
@@ -255,27 +264,22 @@ const bookingCostsHandler: BookingCostsHandler = ({
       }
     }
     if (holidayDays) {
-      items.push({
-        name: 'Holidays surcharge',
-        price: 500,
+      lines.push({
+        description: 'Holidays surcharge',
+        listPrice: 500,
+        listPriceIncludesTax: true,
         quantity: pets.length * holidayDays,
-        discount: 0
+        quantityPerMille: false,
+        discount: 0,
+        taxRate: 21
       })
-    }
-  }
-  let total = 0
-  for (const item of items) {
-    if (item.price && item.quantity) {
-      total += (item.price / 100) * item.quantity - (item.discount || 0)
-    } else {
-      total = 0
-      break
     }
   }
 
   return {
-    items,
-    total
+    lines,
+    discounts,
+    surcharges
   }
 }
 

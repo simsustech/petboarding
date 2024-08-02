@@ -180,6 +180,9 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
     devDependencies:
+      '@modular-api/quasar-components':
+        specifier: ^0.2.9
+        version: 0.2.9(quasar@2.16.4)
       '@petboarding/api':
         specifier: workspace:*
         version: link:../api
@@ -2936,6 +2939,15 @@ packages:
       '@fastify/static': 7.0.4
       fastify: 4.27.0
     dev: false
+
+  /@modular-api/quasar-components@0.2.9(quasar@2.16.4):
+    resolution: {integrity: sha512-NzXGUTYBJAPtQeJim6KxnQv17NxZ2VgzOtNjFhS/quRYdOIbRqxbWdmg57SOSgDquapsnu1zevMfpVW9xAa+wA==}
+    peerDependencies:
+      quasar: ^2.15.2
+    dependencies:
+      quasar: 2.16.4
+      validator: 13.12.0
+    dev: true
 
   /@mollie/api-client@3.7.0:
     resolution: {integrity: sha512-8pYq08xwv7VJIQvOJU+3nThZbXuNLhtD8iJQQ4UYW67kxHw4eC6cVE9SNVtUuHRfxTwcKLv5wrZd9jFb3BFqiA==}
