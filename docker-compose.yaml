@@ -32,6 +32,7 @@ services:
       # COUNTRY: US
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
+      # VITE_UNIT_OF_MASS: kg # kg | lbs
       # VITE_SLIMFACT_HOSTNAME: xyz.slimfact.app
       # VITE_SLIMFACT_COMPANY_ID: 1
     secrets:

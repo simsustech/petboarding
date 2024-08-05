@@ -164,7 +164,8 @@ export default async function (fastify: FastifyInstance) {
         env.read('VITE_MANDATORY_VACCINATIONS_CAT')
       )?.split(','),
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
-      SASS_VARIABLES: sassVariables
+      SASS_VARIABLES: sassVariables,
+      UNIT_OF_MASS: env.read('UNIT_OF_MASS') || env.read('VITE_UNIT_OF_MASS')
     })
   })
 

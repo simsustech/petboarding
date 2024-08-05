@@ -27,6 +27,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
     $info?: string
     $warning?: string
   }
+  UNIT_OF_MASS?: 'kg' | 'lbs'
 }
 export const BOOKING_ICON = ref({
   approved: 'check',

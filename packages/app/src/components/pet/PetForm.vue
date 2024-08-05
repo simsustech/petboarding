@@ -117,21 +117,13 @@
     </div>
 
     <div class="row">
-      <q-input
-        v-bind="input"
-        :model-value="modelValue.weight"
+      <pet-weight
+        v-model="modelValue.weight"
         class="col-md-4 col-12"
-        :label="lang.pet.fields.weight"
-        suffix="kg"
-        type="number"
-        step="0.1"
+        :unit="configuration.UNIT_OF_MASS"
+        v-bind="input"
         bottom-slots
         lazy-rules
-        name="weight"
-        @update:model-value="
-          (val) =>
-            (modelValue.weight = (Math.round(Number(val) * 10) / 10).toString())
-        "
       />
       <form-input
         v-bind="input"
@@ -240,6 +232,9 @@ import PetSpeciesSelect from './PetSpeciesSelect.vue'
 import PetBreedSelect from './PetBreedSelect.vue'
 import PetCategorySelect from './PetCategorySelect.vue'
 import ImageAvatar from '../ImageAvatar.vue'
+import PetWeight from './PetWeight.vue'
+import { useConfiguration } from '../../configuration.js'
+
 export interface Pet extends PetType {
   image?: string
 }
@@ -327,6 +322,8 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 const pastDateOptionsFn = (date: string) => {
   return date < dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
 }
+
+const configuration = useConfiguration()
 
 const variables = ref({
   // header: lang.value.some.nested.prop
