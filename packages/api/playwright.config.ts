@@ -11,6 +11,9 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
+    launchOptions: {
+      slowMo: 20
+    },
     trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
     headless: !!process.env.CI,

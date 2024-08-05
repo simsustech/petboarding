@@ -79,7 +79,11 @@
         />
         <form-item
           :label="lang.pet.fields.weight"
-          :model-value="modelValue.weight ? `${modelValue.weight} kg` : null"
+          :model-value="
+            modelValue.weight
+              ? `${modelValue.weight} ${configuration.UNIT_OF_MASS || 'kg'}`
+              : null
+          "
         />
         <form-item
           :label="lang.pet.fields.chipNumber"
@@ -165,6 +169,7 @@ import {
 import PetCategoryItem from './PetCategoryItem.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
+import { useConfiguration } from '../../configuration.js'
 import type { Vaccination } from '../vaccination/VaccinationItem.vue'
 
 export interface Pet extends PetType {
@@ -284,4 +289,6 @@ const deletePet = (pet: Pet) => {
     emit('delete', { data: pet, done })
   }
 }
+
+const configuration = useConfiguration()
 </script>

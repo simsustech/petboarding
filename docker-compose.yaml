@@ -28,8 +28,11 @@ services:
       VITE_TITLE: Petboarding
       VITE_LANG: en-US
       # VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      # Petboarding
+      # COUNTRY: US
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
+      # VITE_UNIT_OF_MASS: kg # kg | lbs
       # VITE_SLIMFACT_HOSTNAME: xyz.slimfact.app
       # VITE_SLIMFACT_COMPANY_ID: 1
     secrets:
