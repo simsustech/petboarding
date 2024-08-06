@@ -16,6 +16,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 
@@ -30,7 +31,7 @@ const emit = defineEmits<{
 
 const lang = useLang()
 
-const options = [
+const options = computed(() => [
   {
     label: lang.value.daycare.status[DAYCARE_DATE_STATUS.PENDING],
     value: DAYCARE_DATE_STATUS.PENDING
@@ -51,5 +52,5 @@ const options = [
     label: lang.value.daycare.status[DAYCARE_DATE_STATUS.CANCELLED],
     value: DAYCARE_DATE_STATUS.CANCELLED
   }
-]
+])
 </script>
