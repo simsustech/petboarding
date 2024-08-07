@@ -55,7 +55,7 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_LANG') || 'en-US'
   )
 
-  fastify.register(modularapiPlugin, {
+  await fastify.register(modularapiPlugin, {
     kysely,
     cors: {
       origin: [`https://${hostname}`]
