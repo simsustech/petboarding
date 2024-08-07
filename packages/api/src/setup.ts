@@ -76,7 +76,7 @@ export default async function (fastify: FastifyInstance) {
     })
   }
 
-  fastify.register(modularapiPlugin, {
+  await fastify.register(modularapiPlugin, {
     kysely,
     cors: {
       origin: [`https://${hostname}`, `https://localhost:3001`]
