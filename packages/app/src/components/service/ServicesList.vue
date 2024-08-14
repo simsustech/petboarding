@@ -9,7 +9,10 @@
           {{ service.description }}
         </q-item-label>
         <q-item-label caption>
-          <price :model-value="service.listPrice" />
+          <price
+            :model-value="service.listPrice"
+            :currency="configuration.CURRENCY"
+          />
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -38,6 +41,7 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import Price from '../Price.vue'
+import { useConfiguration } from '../../configuration.js'
 import type { Service } from '@petboarding/api/zod'
 
 export interface Props {
@@ -69,6 +73,8 @@ const emit = defineEmits<{
     }
   ): void
 }>()
+
+const configuration = useConfiguration()
 
 const variables = ref({
   // header: lang.value.some.nested.prop

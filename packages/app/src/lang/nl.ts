@@ -64,7 +64,8 @@ const lang: Language = {
       'Er is een fout opgetreden bij het laden van de configuratie.',
     periods: 'Periodes',
     emailTemplates: 'Email sjablonen',
-    openingTimes: 'Openingstijden'
+    openingTimes: 'Openingstijden',
+    integrations: 'Integraties'
   },
   customer: {
     title: 'Klantgegevens',
@@ -225,7 +226,10 @@ const lang: Language = {
       upcomingBookings: 'Komende reserveringen',
       otherBookings: 'Overige reserveringen',
       overlapsWithUnavailablePeriod:
-        'Reservering overlapt met een onbeschikbare periode.'
+        'Reservering overlapt met een onbeschikbare periode.',
+      openInvoice: 'Open rekening of factuur.',
+      invoiceSynchronized:
+        'Kosten van rekening of factuur zijn gesynchroniseerd.'
     },
     helpers: {
       status: {

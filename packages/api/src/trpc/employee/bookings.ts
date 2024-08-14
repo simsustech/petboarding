@@ -11,6 +11,8 @@ import {
   findBookingService,
   updateBooking
 } from '../../repositories/booking.js'
+import { findCustomer } from 'src/repositories/customer.js'
+import { createOrUpdateSlimfactInvoice } from '../admin/bookings.js'
 
 export const employeeBookingValidation = booking
   .omit({
@@ -33,10 +35,10 @@ export const employeeUpdateBookingValidation = employeeBookingValidation.omit({
 })
 
 export const employeeBookingRoutes = ({
-  // fastify,
+  fastify,
   procedure
 }: {
-  fastify?: FastifyInstance
+  fastify: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
   createBooking: procedure
@@ -173,6 +175,43 @@ export const employeeBookingRoutes = ({
           return true
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
+  updateBookingInvoice: procedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .mutation(async ({ input }) => {
+      if (fastify.slimfact) {
+        const { id } = input
+        const booking = await findBooking({
+          criteria: {
+            id
+          }
+        })
+
+        const customer = await findCustomer({
+          criteria: {
+            id: booking?.customerId
+          }
+        })
+
+        if (booking?.costs && customer) {
+          try {
+            await createOrUpdateSlimfactInvoice({
+              fastify,
+              booking,
+              customer
+            })
+          } catch (e) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: e as string
+            })
+          }
+        }
       }
     })
 })

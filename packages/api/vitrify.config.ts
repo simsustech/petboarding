@@ -23,6 +23,7 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           '@vitrify/plugin-env',
           '@modular-api/fastify-oidc',
           '@modular-api/oidc-interactions',
+          '@modular-api/fastify-checkout',
           'bcrypt',
           'kysely',
           'jose',

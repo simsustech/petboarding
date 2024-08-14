@@ -11,7 +11,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
   COUNTRY: string
   TITLE?: string
   ALLOWED_SPECIES?: (typeof PET_SPECIES)[number][]
-  CURRENCY: '€' | '$'
+  CURRENCY: 'EUR' | 'USD'
   HIDE_BRANDING: boolean
   DAYCARE_DISABLED_WEEKDAYS?: number[]
   MANDATORY_VACCINATIONS_DOG?: string[]
@@ -76,7 +76,7 @@ export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
   LANG: import.meta.env.VITE_LANG || 'en-US',
   COUNTRY: import.meta.env.VITE_COUNTRY || 'NL',
   TITLE: import.meta.env.VITE_TITLE || 'Petboarding',
-  CURRENCY: '€',
+  CURRENCY: 'EUR',
   HIDE_BRANDING: false
 })
 

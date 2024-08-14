@@ -11,7 +11,7 @@ const seed = async () => {
   }))
 
   const customers = [1, 2, 3, 4, 5].map((nr) => ({
-    gender: 'male',
+    gender: 'male' as const,
     firstName: `firstName${nr}`,
     lastName: `lastName${nr}`,
     address: `address${nr}`,

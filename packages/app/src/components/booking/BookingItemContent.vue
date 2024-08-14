@@ -71,8 +71,15 @@
         modelValue.services.map((service) => service.service?.name).join(', ')
       }}
     </q-item-label>
-    <q-item-label v-if="modelValue.costs?.total" class="text-bold" caption>
-      {{ configuration.CURRENCY + modelValue.costs.total.toFixed(2) }}
+    <q-item-label
+      v-if="modelValue.costs?.totalIncludingTax"
+      class="text-bold"
+      caption
+    >
+      <price
+        :model-value="modelValue.costs.totalIncludingTax"
+        :currency="configuration.CURRENCY"
+      />
     </q-item-label>
   </q-item-section>
   <q-item-section side>
@@ -126,7 +133,11 @@
         icon="receipt"
         :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
         target="_blank"
-      />
+      >
+        <q-tooltip>
+          {{ lang.booking.messages.openInvoice }}
+        </q-tooltip>
+      </q-btn>
     </q-item-label>
     <q-item-label v-if="showEditButton">
       <q-btn icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'" @click.stop>

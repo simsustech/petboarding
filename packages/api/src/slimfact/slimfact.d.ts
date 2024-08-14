@@ -1,7 +1,7 @@
 import type { inferAsyncReturnType } from '@trpc/server'
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify'
 import type { FastifyInstance } from 'fastify'
-import { MODULARAPI_ACCOUNT_ROLES } from '../zod/account.js'
+import { SLIMFACT_ACCOUNT_ROLES } from '../zod/account.js'
 export declare const t: {
   _config: import('@trpc/server').RootConfig<{
     ctx: {
@@ -832,6 +832,14 @@ export declare const createRouter: (
                   active?: boolean | undefined
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  pagination?:
+                    | {
+                        sortBy: 'id'
+                        descending: boolean
+                        limit: number
+                        offset: number
+                      }
+                    | undefined
                 }
               | undefined
             _input_out:
@@ -839,6 +847,14 @@ export declare const createRouter: (
                   active?: boolean | undefined
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  pagination?:
+                    | {
+                        sortBy: 'id'
+                        descending: boolean
+                        limit: number
+                        offset: number
+                      }
+                    | undefined
                 }
               | undefined
             _output_in: typeof import('@trpc/server').unsetMarker
@@ -1186,19 +1202,38 @@ export declare const createRouter: (
               errorShape: import('@trpc/server').DefaultErrorShape
               transformer: import('@trpc/server').DefaultDataTransformer
             }>
+            _meta: object
             _ctx_out: {
               account: {
                 id: string
                 roles?: string[]
               } | null
             }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
+            _input_in: {
+              pagination?:
+                | {
+                    sortBy: 'id'
+                    descending: boolean
+                    limit: number
+                    offset: number
+                  }
+                | undefined
+            }
+            _input_out: {
+              pagination?:
+                | {
+                    sortBy: 'id'
+                    descending: boolean
+                    limit: number
+                    offset: number
+                  }
+                | undefined
+            }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
           },
           {
+            total?: number | undefined
             number: string | null
             id: any
             createdAt: any
@@ -1285,14 +1320,31 @@ export declare const createRouter: (
             }
             _input_in: {
               name: string
+              pagination?:
+                | {
+                    sortBy: 'id'
+                    descending: boolean
+                    limit: number
+                    offset: number
+                  }
+                | undefined
             }
             _input_out: {
               name: string
+              pagination?:
+                | {
+                    sortBy: 'id'
+                    descending: boolean
+                    limit: number
+                    offset: number
+                  }
+                | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
+            total?: number | undefined
             number: string | null
             id: any
             createdAt: any
@@ -1674,6 +1726,10 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              paymentId?: number | null | undefined
+              status?:
+                | import('@modular-api/fastify-checkout').InvoiceStatus
+                | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1713,12 +1769,9 @@ export declare const createRouter: (
                     accountId?: number | null | undefined
                   }
                 | undefined
+              requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -1756,6 +1809,10 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              paymentId?: number | null | undefined
+              status?:
+                | import('@modular-api/fastify-checkout').InvoiceStatus
+                | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1795,12 +1852,9 @@ export declare const createRouter: (
                     accountId?: number | null | undefined
                   }
                 | undefined
+              requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -1864,6 +1918,10 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              paymentId?: number | null | undefined
+              status?:
+                | import('@modular-api/fastify-checkout').InvoiceStatus
+                | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1903,12 +1961,9 @@ export declare const createRouter: (
                     accountId?: number | null | undefined
                   }
                 | undefined
+              requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -1946,6 +2001,10 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              paymentId?: number | null | undefined
+              status?:
+                | import('@modular-api/fastify-checkout').InvoiceStatus
+                | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1985,12 +2044,9 @@ export declare const createRouter: (
                     accountId?: number | null | undefined
                   }
                 | undefined
+              requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -2025,6 +2081,18 @@ export declare const createRouter: (
                     | null
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  pagination?:
+                    | {
+                        sortBy:
+                          | 'id'
+                          | 'companyId'
+                          | 'clientId'
+                          | 'totalIncludingTax'
+                        descending: boolean
+                        limit: number
+                        offset: number
+                      }
+                    | undefined
                 }
               | undefined
             _input_out:
@@ -2034,6 +2102,18 @@ export declare const createRouter: (
                     | null
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  pagination?:
+                    | {
+                        sortBy:
+                          | 'id'
+                          | 'companyId'
+                          | 'clientId'
+                          | 'totalIncludingTax'
+                        descending: boolean
+                        limit: number
+                        offset: number
+                      }
+                    | undefined
                 }
               | undefined
             _output_in: typeof import('@trpc/server').unsetMarker
@@ -2384,14 +2464,14 @@ export declare const createRouter: (
               currency: 'EUR' | 'USD'
               createdAt: string
               description: string
-              status: import('@modular-api/fastify-checkout').PaymentStatus
               metadata: Record<string, unknown> | null
+              externalId: string | null
+              paymentServiceProvider: 'mollie' | null
               amount: number
+              status: import('@modular-api/fastify-checkout').PaymentStatus
               method: import('@modular-api/fastify-checkout').PaymentMethod
               orderId: number | null
               invoiceId: number | null
-              paymentServiceProvider: 'mollie' | null
-              externalId: string | null
               transactionReference: string | null
               paidAt: string | null
               details:
@@ -2433,6 +2513,50 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           void
+        >
+        refundInvoice: import('@trpc/server').BuildProcedure<
+          'mutation',
+          {
+            _config: import('@trpc/server').RootConfig<{
+              ctx: {
+                account: {
+                  id: string
+                  roles?: string[]
+                } | null
+              }
+              meta: object
+              errorShape: import('@trpc/server').DefaultErrorShape
+              transformer: import('@trpc/server').DefaultDataTransformer
+            }>
+            _meta: object
+            _ctx_out: {
+              account: {
+                id: string
+                roles?: string[]
+              } | null
+            }
+            _input_in: {
+              id: number
+            }
+            _input_out: {
+              id: number
+            }
+            _output_in: typeof import('@trpc/server').unsetMarker
+            _output_out: typeof import('@trpc/server').unsetMarker
+          },
+          {
+            id: number
+            uuid: string | null
+            currency: 'EUR' | 'USD'
+            createdAt: string
+            description: string
+            metadata: Record<string, unknown> | null
+            externalId: string | null
+            paymentId: number
+            paymentServiceProvider: 'mollie' | null
+            amount: number
+            status: import('@modular-api/fastify-checkout').RefundStatus
+          }
         >
         getAccount: import('@trpc/server').BuildProcedure<
           'query',
@@ -2502,7 +2626,7 @@ export declare const createRouter: (
                 | {
                     name?: string | undefined
                     email?: string | undefined
-                    roles?: MODULARAPI_ACCOUNT_ROLES[] | undefined
+                    roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
                   }
                 | undefined
               pagination?:
@@ -2519,7 +2643,7 @@ export declare const createRouter: (
                 | {
                     name?: string | undefined
                     email?: string | undefined
-                    roles?: MODULARAPI_ACCOUNT_ROLES[] | undefined
+                    roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
                   }
                 | undefined
               pagination?:
@@ -2572,7 +2696,7 @@ export declare const createRouter: (
                     | {
                         name?: string | undefined
                         email?: string | undefined
-                        roles?: MODULARAPI_ACCOUNT_ROLES[] | undefined
+                        roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
                       }
                     | undefined
                 }
@@ -2583,7 +2707,7 @@ export declare const createRouter: (
                     | {
                         name?: string | undefined
                         email?: string | undefined
-                        roles?: MODULARAPI_ACCOUNT_ROLES[] | undefined
+                        roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
                       }
                     | undefined
                 }
@@ -2661,11 +2785,11 @@ export declare const createRouter: (
             }
             _input_in: {
               id: number
-              role: MODULARAPI_ACCOUNT_ROLES
+              role: SLIMFACT_ACCOUNT_ROLES
             }
             _input_out: {
               id: number
-              role: MODULARAPI_ACCOUNT_ROLES
+              role: SLIMFACT_ACCOUNT_ROLES
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -2695,11 +2819,11 @@ export declare const createRouter: (
             }
             _input_in: {
               id: number
-              role: MODULARAPI_ACCOUNT_ROLES
+              role: SLIMFACT_ACCOUNT_ROLES
             }
             _input_out: {
               id: number
-              role: MODULARAPI_ACCOUNT_ROLES
+              role: SLIMFACT_ACCOUNT_ROLES
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -2754,6 +2878,70 @@ export declare const createRouter: (
           import('@modular-api/fastify-checkout').Invoice | null
         >
         payWithIdeal: import('@trpc/server').BuildProcedure<
+          'mutation',
+          {
+            _config: import('@trpc/server').RootConfig<{
+              ctx: {
+                account: {
+                  id: string
+                  roles?: string[]
+                } | null
+              }
+              meta: object
+              errorShape: import('@trpc/server').DefaultErrorShape
+              transformer: import('@trpc/server').DefaultDataTransformer
+            }>
+            _meta: object
+            _ctx_out: {
+              account: {
+                id: string
+                roles?: string[]
+              } | null
+            }
+            _input_in: {
+              uuid: string
+            }
+            _input_out: {
+              uuid: string
+            }
+            _output_in: typeof import('@trpc/server').unsetMarker
+            _output_out: typeof import('@trpc/server').unsetMarker
+          },
+          string | null | undefined
+        >
+        payDownPaymentWithIdeal: import('@trpc/server').BuildProcedure<
+          'mutation',
+          {
+            _config: import('@trpc/server').RootConfig<{
+              ctx: {
+                account: {
+                  id: string
+                  roles?: string[]
+                } | null
+              }
+              meta: object
+              errorShape: import('@trpc/server').DefaultErrorShape
+              transformer: import('@trpc/server').DefaultDataTransformer
+            }>
+            _meta: object
+            _ctx_out: {
+              account: {
+                id: string
+                roles?: string[]
+              } | null
+            }
+            _input_in: {
+              uuid: string
+            }
+            _input_out: {
+              uuid: string
+            }
+            _output_in: typeof import('@trpc/server').unsetMarker
+            _output_out: typeof import('@trpc/server').unsetMarker
+          },
+          string | null | undefined
+        >
+        payWithSmartpin: import('@trpc/server').BuildProcedure<
           'mutation',
           {
             _config: import('@trpc/server').RootConfig<{

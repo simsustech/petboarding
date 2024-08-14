@@ -144,7 +144,7 @@ const submit: InstanceType<
 
       await immediatePromise
       done(!error.value)
-      if (replyBookingId.value && replyType.value !== 'reply') {
+      if (!error.value && replyBookingId.value && replyType.value !== 'reply') {
         handledBookingIds.value.push(replyBookingId.value)
       }
       replyType.value = undefined
@@ -359,6 +359,7 @@ const settleCancellation: InstanceType<
     })
   }
 }
+
 onMounted(async () => {
   await executeCategories()
   await executeBookings()

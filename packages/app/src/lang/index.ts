@@ -61,6 +61,7 @@ export interface Language {
     periods: string
     emailTemplates: string
     openingTimes: string
+    integrations: string
   }
   customer: {
     title: string
@@ -212,6 +213,8 @@ export interface Language {
       upcomingBookings: string
       otherBookings: string
       overlapsWithUnavailablePeriod: string
+      openInvoice: string
+      invoiceSynchronized: string
     }
     helpers: {
       status: {

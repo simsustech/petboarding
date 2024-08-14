@@ -10,7 +10,10 @@
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <price :model-value="service.listPrice" />
+        <price
+          :model-value="service.listPrice"
+          :currency="configuration.CURRENCY"
+        />
         <q-btn
           v-if="showEditButton"
           icon="edit"
@@ -30,6 +33,7 @@ export default {
 <script setup lang="ts">
 import { BookingService } from '@petboarding/api/zod'
 import Price from '../Price.vue'
+import { useConfiguration } from '../../configuration.js'
 
 export interface Props {
   modelValue: BookingService[]
@@ -49,4 +53,6 @@ const emit = defineEmits<{
     }
   ): void
 }>()
+
+const configuration = useConfiguration()
 </script>

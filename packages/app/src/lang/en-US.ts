@@ -63,7 +63,8 @@ const lang: Language = {
     errorLoading: 'An error has occured while loading the configuration.',
     periods: 'Periods',
     emailTemplates: 'Email templates',
-    openingTimes: 'Opening times'
+    openingTimes: 'Opening times',
+    integrations: 'Integrations'
   },
   customer: {
     title: 'Customer details',
@@ -222,7 +223,9 @@ const lang: Language = {
       upcomingBookings: 'Upcoming bookings',
       otherBookings: 'Other bookings',
       overlapsWithUnavailablePeriod:
-        'Booking overlaps with an unavailable period.'
+        'Booking overlaps with an unavailable period.',
+      openInvoice: 'Open bill or invoice.',
+      invoiceSynchronized: 'Costs of bill or invoice have been synchronized.'
     },
     helpers: {
       status: {

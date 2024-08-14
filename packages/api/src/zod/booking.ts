@@ -62,7 +62,7 @@ export const bookingValidation = {
   services: bookingService.array().optional(),
   serviceIds: z.number().array().optional(),
   isDoubleBooked: z.boolean().optional(),
-  invoiceUuid: z.string().optional(),
+  invoiceUuid: z.string().optional().nullable(),
   overlapsWithUnavailablePeriod: z.boolean().optional()
 }
 

@@ -15,6 +15,7 @@
           @update="openUpdateDialog"
           @cancel="cancelBooking"
           @open-customer="openCustomer"
+          @update-booking-invoice="updateBookingInvoice"
         />
       </q-list>
       <q-list v-if="otherBookings?.length">
@@ -75,7 +76,7 @@ import BookingExpansionItem from '../../components/booking/BookingExpansionItem.
 import BookingItem from '../../components/booking/BookingItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../components/booking/BookingForm.vue'
-import { extend } from 'quasar'
+import { extend, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 
@@ -84,6 +85,7 @@ const { useQuery, useMutation } = await createUseTrpc()
 const lang = useLang()
 const route = useRoute()
 const router = useRouter()
+const $q = useQuasar()
 
 const ids = ref(((route.params.ids as string[]) || []).map((id) => Number(id)))
 onBeforeRouteUpdate((to) => {
@@ -185,6 +187,31 @@ const cancelBooking: InstanceType<
     await result.immediatePromise
 
     execute()
+    // if (result.data.value) modelValue.value = result.data.value
+    done(!result.error.value)
+  }
+}
+
+const updateBookingInvoice: InstanceType<
+  typeof BookingExpansionItem
+>['$props']['onUpdateBookingInvoice'] = async ({ data, done }) => {
+  if (data.id) {
+    const result = useMutation('employee.updateBookingInvoice', {
+      args: {
+        id: data.id
+      },
+      immediate: true
+    })
+
+    await result.immediatePromise
+
+    execute()
+    if (!result.error.value) {
+      $q.notify({
+        type: 'positive',
+        message: lang.value.booking.messages.invoiceSynchronized
+      })
+    }
     // if (result.data.value) modelValue.value = result.data.value
     done(!result.error.value)
   }

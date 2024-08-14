@@ -41,6 +41,7 @@ export type BookingCostsHandler = (params: {
   lines: RawInvoiceLine[]
   discounts: RawInvoiceDiscount[]
   surcharges: RawInvoiceSurcharge[]
+  requiredDownPaymentAmount?: number
 }
 
 export type BookingCancellationHandler = (params: {

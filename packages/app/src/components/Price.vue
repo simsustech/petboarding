@@ -1,9 +1,5 @@
 <template>
-  {{
-    modelValue
-      ? configuration.CURRENCY + Number(modelValue / 100).toFixed(2)
-      : lang.tbd
-  }}
+  {{ modelValue ? format(modelValue) : '-' }}
 </template>
 
 <script lang="ts">
@@ -13,24 +9,22 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useLang } from '../lang/index.js'
-import { useConfiguration } from '../configuration.js'
-export interface Props {
-  modelValue?: number | null
-}
-defineProps<Props>()
-const configuration = useConfiguration()
-const lang = useLang()
+import { toRefs } from 'vue'
+import { useQuasar } from 'quasar'
 
-const variables = ref({
-  // header: lang.value.some.nested.prop
-})
-const functions = ref({
-  // submit
-})
-defineExpose({
-  variables,
-  functions
-})
+export interface Props {
+  modelValue: number | null
+  currency: 'EUR' | 'USD'
+  locale?: string
+}
+const props = defineProps<Props>()
+const $q = useQuasar()
+const { locale, currency } = toRefs(props)
+
+const format = (value: number) =>
+  Intl.NumberFormat(locale.value || $q.lang.isoName, {
+    maximumFractionDigits: 2,
+    style: 'currency',
+    currency: currency.value
+  }).format(value / 100)
 </script>

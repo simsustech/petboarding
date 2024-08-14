@@ -75,7 +75,7 @@ export const compileEmail = async ({
   }
 }
 
-const createOrUpdateSlimfactInvoice = async ({
+export const createOrUpdateSlimfactInvoice = async ({
   fastify,
   booking,
   customer,
@@ -114,65 +114,73 @@ const createOrUpdateSlimfactInvoice = async ({
     contactPersonName: [customer.firstName, customer.lastName].join(' ')
   }
 
-  const { lines, surcharges, discounts } = booking.costs
+  const { lines, surcharges, discounts, requiredDownPaymentAmount } =
+    booking.costs
 
   const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
   →
   ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
 
-  if (booking.invoiceUuid) {
-    const invoice = await fastify.slimfact.admin.updateInvoice.mutate({
-      uuid: booking.invoiceUuid ? booking.invoiceUuid : undefined,
-      companyDetails: companyDetails,
-      clientDetails,
-      companyPrefix: companyDetails.prefix,
-      numberPrefixTemplate:
-        numberPrefixes.at(0)?.template ||
-        companyDetails.defaultNumberPrefixTemplate,
-      currency: 'EUR',
-      lines,
-      discounts,
-      surcharges,
-      paymentTermDays: 14,
-      locale: 'nl',
-      companyId: companyDetails.id
-    })
+  try {
+    if (booking.invoiceUuid) {
+      const invoice = await fastify.slimfact.admin.updateInvoice.mutate({
+        uuid: booking.invoiceUuid ? booking.invoiceUuid : undefined,
+        companyDetails: companyDetails,
+        clientDetails,
+        companyPrefix: companyDetails.prefix,
+        numberPrefixTemplate:
+          companyDetails.defaultNumberPrefixTemplate ||
+          numberPrefixes.at(0)?.template,
+        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        lines,
+        discounts,
+        surcharges,
+        paymentTermDays: 14,
+        locale,
+        notes,
+        companyId: companyDetails.id,
+        requiredDownPaymentAmount
+      })
 
-    return invoice
-  } else {
-    const invoice = await fastify.slimfact.admin.createInvoice.mutate({
-      companyDetails: companyDetails,
-      clientDetails,
-      companyPrefix: companyDetails.prefix,
-      numberPrefixTemplate:
-        numberPrefixes.at(0)?.template ||
-        companyDetails.defaultNumberPrefixTemplate,
-      currency: 'EUR',
-      lines,
-      discounts,
-      surcharges,
-      paymentTermDays: 14,
-      locale,
-      notes,
-      companyId: companyDetails.id,
-      status: InvoiceStatus.BILL
-    })
+      return invoice
+    } else {
+      const invoice = await fastify.slimfact.admin.createInvoice.mutate({
+        companyDetails: companyDetails,
+        clientDetails,
+        companyPrefix: companyDetails.prefix,
+        numberPrefixTemplate:
+          companyDetails.defaultNumberPrefixTemplate ||
+          numberPrefixes.at(0)?.template,
+        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        lines,
+        discounts,
+        surcharges,
+        paymentTermDays: 14,
+        locale,
+        notes,
+        companyId: companyDetails.id,
+        status: InvoiceStatus.BILL,
+        requiredDownPaymentAmount
+      })
 
-    await updateBooking(
-      {
-        id: booking.id
-      },
-      {
-        booking: {
-          ...booking,
-          invoiceUuid: invoice.uuid
+      await updateBooking(
+        {
+          id: booking.id
         },
-        petIds: booking.pets.map((pet) => pet.id),
-        serviceIds: booking.services.map((service) => service.id)
-      }
-    )
+        {
+          booking: {
+            ...booking,
+            invoiceUuid: invoice.uuid
+          },
+          petIds: booking.pets.map((pet) => pet.id),
+          serviceIds: booking.services.map((service) => service.id)
+        }
+      )
 
-    return invoice
+      return invoice
+    }
+  } catch (e) {
+    throw new Error('Could not create or update booking invoice.')
   }
 }
 
@@ -262,6 +270,12 @@ export const adminBookingRoutes = ({
       })
 
       if (booking) {
+        // if (!booking.pets.every((pet) => pet.categoryId)) {
+        //   throw new TRPCError({
+        //     code: 'BAD_REQUEST',
+        //     message: 'Pets have not been assigned to a cateogry'
+        //   })
+        // }
         await createBookingStatus({
           booking,
           status: BOOKING_STATUS.APPROVED,
@@ -282,12 +296,19 @@ export const adminBookingRoutes = ({
               })
             }
 
-            if (fastify.slimfact) {
-              await createOrUpdateSlimfactInvoice({
-                fastify,
-                booking,
-                customer
-              })
+            if (fastify.slimfact && booking.costs) {
+              try {
+                await createOrUpdateSlimfactInvoice({
+                  fastify,
+                  booking,
+                  customer
+                })
+              } catch (e) {
+                throw new TRPCError({
+                  code: 'BAD_REQUEST',
+                  message: e as string
+                })
+              }
             }
           }
         }
@@ -482,12 +503,19 @@ export const adminBookingRoutes = ({
           }
         })
 
-        if (fastify.slimfact && booking && customer) {
-          createOrUpdateSlimfactInvoice({
-            fastify,
-            booking,
-            customer
-          })
+        if (fastify.slimfact && booking?.costs && customer) {
+          try {
+            await createOrUpdateSlimfactInvoice({
+              fastify,
+              booking,
+              customer
+            })
+          } catch (e) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: e as string
+            })
+          }
         }
 
         if (updatedBookingService) return bookingService

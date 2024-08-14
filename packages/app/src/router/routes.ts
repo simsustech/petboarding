@@ -15,7 +15,16 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'redirect',
         name: redirectRouteKey,
-        component: () => import('../pages/RedirectPage.vue')
+        children: [
+          {
+            path: '',
+            component: () => import('../pages/RedirectPage.vue')
+          },
+          {
+            path: 'slimfact',
+            component: () => import('../pages/redirect/AuthenticatedPage.vue')
+          }
+        ]
       },
       {
         path: 'user',

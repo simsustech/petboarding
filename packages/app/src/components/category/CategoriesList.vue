@@ -6,7 +6,10 @@
           {{ category.name }}
         </q-item-label>
         <q-item-label caption>
-          <price :model-value="category.price" />
+          <price
+            :model-value="category.price"
+            :currency="configuration.CURRENCY"
+          />
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -34,6 +37,7 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import Price from '../Price.vue'
+import { useConfiguration } from '../../configuration.js'
 import type { Category } from '@petboarding/api/zod'
 
 export interface Props {
@@ -65,6 +69,8 @@ const emit = defineEmits<{
     }
   ): void
 }>()
+
+const configuration = useConfiguration()
 
 const variables = ref({
   // header: lang.value.some.nested.prop

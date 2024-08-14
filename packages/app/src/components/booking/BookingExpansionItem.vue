@@ -62,7 +62,7 @@
           :pets="modelValue.pets"
         />
       </q-expansion-item>
-      <!-- <q-expansion-item
+      <q-expansion-item
         v-if="modelValue.costs"
         :header-inset-level="1"
         :content-inset-level="2"
@@ -70,22 +70,44 @@
         <template #header>
           <q-item-section>
             <q-item-label> {{ lang.booking.costs.title }} </q-item-label>
+            <q-item-label>
+              <price
+                v-if="modelValue.costs?.totalIncludingTax"
+                :model-value="modelValue.costs.totalIncludingTax"
+                :currency="configuration.CURRENCY"
+              />
+            </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-item-label>
-              {{
-                modelValue.costs.total
-                  ? configuration.CURRENCY + modelValue.costs.total.toFixed(2)
-                  : lang.tbd
-              }}
-            </q-item-label>
+            <q-btn
+              v-if="
+                configuration.INTEGRATIONS?.slimfact &&
+                onUpdateBookingInvoice &&
+                twoWeeksInThePast < modelValue.endDate
+              "
+              @click.stop="updateBookingInvoice(modelValue)"
+            >
+              <q-icon name="receipt" />
+              <q-icon
+                name="sync"
+                class="text-black q-ma-none q-pa-none"
+                size="xs"
+                rounded
+                style="
+                  position: relative;
+                  right: 12px;
+                  bottom: -10px;
+                  margin-right: -12px;
+                "
+              />
+            </q-btn>
           </q-item-section>
         </template>
         <booking-costs
           v-if="modelValue.costs"
           :model-value="modelValue.costs"
         />
-      </q-expansion-item> -->
+      </q-expansion-item>
       <q-expansion-item
         v-if="modelValue.services?.length"
         :header-inset-level="1"
@@ -116,13 +138,13 @@ export default {
 
 <script setup lang="ts">
 import { ref, useAttrs } from 'vue'
-import { QExpansionItem } from 'quasar'
+import { QExpansionItem, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Booking, BookingService } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
 import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'
-// import { useConfiguration } from '../../configuration.js'
+import { useConfiguration } from '../../configuration.js'
 import BookingServicesList from './BookingServicesList.vue'
 
 export interface Props {
@@ -130,6 +152,7 @@ export interface Props {
   showBookingServicesEditButton?: boolean
   showHistory?: boolean
   onOpenCustomer?: unknown
+  onUpdateBookingInvoice?: unknown
 }
 defineProps<Props>()
 const attrs = useAttrs()
@@ -154,18 +177,38 @@ const emit = defineEmits<{
       done?: (success?: boolean) => void
     }
   ): void
+  (
+    e: 'updateBookingInvoice',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
   (e: 'openCustomer', { id }: { id: number }): void
 }>()
 
 const lang = useLang()
-// const configuration = useConfiguration()
+const configuration = useConfiguration()
 
 const editBookingService: InstanceType<
   typeof BookingServicesList
 >['$props']['onEdit'] = ({ data, done }) =>
   emit('editBookingService', { data, done })
 
+const updateBookingInvoice = (booking: Booking) => {
+  const done = () => {}
+  emit('updateBookingInvoice', { data: booking, done })
+}
 const currentDate = ref(new Date().toISOString().slice(0, 10))
+const twoWeeksInThePast = ref(
+  dateUtil.formatDate(
+    dateUtil.subtractFromDate(new Date(), { days: 14 }),
+    'YYYY-MM-DD'
+  )
+)
 const variables = ref({})
 const functions = ref({})
 defineExpose({

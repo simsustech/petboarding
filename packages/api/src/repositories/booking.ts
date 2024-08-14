@@ -33,10 +33,11 @@ import type {
   Bookings,
   BookingStatus as BookingStatusDb
 } from '../kysely/types.d.ts'
-import type {
-  RawInvoiceLine,
-  RawInvoiceDiscount,
-  RawInvoiceSurcharge
+import {
+  type RawInvoiceLine,
+  type RawInvoiceDiscount,
+  type RawInvoiceSurcharge,
+  computeInvoiceCosts
 } from '@modular-api/fastify-checkout'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
 
@@ -53,10 +54,19 @@ export interface BookingCostItem {
   discount?: number
 }
 
+// export interface BookingCosts {
+//   lines: RawInvoiceLine[]
+//   discounts: RawInvoiceDiscount[]
+//   surcharges: RawInvoiceSurcharge[]
+// }
 export interface BookingCosts {
-  lines: RawInvoiceLine[]
-  discounts: RawInvoiceDiscount[]
-  surcharges: RawInvoiceSurcharge[]
+  lines: ReturnType<typeof computeInvoiceCosts>['computedLines']
+  discounts: ReturnType<typeof computeInvoiceCosts>['computedDiscounts']
+  surcharges: ReturnType<typeof computeInvoiceCosts>['computedSurcharges']
+  taxSummary: ReturnType<typeof computeInvoiceCosts>['taxSummary']
+  totalIncludingTax: ReturnType<typeof computeInvoiceCosts>['totalIncludingTax']
+  totalExcludingTax: ReturnType<typeof computeInvoiceCosts>['totalExcludingTax']
+  requiredDownPaymentAmount?: number
 }
 
 export interface BookingService {
@@ -223,10 +233,27 @@ async function calculateBookingCosts({
       }
     }
   }
-  return {
+  const requiredDownPaymentAmount = 0
+  const {
+    computedLines,
+    computedDiscounts,
+    computedSurcharges,
+    taxSummary,
+    totalExcludingTax,
+    totalIncludingTax
+  } = computeInvoiceCosts({
     lines,
     discounts,
     surcharges
+  })
+  return {
+    lines: computedLines,
+    discounts: computedDiscounts,
+    surcharges: computedSurcharges,
+    taxSummary,
+    totalExcludingTax,
+    totalIncludingTax,
+    requiredDownPaymentAmount
   }
 }
 
