@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
+import { DAYCARE_DATE_STATUS } from '../../types.js'
 
 const NUMBER_OF_CUSTOMERS = 200
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2
@@ -121,12 +122,12 @@ const createDaycareDate = ({
     status:
       getRandomInt(10) > 9
         ? faker.helpers.arrayElement([
-            'rejected',
-            'pending',
-            'standby',
-            'cancelled'
+            DAYCARE_DATE_STATUS.REJECTED,
+            DAYCARE_DATE_STATUS.PENDING,
+            DAYCARE_DATE_STATUS.STANDBY,
+            DAYCARE_DATE_STATUS.CANCELLED
           ])
-        : 'approved',
+        : DAYCARE_DATE_STATUS.APPROVED,
     id: daycareDateId
   }
 }
@@ -208,7 +209,7 @@ export default () => {
       let daycareDate = {
         date: new Date().toISOString().split('T')[0],
         customerId: i,
-        status: 'pending',
+        status: DAYCARE_DATE_STATUS.PENDING,
         id: 0
       }
       for (let j = 1; j <= getRandomInt(MAX_DAYCARE_DATES_PER_CUSTOMER); j++) {
