@@ -1,13 +1,7 @@
 import * as z from 'zod'
 import { pet } from './pet.js'
-
-export enum DAYCARE_DATE_STATUS {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
-  CANCELLED = 'cancelled',
-  STANDBY = 'standby'
-}
+import { DAYCARE_DATE_STATUS } from '../kysely/types.js'
+export { DAYCARE_DATE_STATUS }
 
 export const daycareDateValidation = {
   id: z.number().optional(),

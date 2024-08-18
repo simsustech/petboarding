@@ -20,6 +20,14 @@ export enum OPENING_TIME_TYPE {
   DEPARTURE = 'departure'
 }
 
+export enum DAYCARE_DATE_STATUS {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  CANCELLED = 'cancelled',
+  STANDBY = 'standby'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -156,7 +164,7 @@ export interface DaycareDates {
   id: Generated<number>
   date: string
   comments: string | null
-  status: string
+  status: DAYCARE_DATE_STATUS
   customerId: number | null
   daycareSubscriptionId: number | null
   createdAt: Generated<string>

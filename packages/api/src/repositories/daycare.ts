@@ -295,8 +295,12 @@ export async function createOrUpdateDaycareDates(
     )
 
     const updatedDaycareDates = currentDaycareDates
-      .filter(
-        (daycareDate) => daycareDate.status === DAYCARE_DATE_STATUS.CANCELLED
+      .filter((daycareDate) =>
+        [
+          DAYCARE_DATE_STATUS.CANCELLED,
+          DAYCARE_DATE_STATUS.APPROVED,
+          DAYCARE_DATE_STATUS.PENDING
+        ].includes(daycareDate.status)
       )
       .map((daycareDate) => {
         return {
@@ -306,6 +310,7 @@ export async function createOrUpdateDaycareDates(
             daycareDate.pets.map((pet) => pet.id)
         }
       })
+
     await Promise.all([
       ...newDaycareDates.map((daycareDate) =>
         createDaycareDate({

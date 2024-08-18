@@ -2,7 +2,11 @@ import bcrypt from 'bcrypt'
 import * as compressTag from 'compress-tag'
 import { db } from '../index.js'
 import { sql } from 'kysely'
-import { BOOKING_STATUS, OPENING_TIME_TYPE } from '../types.js'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS,
+  OPENING_TIME_TYPE
+} from '../types.js'
 const { c } = compressTag
 
 const seed = async () => {
@@ -52,17 +56,25 @@ const seed = async () => {
     petId: nr
   }))
 
-  const statuses = [
+  const bookingStatuseEnum = [
     BOOKING_STATUS.PENDING,
     BOOKING_STATUS.APPROVED,
     BOOKING_STATUS.REJECTED,
     BOOKING_STATUS.CANCELLED,
     BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
   ]
+
+  const daycareDateStatusesEnum = [
+    DAYCARE_DATE_STATUS.PENDING,
+    DAYCARE_DATE_STATUS.APPROVED,
+    DAYCARE_DATE_STATUS.REJECTED,
+    DAYCARE_DATE_STATUS.CANCELLED,
+    DAYCARE_DATE_STATUS.STANDBY
+  ]
   const bookingStatuses = [1, 2, 3, 4, 5].map((nr) => ({
     ...bookings[nr - 1],
     bookingId: nr,
-    status: statuses[nr - 1],
+    status: bookingStatuseEnum[nr - 1],
     petIds: `[${nr}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
@@ -71,7 +83,7 @@ const seed = async () => {
   const daycareDates = [1, 2, 3, 4, 5].map((nr) => ({
     date: `2024-02-0${nr}`,
     customerId: nr,
-    status: statuses[nr - 1]
+    status: daycareDateStatusesEnum[nr - 1]
   }))
 
   const daycarePet = [1, 2, 3, 4, 5].map((nr) => ({
