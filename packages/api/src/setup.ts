@@ -187,6 +187,7 @@ export default async function (fastify: FastifyInstance) {
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
       SASS_VARIABLES: sassVariables,
       UNIT_OF_MASS: env.read('UNIT_OF_MASS') || env.read('VITE_UNIT_OF_MASS'),
+      CURRENCY: env.read('CURRENCY') || env.read('VITE_CURRENCY'),
       INTEGRATIONS: {
         slimfact: {
           hostname: slimfactHostname
@@ -195,7 +196,7 @@ export default async function (fastify: FastifyInstance) {
     })
   })
 
-  fastify.register(appSsrPlugin, {
+  await fastify.register(appSsrPlugin, {
     host,
     onRendered: appOnRendered
   })
