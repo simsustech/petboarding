@@ -450,6 +450,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -529,6 +530,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -653,6 +655,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -732,6 +735,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -1156,6 +1160,7 @@ export declare const createRouter: (
               id?: number | undefined
               contactPersonName?: string | undefined
               country?: string | undefined
+              vatIdNumber?: string | null | undefined
               companyName?: string | undefined
               accountId?: number | null | undefined
             }
@@ -1168,6 +1173,7 @@ export declare const createRouter: (
               id?: number | undefined
               contactPersonName?: string | undefined
               country?: string | undefined
+              vatIdNumber?: string | null | undefined
               companyName?: string | undefined
               accountId?: number | null | undefined
             }
@@ -1184,6 +1190,7 @@ export declare const createRouter: (
             country: string
             email: string
             postalCode: string
+            vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }
@@ -1243,6 +1250,7 @@ export declare const createRouter: (
             country: string
             email: string
             postalCode: string
+            vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }[]
@@ -1277,6 +1285,7 @@ export declare const createRouter: (
               id?: number | undefined
               contactPersonName?: string | undefined
               country?: string | undefined
+              vatIdNumber?: string | null | undefined
               companyName?: string | undefined
               accountId?: number | null | undefined
             }
@@ -1289,6 +1298,7 @@ export declare const createRouter: (
               id?: number | undefined
               contactPersonName?: string | undefined
               country?: string | undefined
+              vatIdNumber?: string | null | undefined
               companyName?: string | undefined
               accountId?: number | null | undefined
             }
@@ -1354,6 +1364,7 @@ export declare const createRouter: (
             country: string
             email: string
             postalCode: string
+            vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }[]
@@ -1765,6 +1776,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -1848,6 +1860,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -1957,6 +1970,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -2040,6 +2054,7 @@ export declare const createRouter: (
                     id?: number | undefined
                     contactPersonName?: string | undefined
                     country?: string | undefined
+                    vatIdNumber?: string | null | undefined
                     companyName?: string | undefined
                     accountId?: number | null | undefined
                   }
@@ -2558,6 +2573,67 @@ export declare const createRouter: (
             status: import('@modular-api/fastify-checkout').RefundStatus
           }
         >
+        exportPayments: import('@trpc/server').BuildProcedure<
+          'query',
+          {
+            _config: import('@trpc/server').RootConfig<{
+              ctx: {
+                account: {
+                  id: string
+                  roles?: string[]
+                } | null
+              }
+              meta: object
+              errorShape: import('@trpc/server').DefaultErrorShape
+              transformer: import('@trpc/server').DefaultDataTransformer
+            }>
+            _meta: object
+            _ctx_out: {
+              account: {
+                id: string
+                roles?: string[]
+              } | null
+            }
+            _input_in: {
+              startDate: string
+              endDate: string
+              paymentServiceProvider?: 'mollie' | undefined
+            }
+            _input_out: {
+              startDate: string
+              endDate: string
+              paymentServiceProvider?: 'mollie' | undefined
+            }
+            _output_in: typeof import('@trpc/server').unsetMarker
+            _output_out: typeof import('@trpc/server').unsetMarker
+          },
+          | {
+              invoices:
+                | import('@modular-api/fastify-checkout').Invoice[]
+                | undefined
+              payments: {
+                id: number
+                uuid: string | null
+                currency: 'EUR' | 'USD'
+                createdAt: string
+                description: string
+                metadata: Record<string, unknown> | null
+                externalId: string | null
+                paymentServiceProvider: 'mollie' | null
+                amount: number
+                status: import('@modular-api/fastify-checkout').PaymentStatus
+                method: import('@modular-api/fastify-checkout').PaymentMethod
+                orderId: number | null
+                invoiceId: number | null
+                transactionReference: string | null
+                paidAt: string | null
+                details:
+                  | import('node_modules/@modular-api/fastify-checkout/dist/types/kysely/types/Payment.js').PaymentDetails
+                  | null
+              }[]
+            }
+          | undefined
+        >
         getAccount: import('@trpc/server').BuildProcedure<
           'query',
           {
@@ -2875,7 +2951,7 @@ export declare const createRouter: (
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
           },
-          import('@modular-api/fastify-checkout').Invoice | null
+          import('@modular-api/fastify-checkout').Invoice
         >
         payWithIdeal: import('@trpc/server').BuildProcedure<
           'mutation',
