@@ -193,7 +193,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
   services,
   withServices,
   dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
-  dateHolidays
+  dateHolidays,
+  computeInvoiceCosts
 }) => {
   let lines: RawInvoiceLine[] = []
   const discounts: RawInvoiceDiscount[] = []
@@ -276,10 +277,33 @@ const bookingCostsHandler: BookingCostsHandler = ({
     }
   }
 
+  let computedInvoiceCosts
+  if (computeInvoiceCosts) {
+    computedInvoiceCosts = computeInvoiceCosts({
+      lines,
+      discounts,
+      surcharges
+    })
+  }
+
+  const requiredDownPaymentAmountFractionOfTotal = 0.1
+  const minimumRequiredDownPaymentAmount = 2500
+  const requiredDownPaymentAmount =
+    computedInvoiceCosts &&
+    computedInvoiceCosts.totalIncludingTax *
+      requiredDownPaymentAmountFractionOfTotal >
+      minimumRequiredDownPaymentAmount
+      ? Math.round(
+          computedInvoiceCosts.totalIncludingTax *
+            requiredDownPaymentAmountFractionOfTotal
+        )
+      : minimumRequiredDownPaymentAmount
+
   return {
     lines,
     discounts,
-    surcharges
+    surcharges,
+    requiredDownPaymentAmount
   }
 }
 

@@ -156,7 +156,7 @@ export const createOrUpdateSlimfactInvoice = async ({
   let lines: RawInvoiceLine[] = booking.costs.lines
   let discounts: RawInvoiceDiscount[] | undefined = booking.costs.discounts
   let surcharges: RawInvoiceSurcharge[] | undefined = booking.costs.surcharges
-  const requiredDownPaymentAmount: number =
+  let requiredDownPaymentAmount: number =
     booking.costs.requiredDownPaymentAmount || 0
 
   if (
@@ -166,7 +166,12 @@ export const createOrUpdateSlimfactInvoice = async ({
     ) &&
     cancelationCosts
   ) {
-    ;({ lines, surcharges, discounts } = cancelationCosts)
+    ;({
+      lines,
+      surcharges,
+      discounts,
+      requiredDownPaymentAmount = 0
+    } = cancelationCosts)
   }
 
   const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}

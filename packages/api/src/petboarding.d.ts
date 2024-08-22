@@ -14,10 +14,11 @@ import type {
   differenceInDays
 } from 'date-fns'
 import type Holidays from 'date-holidays'
-import type {
-  RawInvoiceDiscount,
-  RawInvoiceLine,
-  RawInvoiceSurcharge
+import {
+  type RawInvoiceDiscount,
+  type RawInvoiceLine,
+  type RawInvoiceSurcharge,
+  computeInvoiceCosts
 } from '@modular-api/fastify-checkout'
 
 export type BookingCostsHandler = (params: {
@@ -40,6 +41,7 @@ export type BookingCostsHandler = (params: {
     subMonths?: typeof subMonths
   }
   dateHolidays?: typeof Holidays
+  computeInvoiceCosts?: typeof computeInvoiceCosts
 }) => {
   lines: RawInvoiceLine[]
   discounts: RawInvoiceDiscount[]

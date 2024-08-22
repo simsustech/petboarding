@@ -167,6 +167,7 @@ async function calculateBookingCosts({
   let lines: RawInvoiceLine[] = []
   let discounts: RawInvoiceDiscount[] = []
   let surcharges: RawInvoiceSurcharge[] = []
+  let requiredDownPaymentAmount: number
   if (
     booking.startDate &&
     booking.endDate &&
@@ -188,7 +189,12 @@ async function calculateBookingCosts({
       let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
-        ;({ lines, discounts, surcharges } = bookingCostsHandler({
+        ;({
+          lines,
+          discounts,
+          surcharges,
+          requiredDownPaymentAmount = 0
+        } = bookingCostsHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -203,7 +209,8 @@ async function calculateBookingCosts({
             getOverlappingDaysInIntervals,
             parse
           },
-          dateHolidays: Holidays
+          dateHolidays: Holidays,
+          computeInvoiceCosts
         }))
       } catch (e) {
         console.error('Unable to load API config')
@@ -236,7 +243,7 @@ async function calculateBookingCosts({
       }
     }
   }
-  const requiredDownPaymentAmount = 0
+
   const {
     computedLines,
     computedDiscounts,
