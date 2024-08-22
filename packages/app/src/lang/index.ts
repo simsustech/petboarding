@@ -181,8 +181,8 @@ export interface Language {
     status: {
       pending: string
       approved: string
-      cancelled: string
-      cancelledoutsideperiod: string
+      canceled: string
+      canceledoutsideperiod: string
       rejected: string
       standby: string
     }
@@ -201,13 +201,13 @@ export interface Language {
       addPets: string
       termsAndConditions: string
       viewTermsAndConditions: string
-      cancellationReason: string
+      cancelationReason: string
       openCustomer: string
       openBooking: string
       openPets: string
       isDoubleBooked: string
       cancelDoubleBookings: string
-      settleCancellation: string
+      settleCancelation: string
       bookingModified: string
       changeDaycareToBooking: string
       upcomingBookings: string
@@ -220,8 +220,8 @@ export interface Language {
       status: {
         pending: string
         approved: string
-        cancelled: string
-        cancelledoutsideperiod: string
+        canceled: string
+        canceledoutsideperiod: string
         rejected: string
         standby: string
       }
@@ -271,7 +271,7 @@ export interface Language {
     messages: {
       addPets: string
       cancelSelected: string
-      verifyCancellation: string
+      verifyCancelation: string
       verifyApproval: string
       verifyRejection: string
       verifyStandby: string
@@ -286,7 +286,7 @@ export interface Language {
     status: {
       pending: string
       approved: string
-      cancelled: string
+      canceled: string
       rejected: string
       standby: string
     }

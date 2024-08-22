@@ -4,7 +4,7 @@ import {
   RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
 import type {
-  BookingCancellationHandler,
+  BookingCancelationHandler,
   BookingCostsHandler
 } from './petboarding.d.ts'
 import { BOOKING_STATUS } from './zod/booking.js'
@@ -283,9 +283,10 @@ const bookingCostsHandler: BookingCostsHandler = ({
   }
 }
 
-const bookingCancellationHandler: BookingCancellationHandler = ({
+const bookingCancelationHandler: BookingCancelationHandler = ({
   period: { startDate, endDate },
-  dateFns: { parse, isBefore, isWithinInterval, parseISO, subMonths }
+  dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
+  booking
 }) => {
   const start = parse(startDate, 'yyyy-MM-dd', new Date())
   const end = parse(endDate, 'yyyy-MM-dd', new Date())
@@ -310,19 +311,56 @@ const bookingCancellationHandler: BookingCancellationHandler = ({
     }
   }
 
-  const maxCancellationDate = subMonths(
+  const maxCancelationDate = subMonths(
     parseISO(startDate),
     isInSummerVacation ? 4 : 2
   )
 
-  const status = isBefore(new Date(), maxCancellationDate)
-    ? BOOKING_STATUS.CANCELLED
-    : BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+  const status = isAfter(new Date(), maxCancelationDate)
+    ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+    : BOOKING_STATUS.CANCELED
+
+  let bookingCancelationCosts = 0
+  if (isAfter(new Date(), subDays(parseISO(startDate), 14))) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax
+  } else if (isAfter(new Date(), subMonths(parseISO(startDate), 1))) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.75
+  } else if (isAfter(new Date(), maxCancelationDate)) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.5
+  } else {
+    bookingCancelationCosts = booking.costs.requiredDownPaymentAmount || 0
+  }
 
   return {
     status,
-    cancellationCosts: 0
+    cancelationCosts: {
+      lines:
+        status === BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD &&
+        bookingCancelationCosts > (booking.costs.requiredDownPaymentAmount || 0)
+          ? [
+              {
+                description: 'Cancelation costs',
+                listPrice: Math.round(bookingCancelationCosts),
+                taxRate: 21,
+                listPriceIncludesTax: true,
+                discount: 0,
+                quantity: 1,
+                quantityPerMille: false
+              }
+            ]
+          : [
+              {
+                description: 'Down payment',
+                listPrice: booking.costs.requiredDownPaymentAmount || 0,
+                taxRate: 21,
+                listPriceIncludesTax: true,
+                discount: 0,
+                quantity: 1,
+                quantityPerMille: false
+              }
+            ]
+    }
   }
 }
 
-export { bookingCostsHandler, bookingCancellationHandler }
+export { bookingCostsHandler, bookingCancelationHandler }

@@ -37,8 +37,8 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
 export const BOOKING_ICON = ref({
   approved: 'check',
   rejected: 'block',
-  cancelled: 'clear',
-  cancelledoutsideperiod: 'cancel',
+  canceled: 'clear',
+  canceledoutsideperiod: 'cancel',
   pending: 'hourglass_empty',
   standby: 'hourglass_full'
 })
@@ -46,8 +46,8 @@ export const BOOKING_ICON = ref({
 export const BOOKING_ICON_COLOR = ref({
   approved: 'green',
   rejected: 'red',
-  cancelled: 'red',
-  cancelledoutsideperiod: 'red',
+  canceled: 'red',
+  canceledoutsideperiod: 'red',
   pending: 'grey',
   standby: 'yellow'
 })
@@ -55,7 +55,7 @@ export const BOOKING_ICON_COLOR = ref({
 export const DAYCARE_DATE_COLORS = {
   approved: 'green',
   rejected: 'red',
-  cancelled: 'red',
+  canceled: 'red',
   pending: 'grey',
   standby: 'yellow'
 } as const
@@ -63,7 +63,7 @@ export const DAYCARE_DATE_COLORS = {
 export const DAYCARE_DATE_ICONS = {
   approved: 'check',
   rejected: 'block',
-  cancelled: 'clear',
+  canceled: 'clear',
   pending: 'hourglass_empty',
   standby: 'hourglass_full'
 }

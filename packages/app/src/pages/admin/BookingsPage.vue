@@ -9,8 +9,8 @@
         :show-approval-buttons="
           ['pending', 'standby', 'rejected'].includes(booking.status.status)
         "
-        :show-handle-cancellation-button="
-          booking.status.status === 'cancelledoutsideperiod'
+        :show-handle-cancelation-button="
+          booking.status.status === 'canceledoutsideperiod'
         "
         show-booking-services-edit-button
         show-history
@@ -18,7 +18,7 @@
         @reject="reject"
         @standby="standby"
         @reply="reply"
-        @settle-cancellation="settleCancellation"
+        @settle-cancelation="settleCancelation"
         @edit-pet="openUpdatePetDialog"
         @edit-booking-service="openUpdateBookingServiceDialog"
         @open-customer="openCustomer"
@@ -332,19 +332,19 @@ const openCustomer: InstanceType<
 >['$props']['onOpenCustomer'] = ({ id }) =>
   router.push(`/employee/customers/${id}`)
 
-const settleCancellation: InstanceType<
+const settleCancelation: InstanceType<
   typeof BookingItem
->['$props']['onSettleCancellation'] = async ({ data, done }) => {
+>['$props']['onSettleCancelation'] = async ({ data, done }) => {
   if (data.id) {
     $q.dialog({
-      message: `${lang.value.booking.messages.settleCancellation}<br />
+      message: `${lang.value.booking.messages.settleCancelation}<br />
       ${data.pets?.map((pet) => pet.name).join(', ')}<br />
       ${data.startDate} ${data.startTime.name} - ${data.endDate} ${
         data.endTime.name
       }`,
       html: true
     }).onOk(async () => {
-      const result = useMutation('admin.settleBookingCancellation', {
+      const result = useMutation('admin.settleBookingCancelation', {
         args: {
           id: data.id
         },

@@ -101,7 +101,7 @@ export const userDaycareRoutes = ({
             },
             {
               daycareDate: {
-                status: DAYCARE_DATE_STATUS.CANCELLED
+                status: DAYCARE_DATE_STATUS.CANCELED
               }
             }
           )

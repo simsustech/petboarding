@@ -6,9 +6,12 @@ import {
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
+  isAfter,
   isWithinInterval,
   parseISO,
-  subMonths
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
 import Holidays from 'date-holidays'
 import { findCategories } from './category.js'
@@ -891,9 +894,10 @@ export async function updateBooking(
         .where('status', '=', BOOKING_STATUS.APPROVED)
         .orderBy('modifiedAt desc')
         .limit(1)
-        .executeTakeFirstOrThrow()
+        .executeTakeFirst()
 
       if (
+        lastApprovedStatus &&
         updatedBooking.startDate === lastApprovedStatus.startDate &&
         updatedBooking.endDate === lastApprovedStatus.endDate &&
         updatedBooking.startTimeId === lastApprovedStatus.startTimeId &&
@@ -920,13 +924,13 @@ export async function updateBooking(
 export async function cancelBooking(
   criteria: Partial<Booking>,
   reason: string,
-  ignoreCancellationPeriod?: boolean
+  ignoreCancelationPeriod?: boolean
 ) {
   const booking = await findBooking({ criteria })
   if (
     booking?.startDate &&
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
-    !ignoreCancellationPeriod
+    !ignoreCancelationPeriod
   ) {
     throw new Error('You cannot cancel dates in the past.')
   }
@@ -936,13 +940,14 @@ export async function cancelBooking(
   }
 
   if (booking) {
-    let bookingCancellationHandler
-    let status = BOOKING_STATUS.CANCELLED
+    let bookingCancelationHandler
+    let status = BOOKING_STATUS.CANCELED
+    let cancelationCosts
     const days = booking.days
     try {
-      ;({ bookingCancellationHandler } = await import('../api.config.js'))
+      ;({ bookingCancelationHandler } = await import('../api.config.js'))
       if (days) {
-        ;({ status } = bookingCancellationHandler({
+        ;({ status, cancelationCosts } = bookingCancelationHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -950,25 +955,31 @@ export async function cancelBooking(
           },
           dateFns: {
             isBefore,
+            isAfter,
             isWithinInterval,
             parse,
             parseISO,
-            subMonths
-          }
+            subMonths,
+            subDays,
+            differenceInDays
+          },
+          booking
         }))
       }
     } catch (e) {
       console.error('Unable to load API config')
-      const maxCancellationDate = subMonths(
+      const maxCancelationDate = subMonths(
         parseISO(booking.startDate),
-        env.read('CANCELLATION_PERIOD_MONTHS') ||
-          env.read('VITE_CANCELLATION_PERIOD_MONTHS') ||
+        env.read('CANCELATION_PERIOD_MONTHS') ||
+          env.read('VITE_CANCELATION_PERIOD_MONTHS') ||
           0
       )
 
-      status = isBefore(new Date(), maxCancellationDate)
-        ? BOOKING_STATUS.CANCELLED
-        : BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+      status =
+        isAfter(new Date(), maxCancelationDate) &&
+        booking.status?.status === BOOKING_STATUS.APPROVED
+          ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+          : BOOKING_STATUS.CANCELED
     }
 
     const petIds = booking.pets.map((pet) => pet.id)
@@ -979,9 +990,9 @@ export async function cancelBooking(
         comments: reason
       },
       petIds,
-      status: ignoreCancellationPeriod ? BOOKING_STATUS.CANCELLED : status
+      status: ignoreCancelationPeriod ? BOOKING_STATUS.CANCELED : status
     })
-    return true
+    return { status, cancelationCosts }
   }
 }
 

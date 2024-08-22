@@ -297,7 +297,7 @@ export async function createOrUpdateDaycareDates(
     const updatedDaycareDates = currentDaycareDates
       .filter((daycareDate) =>
         [
-          DAYCARE_DATE_STATUS.CANCELLED,
+          DAYCARE_DATE_STATUS.CANCELED,
           DAYCARE_DATE_STATUS.APPROVED,
           DAYCARE_DATE_STATUS.PENDING
         ].includes(daycareDate.status)

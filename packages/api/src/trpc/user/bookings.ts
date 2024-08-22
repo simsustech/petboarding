@@ -15,6 +15,7 @@ import { findCustomer } from '../../repositories/customer'
 import env from '@vitrify/tools/env'
 import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { compileEmail } from '../admin/bookings'
+import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
 
 const MAIL_BCC = env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC')
 
@@ -171,11 +172,6 @@ export const userBookingRoutes = ({
         })
 
         if (customer?.id) {
-          const booking = await findBooking({
-            criteria: {
-              id
-            }
-          })
           await cancelBooking(
             {
               id,
@@ -183,33 +179,53 @@ export const userBookingRoutes = ({
             },
             reason
           )
-          if (fastify?.mailer && booking) {
-            const template = await findEmailTemplate({
-              criteria: {
-                name: 'cancelBooking'
-              }
-            })
+          const booking = await findBooking({
+            criteria: {
+              id
+            }
+          })
+          if (booking) {
+            if (
+              fastify?.slimfact &&
+              booking?.statuses
+                .map((status) => status.status)
+                .includes(BOOKING_STATUS.APPROVED)
+            ) {
+              await createOrUpdateSlimfactInvoice({
+                fastify,
+                booking,
+                customer
+              })
+            }
+            if (fastify?.mailer) {
+              const template = await findEmailTemplate({
+                criteria: {
+                  name: 'cancelBooking'
+                }
+              })
 
-            if (template) {
-              const { subject: subjectTemplate, body: bodyTemplate } = template
+              if (template) {
+                const { subject: subjectTemplate, body: bodyTemplate } =
+                  template
 
-              if (subjectTemplate !== null && bodyTemplate !== null) {
-                const { subject, body } = await compileEmail({
-                  booking,
-                  subjectTemplate,
-                  bodyTemplate,
-                  localeCode,
-                  variables: {
-                    reason
-                  }
-                })
+                if (subjectTemplate !== null && bodyTemplate !== null) {
+                  const { subject, body } = await compileEmail({
+                    booking,
+                    subjectTemplate,
+                    bodyTemplate,
+                    localeCode,
+                    variables: {
+                      reason
+                    }
+                  })
 
-                await fastify.mailer.sendMail({
-                  to: customer.account?.email,
-                  bcc: MAIL_BCC,
-                  subject,
-                  html: body
-                })
+                  await fastify.mailer.sendMail({
+                    to: customer.account?.email,
+                    bcc: MAIL_BCC,
+                    subject,
+                    html: body
+                  })
+                }
               }
             }
           }

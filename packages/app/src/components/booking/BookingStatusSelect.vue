@@ -48,12 +48,12 @@ const options = computed(() => [
     value: BOOKING_STATUS.STANDBY
   },
   {
-    label: lang.value.booking.status[BOOKING_STATUS.CANCELLED],
-    value: BOOKING_STATUS.CANCELLED
+    label: lang.value.booking.status[BOOKING_STATUS.CANCELED],
+    value: BOOKING_STATUS.CANCELED
   },
   {
-    label: lang.value.booking.status[BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD],
-    value: BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+    label: lang.value.booking.status[BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD],
+    value: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
   }
 ])
 </script>

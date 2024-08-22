@@ -60,15 +60,15 @@ const seed = async () => {
     BOOKING_STATUS.PENDING,
     BOOKING_STATUS.APPROVED,
     BOOKING_STATUS.REJECTED,
-    BOOKING_STATUS.CANCELLED,
-    BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+    BOOKING_STATUS.CANCELED,
+    BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
   ]
 
   const daycareDateStatusesEnum = [
     DAYCARE_DATE_STATUS.PENDING,
     DAYCARE_DATE_STATUS.APPROVED,
     DAYCARE_DATE_STATUS.REJECTED,
-    DAYCARE_DATE_STATUS.CANCELLED,
+    DAYCARE_DATE_STATUS.CANCELED,
     DAYCARE_DATE_STATUS.STANDBY
   ]
   const bookingStatuses = [1, 2, 3, 4, 5].map((nr) => ({
@@ -158,8 +158,8 @@ const seed = async () => {
   const emailTemplates = [
     {
       name: 'cancelBooking',
-      subject: 'Your booking has been cancelled.',
-      body: c`<h4>Your booking has been cancelled.</h4>
+      subject: 'Your booking has been canceled.',
+      body: c`<h4>Your booking has been canceled.</h4>
       <p>
           Dear {{customer.firstName}} {{customer.lastName}},
       </p>
@@ -168,9 +168,9 @@ const seed = async () => {
           <b>{{startDate}} {{startTime}}</b> until
           <b>{{endDate}} {{endTime}}</b> for your pets
           <b>{{pets}}</b>
-          has been cancelled with the following reason:
+          has been canceled with the following reason:
           {{reason}}.
-          Please note that a cancellation fee may apply.
+          Please note that a cancelation fee may apply.
       </p>
       <p>
           Kind regards

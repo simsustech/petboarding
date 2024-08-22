@@ -187,8 +187,8 @@ const lang: Language = {
     status: {
       pending: 'Pending',
       approved: 'Approved',
-      cancelled: 'Cancelled',
-      cancelledoutsideperiod: 'Cancelled outside cancellation period.',
+      canceled: 'Canceled',
+      canceledoutsideperiod: 'Canceled outside cancelation period.',
       rejected: 'Rejected',
       standby: 'Reserve list'
     },
@@ -207,7 +207,7 @@ const lang: Language = {
       addPets: 'Please add one or more pets first.',
       termsAndConditions: 'I agree to the terms and conditions.',
       viewTermsAndConditions: 'Click here to view the terms and conditions.',
-      cancellationReason:
+      cancelationReason:
         'Please provide the reason for cancelling the booking.',
       openCustomer: 'Open customer details',
       openBooking: 'Open booking',
@@ -215,8 +215,8 @@ const lang: Language = {
       isDoubleBooked: 'This booking overlaps with another booking or daycare.',
       cancelDoubleBookings:
         'Avoid unnecessary costs and cancel overlapping dates.',
-      settleCancellation:
-        'Are you sure you want to settle the cancellation of the following booking?',
+      settleCancelation:
+        'Are you sure you want to settle the cancelation of the following booking?',
       bookingModified: 'Booking has been modified.',
       changeDaycareToBooking:
         'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.',
@@ -231,9 +231,9 @@ const lang: Language = {
       status: {
         pending: 'Booking is waiting for approval.',
         approved: 'Booking has been approved.',
-        cancelled: 'Booking has been cancelled.',
-        cancelledoutsideperiod:
-          'Booking has been cancelled outside cancellation period.',
+        canceled: 'Booking has been canceled.',
+        canceledoutsideperiod:
+          'Booking has been canceled outside cancelation period.',
         rejected: 'Booking has been rejected.',
         standby: 'Your booking is placed on the reserve list.'
       }
@@ -284,8 +284,7 @@ const lang: Language = {
     messages: {
       addPets: 'Please add one or more pets first.',
       cancelSelected: 'Cancel selected dates',
-      verifyCancellation:
-        'Are you sure you want to cancel the following dates?',
+      verifyCancelation: 'Are you sure you want to cancel the following dates?',
       verifyApproval: 'Are you sure you want to approve the following dates?',
       verifyRejection: 'Are you sure you want to reject the following dates?',
       verifyStandby:
@@ -302,7 +301,7 @@ const lang: Language = {
     status: {
       pending: 'Pending',
       approved: 'Approved',
-      cancelled: 'Cancelled',
+      canceled: 'Canceled',
       rejected: 'Rejected',
       standby: 'Reserve list'
     }

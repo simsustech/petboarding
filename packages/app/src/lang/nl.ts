@@ -188,8 +188,8 @@ const lang: Language = {
     status: {
       pending: 'Wacht op goedkeuring.',
       approved: 'Goedgekeurd.',
-      cancelled: 'Geannuleerd.',
-      cancelledoutsideperiod: 'Geannuleerd buiten annuleringstermijn.',
+      canceled: 'Geannuleerd.',
+      canceledoutsideperiod: 'Geannuleerd buiten annuleringstermijn.',
       rejected: 'Geweigerd.',
       standby: 'Reserve lijst.'
     },
@@ -209,7 +209,7 @@ const lang: Language = {
       termsAndConditions: 'Ik ga akkoord met de algemene voorwaarden.',
       viewTermsAndConditions:
         'Klik hier om de algemene voorwaarden in te zien.',
-      cancellationReason:
+      cancelationReason:
         'Geef a.u.b. de reden voor het annuleren van de reservering.',
       openCustomer: 'Open klantgegevens',
       openBooking: 'Reservering openen',
@@ -218,7 +218,7 @@ const lang: Language = {
         'Deze reservering overlapt met een andere reservering of dagopvang.',
       cancelDoubleBookings:
         'Voorkom onnodige kosten en annuleer de overlappende datums.',
-      settleCancellation:
+      settleCancelation:
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
       bookingModified: 'Reservering is gewijzigd.',
       changeDaycareToBooking:
@@ -235,8 +235,8 @@ const lang: Language = {
       status: {
         pending: 'Reservering wacht op goedkeuring.',
         approved: 'Reservering is goedgekeurd.',
-        cancelled: 'Reservering is geannuleerd.',
-        cancelledoutsideperiod:
+        canceled: 'Reservering is geannuleerd.',
+        canceledoutsideperiod:
           'Reservering is geannuleerd buiten de annuleringstermijn.',
         rejected: 'Reservering is geweigerd.',
         standby: 'Uw reservering staat op de reserve lijst.'
@@ -288,7 +288,7 @@ const lang: Language = {
     messages: {
       addPets: 'Voeg a.u.b. eerst één of meerdere huisdieren toe.',
       cancelSelected: 'Annuleer geselecteerde datums',
-      verifyCancellation:
+      verifyCancelation:
         'Weet u zeker dat u de volgende datums wilt annuleren?',
       verifyApproval: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
       verifyRejection: 'Weet u zeker dat u de volgende datums wilt weigeren?',
@@ -306,7 +306,7 @@ const lang: Language = {
     status: {
       pending: 'Wacht op goedkeuring.',
       approved: 'Goedgekeurd.',
-      cancelled: 'Geannuleerd.',
+      canceled: 'Geannuleerd.',
       rejected: 'Geweigerd.',
       standby: 'Reserve lijst'
     }

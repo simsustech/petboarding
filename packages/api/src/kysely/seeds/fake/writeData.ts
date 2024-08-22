@@ -79,8 +79,8 @@ const services = [
 const emailTemplates = [
   {
     name: 'cancelBooking',
-    subject: 'Your booking has been cancelled.',
-    body: c`<h4>Your booking has been cancelled.</h4>
+    subject: 'Your booking has been canceled.',
+    body: c`<h4>Your booking has been canceled.</h4>
     <p>
         Dear {{customer.firstName}} {{customer.lastName}},
     </p>
@@ -89,9 +89,9 @@ const emailTemplates = [
         <b>{{startDate}} {{startTime}}</b> until
         <b>{{endDate}} {{endTime}}</b> for your pets
         <b>{{pets}}</b>
-        has been cancelled with the following reason:
+        has been canceled with the following reason:
         {{reason}}.
-        Please note that a cancellation fee may apply.
+        Please note that a cancelation fee may apply.
     </p>
     <p>
         Kind regards
@@ -160,6 +160,13 @@ const announcements = [
     title: 'This is a public demo',
     message:
       'Please do NOT enter personal information when using this demo. It may be public to everyone',
+    type: 'important',
+    expirationDate: '2030-01-01'
+  },
+  {
+    title: 'Email',
+    message:
+      'The emails send in the demo can be viewed at https://mail.demo.petboarding.app',
     type: 'important',
     expirationDate: '2030-01-01'
   },

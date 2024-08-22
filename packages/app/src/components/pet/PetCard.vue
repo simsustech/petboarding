@@ -264,7 +264,7 @@ const updateVaccination = (vaccination: Vaccination) => {
   function done() {
     //
   }
-  console.log(vaccination)
+
   if (vaccination.id) {
     emit('update:vaccination', {
       data: { ...vaccination, species: modelValue.value.species },

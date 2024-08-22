@@ -6,9 +6,12 @@ import type {
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
+  isAfter,
   isWithinInterval,
   parseISO,
-  subMonths
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
 import type Holidays from 'date-holidays'
 import type {
@@ -44,7 +47,7 @@ export type BookingCostsHandler = (params: {
   requiredDownPaymentAmount?: number
 }
 
-export type BookingCancellationHandler = (params: {
+export type BookingCancelationHandler = (params: {
   period: {
     startDate: string
     endDate: string
@@ -54,13 +57,22 @@ export type BookingCancellationHandler = (params: {
     getOverlappingDaysInIntervals?: getOverlappingDaysInIntervals
     parse: parse
     isBefore: isBefore
+    isAfter: isAfter
     isWithinInterval: isWithinInterval
     parseISO: parseISO
     subMonths: subMonths
+    subDays: subDays
+    differenceInDays: differenceInDays
   }
+  booking: Booking
 }) => {
   status: BOOKING_STATUS
-  cancellationCosts: number
+  cancelationCosts?: {
+    lines: RawInvoiceLine[]
+    discounts?: RawInvoiceDiscount[]
+    surcharges?: RawInvoiceSurcharge[]
+    requiredDownPaymentAmount?: number
+  }
 }
 
 export interface Configuration {

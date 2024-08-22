@@ -8,9 +8,15 @@ import {
   parseISO,
   eachDayOfInterval,
   startOfMonth,
-  endOfMonth
+  endOfMonth,
+  parse,
+  isBefore,
+  isAfter,
+  isWithinInterval,
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
-
 import type { FastifyInstance } from 'fastify'
 import {
   createBookingStatus,
@@ -27,6 +33,11 @@ import { findCustomer } from '../../repositories/customer.js'
 import env from '@vitrify/tools/env'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
+import {
+  RawInvoiceDiscount,
+  RawInvoiceLine,
+  RawInvoiceSurcharge
+} from '@modular-api/fastify-checkout'
 
 export const compileEmail = async ({
   booking,
@@ -114,8 +125,49 @@ export const createOrUpdateSlimfactInvoice = async ({
     contactPersonName: [customer.firstName, customer.lastName].join(' ')
   }
 
-  const { lines, surcharges, discounts, requiredDownPaymentAmount } =
-    booking.costs
+  let bookingCancelationHandler
+  let cancelationCosts
+  try {
+    ;({ bookingCancelationHandler } = await import('../../api.config.js'))
+    if (booking.days) {
+      ;({ cancelationCosts } = bookingCancelationHandler({
+        period: {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          days: booking.days
+        },
+        dateFns: {
+          isBefore,
+          isAfter,
+          isWithinInterval,
+          parse,
+          parseISO,
+          subMonths,
+          differenceInDays,
+          subDays
+        },
+        booking
+      }))
+    }
+  } catch (e) {
+    console.error('Unable to load API config')
+  }
+
+  let lines: RawInvoiceLine[] = booking.costs.lines
+  let discounts: RawInvoiceDiscount[] | undefined = booking.costs.discounts
+  let surcharges: RawInvoiceSurcharge[] | undefined = booking.costs.surcharges
+  const requiredDownPaymentAmount: number =
+    booking.costs.requiredDownPaymentAmount || 0
+
+  if (
+    booking.status?.status &&
+    [BOOKING_STATUS.CANCELED, BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD].includes(
+      booking.status?.status
+    ) &&
+    cancelationCosts
+  ) {
+    ;({ lines, surcharges, discounts } = cancelationCosts)
+  }
 
   const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
   →
@@ -536,7 +588,7 @@ export const adminBookingRoutes = ({
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
-  settleBookingCancellation: procedure
+  settleBookingCancelation: procedure
     .input(
       z.object({
         id: z.number()

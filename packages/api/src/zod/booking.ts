@@ -22,8 +22,8 @@ export const bookingService = z.object(bookingServiceValidation).omit({})
 //   APPROVED = 'approved',
 //   REJECTED = 'rejected',
 //   STANDBY = 'standby',
-//   CANCELLED = 'cancelled',
-//   CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+//   CANCELED = 'canceled',
+//   CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod'
 // }
 
 export const bookingStatusValidation = {

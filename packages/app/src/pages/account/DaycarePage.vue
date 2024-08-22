@@ -171,7 +171,7 @@ const cancelDaycareDates = async () => {
     html: true,
     cancel: true,
     message: `${
-      lang.value.daycare.messages.verifyCancellation
+      lang.value.daycare.messages.verifyCancelation
     } <br /> <b>${events.value
       ?.filter((ev) => selectedEvents.value.includes(ev.id))
       .map((event) => {

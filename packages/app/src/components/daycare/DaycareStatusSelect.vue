@@ -49,8 +49,8 @@ const options = computed(() => [
     value: DAYCARE_DATE_STATUS.STANDBY
   },
   {
-    label: lang.value.daycare.status[DAYCARE_DATE_STATUS.CANCELLED],
-    value: DAYCARE_DATE_STATUS.CANCELLED
+    label: lang.value.daycare.status[DAYCARE_DATE_STATUS.CANCELED],
+    value: DAYCARE_DATE_STATUS.CANCELED
   }
 ])
 </script>

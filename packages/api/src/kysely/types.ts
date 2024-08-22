@@ -10,8 +10,8 @@ export enum BOOKING_STATUS {
   APPROVED = 'approved',
   REJECTED = 'rejected',
   STANDBY = 'standby',
-  CANCELLED = 'cancelled',
-  CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+  CANCELED = 'canceled',
+  CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod'
 }
 
 export enum OPENING_TIME_TYPE {
@@ -24,7 +24,7 @@ export enum DAYCARE_DATE_STATUS {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
-  CANCELLED = 'cancelled',
+  CANCELED = 'canceled',
   STANDBY = 'standby'
 }
 

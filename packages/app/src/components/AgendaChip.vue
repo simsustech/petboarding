@@ -7,7 +7,7 @@
       class="q-mt-none q-mb-xs q-pr-sm"
       :class="{
         'text-strike':
-          (modelValue.status?.status || modelValue.status) === 'cancelled'
+          (modelValue.status?.status || modelValue.status) === 'canceled'
       }"
       dense
       :icon="icons[type]"

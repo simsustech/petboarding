@@ -75,8 +75,8 @@ const seed = async () => {
   const emailTemplates = [
     {
       name: 'cancelBooking',
-      subject: 'Your booking has been cancelled.',
-      body: c`<h4>Your booking has been cancelled.</h4>
+      subject: 'Your booking has been canceled.',
+      body: c`<h4>Your booking has been canceled.</h4>
       <p>
           Dear {{customer.firstName}} {{customer.lastName}},
       </p>
@@ -85,9 +85,9 @@ const seed = async () => {
           <b>{{startDate}} {{startTime}}</b> until
           <b>{{endDate}} {{endTime}}</b> for your pets
           <b>{{pets}}</b>
-          has been cancelled with the following reason:
+          has been canceled with the following reason:
           {{reason}}.
-          Please note that a cancellation fee may apply.
+          Please note that a cancelation fee may apply.
       </p>
       <p>
           Kind regards
