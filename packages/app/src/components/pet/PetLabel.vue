@@ -46,6 +46,16 @@
                   tabindex="0"
                 >
                   <q-icon
+                    v-if="
+                      modelValue.chemicalSterilizationDate &&
+                      modelValue.chemicalSterilizationDate < dateSixMonthsAgo
+                    "
+                    size="xs"
+                    color="orange"
+                    name="warning"
+                  />
+                  <q-icon
+                    v-else
                     size="sm"
                     :color="modelValue.sterilized ? 'green' : 'red'"
                     :name="modelValue.sterilized ? 'check' : 'close'"
@@ -160,7 +170,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, computed } from 'vue'
+import { date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Pet } from '@petboarding/api/zod'
 import { renderSVG } from 'uqr'
@@ -191,5 +202,14 @@ defineExpose({
 
 const qrSvg = ref(
   renderSVG(`${window.location.origin}/employee/pets/${modelValue.value.id}`)
+)
+
+const dateSixMonthsAgo = computed(() =>
+  dateUtil.formatDate(
+    dateUtil.subtractFromDate(new Date(), {
+      months: 6
+    }),
+    'YYYY-MM-DD'
+  )
 )
 </script>
