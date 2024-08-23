@@ -40,15 +40,20 @@ import {
   type RawInvoiceLine,
   type RawInvoiceDiscount,
   type RawInvoiceSurcharge,
-  computeInvoiceCosts
+  computeInvoiceCosts,
+  type Invoice
 } from '@modular-api/fastify-checkout'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
+import { FastifyInstance } from 'fastify'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
 type BookingUpdate = Updateable<Bookings>
 
-type BookingStatus = Selectable<BookingStatusDb>
+type BookingStatus = Selectable<BookingStatusDb> & {
+  startTime: OpeningTime
+  endTime: OpeningTime
+}
 
 export interface BookingCostItem {
   name: string
@@ -98,7 +103,7 @@ interface BookingCustomer {
 
 export interface ParsedBooking extends Booking {
   days: number
-  costs: BookingCosts
+  costs: BookingCosts | null
   startTime: OpeningTime | null
   endTime: OpeningTime | null
   customer: BookingCustomer | null
@@ -106,6 +111,7 @@ export interface ParsedBooking extends Booking {
   services: BookingService[]
   status: BookingStatus | null
   statuses: BookingStatus[]
+  invoice?: Invoice | null
 }
 
 const defaultSelect = [
@@ -138,8 +144,16 @@ export const findIds = ({
   }
 }
 
-function calculateBookingDays(
-  booking: Omit<ParsedBooking, 'costs' | 'days' | 'status'>
+export function calculateBookingDays(
+  booking: Pick<
+    ParsedBooking,
+    | 'startTime'
+    | 'startTimeId'
+    | 'endTime'
+    | 'endTimeId'
+    | 'startDate'
+    | 'endDate'
+  >
 ) {
   if (booking.startTime && booking.endTime) {
     return (
@@ -167,7 +181,7 @@ async function calculateBookingCosts({
   let lines: RawInvoiceLine[] = []
   let discounts: RawInvoiceDiscount[] = []
   let surcharges: RawInvoiceSurcharge[] = []
-  let requiredDownPaymentAmount: number
+  let requiredDownPaymentAmount: number = 0
   if (
     booking.startDate &&
     booking.endDate &&
@@ -264,6 +278,26 @@ async function calculateBookingCosts({
     totalExcludingTax,
     totalIncludingTax,
     requiredDownPaymentAmount
+  }
+}
+
+async function getBookingInvoice({
+  booking,
+  fastify
+}: {
+  booking: Booking
+  fastify?: FastifyInstance
+}) {
+  try {
+    if (!booking.invoiceUuid || !fastify?.slimfact)
+      throw new Error('Invoice UUID or fastify not defined')
+
+    const invoice = await fastify.slimfact.admin.getInvoice.query({
+      uuid: booking.invoiceUuid
+    })
+    return invoice
+  } catch (e) {
+    return null
   }
 }
 
@@ -381,7 +415,9 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
               'openingTimes.id',
               'openingTimes.name',
               'openingTimes.startTime',
-              'openingTimes.endTime'
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
             ])
             .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
         ).as('startTime'),
@@ -392,7 +428,9 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
               'openingTimes.id',
               'openingTimes.name',
               'openingTimes.startTime',
-              'openingTimes.endTime'
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
             ])
             .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
         ).as('endTime'),
@@ -623,7 +661,8 @@ function find({
 
 export async function findBooking({
   criteria,
-  select
+  select,
+  fastify
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -632,6 +671,7 @@ export async function findBooking({
     until?: string
   }
   select?: (keyof Booking)[]
+  fastify?: FastifyInstance
 }): Promise<ParsedBooking | undefined> {
   const query = find({ criteria, select })
 
@@ -657,7 +697,8 @@ export async function findBooking({
         booking: { ...result, days },
         categories,
         withServices: true
-      })
+      }),
+      invoice: await getBookingInvoice({ booking: result, fastify })
     }
   } else {
     return result
@@ -667,7 +708,8 @@ export async function findBooking({
 export async function findBookings({
   criteria,
   select,
-  limit
+  limit,
+  fastify
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -677,6 +719,7 @@ export async function findBookings({
   }
   select?: (keyof Booking)[]
   limit?: number
+  fastify?: FastifyInstance
 }): Promise<ParsedBooking[]> {
   let query = find({
     criteria,
@@ -714,9 +757,12 @@ export async function findBookings({
         withServices: true
       })
 
+      const invoice = await getBookingInvoice({ booking: result, fastify })
+
       return {
         ...result,
-        costs
+        costs,
+        invoice
       }
     })
   )

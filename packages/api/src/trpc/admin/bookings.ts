@@ -25,7 +25,8 @@ import {
   getBookingsCount,
   updateBookingService,
   cancelBooking,
-  updateBooking
+  updateBooking,
+  calculateBookingDays
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findEmailTemplate } from '../../repositories/emailTemplate.js'
@@ -34,6 +35,7 @@ import env from '@vitrify/tools/env'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import {
+  Invoice,
   RawInvoiceDiscount,
   RawInvoiceLine,
   RawInvoiceSurcharge
@@ -99,7 +101,13 @@ export const createOrUpdateSlimfactInvoice = async ({
     'firstName' | 'lastName' | 'address' | 'postalCode' | 'city'
   > & { account: { email: string } | null }
   locale?: 'en-US' | 'nl'
-}) => {
+}): Promise<
+  | {
+      success: true
+      invoice: Invoice
+    }
+  | { success: false; errorMessage: string }
+> => {
   if (!fastify.slimfact) throw new Error('SlimFact not configured')
   if (!customer.account) throw new Error('Customer is not linked to an account')
 
@@ -153,11 +161,13 @@ export const createOrUpdateSlimfactInvoice = async ({
     console.error('Unable to load API config')
   }
 
-  let lines: RawInvoiceLine[] = booking.costs.lines
-  let discounts: RawInvoiceDiscount[] | undefined = booking.costs.discounts
-  let surcharges: RawInvoiceSurcharge[] | undefined = booking.costs.surcharges
+  let lines: RawInvoiceLine[] = booking.costs?.lines || []
+  let discounts: RawInvoiceDiscount[] | undefined =
+    booking.costs?.discounts || []
+  let surcharges: RawInvoiceSurcharge[] | undefined =
+    booking.costs?.surcharges || []
   let requiredDownPaymentAmount: number =
-    booking.costs.requiredDownPaymentAmount || 0
+    booking.costs?.requiredDownPaymentAmount || 0
 
   if (
     booking.status?.status &&
@@ -178,6 +188,37 @@ export const createOrUpdateSlimfactInvoice = async ({
   →
   ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
 
+  const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+
+  const lastApprovedStatus = booking.statuses
+    .filter((status) => status.status === BOOKING_STATUS.APPROVED)
+    .sort((a, b) => {
+      if (a.createdAt < b.createdAt) return -1
+      if (a.createdAt > b.createdAt) return 1
+      return 0
+    })
+    .at(-1)
+
+  if (lastApprovedStatus) {
+    const lastApprovedBookingDays = calculateBookingDays({
+      startDate: lastApprovedStatus.startDate,
+      endDate: lastApprovedStatus.endDate,
+      startTime: lastApprovedStatus.startTime,
+      endTime: lastApprovedStatus.endTime,
+      startTimeId: lastApprovedStatus.startTimeId,
+      endTimeId: lastApprovedStatus.endTimeId
+    })
+    if (
+      lastApprovedStatus.startDate >= format(new Date(), 'yyyy-MM-dd') &&
+      booking.days < lastApprovedBookingDays
+    ) {
+      return {
+        success: false,
+        errorMessage: 'Booking which have already started cannot be shortened.'
+      }
+    }
+  }
+
   try {
     if (booking.invoiceUuid) {
       const invoice = await fastify.slimfact.admin.updateInvoice.mutate({
@@ -196,10 +237,16 @@ export const createOrUpdateSlimfactInvoice = async ({
         locale,
         notes,
         companyId: companyDetails.id,
-        requiredDownPaymentAmount
+        requiredDownPaymentAmount,
+        metadata: {
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`
+        }
       })
 
-      return invoice
+      return {
+        success: true,
+        invoice
+      }
     } else {
       const invoice = await fastify.slimfact.admin.createInvoice.mutate({
         companyDetails: companyDetails,
@@ -217,7 +264,10 @@ export const createOrUpdateSlimfactInvoice = async ({
         notes,
         companyId: companyDetails.id,
         status: InvoiceStatus.BILL,
-        requiredDownPaymentAmount
+        requiredDownPaymentAmount,
+        metadata: {
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`
+        }
       })
 
       await updateBooking(
@@ -234,10 +284,16 @@ export const createOrUpdateSlimfactInvoice = async ({
         }
       )
 
-      return invoice
+      return {
+        success: true,
+        invoice
+      }
     }
   } catch (e) {
-    throw new Error('Could not create or update booking invoice.')
+    return {
+      success: false,
+      errorMessage: 'Could not create or update booking invoice.'
+    }
   }
 }
 
@@ -264,7 +320,8 @@ export const adminBookingRoutes = ({
           until,
           status
         },
-        limit: 25
+        limit: 25,
+        fastify
       })
       return bookings
     }),
@@ -354,18 +411,12 @@ export const adminBookingRoutes = ({
             }
 
             if (fastify.slimfact && booking.costs) {
-              try {
-                await createOrUpdateSlimfactInvoice({
-                  fastify,
-                  booking,
-                  customer
-                })
-              } catch (e) {
-                throw new TRPCError({
-                  code: 'BAD_REQUEST',
-                  message: e as string
-                })
-              }
+              const result = await createOrUpdateSlimfactInvoice({
+                fastify,
+                booking,
+                customer
+              })
+              if (!result.success) fastify.log.debug(result.errorMessage)
             }
           }
         }
@@ -561,18 +612,12 @@ export const adminBookingRoutes = ({
         })
 
         if (fastify.slimfact && booking?.costs && customer) {
-          try {
-            await createOrUpdateSlimfactInvoice({
-              fastify,
-              booking,
-              customer
-            })
-          } catch (e) {
-            throw new TRPCError({
-              code: 'BAD_REQUEST',
-              message: e as string
-            })
-          }
+          const result = await createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+          if (!result.success) fastify.log.debug(result.errorMessage)
         }
 
         if (updatedBookingService) return bookingService

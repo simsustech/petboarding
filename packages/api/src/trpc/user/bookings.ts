@@ -85,7 +85,8 @@ export const userBookingRoutes = ({
         const bookings = await findBookings({
           criteria: {
             customerId: customer.id
-          }
+          },
+          fastify
         })
         return bookings
       }
@@ -191,11 +192,12 @@ export const userBookingRoutes = ({
                 .map((status) => status.status)
                 .includes(BOOKING_STATUS.APPROVED)
             ) {
-              await createOrUpdateSlimfactInvoice({
+              const result = await createOrUpdateSlimfactInvoice({
                 fastify,
                 booking,
                 customer
               })
+              if (!result.success) fastify.log.debug(result.errorMessage)
             }
             if (fastify?.mailer) {
               const template = await findEmailTemplate({

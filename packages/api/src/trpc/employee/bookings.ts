@@ -67,7 +67,8 @@ export const employeeBookingRoutes = ({
         const booking = findBooking({
           criteria: {
             id
-          }
+          },
+          fastify
         })
 
         return booking
@@ -82,7 +83,8 @@ export const employeeBookingRoutes = ({
         const bookings = findBookings({
           criteria: {
             ids
-          }
+          },
+          fastify
         })
 
         return bookings
@@ -107,7 +109,8 @@ export const employeeBookingRoutes = ({
             until,
             status,
             customerId
-          }
+          },
+          fastify
         })
         return bookings
       }
@@ -199,16 +202,16 @@ export const employeeBookingRoutes = ({
         })
 
         if (booking?.costs && customer) {
-          try {
-            await createOrUpdateSlimfactInvoice({
-              fastify,
-              booking,
-              customer
-            })
-          } catch (e) {
+          const result = await createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+          if (!result.success) {
+            fastify.log.debug(result.errorMessage)
             throw new TRPCError({
               code: 'BAD_REQUEST',
-              message: e as string
+              message: result.errorMessage
             })
           }
         }

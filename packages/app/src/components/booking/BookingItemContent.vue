@@ -77,7 +77,7 @@
       caption
     >
       <price
-        :model-value="modelValue.costs.totalIncludingTax"
+        :model-value="modelValue.costs?.totalIncludingTax"
         :currency="configuration.CURRENCY"
       />
     </q-item-label>
@@ -94,14 +94,14 @@
     <div v-if="showApprovalButtons">
       <div class="row">
         <q-btn
-          v-if="modelValue.status.status !== 'approved'"
+          v-if="modelValue.status?.status !== 'approved'"
           icon="check"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="green"
           @click.stop="approve(modelValue)"
         />
         <q-btn
-          v-if="modelValue.status.status !== 'rejected'"
+          v-if="modelValue.status?.status !== 'rejected'"
           icon="cancel"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="red"
@@ -110,7 +110,7 @@
       </div>
       <div class="row">
         <q-btn
-          v-if="modelValue.status.status !== 'standby'"
+          v-if="modelValue.status?.status !== 'standby'"
           icon="hourglass_full"
           :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="yellow"
@@ -126,14 +126,26 @@
     </div>
     <q-item-label
       v-if="
-        configuration.INTEGRATIONS?.slimfact.hostname && modelValue.invoiceUuid
+        configuration.INTEGRATIONS?.slimfact.hostname &&
+        modelValue.invoiceUuid &&
+        modelValue.invoice
       "
     >
       <q-btn
         icon="receipt"
         :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
         target="_blank"
+        :text-color="
+          modelValue.invoice.amountDue !== void 0 &&
+          modelValue.invoice.amountDue <= 0
+            ? 'green-6'
+            : undefined
+        "
       >
+        <price
+          :model-value="modelValue.invoice.totalIncludingTax || 0"
+          :currency="modelValue.invoice.currency"
+        />
         <q-tooltip>
           {{ lang.booking.messages.openInvoice }}
         </q-tooltip>
@@ -166,6 +178,7 @@
 
 <script lang="ts">
 import type { Language } from '../../lang/index.js'
+import Price from '../Price.vue'
 export default {
   name: 'BookingItemContent'
 }

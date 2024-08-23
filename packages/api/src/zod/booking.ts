@@ -63,6 +63,15 @@ export const bookingValidation = {
   serviceIds: z.number().array().optional(),
   isDoubleBooked: z.boolean().optional(),
   invoiceUuid: z.string().optional().nullable(),
+  invoice: z
+    .object({
+      uuid: z.string(),
+      totalIncludingTax: z.number().optional(),
+      amountDue: z.number().optional(),
+      currency: z.union([z.literal('EUR'), z.literal('USD')])
+    })
+    .nullable()
+    .optional(),
   overlapsWithUnavailablePeriod: z.boolean().optional()
 }
 
