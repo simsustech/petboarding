@@ -12,7 +12,7 @@ export default defineConfig({
   reporter: 'html',
   use: {
     launchOptions: {
-      slowMo: 20
+      slowMo: 25
     },
     trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
