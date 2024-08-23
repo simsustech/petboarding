@@ -47,10 +47,10 @@ importers:
         specifier: 7.0.4
         version: 7.0.4
       '@modular-api/api':
-        specifier: ^0.4.24
+        specifier: ^0.4.26
         version: 0.4.26(bcrypt@5.1.1)(fastify@4.27.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.6.5)(otplib@12.0.1)(typescript@5.4.5)(vue@3.4.27)
       '@modular-api/fastify-checkout':
-        specifier: ^0.3.14
+        specifier: ^0.3.16
         version: 0.3.16(kysely@0.27.4)
       '@modular-api/fastify-oidc':
         specifier: ^0.5.4
