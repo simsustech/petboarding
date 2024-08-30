@@ -68,6 +68,8 @@ export const bookingValidation = {
       uuid: z.string(),
       totalIncludingTax: z.number().optional(),
       amountDue: z.number().optional(),
+      amountPaid: z.number().optional(),
+      requiredDownPaymentAmount: z.number().optional(),
       currency: z.union([z.literal('EUR'), z.literal('USD')])
     })
     .nullable()
