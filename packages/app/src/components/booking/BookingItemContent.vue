@@ -130,22 +130,20 @@
         modelValue.invoiceUuid &&
         modelValue.invoice
       "
+      data-html2canvas-ignore="true"
     >
       <q-btn
         icon="receipt"
         :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
         target="_blank"
-        :text-color="
-          modelValue.invoice.amountDue !== void 0 &&
-          modelValue.invoice.amountDue <= 0
-            ? 'green-6'
-            : undefined
-        "
+        :text-color="getInvoiceTextColor(modelValue)"
       >
-        <price
-          :model-value="modelValue.invoice.totalIncludingTax || 0"
-          :currency="modelValue.invoice.currency"
-        />
+        <div class="row text-caption">
+          <price
+            :model-value="modelValue.invoice.totalIncludingTax || 0"
+            :currency="modelValue.invoice.currency"
+          />
+        </div>
         <q-tooltip>
           {{ lang.booking.messages.openInvoice }}
         </q-tooltip>
@@ -387,4 +385,19 @@ const settleCancelation = (booking: Booking) =>
     data: booking,
     done: () => {}
   })
+
+const getInvoiceTextColor = (booking: Booking) => {
+  if (booking.invoice?.amountDue !== void 0) {
+    if (booking.invoice.amountDue <= 0) return 'green-6'
+    if (
+      booking.invoice.amountPaid &&
+      booking.invoice.requiredDownPaymentAmount
+    ) {
+      if (
+        booking.invoice.amountPaid >= booking.invoice.requiredDownPaymentAmount
+      )
+        return 'orange-6'
+    }
+  }
+}
 </script>
