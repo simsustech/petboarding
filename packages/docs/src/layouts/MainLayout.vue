@@ -34,6 +34,7 @@
           flat
           :icon="fabGithub"
           color="black"
+          aria-label="Github"
           href="https://github.com/simsustech/petboarding"
         />
       </q-toolbar>
