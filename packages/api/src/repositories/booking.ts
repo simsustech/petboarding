@@ -16,7 +16,11 @@ import {
 import Holidays from 'date-holidays'
 import { findCategories } from './category.js'
 
-import { BOOKING_STATUS, PERIOD_TYPE } from '../zod/index.js'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS,
+  PERIOD_TYPE
+} from '../zod/index.js'
 import type { OpeningTime } from './openingTime.js'
 import {
   withValidVaccinations,
@@ -297,6 +301,8 @@ async function getBookingInvoice({
     })
     return invoice
   } catch (e) {
+    console.error(e)
+    fastify?.log.debug(e)
     return null
   }
 }
@@ -515,7 +521,7 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
           'daycareDates.status',
           'daycareDates.customerId'
         ])
-        .where('daycareDates.status', '=', 'approved')
+        .where('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED)
         .whereRef('daycareDates.customerId', '=', 'bookings.customerId')
         .whereRef('daycareDates.date', '>=', 'bookings.startDate')
         .whereRef('daycareDates.date', '<=', 'bookings.endDate')
@@ -988,7 +994,7 @@ export async function cancelBooking(
     throw new Error('You cannot cancel dates in the past.')
   }
 
-  if (booking?.status?.status === 'rejected') {
+  if (booking?.status?.status === BOOKING_STATUS.REJECTED) {
     throw new Error('You cannot cancel rejected bookings.')
   }
 

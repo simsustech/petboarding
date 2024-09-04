@@ -11,7 +11,8 @@ export enum BOOKING_STATUS {
   REJECTED = 'rejected',
   STANDBY = 'standby',
   CANCELED = 'canceled',
-  CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod'
+  CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod',
+  AWAITING_DOWNPAYMENT = 'awaitingdownpayment'
 }
 
 export enum OPENING_TIME_TYPE {

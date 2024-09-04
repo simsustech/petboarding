@@ -88,11 +88,13 @@ export const compileEmail = async ({
   }
 }
 
+const slimfactHostname =
+  env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
 export const createOrUpdateSlimfactInvoice = async ({
   fastify,
   booking,
   customer,
-  locale = 'nl'
+  locale
 }: {
   fastify: FastifyInstance
   booking: ParsedBooking
@@ -111,19 +113,26 @@ export const createOrUpdateSlimfactInvoice = async ({
   if (!fastify.slimfact) throw new Error('SlimFact not configured')
   if (!customer.account) throw new Error('Customer is not linked to an account')
 
+  if (!locale) locale = env.read('VITE_LANG') || 'en-US'
+
   const dateFormatter = (date: Date) =>
     new Intl.DateTimeFormat(locale, {
       dateStyle: 'full',
       timeZone: 'UTC'
     }).format(date)
 
-  const numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
+  let numberPrefixes, companyDetails
+  try {
+    numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
 
-  const companyDetails = await fastify.slimfact.admin.getCompany.query({
-    id: Number(
-      env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
-    )
-  })
+    companyDetails = await fastify.slimfact.admin.getCompany.query({
+      id: Number(
+        env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
+      )
+    })
+  } catch (e) {
+    throw new Error('SlimFact not authorized.')
+  }
 
   const clientDetails = {
     address: customer.address,
@@ -239,6 +248,7 @@ export const createOrUpdateSlimfactInvoice = async ({
         companyId: companyDetails.id,
         requiredDownPaymentAmount,
         metadata: {
+          referenceId: 'petboarding',
           referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`
         }
       })
@@ -281,6 +291,9 @@ export const createOrUpdateSlimfactInvoice = async ({
           },
           petIds: booking.pets.map((pet) => pet.id),
           serviceIds: booking.services.map((service) => service.id)
+        },
+        {
+          skipStatusUpdate: true
         }
       )
 
@@ -376,47 +389,77 @@ export const adminBookingRoutes = ({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, emailText, emailSubject } = input
+      let { emailText, emailSubject } = input
+      const { id } = input
       const booking = await findBooking({
         criteria: {
           id
-        }
+        },
+        fastify
       })
 
       if (booking) {
-        // if (!booking.pets.every((pet) => pet.categoryId)) {
-        //   throw new TRPCError({
-        //     code: 'BAD_REQUEST',
-        //     message: 'Pets have not been assigned to a cateogry'
-        //   })
-        // }
-        await createBookingStatus({
-          booking,
-          status: BOOKING_STATUS.APPROVED,
-          petIds: booking.pets.map((pet) => pet.id)
-        })
+        if (!booking.pets.every((pet) => pet.categoryId)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Not all pets have not been assigned to a cateogry'
+          })
+        }
+
         if (booking?.customerId) {
           const customer = await findCustomer({
             criteria: {
               id: booking.customerId
             }
           })
+
+          let requiredDownPaymentAmount, invoiceUrl
+          if (customer && fastify.slimfact && booking.costs) {
+            const result = await createOrUpdateSlimfactInvoice({
+              fastify,
+              booking,
+              customer
+            })
+            if (!result.success) {
+              fastify.log.debug(result.errorMessage)
+              await createBookingStatus({
+                booking,
+                status: BOOKING_STATUS.APPROVED,
+                petIds: booking.pets.map((pet) => pet.id)
+              })
+            }
+            if (result.success) {
+              invoiceUrl = `https://${slimfactHostname}/invoice/${result.invoice.uuid}`
+              requiredDownPaymentAmount =
+                (booking.costs?.requiredDownPaymentAmount || 0) -
+                (booking.invoice?.amountPaid || 0)
+
+              await createBookingStatus({
+                booking,
+                status:
+                  requiredDownPaymentAmount > 0
+                    ? BOOKING_STATUS.AWAITING_DOWNPAYMENT
+                    : BOOKING_STATUS.APPROVED,
+                petIds: booking.pets.map((pet) => pet.id)
+              })
+            }
+          }
+
           if (customer?.account?.email) {
             if (fastify?.mailer) {
+              emailText = handlebars.compile(emailText)({
+                invoiceUrl,
+                requiredDownPaymentAmount
+              })
+              emailSubject = handlebars.compile(emailSubject)({
+                invoiceUrl,
+                requiredDownPaymentAmount
+              })
               await fastify.mailer.sendMail({
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
               })
-            }
-
-            if (fastify.slimfact && booking.costs) {
-              const result = await createOrUpdateSlimfactInvoice({
-                fastify,
-                booking,
-                customer
-              })
-              if (!result.success) fastify.log.debug(result.errorMessage)
             }
           }
         }

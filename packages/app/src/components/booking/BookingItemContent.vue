@@ -83,94 +83,102 @@
     </q-item-label>
   </q-item-section>
   <q-item-section side>
-    <div v-if="showHandleCancelationButton">
-      <q-btn
-        icon="check"
-        color="red"
-        :size="$q.screen.lt.sm ? 'sm' : 'md'"
-        @click.stop="settleCancelation(modelValue)"
-      />
-    </div>
-    <div v-if="showApprovalButtons">
-      <div class="row">
+    <div class="row">
+      <div v-if="showHandleCancelationButton" class="col-12 col-sm-shrink">
         <q-btn
-          v-if="modelValue.status?.status !== 'approved'"
           icon="check"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          color="green"
-          @click.stop="approve(modelValue)"
-        />
-        <q-btn
-          v-if="modelValue.status?.status !== 'rejected'"
-          icon="cancel"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
           color="red"
-          @click.stop="reject(modelValue)"
+          :size="$q.screen.lt.sm ? 'sm' : 'md'"
+          @click.stop="settleCancelation(modelValue)"
         />
       </div>
-      <div class="row">
-        <q-btn
-          v-if="modelValue.status?.status !== 'standby'"
-          icon="hourglass_full"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          color="yellow"
-          @click.stop="standby(modelValue)"
-        />
-
-        <q-btn
-          icon="reply"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          @click.stop="reply(modelValue)"
-        />
-      </div>
-    </div>
-    <q-item-label
-      v-if="
-        configuration.INTEGRATIONS?.slimfact.hostname &&
-        modelValue.invoiceUuid &&
-        modelValue.invoice
-      "
-      data-html2canvas-ignore="true"
-    >
-      <q-btn
-        icon="receipt"
-        :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
-        target="_blank"
-        :text-color="getInvoiceTextColor(modelValue)"
-      >
-        <div class="row text-caption">
-          <price
-            :model-value="modelValue.invoice.totalIncludingTax || 0"
-            :currency="modelValue.invoice.currency"
+      <div v-if="showApprovalButtons" class="col-12 col-sm-shrink">
+        <div class="row">
+          <q-btn
+            v-if="modelValue.status?.status !== 'approved'"
+            icon="check"
+            :dense="$q.screen.lt.sm"
+            color="green"
+            @click.stop="approve(modelValue)"
+          />
+          <q-btn
+            v-if="modelValue.status?.status !== 'rejected'"
+            icon="cancel"
+            :dense="$q.screen.lt.sm"
+            color="red"
+            @click.stop="reject(modelValue)"
           />
         </div>
-        <q-tooltip>
-          {{ lang.booking.messages.openInvoice }}
-        </q-tooltip>
-      </q-btn>
-    </q-item-label>
-    <q-item-label v-if="showEditButton">
-      <q-btn icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'" @click.stop>
-        <q-menu>
-          <q-list>
-            <q-item v-close-popup clickable @click.stop="update(modelValue)">
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.edit }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item v-close-popup clickable @click.stop="cancel(modelValue)">
-              <q-item-section>
-                <q-item-label class="text-red">
-                  {{ lang.cancel }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-    </q-item-label>
+        <div class="row">
+          <q-btn
+            v-if="modelValue.status?.status !== 'standby'"
+            icon="hourglass_full"
+            :dense="$q.screen.lt.sm"
+            color="yellow"
+            @click.stop="standby(modelValue)"
+          />
+
+          <q-btn
+            icon="reply"
+            :dense="$q.screen.lt.sm"
+            @click.stop="reply(modelValue)"
+          />
+        </div>
+      </div>
+
+      <div
+        v-if="
+          configuration.INTEGRATIONS?.slimfact.hostname &&
+          modelValue.invoiceUuid &&
+          modelValue.invoice
+        "
+        class="col-12 col-sm-shrink"
+      >
+        <q-btn
+          :dense="$q.screen.lt.sm"
+          data-html2canvas-ignore="true"
+          :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
+          target="_blank"
+          :text-color="getInvoiceTextColor(modelValue)"
+        >
+          <div class="column q-pl-xs q-pr-xs">
+            <q-icon class="col-12" name="receipt" />
+            <div class="col-12 text-caption">
+              <price
+                :model-value="modelValue.invoice.totalIncludingTax || 0"
+                :currency="modelValue.invoice.currency"
+              />
+            </div>
+          </div>
+          <q-tooltip>
+            {{ lang.booking.messages.openInvoice }}
+          </q-tooltip>
+        </q-btn>
+      </div>
+
+      <div v-if="showEditButton" class="col-12 col-sm-shrink">
+        <q-btn icon="edit" :dense="$q.screen.lt.sm" @click.stop>
+          <q-menu>
+            <q-list>
+              <q-item v-close-popup clickable @click.stop="update(modelValue)">
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.edit }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item v-close-popup clickable @click.stop="cancel(modelValue)">
+                <q-item-section>
+                  <q-item-label class="text-red">
+                    {{ lang.cancel }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </div>
+    </div>
   </q-item-section>
 </template>
 

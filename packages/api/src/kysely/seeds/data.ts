@@ -95,11 +95,23 @@ const seed = async () => {
     },
     {
       name: 'approveBooking',
-      subject: 'Your booking has been approved.',
+      subject: c`Your booking has been approved\\{{#if requiredDownPaymentAmount}} (down payment required!)\\{{/if}}.`,
       body: c`<h4>Thanks for your booking.</h4>
       <p>
           Dear {{customer.firstName}} {{customer.lastName}},
       </p>
+      \\{{#if requiredDownPaymentAmount}}
+        <p style="color:red;">
+          This booking requires a down payment. Open the bill with the link below to pay the down payment.
+          <br />
+          <b>If you do not pay the down payment within 5 days your booking will automatically be canceled.</b>
+        </p>
+      \\{{/if}}
+      \\{{#if invoiceUrl}}
+        <p>
+        <a href="\\{{invoiceUrl}}">Click here to view and pay the bill for this booking.</a>
+        </p>
+      \\{{/if}}
       <p>
           This email is to inform you that the booking from
           <b>{{startDate}} {{startTime}}</b> until

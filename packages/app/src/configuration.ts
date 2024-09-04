@@ -40,7 +40,8 @@ export const BOOKING_ICON = ref({
   canceled: 'clear',
   canceledoutsideperiod: 'cancel',
   pending: 'hourglass_empty',
-  standby: 'hourglass_full'
+  standby: 'hourglass_full',
+  awaitingdownpayment: 'hourglass_top'
 })
 
 export const BOOKING_ICON_COLOR = ref({
@@ -49,7 +50,8 @@ export const BOOKING_ICON_COLOR = ref({
   canceled: 'red',
   canceledoutsideperiod: 'red',
   pending: 'grey',
-  standby: 'yellow'
+  standby: 'yellow',
+  awaitingdownpayment: 'green'
 })
 
 export const DAYCARE_DATE_COLORS = {

@@ -63,10 +63,12 @@
       </q-btn-dropdown>
     </div>
     <div id="print-area">
-      <div class="row">
-        <div class="col col-md-6">
-          <q-styled-card>
-            <template #title> {{ lang.booking.arrivals }} </template>
+      <div class="row q-col-gutter-md q-mb-md">
+        <div class="col-12 col-sm-6">
+          <q-card>
+            <q-card-section class="text-h6">
+              {{ lang.booking.arrivals }}
+            </q-card-section>
             <q-list>
               <div
                 v-for="openingTime in sortedOpeningTimes"
@@ -93,11 +95,13 @@
                 ></booking-item>
               </div>
             </q-list>
-          </q-styled-card>
+          </q-card>
         </div>
-        <div class="col col-md-6">
-          <q-styled-card>
-            <template #title> {{ lang.booking.departures }} </template>
+        <div class="col-12 col-sm-6">
+          <q-card>
+            <q-card-section class="text-h6">
+              {{ lang.booking.departures }}
+            </q-card-section>
             <q-list>
               <div
                 v-for="openingTime in sortedOpeningTimes"
@@ -121,44 +125,48 @@
                 ></booking-item>
               </div>
             </q-list>
-          </q-styled-card>
+          </q-card>
         </div>
       </div>
       <div class="row">
-        <q-styled-card>
-          <template #title> {{ lang.daycare.title }} </template>
-          <q-list>
-            <q-item
-              v-for="daycareDate in daycareDatesData"
-              :key="daycareDate.id"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ getPetsFromDaycareDate(daycareDate.pets) }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ daycareDate.customer.lastName }}
-                </q-item-label>
-              </q-item-section>
-              <q-menu context-menu>
-                <q-list dense>
-                  <q-item
-                    clickable
-                    :to="`/employee/pets/${daycareDate.pets
-                      .map((pet) => pet.id)
-                      .join('/')}`"
-                  >
-                    <q-item-section>
-                      <q-item-label>{{
-                        lang.booking.messages.openPets
-                      }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-item>
-          </q-list>
-        </q-styled-card>
+        <div class="col-12 col-sm-6">
+          <q-card>
+            <q-card-section class="text-h6">
+              {{ lang.daycare.title }}
+            </q-card-section>
+            <q-list>
+              <q-item
+                v-for="daycareDate in daycareDatesData"
+                :key="daycareDate.id"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ getPetsFromDaycareDate(daycareDate.pets) }}
+                  </q-item-label>
+                  <q-item-label caption>
+                    {{ daycareDate.customer.lastName }}
+                  </q-item-label>
+                </q-item-section>
+                <q-menu context-menu>
+                  <q-list dense>
+                    <q-item
+                      clickable
+                      :to="`/employee/pets/${daycareDate.pets
+                        .map((pet) => pet.id)
+                        .join('/')}`"
+                    >
+                      <q-item-section>
+                        <q-item-label>{{
+                          lang.booking.messages.openPets
+                        }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
       </div>
     </div>
   </q-page>
@@ -172,7 +180,6 @@ export default {
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { QStyledCard } from '@simsustech/quasar-components'
 import { createUseTrpc } from '../../trpc.js'
 import { QInput, date as dateUtil } from 'quasar'
 import BookingItem from '../../components/booking/BookingItem.vue'

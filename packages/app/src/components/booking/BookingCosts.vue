@@ -6,6 +6,7 @@
     :currency="currency"
     disable
   />
+  {{ lang.pricesSubjectToChange }}
 </template>
 
 <script lang="ts">
@@ -18,10 +19,12 @@ export default {
 import { BookingCosts } from '@petboarding/api'
 import { InvoiceLineRow } from '@modular-api/quasar-components/checkout'
 import { ref } from 'vue'
+import { useLang } from '../../lang/index.js'
 export interface Props {
   modelValue: BookingCosts
 }
 defineProps<Props>()
 
+const lang = useLang()
 const currency = ref('EUR' as const)
 </script>

@@ -438,6 +438,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               client?:
@@ -518,6 +519,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               client?:
@@ -643,6 +645,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               client?:
@@ -723,6 +726,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               client?:
@@ -1410,6 +1414,7 @@ export declare const createRouter: (
               website?: string | null | undefined
               defaultNumberPrefixTemplate?: string | null | undefined
               defaultLocale?: string | null | undefined
+              defaultCurrency?: 'EUR' | 'USD' | null | undefined
             }
             _input_out: {
               name: string
@@ -1431,6 +1436,7 @@ export declare const createRouter: (
               website?: string | null | undefined
               defaultNumberPrefixTemplate?: string | null | undefined
               defaultLocale?: string | null | undefined
+              defaultCurrency?: 'EUR' | 'USD' | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -1456,6 +1462,7 @@ export declare const createRouter: (
             website: string | null | undefined
             defaultNumberPrefixTemplate: string | null | undefined
             defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }
         >
         getCompanies: import('@trpc/server').BuildProcedure<
@@ -1506,6 +1513,7 @@ export declare const createRouter: (
             website: string | null | undefined
             defaultNumberPrefixTemplate: string | null | undefined
             defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         getCompany: import('@trpc/server').BuildProcedure<
@@ -1560,6 +1568,7 @@ export declare const createRouter: (
             website: string | null | undefined
             defaultNumberPrefixTemplate: string | null | undefined
             defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }
         >
         updateCompany: import('@trpc/server').BuildProcedure<
@@ -1603,6 +1612,7 @@ export declare const createRouter: (
               website?: string | null | undefined
               defaultNumberPrefixTemplate?: string | null | undefined
               defaultLocale?: string | null | undefined
+              defaultCurrency?: 'EUR' | 'USD' | null | undefined
             }
             _input_out: {
               name: string
@@ -1624,6 +1634,7 @@ export declare const createRouter: (
               website?: string | null | undefined
               defaultNumberPrefixTemplate?: string | null | undefined
               defaultLocale?: string | null | undefined
+              defaultCurrency?: 'EUR' | 'USD' | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -1678,6 +1689,7 @@ export declare const createRouter: (
             website: string | null | undefined
             defaultNumberPrefixTemplate: string | null | undefined
             defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         createInvoice: import('@trpc/server').BuildProcedure<
@@ -1714,7 +1726,6 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
-              metadata: Record<string, unknown>
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1738,6 +1749,7 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              metadata?: Record<string, unknown> | null | undefined
               paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
@@ -1765,6 +1777,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               clientDetails?:
@@ -1785,6 +1798,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
+              reminderSentDates?: string[] | null | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -1799,7 +1813,6 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
-              metadata: Record<string, unknown>
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1823,6 +1836,7 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              metadata?: Record<string, unknown> | null | undefined
               paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
@@ -1850,6 +1864,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               clientDetails?:
@@ -1870,6 +1885,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
+              reminderSentDates?: string[] | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -1910,7 +1926,6 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
-              metadata: Record<string, unknown>
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1934,6 +1949,7 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              metadata?: Record<string, unknown> | null | undefined
               paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
@@ -1961,6 +1977,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               clientDetails?:
@@ -1981,6 +1998,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
+              reminderSentDates?: string[] | null | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -1995,7 +2013,6 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
-              metadata: Record<string, unknown>
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -2019,6 +2036,7 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
+              metadata?: Record<string, unknown> | null | undefined
               paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
@@ -2046,6 +2064,7 @@ export declare const createRouter: (
                     website?: string | null | undefined
                     defaultNumberPrefixTemplate?: string | null | undefined
                     defaultLocale?: string | null | undefined
+                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
                   }
                 | undefined
               clientDetails?:
@@ -2066,6 +2085,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
+              reminderSentDates?: string[] | null | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker

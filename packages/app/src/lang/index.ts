@@ -185,6 +185,7 @@ export interface Language {
       canceledoutsideperiod: string
       rejected: string
       standby: string
+      awaitingdownpayment: string
     }
     fields: {
       startDate: string
@@ -224,6 +225,7 @@ export interface Language {
         canceledoutsideperiod: string
         rejected: string
         standby: string
+        awaitingdownpayment: string
       }
     }
     replies: {

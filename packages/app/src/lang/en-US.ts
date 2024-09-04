@@ -190,7 +190,8 @@ const lang: Language = {
       canceled: 'Canceled',
       canceledoutsideperiod: 'Canceled outside cancelation period.',
       rejected: 'Rejected',
-      standby: 'Reserve list'
+      standby: 'Reserve list',
+      awaitingdownpayment: 'Awaiting down payment'
     },
     fields: {
       startDate: 'Start date',
@@ -235,7 +236,8 @@ const lang: Language = {
         canceledoutsideperiod:
           'Booking has been canceled outside cancelation period.',
         rejected: 'Booking has been rejected.',
-        standby: 'Your booking is placed on the reserve list.'
+        standby: 'Your booking is placed on the reserve list.',
+        awaitingdownpayment: 'Awaiting the down payment'
       }
     },
     replies: {
@@ -246,7 +248,7 @@ const lang: Language = {
       cancel: 'Cancel booking'
     },
     validations: {
-      fieldRequired: 'Veld is vereist',
+      fieldRequired: 'Field is required',
       termsAndConditions: 'You need to acccept the terms and conditions.'
     }
   },

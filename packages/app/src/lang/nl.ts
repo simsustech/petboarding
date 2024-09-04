@@ -191,7 +191,8 @@ const lang: Language = {
       canceled: 'Geannuleerd.',
       canceledoutsideperiod: 'Geannuleerd buiten annuleringstermijn.',
       rejected: 'Geweigerd.',
-      standby: 'Reserve lijst.'
+      standby: 'Reserve lijst.',
+      awaitingdownpayment: 'In afwachting van aanbetaling.'
     },
     fields: {
       startDate: 'Datum brengen',
@@ -239,7 +240,8 @@ const lang: Language = {
         canceledoutsideperiod:
           'Reservering is geannuleerd buiten de annuleringstermijn.',
         rejected: 'Reservering is geweigerd.',
-        standby: 'Uw reservering staat op de reserve lijst.'
+        standby: 'Uw reservering staat op de reserve lijst.',
+        awaitingdownpayment: 'In afwachting van de aanbetaling.'
       }
     },
     replies: {

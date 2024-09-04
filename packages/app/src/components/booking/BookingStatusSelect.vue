@@ -54,6 +54,10 @@ const options = computed(() => [
   {
     label: lang.value.booking.status[BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD],
     value: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+  },
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.AWAITING_DOWNPAYMENT],
+    value: BOOKING_STATUS.AWAITING_DOWNPAYMENT
   }
 ])
 </script>
