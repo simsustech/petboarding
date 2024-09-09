@@ -8,6 +8,7 @@ import { onRendered as appOnRendered } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
 import { oidcClientPlugin } from '@modular-api/api'
 import { createSlimfactTrpcClient } from './slimfact/index.js'
+import { initialize } from './pgboss.js'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -199,5 +200,13 @@ export default async function (fastify: FastifyInstance) {
   await fastify.register(appSsrPlugin, {
     host,
     onRendered: appOnRendered
+  })
+
+  const boss = await initialize({ fastify })
+  console.log(boss)
+  fastify.decorate('pg-boss', boss)
+
+  fastify.addHook('onClose', async () => {
+    await boss.stop()
   })
 }

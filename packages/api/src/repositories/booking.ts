@@ -1092,3 +1092,62 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
 
   return count
 }
+
+const downPaymentPaymentTermDays =
+  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  5
+export async function checkDownPayments({
+  fastify
+}: {
+  fastify: FastifyInstance
+}) {
+  const bookings = await db
+    .selectFrom('bookings')
+    .where(({ eb, selectFrom }) =>
+      eb(
+        'bookings.id',
+        '=',
+        selectFrom('bookingStatus')
+          .whereRef('bookingStatus.bookingId', '=', 'bookings.id')
+          .where(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+          )
+          .where(
+            'bookingStatus.status',
+            '=',
+            BOOKING_STATUS.AWAITING_DOWNPAYMENT
+          )
+          .select('bookingStatus.bookingId')
+      )
+    )
+    .select([withPets, withStatus])
+    .selectAll()
+    .execute()
+
+  for (const booking of bookings) {
+    const invoice = await getBookingInvoice({ booking, fastify })
+    if (
+      invoice?.amountPaid &&
+      invoice?.requiredDownPaymentAmount &&
+      invoice.amountPaid >= invoice.requiredDownPaymentAmount
+    ) {
+      createBookingStatus({
+        booking,
+        petIds: booking.pets.map((pet) => pet.id),
+        status: BOOKING_STATUS.APPROVED
+      })
+    } else if (
+      booking.status?.status &&
+      new Date(booking.status?.createdAt) <
+        subDays(new Date(), downPaymentPaymentTermDays)
+    ) {
+      cancelBooking(
+        { id: booking.id },
+        `Down payment not received within ${downPaymentPaymentTermDays} days`
+      )
+    }
+  }
+}
