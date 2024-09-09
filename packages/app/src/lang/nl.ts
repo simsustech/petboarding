@@ -401,6 +401,18 @@ const lang: Language = {
         'Weet u zeker dat u de volgende categorie wilt verwijderen?'
     }
   },
+  information: {
+    messages: {
+      termsAndConditions:
+        'Zorg ervoor dat u op de hoogte bent van de algemene voorwaarden.',
+      openingTimes:
+        'Kom a.u.b. op de tijd zoals aangegeven in uw reservering. Bent u verhinderd? Laat dit dan op tijd weten.',
+      petHealth:
+        'Zorg ervoor dat uw hond in goede gezondheid verkeerd, ontwormd en ontvlooid is en alle verplichte vaccinaties heeft.',
+      vaccinations:
+        'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!'
+    }
+  },
   errors: {
     invalid_type: ({
       path,

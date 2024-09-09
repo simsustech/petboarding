@@ -29,7 +29,6 @@ import {
   calculateBookingDays
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
-import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { findCustomer } from '../../repositories/customer.js'
 import env from '@vitrify/tools/env'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
@@ -40,6 +39,8 @@ import {
   RawInvoiceLine,
   RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
+
+import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 export const compileEmail = async ({
   booking,
@@ -354,11 +355,12 @@ export const adminBookingRoutes = ({
         }
       })
       if (booking) {
-        const template = await findEmailTemplate({
-          criteria: {
-            name: type + 'Booking'
-          }
-        })
+        let template: { subject: string; body: string }
+        try {
+          template = await bookingEmailTemplates[`./${type}/${localeCode}.ts`]()
+        } catch (e) {
+          template = await bookingEmailTemplates[`./${type}/en-US.ts`]()
+        }
 
         if (template) {
           const { subject: subjectTemplate, body: bodyTemplate } = template

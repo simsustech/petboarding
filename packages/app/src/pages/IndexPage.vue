@@ -78,7 +78,16 @@
         </q-styled-card>
       </div>
       <div class="col-md-4">
-        <availability-card v-if="periods" :periods="periods" />
+        <q-banner rounded>
+          <template v-slot:avatar>
+            <q-icon name="info" color="info" />
+          </template>
+          <router-link to="/availability">{{
+            lang.availability.title
+          }}</router-link>
+        </q-banner>
+
+        <!-- <availability-card v-if="periods" :periods="periods" /> -->
       </div>
     </div>
     <div class="row justify-center q-gutter-md"></div>
@@ -100,7 +109,6 @@ import { useConfiguration } from '../configuration.js'
 import { useLang } from '../lang/index.js'
 import { createUseTrpc } from '../trpc.js'
 import { computed, onMounted, ref } from 'vue'
-import AvailabilityCard from '../components/AvailabilityCard.vue'
 import petboardingLogo from '../assets/logo.svg'
 const { useQuery } = await createUseTrpc()
 const configuration = useConfiguration()
@@ -113,13 +121,13 @@ const login = () => {
 }
 
 const { data: announcements, execute } = useQuery('public.getAnnouncements')
-const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
+// const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
 
 onMounted(async () => {
   fetch('./logo.svg').then(() => {
     logo.value = './logo.svg'
   })
   execute()
-  executePeriods()
+  // executePeriods()
 })
 </script>

@@ -13,9 +13,9 @@ import {
 } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer'
 import env from '@vitrify/tools/env'
-import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { compileEmail } from '../admin/bookings'
 import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
+import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 const MAIL_BCC = env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC')
 
@@ -200,11 +200,13 @@ export const userBookingRoutes = ({
               if (!result.success) fastify.log.debug(result.errorMessage)
             }
             if (fastify?.mailer) {
-              const template = await findEmailTemplate({
-                criteria: {
-                  name: 'cancelBooking'
-                }
-              })
+              let template: { subject: string; body: string }
+              try {
+                template =
+                  await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
+              } catch (e) {
+                template = await bookingEmailTemplates[`./cancel/en-US.ts`]()
+              }
 
               if (template) {
                 const { subject: subjectTemplate, body: bodyTemplate } =

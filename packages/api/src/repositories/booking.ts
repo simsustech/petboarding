@@ -301,7 +301,6 @@ async function getBookingInvoice({
     })
     return invoice
   } catch (e) {
-    console.error(e)
     fastify?.log.debug(e)
     return null
   }

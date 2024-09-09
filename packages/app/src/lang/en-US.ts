@@ -392,6 +392,17 @@ const lang: Language = {
       verifyDeletion: 'Are you sure you want to delete the following category?'
     }
   },
+  information: {
+    messages: {
+      termsAndConditions:
+        'Make sure you have read and understand the terms and conditions.',
+      openingTimes:
+        'Please arrive at the time as is shown in your booking. If you are unable to make it, let us know in time.',
+      petHealth:
+        'Make sure your pet is in good health, dewormed and treated for fleas and has all mandatory vaccinations.',
+      vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`
+    }
+  },
   errors: {
     invalid_type: ({
       path,

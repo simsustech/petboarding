@@ -286,8 +286,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
     })
   }
 
-  const requiredDownPaymentAmountFractionOfTotal = 0.25
-  const minimumRequiredDownPaymentAmount = 2500
+  const requiredDownPaymentAmountFractionOfTotal = 0
+  const minimumRequiredDownPaymentAmount = 5000
   let requiredDownPaymentAmount =
     computedInvoiceCosts &&
     computedInvoiceCosts.totalIncludingTax *

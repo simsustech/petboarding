@@ -1798,7 +1798,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              reminderSentDates?: string[] | null | undefined
+              reminderSentDates?: string[] | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -1885,7 +1885,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              reminderSentDates?: string[] | null | undefined
+              reminderSentDates?: string[] | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -1998,7 +1998,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              reminderSentDates?: string[] | null | undefined
+              reminderSentDates?: string[] | undefined
             }
             _input_out: {
               numberPrefixTemplate: string
@@ -2085,7 +2085,7 @@ export declare const createRouter: (
               requiredDownPaymentAmount?: number | undefined
               projectId?: string | null | undefined
               notes?: string | null | undefined
-              reminderSentDates?: string[] | null | undefined
+              reminderSentDates?: string[] | undefined
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker
@@ -2397,21 +2397,13 @@ export declare const createRouter: (
             }
             _input_in: {
               id: number
-              type:
-                | 'sendInvoice'
-                | 'remindInvoice'
-                | 'exhortInvoice'
-                | 'sendBill'
-                | 'sendReceipt'
+              type: 'invoice' | 'bill' | 'receipt'
+              action: 'send' | 'remind' | 'exhort'
             }
             _input_out: {
               id: number
-              type:
-                | 'sendInvoice'
-                | 'remindInvoice'
-                | 'exhortInvoice'
-                | 'sendBill'
-                | 'sendReceipt'
+              type: 'invoice' | 'bill' | 'receipt'
+              action: 'send' | 'remind' | 'exhort'
             }
             _output_in: typeof import('@trpc/server').unsetMarker
             _output_out: typeof import('@trpc/server').unsetMarker

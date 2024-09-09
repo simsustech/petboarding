@@ -374,6 +374,14 @@ export interface Language {
       verifyDeletion: string
     }
   }
+  information: {
+    messages: {
+      termsAndConditions: string
+      openingTimes: string
+      petHealth: string
+      vaccinations: string
+    }
+  }
   errors: {
     invalid_type: ({
       path,
