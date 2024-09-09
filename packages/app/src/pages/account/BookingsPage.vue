@@ -152,21 +152,13 @@ const openCreateDialog: InstanceType<
 const update: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
-  const afterUpdate = (success?: boolean) => {
-    done(success)
-    execute()
-  }
-  updateBookingFormRef.value?.functions.submit({ done: afterUpdate })
+  updateBookingFormRef.value?.functions.submit({ done })
 }
 
 const create: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
-  const afterCreate = (success?: boolean) => {
-    done(success)
-    execute()
-  }
-  createBookingFormRef.value?.functions.submit({ done: afterCreate })
+  createBookingFormRef.value?.functions.submit({ done })
 }
 
 const updateBooking: InstanceType<
@@ -181,6 +173,8 @@ const updateBooking: InstanceType<
   })
 
   await result.immediatePromise
+
+  if (!result.error.value) await execute()
 
   done(!result.error.value)
 }
@@ -199,7 +193,7 @@ const cancelBooking: InstanceType<
 
     await result.immediatePromise
 
-    execute()
+    if (!result.error.value) await execute()
     // if (result.data.value) modelValue.value = result.data.value
     done(!result.error.value)
   }
@@ -216,6 +210,8 @@ const createBooking: InstanceType<
   })
 
   await result.immediatePromise
+
+  if (!result.error.value) await execute()
 
   done(!result.error.value)
 }
