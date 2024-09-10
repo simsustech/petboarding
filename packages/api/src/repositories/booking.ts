@@ -1146,7 +1146,8 @@ export async function checkDownPayments({
     ) {
       cancelBooking(
         { id: booking.id },
-        `Down payment not received within ${downPaymentPaymentTermDays} days`
+        `Down payment not received within ${downPaymentPaymentTermDays} days`,
+        true
       )
     }
   }
