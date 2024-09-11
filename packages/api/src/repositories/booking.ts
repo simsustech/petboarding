@@ -173,12 +173,12 @@ export function calculateBookingDays(
   return 0
 }
 
-async function calculateBookingCosts({
+export async function calculateBookingCosts({
   booking,
   categories,
   withServices
 }: {
-  booking: Omit<ParsedBooking, 'costs' | 'status'>
+  booking: Omit<ParsedBooking, 'costs' | 'status' | 'statuses' | 'invoiceUuid'>
   categories: Category[]
   withServices?: boolean
 }): Promise<BookingCosts | null> {
@@ -1002,6 +1002,8 @@ export async function cancelBooking(
     let status = BOOKING_STATUS.CANCELED
     let cancelationCosts
     const days = booking.days
+
+    const lastApprovedBooking = getLastApprovedForBooking(booking)
     try {
       ;({ bookingCancelationHandler } = await import('../api.config.js'))
       if (days) {
@@ -1021,7 +1023,7 @@ export async function cancelBooking(
             subDays,
             differenceInDays
           },
-          booking
+          booking: lastApprovedBooking
         }))
       }
     } catch (e) {
@@ -1151,4 +1153,50 @@ export async function checkDownPayments({
       )
     }
   }
+}
+
+export async function getLastApprovedForBooking(booking: ParsedBooking) {
+  const lastApprovedStatus = booking.statuses
+    .filter((status) => status.status === BOOKING_STATUS.APPROVED)
+    .sort((a, b) => {
+      if (a.createdAt < b.createdAt) return -1
+      if (a.createdAt > b.createdAt) return 1
+      return 0
+    })
+    .at(-1)
+
+  if (lastApprovedStatus) {
+    const lastApprovedBookingDays = calculateBookingDays({
+      startDate: lastApprovedStatus.startDate,
+      endDate: lastApprovedStatus.endDate,
+      startTime: lastApprovedStatus.startTime,
+      endTime: lastApprovedStatus.endTime,
+      startTimeId: lastApprovedStatus.startTimeId,
+      endTimeId: lastApprovedStatus.endTimeId
+    })
+    const categories = await findCategories({
+      criteria: {}
+    })
+    const lastApprovedBookingCosts = await calculateBookingCosts({
+      booking: {
+        ...lastApprovedStatus,
+        days: lastApprovedBookingDays,
+        customer: booking.customer,
+        customerId: booking.customerId,
+        pets: booking.pets,
+        services: booking.services
+      },
+      categories
+    })
+    return {
+      ...lastApprovedStatus,
+      days: lastApprovedBookingDays,
+      customer: booking.customer,
+      customerId: booking.customerId,
+      pets: booking.pets,
+      services: booking.services,
+      costs: lastApprovedBookingCosts
+    }
+  }
+  return booking
 }

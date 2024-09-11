@@ -26,7 +26,7 @@ import {
   updateBookingService,
   cancelBooking,
   updateBooking,
-  calculateBookingDays
+  getLastApprovedForBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer.js'
@@ -34,6 +34,7 @@ import env from '@vitrify/tools/env'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import {
+  computeInvoiceCosts,
   Invoice,
   RawInvoiceDiscount,
   RawInvoiceLine,
@@ -143,6 +144,7 @@ export const createOrUpdateSlimfactInvoice = async ({
     contactPersonName: [customer.firstName, customer.lastName].join(' ')
   }
 
+  const lastApprovedBooking = await getLastApprovedForBooking(booking)
   let bookingCancelationHandler
   let cancelationCosts
   try {
@@ -164,10 +166,11 @@ export const createOrUpdateSlimfactInvoice = async ({
           differenceInDays,
           subDays
         },
-        booking
+        booking: lastApprovedBooking
       }))
     }
   } catch (e) {
+    fastify.log.debug(e)
     console.error('Unable to load API config')
   }
 
@@ -200,32 +203,30 @@ export const createOrUpdateSlimfactInvoice = async ({
 
   const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
 
-  const lastApprovedStatus = booking.statuses
-    .filter((status) => status.status === BOOKING_STATUS.APPROVED)
-    .sort((a, b) => {
-      if (a.createdAt < b.createdAt) return -1
-      if (a.createdAt > b.createdAt) return 1
-      return 0
+  let computedCancelationCosts
+  let cancelationSurcharge: RawInvoiceSurcharge
+  if (cancelationCosts) {
+    const computedInvoiceCosts = computeInvoiceCosts({
+      lines,
+      discounts,
+      surcharges
     })
-    .at(-1)
+    computedCancelationCosts = computeInvoiceCosts(cancelationCosts)
 
-  if (lastApprovedStatus) {
-    const lastApprovedBookingDays = calculateBookingDays({
-      startDate: lastApprovedStatus.startDate,
-      endDate: lastApprovedStatus.endDate,
-      startTime: lastApprovedStatus.startTime,
-      endTime: lastApprovedStatus.endTime,
-      startTimeId: lastApprovedStatus.startTimeId,
-      endTimeId: lastApprovedStatus.endTimeId
-    })
     if (
-      lastApprovedStatus.startDate >= format(new Date(), 'yyyy-MM-dd') &&
-      booking.days < lastApprovedBookingDays
+      computedCancelationCosts.totalIncludingTax -
+        computedInvoiceCosts.totalIncludingTax >
+      0
     ) {
-      return {
-        success: false,
-        errorMessage: 'Booking which have already started cannot be shortened.'
+      cancelationSurcharge = {
+        ...cancelationCosts.lines.at(0),
+        listPriceIncludesTax: true,
+        taxRate: 21,
+        listPrice:
+          computedCancelationCosts.totalIncludingTax -
+          computedInvoiceCosts.totalIncludingTax
       }
+      surcharges?.push(cancelationSurcharge)
     }
   }
 

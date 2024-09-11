@@ -204,7 +204,6 @@ export default async function (fastify: FastifyInstance) {
   })
 
   const boss = await initialize({ fastify })
-  console.log(boss)
   fastify.decorate('pg-boss', boss)
 
   fastify.addHook('onClose', async () => {
