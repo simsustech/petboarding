@@ -245,7 +245,8 @@ const lang: Language = {
       reject: 'Reject booking',
       standby: 'Place booking on reserve list',
       reply: 'Reply to booking',
-      cancel: 'Cancel booking'
+      cancel: 'Cancel booking',
+      settleCancelation: 'Settle cancelation'
     },
     validations: {
       fieldRequired: 'Field is required',

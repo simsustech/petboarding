@@ -234,6 +234,7 @@ export interface Language {
       standby: string
       reply: string
       cancel: string
+      settleCancelation: string
     }
     validations: {
       fieldRequired: string

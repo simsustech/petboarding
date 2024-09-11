@@ -249,7 +249,8 @@ const lang: Language = {
       reject: 'Reservering weigeren',
       standby: 'Reservering op reservelijst plaatsen',
       reply: 'Reactie op reservering',
-      cancel: 'Reservering annuleren'
+      cancel: 'Reservering annuleren',
+      settleCancelation: 'Annulering afhandelen'
     },
     validations: {
       fieldRequired: 'Veld is vereist',
