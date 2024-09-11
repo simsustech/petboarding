@@ -33,6 +33,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
       hostname: string
     }
   }
+  SUPPORT_EMAIL?: string
 }
 export const BOOKING_ICON = ref({
   approved: 'check',

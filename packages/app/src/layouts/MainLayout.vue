@@ -8,6 +8,22 @@
           </q-btn>
 
           <q-toolbar-title> {{ title }} </q-toolbar-title>
+          <q-btn v-if="configuration.SUPPORT_EMAIL" icon="help" flat>
+            <q-menu>
+              <q-list>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="email" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>
+                      {{ configuration.SUPPORT_EMAIL }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
           <q-language-select
             v-model="language"
             :language-imports="languageImports"

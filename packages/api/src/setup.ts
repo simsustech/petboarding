@@ -193,7 +193,8 @@ export default async function (fastify: FastifyInstance) {
         slimfact: {
           hostname: slimfactHostname
         }
-      }
+      },
+      SUPPORT_EMAIL: env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL')
     })
   })
 
