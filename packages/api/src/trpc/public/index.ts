@@ -7,6 +7,7 @@ import { findCategories } from '../../repositories/category.js'
 import { findAnnouncements } from '../../repositories/announcement.js'
 import type { Category } from '../../repositories/category.js'
 import type { FastifyInstance } from 'fastify'
+import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
 
 export const publicRoutes = ({
   // fastify,
@@ -69,5 +70,12 @@ export const publicRoutes = ({
     })
     if (periods) return periods
     return []
+  }),
+  getDaycareSubscriptions: procedure.query(async () => {
+    const daycareSubscriptions = await findDaycareSubscriptions({
+      criteria: {}
+    })
+
+    return daycareSubscriptions
   })
 })

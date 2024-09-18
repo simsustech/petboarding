@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import modularapiPlugin from '@modular-api/api'
 import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
@@ -9,6 +9,12 @@ import { db as kysely } from '../src/kysely/index.js'
 import { oidcClientPlugin } from '@modular-api/api'
 import { createSlimfactTrpcClient } from './slimfact/index.js'
 import { initialize } from './pgboss.js'
+import {
+  findCustomerDaycareSubscription,
+  updateCustomerDaycareSubscription
+} from './repositories/customerDaycareSubscription.js'
+import { InvoiceStatus } from '@modular-api/fastify-checkout'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from './kysely/types.js'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -75,6 +81,51 @@ export default async function (fastify: FastifyInstance) {
       hostname: slimfactHostname,
       fastify
     })
+
+    fastify.post(
+      '/webhook/slimfact',
+      async (
+        request: FastifyRequest<{ Body: { uuid: string } }>,
+        reply: FastifyReply
+      ) => {
+        const { uuid } = request.body
+        const invoice = await fastify.slimfact.admin.getInvoice.query({ uuid })
+        if (invoice) {
+          const customerDaycareSubscription =
+            await findCustomerDaycareSubscription({
+              criteria: {
+                invoiceUuid: uuid
+              }
+            })
+          if (customerDaycareSubscription) {
+            const getCustomerDaycareSubscriptionStatus = ({
+              invoiceStatus,
+              customerDaycareSubscriptionStatus
+            }: {
+              invoiceStatus: InvoiceStatus
+              customerDaycareSubscriptionStatus: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+            }) => {
+              if (invoiceStatus === InvoiceStatus.PAID)
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+              if (invoiceStatus === InvoiceStatus.CANCELED)
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
+              return customerDaycareSubscriptionStatus
+            }
+            updateCustomerDaycareSubscription(
+              { id: customerDaycareSubscription.id },
+              {
+                status: getCustomerDaycareSubscriptionStatus({
+                  invoiceStatus: invoice.status,
+                  customerDaycareSubscriptionStatus:
+                    customerDaycareSubscription.status
+                })
+              }
+            )
+          }
+        }
+        return reply.send()
+      }
+    )
   }
 
   await fastify.register(modularapiPlugin, {

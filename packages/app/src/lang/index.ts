@@ -23,6 +23,8 @@ export interface Language {
   boarding: string
   update: string
   page: string
+  next: string
+  previous: string
   account: {
     title: string
     fields: {
@@ -381,6 +383,35 @@ export interface Language {
       openingTimes: string
       petHealth: string
       vaccinations: string
+    }
+  }
+  daycareSubscription: {
+    title: string
+    fields: {
+      description: string
+      numberOfDays: string
+      validityPeriod: string
+      listPrice: string
+    }
+    labels: {
+      years: string
+      months: string
+      days: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  customerDaycareSubscription: {
+    fields: {
+      effectiveDate: string
+    }
+    labels: {
+      overview: string
+      purchase: string
+    }
+    messages: {
+      daycareSubscriptionRequired: string
     }
   }
   errors: {

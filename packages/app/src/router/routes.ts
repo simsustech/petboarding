@@ -53,6 +53,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('../pages/admin/DaycarePage.vue')
           },
           {
+            path: 'daycaresubscriptions',
+            component: () =>
+              import('../pages/admin/DaycareSubscriptionsPage.vue')
+          },
+          {
             path: 'occupancy/:date?',
             component: () => import('../pages/admin/OccupancyPage.vue'),
             beforeEnter: (route) => {

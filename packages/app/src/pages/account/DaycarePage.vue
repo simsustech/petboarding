@@ -1,7 +1,10 @@
 <template>
   <resource-page
     type="create"
-    :disabled="!petsData?.length"
+    :disabled="
+      !petsData?.length ||
+      (daycareSubscriptions?.length && !customerDaycareSubscriptions?.length)
+    "
     @create="openCreateDialog"
     @update="openUpdateDialog"
   >
@@ -10,6 +13,31 @@
     </template>
     <div v-if="ready">
       <div v-if="petsData?.length">
+        <q-banner
+          v-if="
+            daycareSubscriptions?.length &&
+            !customerDaycareSubscriptions?.length
+          "
+          rounded
+        >
+          <template #avatar>
+            <q-icon name="warning" color="warning" />
+          </template>
+          <template #action>
+            <q-btn
+              label="Purchase subscription"
+              icon="shopping_cart"
+              flat
+              @click="
+                purchaseCustomerDaycareSubscriptionDialogRef?.functions.open()
+              "
+            />
+          </template>
+          {{
+            lang.customerDaycareSubscription.messages
+              .daycareSubscriptionRequired
+          }}
+        </q-banner>
         <daycare-legend />
         <daycare-calendar-month
           :events="events"
@@ -52,6 +80,18 @@
         @submit="createDaycare"
       ></daycare-form>
     </responsive-dialog>
+    <responsive-dialog
+      ref="purchaseCustomerDaycareSubscriptionDialogRef"
+      persistent
+      display
+    >
+      <customer-daycare-subscription-stepper
+        :daycare-subscriptions="daycareSubscriptions"
+        @purchase-customer-daycare-subscription="
+          onPurchaseCustomerDaycareSubscription
+        "
+      />
+    </responsive-dialog>
   </resource-page>
 </template>
 
@@ -77,7 +117,8 @@ import {
   DAYCARE_DATE_ICONS,
   useConfiguration
 } from '../../configuration.js'
-
+import { type CustomerDaycareSubscription } from '@petboarding/api/zod'
+import customerDaycareSubscriptionStepper from '../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
 const $q = useQuasar()
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -93,6 +134,19 @@ const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
 
 const { data, execute } = useQuery('user.getDaycareDates', {
   args: reactive({ from: startDate, until: endDate }),
+  reactive: {
+    args: true
+  }
+  // immediate: true
+})
+
+const { data: daycareSubscriptions, execute: executeDaycareSubscriptions } =
+  useQuery('public.getDaycareSubscriptions', {})
+
+const {
+  data: customerDaycareSubscriptions,
+  execute: executeCustomerDaycareSubscriptions
+} = useQuery('user.getCustomerDaycareSubscriptions', {
   reactive: {
     args: true
   }
@@ -228,9 +282,37 @@ const onChangeDate: InstanceType<
   endDate.value = data.end
 }
 
+const onPurchaseCustomerDaycareSubscription = async ({
+  data,
+  done
+}: {
+  data: CustomerDaycareSubscription
+  done: (success?: boolean) => void
+}) => {
+  const result = useMutation('user.createCustomerDaycareSubscription', {
+    args: data,
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  if (!result.error.value) {
+  }
+
+  if (result.data.value?.checkoutUrl)
+    window.location.href = result.data.value.checkoutUrl
+
+  done(!result.error.value)
+}
+
+const purchaseCustomerDaycareSubscriptionDialogRef =
+  ref<typeof ResponsiveDialog>()
+
 const ready = ref<boolean>(false)
 onMounted(async () => {
   await executeCustomer()
+  await executeDaycareSubscriptions()
+  await executeCustomerDaycareSubscriptions()
   // await execute()
   ready.value = true
 })

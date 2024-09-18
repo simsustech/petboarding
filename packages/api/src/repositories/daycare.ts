@@ -20,7 +20,7 @@ const defaultSelect = [
   'status',
   'comments',
   'customerId',
-  'daycareSubscriptionId'
+  'customerDaycareSubscriptionId'
 ] as (keyof DaycareDate)[]
 
 function withPets(eb: ExpressionBuilder<Database, 'daycareDates'>) {

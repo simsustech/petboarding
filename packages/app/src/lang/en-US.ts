@@ -25,6 +25,8 @@ const lang: Language = {
   boarding: 'Boarding',
   update: 'Update',
   page: 'Page',
+  next: 'Next',
+  previous: 'Previous',
   account: {
     title: 'Account',
     fields: {
@@ -402,6 +404,37 @@ const lang: Language = {
       petHealth:
         'Make sure your pet is in good health, dewormed and treated for fleas and has all mandatory vaccinations.',
       vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`
+    }
+  },
+  daycareSubscription: {
+    title: 'Daycare subscriptions',
+    fields: {
+      description: 'Omschrijving',
+      numberOfDays: 'Aantal dagen',
+      validityPeriod: 'Validity period',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      years: 'Years',
+      months: 'Months',
+      days: 'Days'
+    },
+    messages: {
+      verifyDeletion:
+        'Are you sure you want to delete the following daycare subscription?'
+    }
+  },
+  customerDaycareSubscription: {
+    fields: {
+      effectiveDate: 'Effective date'
+    },
+    labels: {
+      overview: 'Overview',
+      purchase: 'Purchase'
+    },
+    messages: {
+      daycareSubscriptionRequired:
+        'You need to purchase a daycare subscription before you can add daycare dates.'
     }
   },
   errors: {

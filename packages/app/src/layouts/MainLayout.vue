@@ -202,6 +202,13 @@
                     >
                   </q-item-section>
                 </q-item>
+                <q-item :inset-level="1" to="/admin/daycaresubscriptions">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.daycareSubscription.title }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item :inset-level="1" to="/admin/occupancy">
                   <q-item-section>
                     <q-item-label> {{ lang.occupancy.title }} </q-item-label>

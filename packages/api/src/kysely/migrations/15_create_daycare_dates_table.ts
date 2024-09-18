@@ -11,6 +11,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('customer_id', 'integer', (col) =>
       col.references('customers.id').onDelete('cascade')
     )
+    // Changed
     .addColumn('daycare_subscription_id', 'integer', (col) =>
       col.references('daycare_subscriptions.id').onDelete('set null')
     )

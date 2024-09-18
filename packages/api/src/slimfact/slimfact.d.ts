@@ -2473,6 +2473,7 @@ export declare const createRouter: (
                 amount: number
                 method: import('@modular-api/fastify-checkout').PaymentMethod
                 description?: string | undefined
+                redirectUrl?: string | undefined
               }
             }
             _input_out: {
@@ -2482,6 +2483,7 @@ export declare const createRouter: (
                 amount: number
                 method: import('@modular-api/fastify-checkout').PaymentMethod
                 description?: string | undefined
+                redirectUrl?: string | undefined
               }
             }
             _output_in: typeof import('@trpc/server').unsetMarker

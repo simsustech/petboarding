@@ -172,14 +172,33 @@ export interface DaycareDates {
   createdAt: Generated<string>
 }
 
+export enum CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS {
+  OPEN = 'open',
+  PAID = 'paid',
+  CANCELED = 'canceled'
+}
+
 export interface DaycareSubscriptions {
   id: Generated<number>
-  name: string
-  period: string | null
-  amount: number
-  productId: number | null
-  customerId: number | null
+  description: string
+  numberOfDays: number
+  validityPeriod: JSONColumnType<{
+    years: number
+    months: number
+    days: number
+  }>
+  listPrice: number
   createdAt: Generated<string>
+}
+
+export interface CustomerDaycareSubscriptions {
+  id: Generated<number>
+  effectiveDate: string
+  expirationDate: string
+  status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+  invoiceUuid: string | null
+  daycareSubscriptionId: number
+  customerId: number
 }
 
 export interface EmailTemplates {
@@ -300,6 +319,7 @@ export interface DB {
   daycareDatePetKennel: DaycareDatePetKennel
   daycareDates: DaycareDates
   daycareSubscriptions: DaycareSubscriptions
+  customerDaycareSubscriptions: CustomerDaycareSubscriptions
   emailTemplates: EmailTemplates
   kennels: Kennels
   openingTimes: OpeningTimes

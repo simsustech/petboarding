@@ -6,6 +6,7 @@ import { adminPetRoutes } from './pet.js'
 import { t } from '../../trpc/index.js'
 import type { FastifyInstance } from 'fastify'
 import { adminSlimFactRoutes } from './slimfact.js'
+import { adminDaycareSubscriptionRoutes } from './daycareSubscriptions.js'
 
 export const adminRoutes = ({
   fastify,
@@ -19,5 +20,6 @@ export const adminRoutes = ({
   ...adminDaycareRoutes({ fastify, procedure }),
   ...adminOccupancyRoutes({ fastify, procedure }),
   ...adminPetRoutes({ fastify, procedure }),
-  ...adminSlimFactRoutes({ fastify, procedure })
+  ...adminSlimFactRoutes({ fastify, procedure }),
+  ...adminDaycareSubscriptionRoutes({ fastify, procedure })
 })

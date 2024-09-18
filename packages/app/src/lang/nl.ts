@@ -25,6 +25,8 @@ const lang: Language = {
   boarding: 'Pension',
   update: 'Update',
   page: 'Pagina',
+  next: 'Volgende',
+  previous: 'Vorige',
   account: {
     title: 'Account',
     fields: {
@@ -412,6 +414,37 @@ const lang: Language = {
         'Zorg ervoor dat uw hond in goede gezondheid verkeerd, ontwormd en ontvlooid is en alle verplichte vaccinaties heeft.',
       vaccinations:
         'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!'
+    }
+  },
+  daycareSubscription: {
+    title: 'Dagopvang abonnementen',
+    fields: {
+      description: 'Omschrijving',
+      numberOfDays: 'Aantal dagen',
+      validityPeriod: 'Geldigheidsduur',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      years: 'Jaren',
+      months: 'Maanden',
+      days: 'Dagen'
+    },
+    messages: {
+      verifyDeletion:
+        'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?'
+    }
+  },
+  customerDaycareSubscription: {
+    fields: {
+      effectiveDate: 'Ingangsdatum'
+    },
+    labels: {
+      overview: 'Overzicht',
+      purchase: 'Kopen'
+    },
+    message: {
+      daycareSubscriptionRequired:
+        'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.'
     }
   },
   errors: {

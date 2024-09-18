@@ -5,13 +5,12 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
     .createTable('daycare_subscriptions')
     .addColumn('id', 'serial', (col) => col.primaryKey())
-    .addColumn('name', 'varchar', (col) => col.notNull())
-    .addColumn('period', 'varchar')
-    .addColumn('amount', 'integer', (col) => col.notNull())
-    .addColumn('product_id', 'integer')
-    .addColumn('customer_id', 'integer', (col) =>
-      col.references('customers.id').onDelete('cascade')
+    .addColumn('description', 'varchar', (col) => col.notNull())
+    .addColumn('number_of_days', 'integer', (col) => col.notNull())
+    .addColumn('validity_period', 'json', (col) =>
+      col.defaultTo('{ "years": 1, "months": 0, "days": 0 }')
     )
+    .addColumn('list_price', 'integer', (col) => col.notNull())
 
     .addColumn('created_at', 'text', (col) =>
       col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull()
