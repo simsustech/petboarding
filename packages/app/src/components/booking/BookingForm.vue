@@ -1,6 +1,6 @@
 <template>
-  <q-form ref="formRef" class="row justtify-center">
-    <div class="row q-gutter-md">
+  <q-form ref="formRef" class="justtify-center">
+    <div class="row q-col-gutter-md">
       <q-date
         v-model="dateRange"
         class="col-md-5 col-12"
