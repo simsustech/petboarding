@@ -9,7 +9,11 @@ import type {
   Selectable,
   Updateable
 } from 'kysely'
-import { DAYCARE_DATE_STATUS } from '../zod/index.js'
+import {
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  DAYCARE_DATE_STATUS
+} from '../zod/index.js'
+import { findCustomerDaycareSubscription } from './customerDaycareSubscription.js'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>
@@ -73,6 +77,27 @@ function withCustomer(eb: ExpressionBuilder<Database, 'daycareDates'>) {
   ).as('customer')
 }
 
+function withCustomerDaycareSubscription(
+  eb: ExpressionBuilder<Database, 'daycareDates'>
+) {
+  return jsonObjectFrom(
+    eb
+      .selectFrom('customerDaycareSubscriptions')
+      .select([
+        'customerDaycareSubscriptions.id',
+        'customerDaycareSubscriptions.effectiveDate',
+        'customerDaycareSubscriptions.expirationDate',
+        'customerDaycareSubscriptions.status',
+        'customerDaycareSubscriptions.invoiceUuid'
+      ])
+      .whereRef(
+        'daycareDates.customerDaycareSubscriptionId',
+        '=',
+        'customerDaycareSubscriptions.id'
+      )
+  ).as('customerDaycareSubscription')
+}
+
 function find({
   criteria,
   select
@@ -111,7 +136,9 @@ function find({
   if (criteria.dates && criteria.dates.length) {
     query = query.where('date', 'in', criteria.dates)
   }
-  return query.select(select).select([withCustomer, withPets])
+  return query
+    .select(select)
+    .select([withCustomer, withPets, withCustomerDaycareSubscription])
 }
 
 export async function findDaycareDate({
@@ -182,11 +209,33 @@ export async function findDaycareDates({
 
 export async function createDaycareDate({
   daycareDate,
-  petIds
+  petIds,
+  useCustomerDaycareSubscription
 }: {
   daycareDate: NewDaycareDate
   petIds: number[]
+  useCustomerDaycareSubscription?: boolean
 }) {
+  if (useCustomerDaycareSubscription) {
+    const customerDaycareSubscription = await findCustomerDaycareSubscription({
+      criteria: {
+        customerId: daycareDate.customerId,
+        date: daycareDate.date,
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+      }
+    })
+    if (
+      customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
+    ) {
+      daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
+    } else {
+      throw new Error(
+        `No valid customer daycare subscription available for date ${daycareDate.date}`
+      )
+    }
+  }
+
   const newDaycareDate = await db
     .insertInto('daycareDates')
     .values(daycareDate)
@@ -213,8 +262,36 @@ export async function updateDaycareDate(
   updateWith: {
     daycareDate: DaycareDateUpdate
     petIds?: number[]
-  }
+  },
+  useCustomerDaycareSubscription?: boolean
 ) {
+  if (
+    useCustomerDaycareSubscription &&
+    updateWith.petIds &&
+    !updateWith.daycareDate.customerDaycareSubscriptionId
+  ) {
+    const customerDaycareSubscription = await findCustomerDaycareSubscription({
+      criteria: {
+        customerId: criteria.customerId,
+        date: criteria.date,
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+      }
+    })
+    if (
+      customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining !== null &&
+      customerDaycareSubscription.numberOfDaysRemaining >=
+        updateWith.petIds.length
+    ) {
+      updateWith.daycareDate.customerDaycareSubscriptionId =
+        customerDaycareSubscription.id
+    } else {
+      throw new Error(
+        `No valid customer daycare subscription available for date ${criteria.date}`
+      )
+    }
+  }
+
   let query = db.updateTable('daycareDates')
 
   if (criteria.ids && !criteria.ids.length) {
@@ -276,7 +353,10 @@ export async function getDaycareDateCount({
 }
 
 export async function createOrUpdateDaycareDates(
-  daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[]
+  daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[],
+  options?: {
+    useCustomerDaycareDateSubscription?: boolean
+  }
 ) {
   const customerId = daycareDates[0].customerId
   if (customerId) {
@@ -320,7 +400,9 @@ export async function createOrUpdateDaycareDates(
             customerId,
             status: DAYCARE_DATE_STATUS.PENDING
           },
-          petIds: daycareDate.petIds
+          petIds: daycareDate.petIds,
+          useCustomerDaycareSubscription:
+            options?.useCustomerDaycareDateSubscription
         })
       ),
       ...updatedDaycareDates.map((daycareDate) =>
@@ -334,7 +416,9 @@ export async function createOrUpdateDaycareDates(
               date: daycareDate.date,
               comments: daycareDate.comments,
               customerId,
-              status: DAYCARE_DATE_STATUS.PENDING
+              status: DAYCARE_DATE_STATUS.PENDING,
+              customerDaycareSubscriptionId:
+                daycareDate.customerDaycareSubscriptionId
             },
             petIds: daycareDate.petIds
           }

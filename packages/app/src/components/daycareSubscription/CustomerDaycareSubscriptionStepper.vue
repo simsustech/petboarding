@@ -23,7 +23,8 @@
         class="col-md-6 col-12"
         :date="{
           noUnset: true,
-          firstDayOfWeek: '1'
+          firstDayOfWeek: '1',
+          options: futureDateOptionsFn
         }"
       />
     </q-step>
@@ -113,7 +114,7 @@ import DaycareSubscriptionsList from './DaycareSubscriptionsList.vue'
 import { DateInput } from '@simsustech/quasar-components/form'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
-import { useQuasar } from 'quasar'
+import { useQuasar, date as dateUtil } from 'quasar'
 
 interface Props {
   daycareSubscriptions: DaycareSubscription[]
@@ -168,5 +169,9 @@ const dateFormatter = (date: Date, locale: string) =>
 const formatDate = (date: string | null) => {
   if (date) return dateFormatter(new Date(date), $q.lang.isoName)
   return '-'
+}
+
+const futureDateOptionsFn = (date: string) => {
+  return date >= dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
 }
 </script>

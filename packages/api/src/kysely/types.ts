@@ -167,8 +167,8 @@ export interface DaycareDates {
   date: string
   comments: string | null
   status: DAYCARE_DATE_STATUS
-  customerId: number | null
-  daycareSubscriptionId: number | null
+  customerId: number
+  customerDaycareSubscriptionId: number | null
   createdAt: Generated<string>
 }
 

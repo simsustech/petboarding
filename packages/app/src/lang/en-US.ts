@@ -421,16 +421,20 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion:
-        'Are you sure you want to delete the following daycare subscription?'
+        'Are you sure you want to delete the following daycare subscription?',
+      addDaycareSubscriptionNotification:
+        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.'
     }
   },
   customerDaycareSubscription: {
+    title: 'Daycare subscriptions',
     fields: {
       effectiveDate: 'Effective date'
     },
     labels: {
       overview: 'Overview',
-      purchase: 'Purchase'
+      purchase: 'Purchase',
+      checkout: 'Checkout'
     },
     messages: {
       daycareSubscriptionRequired:

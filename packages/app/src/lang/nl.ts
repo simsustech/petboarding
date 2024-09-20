@@ -431,18 +431,22 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion:
-        'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?'
+        'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?',
+      addDaycareSubscriptionNotification:
+        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.'
     }
   },
   customerDaycareSubscription: {
+    title: 'Dagopvang abonnementen',
     fields: {
       effectiveDate: 'Ingangsdatum'
     },
     labels: {
       overview: 'Overzicht',
-      purchase: 'Kopen'
+      purchase: 'Kopen',
+      checkout: 'Afrekenen'
     },
-    message: {
+    messages: {
       daycareSubscriptionRequired:
         'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.'
     }

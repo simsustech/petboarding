@@ -11,6 +11,7 @@ import {
 } from '../../repositories/daycare.js'
 import { findCustomer } from '../../repositories/customer.js'
 import { addDays } from 'date-fns'
+import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
 
 export const userDaycareValidation = daycareDate.omit({
   customerId: true,
@@ -64,11 +65,16 @@ export const userDaycareRoutes = ({
             }
           })
           if (customer?.id) {
+            const daycareSubscriptions = await findDaycareSubscriptions({
+              criteria: {}
+            })
             const daycareDates = input.map((daycareDate) => ({
               ...daycareDate,
               customerId: customer.id
             }))
-            await createOrUpdateDaycareDates(daycareDates)
+            await createOrUpdateDaycareDates(daycareDates, {
+              useCustomerDaycareDateSubscription: !!daycareSubscriptions.length
+            })
           }
         }
       } catch (e) {

@@ -1,0 +1,57 @@
+<template>
+  <q-btn
+    :dense="$q.screen.lt.sm"
+    class="q-pt-none q-pb-none"
+    data-html2canvas-ignore="true"
+    :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.uuid}`"
+    target="_blank"
+    :text-color="invoiceTextColor"
+  >
+    <div class="column">
+      <q-icon class="col-12" name="receipt" />
+      <div class="col-12 text-caption">
+        <price
+          :model-value="modelValue.totalIncludingTax || 0"
+          :currency="modelValue.currency"
+        />
+      </div>
+    </div>
+    <q-tooltip>
+      {{ lang.booking.messages.openInvoice }}
+    </q-tooltip>
+  </q-btn>
+</template>
+
+<script setup lang="ts">
+import { computed, toRefs } from 'vue'
+import { useLang } from '../lang/index.js'
+import { useQuasar } from 'quasar'
+import { type Invoice } from '@modular-api/fastify-checkout'
+import { useConfiguration } from '../configuration.js'
+interface Props {
+  modelValue: Invoice
+}
+const props = defineProps<Props>()
+
+const { modelValue } = toRefs(props)
+const $q = useQuasar()
+const lang = useLang()
+const configuration = useConfiguration()
+
+const invoiceTextColor = computed(() => {
+  if (modelValue.value.amountDue !== void 0) {
+    if (modelValue.value.amountDue <= 0) return 'green-6'
+    if (
+      modelValue.value.amountPaid &&
+      modelValue.value.requiredDownPaymentAmount
+    ) {
+      if (
+        modelValue.value.amountPaid >=
+        modelValue.value.requiredDownPaymentAmount
+      )
+        return 'orange-6'
+    }
+  }
+  return ''
+})
+</script>

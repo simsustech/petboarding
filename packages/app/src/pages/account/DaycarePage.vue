@@ -3,7 +3,7 @@
     type="create"
     :disabled="
       !petsData?.length ||
-      (daycareSubscriptions?.length && !customerDaycareSubscriptions?.length)
+      !!(daycareSubscriptions?.length && !customerDaycareSubscriptions?.length)
     "
     @create="openCreateDialog"
     @update="openUpdateDialog"
@@ -38,6 +38,9 @@
               .daycareSubscriptionRequired
           }}
         </q-banner>
+        <customer-daycare-subscriptions-list
+          :model-value="customerDaycareSubscriptions"
+        />
         <daycare-legend />
         <daycare-calendar-month
           :events="events"
@@ -64,19 +67,21 @@
       </div>
     </div>
     <!-- <q-btn @click="createCustomer" /> -->
-    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <!-- <responsive-dialog ref="updateDialogRef" persistent @submit="update">
       <daycare-form
         ref="updateDaycareFormRef"
         :pets="petsData"
         :terms-and-conditions-url="termsAndConditionsUrl"
         @submit="updateDaycare"
       ></daycare-form>
-    </responsive-dialog>
+    </responsive-dialog> -->
     <responsive-dialog ref="createDialogRef" persistent @submit="create">
       <daycare-form
         ref="createDaycareFormRef"
         :pets="petsData"
         :terms-and-conditions-url="termsAndConditionsUrl"
+        :customer-daycare-subscriptions="paidCustomerDaycareSubscriptions"
+        :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
         @submit="createDaycare"
       ></daycare-form>
     </responsive-dialog>
@@ -117,8 +122,12 @@ import {
   DAYCARE_DATE_ICONS,
   useConfiguration
 } from '../../configuration.js'
-import { type CustomerDaycareSubscription } from '@petboarding/api/zod'
+import {
+  type CustomerDaycareSubscription,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+} from '@petboarding/api/zod'
 import customerDaycareSubscriptionStepper from '../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
+import customerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 const $q = useQuasar()
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -172,15 +181,15 @@ const openCreateDialog: InstanceType<
   createDialogRef.value?.functions.open()
 }
 
-const update: InstanceType<
-  typeof ResponsiveDialog
->['$props']['onSubmit'] = async ({ done }) => {
-  const afterUpdate = (success?: boolean) => {
-    done(success)
-    execute()
-  }
-  updateDaycareFormRef.value?.functions.submit({ done: afterUpdate })
-}
+// const update: InstanceType<
+//   typeof ResponsiveDialog
+// >['$props']['onSubmit'] = async ({ done }) => {
+//   const afterUpdate = (success?: boolean) => {
+//     done(success)
+//     execute()
+//   }
+//   updateDaycareFormRef.value?.functions.submit({ done: afterUpdate })
+// }
 
 const create: InstanceType<
   typeof ResponsiveDialog
@@ -192,9 +201,9 @@ const create: InstanceType<
   createDaycareFormRef.value?.functions.submit({ done: afterCreate })
 }
 
-const updateDaycare: InstanceType<
-  typeof DaycareForm
->['$props']['onSubmit'] = async () => {}
+// const updateDaycare: InstanceType<
+//   typeof DaycareForm
+// >['$props']['onSubmit'] = async () => {}
 
 const createDaycare: InstanceType<
   typeof DaycareForm
@@ -308,6 +317,13 @@ const onPurchaseCustomerDaycareSubscription = async ({
 const purchaseCustomerDaycareSubscriptionDialogRef =
   ref<typeof ResponsiveDialog>()
 
+const paidCustomerDaycareSubscriptions = computed(() =>
+  customerDaycareSubscriptions.value?.filter(
+    (customerDaycareSubscription) =>
+      customerDaycareSubscription.status ===
+      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+  )
+)
 const ready = ref<boolean>(false)
 onMounted(async () => {
   await executeCustomer()

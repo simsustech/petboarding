@@ -5,7 +5,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .alterTable('daycare_dates')
     .dropColumn('daycare_subscription_id')
     .addColumn('customer_daycare_subscription_id', 'integer', (col) =>
-      col.references('customer_daycare_subscriptions.id').onDelete('cascade')
+      col.references('customer_daycare_subscriptions.id').onDelete('set null')
     )
     .execute()
 }

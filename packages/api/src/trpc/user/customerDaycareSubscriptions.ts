@@ -151,8 +151,13 @@ export const userCustomerDaycareSubscriptionRoutes = ({
           await findCustomerDaycareSubscriptions({
             criteria: {
               customerId: customer.id,
-              status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-            }
+              date: new Date().toISOString().slice(0, 10),
+              statuses: [
+                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+              ]
+            },
+            fastify
           })
         return customerDaycareSubscriptions
       }
@@ -174,6 +179,8 @@ export const userCustomerDaycareSubscriptionRoutes = ({
           }
         })
         if (customer?.id && daycareSubscription) {
+          if (input.effectiveDate < new Date().toISOString().slice(0, 10))
+            throw new Error('Effective date cannot be in the past')
           const newCustomerDaycareSubscription =
             await createCustomerDaycareSubscription({
               effectiveDate:

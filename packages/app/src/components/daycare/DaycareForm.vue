@@ -21,8 +21,12 @@
   <daycare-calendar-month
     :selected-dates="selectedDates"
     :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
+    :max-number-of-selected-dates="maxNumberOfSelectedDates"
     @update:selected-dates="($event) => (selectedDates = $event)"
   ></daycare-calendar-month>
+  <div v-if="useCustomerDaycareSubscriptions" class="row justify-center">
+    Remaining days: {{ remainingDays }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -33,7 +37,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Pet, DaycareDate } from '@petboarding/api/zod'
+import {
+  Pet,
+  DaycareDate,
+  CustomerDaycareSubscription
+} from '@petboarding/api/zod'
 import { ref, useAttrs, computed, toRefs } from 'vue'
 import DaycareCalendarMonth from './DaycareCalendarMonth.vue'
 import { useLang } from '../../lang/index.js'
@@ -45,6 +53,8 @@ export interface Props {
   pets: Pet[]
   termsAndConditionsUrl?: string
   ignoreTermsAndConditions?: boolean
+  useCustomerDaycareSubscriptions?: boolean
+  customerDaycareSubscriptions?: CustomerDaycareSubscription[]
 }
 
 const props = defineProps<Props>()
@@ -74,7 +84,7 @@ const validations = computed<
   pets: [(val) => !!val.length || lang.value.booking.validations.fieldRequired]
 }))
 
-const { pets } = toRefs(props)
+const { pets, customerDaycareSubscriptions } = toRefs(props)
 const selectedDates = ref<string[]>([])
 const modelValue = ref({
   petIds: []
@@ -110,6 +120,20 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
   })
   done(false)
 }
+
+const maxNumberOfSelectedDates = computed(() => {
+  return customerDaycareSubscriptions.value?.reduce((acc, cur) => {
+    acc += cur.numberOfDaysRemaining || 0
+    return acc
+  }, 0)
+})
+
+const remainingDays = computed(() => {
+  if (maxNumberOfSelectedDates.value) {
+    return maxNumberOfSelectedDates.value - selectedDates.value.length
+  }
+  return 0
+})
 
 const variables = ref({
   // header: lang.value.some.nested.prop

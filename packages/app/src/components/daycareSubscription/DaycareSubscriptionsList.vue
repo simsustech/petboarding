@@ -14,6 +14,11 @@
             :currency="configuration.CURRENCY"
           />
         </q-item-label>
+        <q-item-label caption>
+          {{
+            `${daycareSubscription.numberOfDays} ${lang.daycareSubscription.labels.days.toLowerCase()}`
+          }}
+        </q-item-label>
       </q-item-section>
       <q-item-section side>
         <q-btn

@@ -202,13 +202,6 @@
                     >
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/daycaresubscriptions">
-                  <q-item-section>
-                    <q-item-label>
-                      {{ lang.daycareSubscription.title }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
                 <q-item :inset-level="1" to="/admin/occupancy">
                   <q-item-section>
                     <q-item-label> {{ lang.occupancy.title }} </q-item-label>
@@ -232,6 +225,13 @@
                   <q-item to="/admin/configuration/categories">
                     <q-item-section>
                       <q-item-label> {{ lang.category.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/daycaresubscriptions">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.daycareSubscription.title }}
+                      </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item to="/admin/configuration/services">

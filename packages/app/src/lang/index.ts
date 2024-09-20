@@ -400,15 +400,18 @@ export interface Language {
     }
     messages: {
       verifyDeletion: string
+      addDaycareSubscriptionNotification: string
     }
   }
   customerDaycareSubscription: {
+    title: string
     fields: {
       effectiveDate: string
     }
     labels: {
       overview: string
       purchase: string
+      checkout: string
     }
     messages: {
       daycareSubscriptionRequired: string

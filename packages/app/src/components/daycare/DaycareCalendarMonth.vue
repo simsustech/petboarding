@@ -139,6 +139,7 @@ export interface Props {
   focusable?: boolean
   hoverable?: boolean
   onOpenPets?: unknown
+  maxNumberOfSelectedDates?: number
 }
 const props = defineProps<Props>()
 const emit = defineEmits<{
@@ -168,7 +169,8 @@ const lang = useLang()
 
 const calendarRef = ref<QCalendarMonth>()
 const selectedDate = ref(today())
-const { events, selectedDates, disabledWeekdays } = toRefs(props)
+const { events, selectedDates, disabledWeekdays, maxNumberOfSelectedDates } =
+  toRefs(props)
 const weekdays = ref(
   [1, 2, 3, 4, 5, 6, 0].filter((day) => !disabledWeekdays?.value?.includes(day))
 )
@@ -221,7 +223,11 @@ const onClickDate = ({ scope }) => {
   } else {
     // add the date if not outside
     if (selectedDates?.value && scope.outside !== true) {
-      selectedDates.value.push(date)
+      if (
+        maxNumberOfSelectedDates.value === void 0 ||
+        maxNumberOfSelectedDates.value > selectedDates.value.length
+      )
+        selectedDates.value.push(date)
     }
   }
 }

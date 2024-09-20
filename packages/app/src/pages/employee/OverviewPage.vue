@@ -139,6 +139,16 @@
                 v-for="daycareDate in daycareDatesData"
                 :key="daycareDate.id"
               >
+                <q-item-section avatar>
+                  <q-icon
+                    v-if="
+                      daycareDate.customerDaycareSubscription?.status ===
+                      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+                    "
+                    name="paid"
+                    color="green"
+                  />
+                </q-item-section>
                 <q-item-section>
                   <q-item-label>
                     {{ getPetsFromDaycareDate(daycareDate.pets) }}
@@ -183,7 +193,12 @@ import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import { QInput, date as dateUtil } from 'quasar'
 import BookingItem from '../../components/booking/BookingItem.vue'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS, Pet } from '@petboarding/api/zod'
+import {
+  BOOKING_STATUS,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  DAYCARE_DATE_STATUS,
+  Pet
+} from '@petboarding/api/zod'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
 
@@ -268,10 +283,12 @@ const sortedOpeningTimes = computed(() => {
 const getPetsFromDaycareDate = (pets: Pet[]) =>
   pets.map((pet) => pet.name).join(', ')
 
-const setDate = (date: string) =>
-  router.push({
-    path: `/employee/overview/${date.replaceAll('/', '-')}`
-  })
+const setDate = (date: string) => {
+  if (date)
+    router.push({
+      path: `/employee/overview/${date.replaceAll('/', '-')}`
+    })
+}
 
 const printPage = async () => {
   let html2pdf = (element, opt) => {

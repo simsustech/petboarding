@@ -7,6 +7,7 @@ import {
   findDaycareDates
 } from '../../repositories/daycare.js'
 import { DAYCARE_DATE_STATUS, daycareDate } from '../../zod/index.js'
+import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
 
 export const employeeDaycareValidation = daycareDate
   .omit({
@@ -53,7 +54,12 @@ export const employeeDaycareRoutes = ({
     .input(employeeDaycareValidation.array())
     .mutation(async ({ input }) => {
       try {
-        await createOrUpdateDaycareDates(input)
+        const daycareSubscriptions = await findDaycareSubscriptions({
+          criteria: {}
+        })
+        await createOrUpdateDaycareDates(input, {
+          useCustomerDaycareDateSubscription: !!daycareSubscriptions.length
+        })
       } catch (e) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }

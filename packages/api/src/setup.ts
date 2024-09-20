@@ -11,9 +11,9 @@ import { createSlimfactTrpcClient } from './slimfact/index.js'
 import { initialize } from './pgboss.js'
 import {
   findCustomerDaycareSubscription,
-  updateCustomerDaycareSubscription
+  setCustomerDaycareSubscriptionStatus
 } from './repositories/customerDaycareSubscription.js'
-import { InvoiceStatus } from '@modular-api/fastify-checkout'
+import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
 import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from './kysely/types.js'
 
 const getString = (str: string) => str
@@ -99,28 +99,32 @@ export default async function (fastify: FastifyInstance) {
             })
           if (customerDaycareSubscription) {
             const getCustomerDaycareSubscriptionStatus = ({
-              invoiceStatus,
+              invoice,
               customerDaycareSubscriptionStatus
             }: {
-              invoiceStatus: InvoiceStatus
+              invoice: Invoice
               customerDaycareSubscriptionStatus: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
             }) => {
-              if (invoiceStatus === InvoiceStatus.PAID)
+              if (invoice.status === InvoiceStatus.PAID)
                 return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-              if (invoiceStatus === InvoiceStatus.CANCELED)
+              if (invoice.status === InvoiceStatus.CANCELED)
                 return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
+              if (
+                typeof invoice.amountDue === 'number' &&
+                invoice.amountDue <= 0
+              ) {
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+              }
               return customerDaycareSubscriptionStatus
             }
-            updateCustomerDaycareSubscription(
-              { id: customerDaycareSubscription.id },
-              {
-                status: getCustomerDaycareSubscriptionStatus({
-                  invoiceStatus: invoice.status,
-                  customerDaycareSubscriptionStatus:
-                    customerDaycareSubscription.status
-                })
-              }
-            )
+            setCustomerDaycareSubscriptionStatus({
+              id: customerDaycareSubscription.id,
+              status: getCustomerDaycareSubscriptionStatus({
+                invoice: invoice,
+                customerDaycareSubscriptionStatus:
+                  customerDaycareSubscription.status
+              })
+            })
           }
         }
         return reply.send()

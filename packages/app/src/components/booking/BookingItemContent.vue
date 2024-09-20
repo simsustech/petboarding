@@ -92,7 +92,8 @@
         "
         class="col-sm-auto"
       >
-        <q-btn
+        <invoice-button :model-value="modelValue.invoice" />
+        <!-- <q-btn
           :dense="$q.screen.lt.sm"
           class="q-pt-none q-pb-none"
           data-html2canvas-ignore="true"
@@ -112,10 +113,17 @@
           <q-tooltip>
             {{ lang.booking.messages.openInvoice }}
           </q-tooltip>
-        </q-btn>
+        </q-btn> -->
       </div>
 
-      <q-btn class="col-auto" icon="more_vert" flat>
+      <q-btn
+        v-if="
+          showApprovalButtons || showEditButton || showHandleCancelationButton
+        "
+        class="col-auto"
+        icon="more_vert"
+        flat
+      >
         <q-menu>
           <q-list>
             <q-item
@@ -264,6 +272,7 @@ import { useLang, loadLang } from '../../lang/index.js'
 import { Booking, BOOKING_STATUS } from '@petboarding/api/zod'
 import { BOOKING_ICON, BOOKING_ICON_COLOR } from '../../configuration.js'
 import { useConfiguration } from '../../configuration.js'
+import InvoiceButton from '../InvoiceButton.vue'
 export interface Props {
   modelValue: Booking
   showIcon?: boolean
@@ -436,19 +445,4 @@ const settleCancelation = (booking: Booking) =>
     data: booking,
     done: () => {}
   })
-
-const getInvoiceTextColor = (booking: Booking) => {
-  if (booking.invoice?.amountDue !== void 0) {
-    if (booking.invoice.amountDue <= 0) return 'green-6'
-    if (
-      booking.invoice.amountPaid &&
-      booking.invoice.requiredDownPaymentAmount
-    ) {
-      if (
-        booking.invoice.amountPaid >= booking.invoice.requiredDownPaymentAmount
-      )
-        return 'orange-6'
-    }
-  }
-}
 </script>

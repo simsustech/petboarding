@@ -9,7 +9,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('comments', 'text')
     .addColumn('status', 'varchar', (col) => col.notNull())
     .addColumn('customer_id', 'integer', (col) =>
-      col.references('customers.id').onDelete('cascade')
+      col.references('customers.id').onDelete('cascade').notNull()
     )
     // Changed
     .addColumn('daycare_subscription_id', 'integer', (col) =>

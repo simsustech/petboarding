@@ -3,6 +3,12 @@
     <template #header>
       {{ lang.daycareSubscription.title }}
     </template>
+    <q-banner>
+      <template #avatar>
+        <q-icon name="info" color="info" />
+      </template>
+      {{ lang.daycareSubscription.messages.addDaycareSubscriptionNotification }}
+    </q-banner>
     <daycareSubscriptions-list
       v-if="daycareSubscriptions"
       :model-value="daycareSubscriptions"

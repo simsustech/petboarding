@@ -43,6 +43,7 @@
   "devDependencies": {
     "@petboarding/api": "^0.1.0",
     "@modular-api/quasar-components": "^0.2.12",
+    "@modular-api/fastify-checkout": "^0.3.17",
     "@quasar/extras": "1.16.11",
     "@quasar/quasar-ui-qcalendar": "4.0.0-beta.16",
     "@simsustech/quasar-components": "^0.10.4",
