@@ -7,7 +7,7 @@ import {
 } from '../kysely/types.js'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
-import { ExpressionBuilder } from 'kysely'
+import { ExpressionBuilder, sql } from 'kysely'
 import { FastifyInstance } from 'fastify'
 import { Invoice } from '@modular-api/fastify-checkout'
 export type CustomerDaycareSubscription =
@@ -98,6 +98,33 @@ function withNumberOfDaysUsed(
     .as('numberOfDaysUsed')
 }
 
+function withIsActive(
+  eb: ExpressionBuilder<Database, 'customerDaycareSubscriptions'>
+) {
+  return eb
+    .case()
+    .when(
+      'customerDaycareSubscriptions.effectiveDate',
+      '<=',
+      sql<string>`CURRENT_DATE`
+    )
+    .then(
+      eb
+        .case()
+        .when(
+          'customerDaycareSubscriptions.expirationDate',
+          '>=',
+          sql<string>`CURRENT_DATE`
+        )
+        .then(true)
+        .else(false)
+        .end()
+    )
+    .else(false)
+    .end()
+    .as('isActive')
+}
+
 function withNumberOfDaysRemaining(
   eb: ExpressionBuilder<Database, 'customerDaycareSubscriptions'>
 ) {
@@ -176,6 +203,14 @@ function find({
       .where('customerDaycareSubscriptions.expirationDate', '>=', criteria.date)
   }
 
+  if (criteria.expirationDate) {
+    query = query.where(
+      'customerDaycareSubscriptions.expirationDate',
+      '>=',
+      criteria.expirationDate
+    )
+  }
+
   if (criteria.invoiceUuid) {
     query = query.where('invoiceUuid', '=', criteria.invoiceUuid)
   }
@@ -189,7 +224,8 @@ function find({
     .select([
       withDaycareSubscription,
       withNumberOfDaysUsed,
-      withNumberOfDaysRemaining
+      withNumberOfDaysRemaining,
+      withIsActive
     ])
 }
 

@@ -25,7 +25,8 @@ export const customerDaycareSubscriptionValidation = {
   daycareSubscriptionId: z.number(),
   daycareSubscription: daycareSubscription.optional().nullable(),
   numberOfDaysUsed: z.number().optional(),
-  numberOfDaysRemaining: z.number().optional()
+  numberOfDaysRemaining: z.number().optional(),
+  isActive: z.boolean().optional()
 }
 
 export const customerDaycareSubscription = z.object(

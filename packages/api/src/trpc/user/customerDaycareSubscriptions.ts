@@ -151,7 +151,8 @@ export const userCustomerDaycareSubscriptionRoutes = ({
           await findCustomerDaycareSubscriptions({
             criteria: {
               customerId: customer.id,
-              date: new Date().toISOString().slice(0, 10),
+              expirationDate: new Date().toISOString().slice(0, 10),
+              // date: new Date().toISOString().slice(0, 10),
               statuses: [
                 CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
                 CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN

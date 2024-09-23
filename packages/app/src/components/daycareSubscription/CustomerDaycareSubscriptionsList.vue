@@ -1,34 +1,42 @@
 <template>
   <q-list>
-    <q-item-label header>
-      {{ lang.customerDaycareSubscription.title }}
-    </q-item-label>
-    <q-item
-      v-for="(customerDaycareSubscription, index) in modelValue"
-      :key="index"
-    >
-      <q-item-section>
-        <q-item-label overline>
-          {{
-            `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
-          }}
-        </q-item-label>
-        <q-item-label>
-          {{ customerDaycareSubscription.daycareSubscription?.description }}
-        </q-item-label>
-        <q-item-label caption>
-          {{
-            `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
-          }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <invoice-button
-          v-if="customerDaycareSubscription.invoice"
-          :model-value="customerDaycareSubscription.invoice"
-        />
-      </q-item-section>
-    </q-item>
+    <q-expansion-item>
+      <template #header>
+        <q-item-section>
+          <q-item-label>
+            {{ lang.customerDaycareSubscription.title }}
+          </q-item-label>
+        </q-item-section>
+      </template>
+
+      <q-item
+        v-for="(customerDaycareSubscription, index) in modelValue"
+        :key="index"
+        :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
+      >
+        <q-item-section>
+          <q-item-label overline>
+            {{
+              `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
+            }}
+          </q-item-label>
+          <q-item-label>
+            {{ customerDaycareSubscription.daycareSubscription?.description }}
+          </q-item-label>
+          <q-item-label caption>
+            {{
+              `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
+            }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <invoice-button
+            v-if="customerDaycareSubscription.invoice"
+            :model-value="customerDaycareSubscription.invoice"
+          />
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
   </q-list>
 </template>
 

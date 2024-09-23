@@ -13,15 +13,19 @@
     </template>
     <div v-if="ready">
       <div v-if="petsData?.length">
-        <q-banner
-          v-if="
-            daycareSubscriptions?.length &&
-            !customerDaycareSubscriptions?.length
-          "
-          rounded
-        >
+        <customer-daycare-subscriptions-list
+          :model-value="customerDaycareSubscriptions"
+        />
+        <q-banner rounded>
           <template #avatar>
-            <q-icon name="warning" color="warning" />
+            <q-icon
+              v-if="
+                daycareSubscriptions?.length &&
+                !customerDaycareSubscriptions?.length
+              "
+              name="warning"
+              color="warning"
+            />
           </template>
           <template #action>
             <q-btn
@@ -33,14 +37,18 @@
               "
             />
           </template>
-          {{
-            lang.customerDaycareSubscription.messages
-              .daycareSubscriptionRequired
-          }}
+          <a
+            v-if="
+              daycareSubscriptions?.length &&
+              !customerDaycareSubscriptions?.length
+            "
+          >
+            {{
+              lang.customerDaycareSubscription.messages
+                .daycareSubscriptionRequired
+            }}
+          </a>
         </q-banner>
-        <customer-daycare-subscriptions-list
-          :model-value="customerDaycareSubscriptions"
-        />
         <daycare-legend />
         <daycare-calendar-month
           :events="events"
@@ -80,7 +88,9 @@
         ref="createDaycareFormRef"
         :pets="petsData"
         :terms-and-conditions-url="termsAndConditionsUrl"
-        :customer-daycare-subscriptions="paidCustomerDaycareSubscriptions"
+        :customer-daycare-subscriptions="
+          paidAndActiveCustomerDaycareSubscriptions
+        "
         :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
         @submit="createDaycare"
       ></daycare-form>
@@ -317,11 +327,12 @@ const onPurchaseCustomerDaycareSubscription = async ({
 const purchaseCustomerDaycareSubscriptionDialogRef =
   ref<typeof ResponsiveDialog>()
 
-const paidCustomerDaycareSubscriptions = computed(() =>
+const paidAndActiveCustomerDaycareSubscriptions = computed(() =>
   customerDaycareSubscriptions.value?.filter(
     (customerDaycareSubscription) =>
       customerDaycareSubscription.status ===
-      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+        CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID &&
+      customerDaycareSubscription.isActive
   )
 )
 const ready = ref<boolean>(false)
