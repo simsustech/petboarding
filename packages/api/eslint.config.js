@@ -23,6 +23,16 @@ export default typescriptEslint.config(
       }
     }
   },
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          caughtErrors: 'none'
+        }
+      ]
+    }
+  },
   /**
    * end
    */
