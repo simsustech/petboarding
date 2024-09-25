@@ -14,8 +14,20 @@ const seed = async () => {
     {
       species: 'dog',
       order: 1,
-      name: 'Small',
-      price: 1000
+      name: 'Small'
+      // price: 1000
+    }
+  ]
+  const categoryPrices = [
+    {
+      categoryId: 1,
+      date: '2024-01-01',
+      listPrice: 1000
+    },
+    {
+      categoryId: 1,
+      date: '2025-01-01',
+      listPrice: 1500
     }
   ]
   const openingTimes = [
@@ -167,6 +179,7 @@ const seed = async () => {
 
   // await db.insertInto('announcements').values(announcements).execute()
   await db.insertInto('categories').values(categories).execute()
+  await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
   await db.insertInto('emailTemplates').values(emailTemplates).execute()

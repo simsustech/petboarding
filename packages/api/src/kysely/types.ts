@@ -126,7 +126,14 @@ export interface Categories {
   name: string
   price: number | null
   order: number | null
-  productId: string | null
+  createdAt: Generated<string>
+}
+
+export interface CategoryPrices {
+  id: Generated<number>
+  categoryId: number
+  date: string
+  listPrice: number
   createdAt: Generated<string>
 }
 
@@ -314,6 +321,7 @@ export interface DB {
   bookingStatus: BookingStatus
   buildings: Buildings
   categories: Categories
+  categoryPrices: CategoryPrices
   contactPeople: ContactPeople
   customers: Customers
   daycareDatePetKennel: DaycareDatePetKennel

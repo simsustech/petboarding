@@ -27,6 +27,7 @@ const lang: Language = {
   page: 'Pagina',
   next: 'Volgende',
   previous: 'Vorige',
+  delete: 'Verwijderen',
   account: {
     title: 'Account',
     fields: {
@@ -402,6 +403,19 @@ const lang: Language = {
     messages: {
       verifyDeletion:
         'Weet u zeker dat u de volgende categorie wilt verwijderen?'
+    }
+  },
+  categoryPrice: {
+    fields: {
+      date: 'Datum',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      addPrice: 'Prijs toevoegen'
+    },
+    messages: {
+      verifyDeletion:
+        'Weet u zeker dat u de volgende categorie prijs wilt verwijderen?'
     }
   },
   information: {

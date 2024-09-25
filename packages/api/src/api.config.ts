@@ -186,6 +186,22 @@ const vacations = [
   }
 ]
 
+const findActualPrice = ({
+  prices,
+  date
+}: {
+  prices?: { date: string; listPrice: number }[]
+  date: string
+}) => {
+  const sortedAndFiltered = prices
+    ?.filter((price) => price.date <= date)
+    .sort((a, b) => {
+      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+    })
+
+  return sortedAndFiltered?.at(0)?.listPrice || 0
+}
+
 const bookingCostsHandler: BookingCostsHandler = ({
   period: { startDate, endDate, days },
   pets,
@@ -202,9 +218,11 @@ const bookingCostsHandler: BookingCostsHandler = ({
 
   lines = pets.map((pet) => ({
     description: pet.name,
-    listPrice:
-      categories?.find((category) => category.id === pet.categoryId)?.price ||
-      NaN,
+    listPrice: findActualPrice({
+      prices: categories?.find((category) => category.id === pet.categoryId)
+        ?.prices,
+      date: startDate
+    }),
     listPriceIncludesTax: true,
     quantity: days * 1000,
     quantityPerMille: true,

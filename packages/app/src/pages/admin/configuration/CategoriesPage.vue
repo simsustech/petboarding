@@ -10,6 +10,8 @@
       show-delete-button
       @update="openUpdateCategoryDialog"
       @delete="openDeleteCategoryDialog"
+      @add-price="openCreateCategoryPriceDialog"
+      @delete-price="openDeleteCategoryPriceDialog"
     />
   </resource-page>
   <responsive-dialog ref="createCategoryDialogRef" persistent @submit="create">
@@ -17,6 +19,16 @@
   </responsive-dialog>
   <responsive-dialog ref="updateCategoryDialogRef" persistent @submit="update">
     <category-form ref="updateCategoryFormRef" @submit="updateCategory" />
+  </responsive-dialog>
+  <responsive-dialog
+    ref="createCategoryPriceDialogRef"
+    persistent
+    @submit="submitCategoryPrice"
+  >
+    <category-price-form
+      ref="createCategoryPriceFormRef"
+      @submit="createCategoryPrice"
+    />
   </responsive-dialog>
 </template>
 
@@ -31,8 +43,10 @@ import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import { createUseTrpc } from '../../../trpc.js'
-import { Category } from '@petboarding/api/zod'
+import { Category, CategoryPrice } from '@petboarding/api/zod'
 import CategoryForm from '../../../components/category/CategoryForm.vue'
+import CategoryPriceForm from '../../../components/category/CategoryPriceForm.vue'
+import CategoriesList from '../../../components/category/CategoriesList.vue'
 import { useQuasar } from 'quasar'
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -124,6 +138,66 @@ const openDeleteCategoryDialog = ({ data }: { data: Category }) => {
     await result.immediatePromise
     if (!result.error.value) await execute()
   })
+}
+
+const openDeleteCategoryPriceDialog = ({ data }: { data: CategoryPrice }) => {
+  $q.dialog({
+    html: true,
+    cancel: true,
+    message: `${lang.value.categoryPrice.messages.verifyDeletion}<br />
+    ${lang.value.categoryPrice.fields.date}: ${data.date}<br />
+    `
+  }).onOk(async () => {
+    const result = useMutation('configuration.deleteCategoryPrice', {
+      args: data.id,
+      immediate: true
+    })
+
+    await result.immediatePromise
+    if (!result.error.value) await execute()
+  })
+}
+
+const createCategoryPriceDialogRef =
+  ref<InstanceType<typeof ResponsiveDialog>>()
+const createCategoryPriceFormRef = ref<InstanceType<typeof CategoryPriceForm>>()
+const openCreateCategoryPriceDialog: InstanceType<
+  typeof CategoriesList
+>['$props']['onAddPrice'] = ({ data }) => {
+  createCategoryPriceDialogRef.value?.functions.open()
+  nextTick(() => {
+    createCategoryPriceFormRef.value?.functions.setValue({
+      categoryId: data.id!,
+      date: new Date().toISOString().slice(0, 10),
+      listPrice: 0
+    })
+  })
+}
+
+const submitCategoryPrice: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  const afterCreate = (success?: boolean) => {
+    done(success)
+    execute()
+  }
+  createCategoryPriceFormRef.value?.functions.submit({ done: afterCreate })
+}
+
+const createCategoryPrice: InstanceType<
+  typeof CategoryPriceForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  const result = useMutation('configuration.createCategoryPrice', {
+    args: data,
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  if (done) {
+    done(!result.error.value)
+    await execute()
+  }
 }
 
 onMounted(async () => {

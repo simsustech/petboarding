@@ -25,6 +25,7 @@ export interface Language {
   page: string
   next: string
   previous: string
+  delete: string
   account: {
     title: string
     fields: {
@@ -372,6 +373,18 @@ export interface Language {
     helpers: {
       productIdHint: string
       orderHint: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  categoryPrice: {
+    fields: {
+      date: string
+      listPrice: string
+    }
+    labels: {
+      addPrice: string
     }
     messages: {
       verifyDeletion: string

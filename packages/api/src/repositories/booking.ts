@@ -27,7 +27,7 @@ import {
   checkVaccinations,
   type ParsedPet
 } from './pet.js'
-import type { Category } from './category.js'
+import type { ParsedCategory } from './category.js'
 import {
   type Insertable,
   type Selectable,
@@ -179,7 +179,7 @@ export async function calculateBookingCosts({
   withServices
 }: {
   booking: Omit<ParsedBooking, 'costs' | 'status' | 'statuses' | 'invoiceUuid'>
-  categories: Category[]
+  categories: ParsedCategory[]
   withServices?: boolean
 }): Promise<BookingCosts | null> {
   let lines: RawInvoiceLine[] = []
@@ -195,7 +195,9 @@ export async function calculateBookingCosts({
   ) {
     if (!categories) {
       categories = await findCategories({
-        criteria: {}
+        criteria: {
+          date: booking.startDate
+        }
       })
     }
     const days = booking.days
@@ -232,11 +234,31 @@ export async function calculateBookingCosts({
         }))
       } catch (e) {
         console.error('Unable to load API config')
+
+        const findActualPrice = ({
+          prices,
+          date
+        }: {
+          prices?: { date: string; listPrice: number }[]
+          date: string
+        }) => {
+          const sortedAndFiltered = prices
+            ?.filter((price) => price.date <= date)
+            .sort((a, b) => {
+              return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+            })
+
+          return sortedAndFiltered?.at(0)?.listPrice || 0
+        }
+
         lines = booking.pets.map((pet) => ({
           description: pet.name,
-          listPrice:
-            categories?.find((category) => category.id === pet.categoryId)
-              ?.price || NaN,
+          listPrice: findActualPrice({
+            prices: categories?.find(
+              (category) => category.id === pet.categoryId
+            )?.prices,
+            date: booking.startDate
+          }),
           listPriceIncludesTax: true,
           quantity: days * 1000,
           quantityPerMille: true,
@@ -635,6 +657,10 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
+  if (criteria.invoiceUuid) {
+    query = query.where('bookings.invoiceUuid', '=', criteria.invoiceUuid)
+  }
+
   return query
     .select(select)
     .select(({ selectFrom }) => [
@@ -695,7 +721,9 @@ export async function findBooking({
       }
     })
 
-    const categories = await db.selectFrom('categories').selectAll().execute()
+    const categories = await findCategories({
+      criteria: {}
+    })
     return {
       ...result,
       costs: await calculateBookingCosts({
@@ -737,7 +765,9 @@ export async function findBookings({
 
   const results = await query.orderBy('id desc').execute()
 
-  const categories = await db.selectFrom('categories').selectAll().execute()
+  const categories = await findCategories({
+    criteria: {}
+  })
 
   if (results) {
     results.forEach((booking) => {
@@ -1175,7 +1205,9 @@ export async function getLastApprovedForBooking(booking: ParsedBooking) {
       endTimeId: lastApprovedStatus.endTimeId
     })
     const categories = await findCategories({
-      criteria: {}
+      criteria: {
+        date: lastApprovedStatus.startDate
+      }
     })
     const lastApprovedBookingCosts = await calculateBookingCosts({
       booking: {

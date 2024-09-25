@@ -252,7 +252,13 @@ test.describe('Account', async () => {
 
     await expect(page.getByText('hourglass_empty')).toBeVisible()
 
-    await page.locator('button >> text=edit').click()
+    // await page.locator('button >> text=edit').click()
+    // await page.getByText('Edit', { exact: true }).click()
+    await page
+      .getByRole('main')
+      .getByLabel('Expand')
+      .getByRole('button')
+      .click()
     await page.getByText('Edit', { exact: true }).click()
     await page.getByLabel('Start time').click()
     await page.getByRole('option', { name: 'Evening' }).click()

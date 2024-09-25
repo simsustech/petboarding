@@ -27,6 +27,7 @@ const lang: Language = {
   page: 'Page',
   next: 'Next',
   previous: 'Previous',
+  delete: 'Delete',
   account: {
     title: 'Account',
     fields: {
@@ -393,6 +394,19 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion: 'Are you sure you want to delete the following category?'
+    }
+  },
+  categoryPrice: {
+    fields: {
+      date: 'Date',
+      listPrice: 'Price'
+    },
+    labels: {
+      addPrice: 'Add price'
+    },
+    messages: {
+      verifyDeletion:
+        'Are you sure you want to delete the following category price?'
     }
   },
   information: {

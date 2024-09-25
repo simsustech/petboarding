@@ -7,6 +7,7 @@ import { configurationCategoryRoutes } from './categories.js'
 import type { FastifyInstance } from 'fastify'
 import { configurationServiceRoutes } from './services'
 import { configurationDaycareSubscriptionRoutes } from './daycareSubscriptions.js'
+import { configurationCategoryPriceRoutes } from './categoryPrices.js'
 
 export const configurationRoutes = ({
   fastify,
@@ -21,5 +22,6 @@ export const configurationRoutes = ({
   ...configurationAnnouncementRoutes({ procedure, fastify }),
   ...configurationCategoryRoutes({ procedure, fastify }),
   ...configurationServiceRoutes({ procedure, fastify }),
-  ...configurationDaycareSubscriptionRoutes({ procedure, fastify })
+  ...configurationDaycareSubscriptionRoutes({ procedure, fastify }),
+  ...configurationCategoryPriceRoutes({ procedure, fastify })
 })

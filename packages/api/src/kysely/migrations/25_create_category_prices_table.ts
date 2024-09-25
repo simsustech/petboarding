@@ -3,13 +3,13 @@ import type { Kysely } from 'kysely'
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
-    .createTable('categories')
+    .createTable('category_prices')
     .addColumn('id', 'serial', (col) => col.primaryKey())
-    .addColumn('species', 'varchar', (col) => col.notNull())
-    .addColumn('name', 'varchar', (col) => col.notNull())
-    .addColumn('price', 'integer')
-    .addColumn('order', 'integer')
-
+    .addColumn('category_id', 'integer', (col) =>
+      col.references('categories.id').notNull().onDelete('cascade')
+    )
+    .addColumn('date', 'date', (col) => col.notNull())
+    .addColumn('list_price', 'integer', (col) => col.notNull())
     .addColumn('created_at', 'text', (col) =>
       col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull()
     )
@@ -17,5 +17,5 @@ export async function up(db: Kysely<unknown>): Promise<void> {
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable('categories').execute()
+  await db.schema.dropTable('category_prices').execute()
 }

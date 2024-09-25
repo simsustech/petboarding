@@ -1,70 +1,48 @@
 <template>
   <q-form ref="formRef">
     <div class="row q-col-gutter-sm">
-      <pet-species-select
-        v-bind="input"
-        v-model="modelValue.species"
-        class="col-md-2 col-12"
+      <date-input
+        v-model="modelValue.date"
+        :label="lang.categoryPrice.fields.date"
+        format="DD-MM-YYYY"
         required
-        bottom-slots
-        lazy-rules
-        name="speies"
+        clearable
+        class="col-md-6 col-12"
+        :date="{
+          noUnset: true,
+          firstDayOfWeek: '1'
+        }"
       />
-
-      <form-input
-        v-bind="input"
-        v-model="modelValue.name"
-        class="col-md-3 col-12"
-        required
-        field="name"
-        bottom-slots
-        lazy-rules
-        name="name"
-      />
-
       <q-input
-        v-bind="input"
-        v-model.number="modelValue.order"
-        class="col-md-3 col-12"
-        required
-        field="order"
-        bottom-slots
-        lazy-rules
-        name="order"
+        :model-value="modelValue.listPrice ? modelValue.listPrice / 100 : 0"
+        :label="lang.categoryPrice.fields.listPrice"
+        class="col-12 col-md-6"
+        :prefix="currencySymbols[configuration.CURRENCY]"
+        :lang="$q.lang.isoName"
         type="number"
-        :hint="lang.category.helpers.orderHint"
-        :label="lang.category.fields.order"
+        step="0.01"
+        @update:model-value="
+          ($event) => (modelValue.listPrice = Math.round(Number($event) * 100))
+        "
       />
-
-      <!-- <q-input
-        v-model.number="modelValue.price"
-        class="col-12"
-        :label="lang.category.fields.price"
-        :prefix="configuration.CURRENCY"
-        mask="#.##"
-        fill-mask="0"
-        unmasked-value
-        reverse-fill-mask
-      /> -->
     </div>
   </q-form>
 </template>
 
 <script lang="ts">
 export default {
-  name: 'CategoryForm'
+  name: 'CategoryPriceForm'
 }
 </script>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { extend, QForm } from 'quasar'
+import { extend, QForm, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { Category } from '@petboarding/api/zod'
-// import { useConfiguration } from '../../configuration.js'
-import PetSpeciesSelect from '../pet/PetSpeciesSelect.vue'
-import { FormInput } from '@simsustech/quasar-components/form'
+import { DateInput } from '@simsustech/quasar-components/form'
+import { CategoryPrice } from '@petboarding/api/zod'
+import { useConfiguration } from '../../configuration.js'
 import type { QFormProps, QInputProps } from 'quasar'
 
 export interface Props {
@@ -91,27 +69,31 @@ const emit = defineEmits<{
       data,
       done
     }: {
-      data: Category
+      data: CategoryPrice
       done: (success?: boolean) => void
     }
   ): void
 }>()
 
 const lang = useLang()
-// const configuration = useConfiguration()
+const configuration = useConfiguration()
+const $q = useQuasar()
+
+const currencySymbols = ref({
+  EUR: '€',
+  USD: '$'
+})
 
 const formRef = ref<QForm>()
 
 const initialValue = {
-  name: '',
-  species: 'dog',
-  order: 0,
-  price: null,
-  productId: null
+  categoryId: NaN,
+  date: new Date().toISOString().slice(0, 10),
+  listPrice: 0
 }
-const modelValue = ref<Category>(initialValue)
+const modelValue = ref<CategoryPrice>(initialValue)
 
-const setValue = (newValue: Category) => {
+const setValue = (newValue: CategoryPrice) => {
   modelValue.value = extend({}, initialValue, newValue)
 }
 

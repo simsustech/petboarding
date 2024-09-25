@@ -37,7 +37,7 @@ export const bookingStatusValidation = {
   endTime: openingTime.optional(),
   pets: z.string().array().optional(),
   days: z.number().optional(),
-  comments: z.string().optional(),
+  comments: z.string().optional().nullable(),
   modifiedAt: z.string()
 }
 export const bookingStatus = z.object(bookingStatusValidation)
@@ -53,7 +53,7 @@ export const bookingValidation = {
   petIds: z.number().array(),
   pets: pet.array().optional(),
   days: z.number().optional(),
-  comments: z.string().optional(),
+  comments: z.string().optional().nullable(),
   orderId: z.string().optional(),
   customerId: z.number().optional(),
   customer: customer.optional(),

@@ -14,7 +14,11 @@ import {
   setCustomerDaycareSubscriptionStatus
 } from './repositories/customerDaycareSubscription.js'
 import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from './kysely/types.js'
+import {
+  BOOKING_STATUS,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+} from './kysely/types.js'
+import { createBookingStatus, findBooking } from './repositories/booking.js'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -97,6 +101,11 @@ export default async function (fastify: FastifyInstance) {
                 invoiceUuid: uuid
               }
             })
+          const booking = await findBooking({
+            criteria: {
+              invoiceUuid: uuid
+            }
+          })
           if (customerDaycareSubscription) {
             const getCustomerDaycareSubscriptionStatus = ({
               invoice,
@@ -117,7 +126,7 @@ export default async function (fastify: FastifyInstance) {
               }
               return customerDaycareSubscriptionStatus
             }
-            setCustomerDaycareSubscriptionStatus({
+            await setCustomerDaycareSubscriptionStatus({
               id: customerDaycareSubscription.id,
               status: getCustomerDaycareSubscriptionStatus({
                 invoice: invoice,
@@ -125,6 +134,24 @@ export default async function (fastify: FastifyInstance) {
                   customerDaycareSubscription.status
               })
             })
+          }
+
+          if (booking) {
+            if (
+              booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT
+            ) {
+              if (
+                invoice.amountPaid &&
+                invoice.requiredDownPaymentAmount &&
+                invoice.amountPaid >= invoice.requiredDownPaymentAmount
+              ) {
+                await createBookingStatus({
+                  booking,
+                  petIds: booking.pets.map((pet) => pet.id),
+                  status: BOOKING_STATUS.APPROVED
+                })
+              }
+            }
           }
         }
         return reply.send()
