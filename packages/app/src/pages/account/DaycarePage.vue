@@ -14,6 +14,7 @@
     <div v-if="ready">
       <div v-if="petsData?.length">
         <customer-daycare-subscriptions-list
+          v-if="customerDaycareSubscriptions?.length"
           :model-value="customerDaycareSubscriptions"
         />
         <q-banner rounded>

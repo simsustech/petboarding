@@ -658,7 +658,7 @@ function find({
   }
 
   if (criteria.invoiceUuid) {
-    query = query.where('bookings.invoiceUuid', '=', criteria.invoiceUuid)
+    query = query.where('invoiceUuid', '=', criteria.invoiceUuid)
   }
 
   return query

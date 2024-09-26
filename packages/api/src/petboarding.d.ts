@@ -1,4 +1,4 @@
-import type { Category } from './zod/category.js'
+import type { ParsedCategory } from './zod/category.js'
 import type { BookingPets, BookingService } from './repositories/booking.js'
 import type { BOOKING_STATUS } from './zod/booking.js'
 import type {
@@ -28,7 +28,7 @@ export type BookingCostsHandler = (params: {
     days: number
   }
   pets: BookingPets
-  categories: Category[]
+  categories: ParsedCategory[]
   services: BookingService[]
   withServices?: boolean
   dateFns: {

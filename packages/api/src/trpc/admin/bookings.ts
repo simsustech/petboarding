@@ -251,7 +251,8 @@ export const createOrUpdateSlimfactInvoice = async ({
         requiredDownPaymentAmount,
         metadata: {
           referenceId: 'petboarding',
-          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${hostname}/webhook/slimfact`
         }
       })
 
@@ -278,7 +279,9 @@ export const createOrUpdateSlimfactInvoice = async ({
         status: InvoiceStatus.BILL,
         requiredDownPaymentAmount,
         metadata: {
-          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`
+          referenceId: 'petboarding',
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${hostname}/webhook/slimfact`
         }
       })
 

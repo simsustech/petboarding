@@ -121,6 +121,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass'
 import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
+import { useQuasar } from 'quasar'
 
 export interface QCalendarEvent {
   id: number
@@ -166,6 +167,7 @@ const emit = defineEmits<{
   ): void
 }>()
 const lang = useLang()
+const $q = useQuasar()
 
 const calendarRef = ref<QCalendarMonth>()
 const selectedDate = ref(today())
@@ -225,6 +227,7 @@ const onClickDate = ({ scope }) => {
     if (selectedDates?.value && scope.outside !== true) {
       if (
         maxNumberOfSelectedDates.value === void 0 ||
+        maxNumberOfSelectedDates.value === 0 ||
         maxNumberOfSelectedDates.value > selectedDates.value.length
       )
         selectedDates.value.push(date)

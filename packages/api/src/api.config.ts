@@ -199,7 +199,7 @@ const findActualPrice = ({
       return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
     })
 
-  return sortedAndFiltered?.at(0)?.listPrice || 0
+  return sortedAndFiltered?.at(0)?.listPrice || NaN
 }
 
 const bookingCostsHandler: BookingCostsHandler = ({
