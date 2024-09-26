@@ -356,6 +356,7 @@ export interface Language {
       general: string
       important: string
       priority: string
+      urgent: string
     }
     messages: {
       verifyDeletion: string

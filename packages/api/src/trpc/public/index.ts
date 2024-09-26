@@ -8,6 +8,7 @@ import { findAnnouncements } from '../../repositories/announcement.js'
 import type { Category } from '../../repositories/category.js'
 import type { FastifyInstance } from 'fastify'
 import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
+import { ANNOUNCEMENT_TYPE } from 'src/zod/announcement.js'
 
 export const publicRoutes = ({
   // fastify,
@@ -41,6 +42,15 @@ export const publicRoutes = ({
     })
     if (services) return services
     throw new TRPCError({ code: 'BAD_REQUEST' })
+  }),
+  getUrgentAnnouncements: procedure.query(async () => {
+    const announcements = await findAnnouncements({
+      criteria: {
+        expirationDate: new Date().toISOString().slice(0, 10),
+        type: ANNOUNCEMENT_TYPE.URGENT
+      }
+    })
+    return announcements
   }),
   getAnnouncements: procedure.query(async () => {
     const announcements = await findAnnouncements({

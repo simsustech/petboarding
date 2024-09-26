@@ -7,7 +7,7 @@ import type {
   BookingCancelationHandler,
   BookingCostsHandler
 } from './petboarding.d.ts'
-import { BOOKING_STATUS } from './zod/booking.js'
+
 const vacations = [
   {
     name: 'Herfstvakantie',
@@ -334,7 +334,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
 const bookingCancelationHandler: BookingCancelationHandler = ({
   period: { startDate, endDate },
   dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
-  booking
+  booking,
+  BOOKING_STATUS
 }) => {
   const start = parse(startDate, 'yyyy-MM-dd', new Date())
   const end = parse(endDate, 'yyyy-MM-dd', new Date())

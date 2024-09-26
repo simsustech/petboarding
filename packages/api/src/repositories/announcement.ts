@@ -34,6 +34,10 @@ function find({
     query = query.where('expirationDate', '>', criteria.expirationDate)
   }
 
+  if (criteria.type) {
+    query = query.where('type', '=', criteria.type)
+  }
+
   return query.select(select)
 }
 

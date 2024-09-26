@@ -67,6 +67,7 @@ export type BookingCancelationHandler = (params: {
     differenceInDays: differenceInDays
   }
   booking: Booking
+  BOOKING_STATUS: typeof BOOKING_STATUS
 }) => {
   status: BOOKING_STATUS
   cancelationCosts?: {

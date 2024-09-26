@@ -379,7 +379,8 @@ const lang: Language = {
     type: {
       general: 'Algemeen',
       important: 'Belangrijk',
-      priority: 'Prioriteit'
+      priority: 'Prioriteit',
+      urgent: 'Urgent'
     },
     messages: {
       verifyDeletion:

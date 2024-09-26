@@ -32,7 +32,7 @@
             class="col q-mr-md"
             :placeholder="lang.daycareSubscription.labels.years"
             :step="1"
-            style="width: 8ch; margin-top: -2em; margin-bottom: -0.5em"
+            style="width: 10ch; margin-top: -2em; margin-bottom: -0.5em"
             :suffix="lang.daycareSubscription.labels.years"
           />
           <q-input
@@ -40,7 +40,7 @@
             class="col q-mr-md"
             :placeholder="lang.daycareSubscription.labels.months"
             :step="1"
-            style="width: 8ch; margin-top: -2em; margin-bottom: -0.5em"
+            style="width: 10ch; margin-top: -2em; margin-bottom: -0.5em"
             :suffix="lang.daycareSubscription.labels.months"
           />
           <q-input
@@ -48,7 +48,7 @@
             class="col"
             :placeholder="lang.daycareSubscription.labels.days"
             :step="1"
-            style="width: 8ch; margin-top: -2em; margin-bottom: -0.5em"
+            style="width: 10ch; margin-top: -2em; margin-bottom: -0.5em"
             :suffix="lang.daycareSubscription.labels.days"
           />
         </div>
