@@ -78,7 +78,7 @@ export const userDaycareRoutes = ({
           }
         }
       } catch (e) {
-        throw new TRPCError({ code: 'BAD_REQUEST' })
+        throw new TRPCError({ code: 'BAD_REQUEST', message: e as string })
       }
     }),
 

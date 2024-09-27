@@ -98,28 +98,44 @@ function withNumberOfDaysUsed(
     .as('numberOfDaysUsed')
 }
 
+// function withIsActive(
+//   eb: ExpressionBuilder<Database, 'customerDaycareSubscriptions'>
+// ) {
+//   return eb
+//     .case()
+//     .when(
+//       'customerDaycareSubscriptions.effectiveDate',
+//       '<=',
+//       sql<string>`CURRENT_DATE`
+//     )
+//     .then(
+//       eb
+//         .case()
+//         .when(
+//           'customerDaycareSubscriptions.expirationDate',
+//           '>=',
+//           sql<string>`CURRENT_DATE`
+//         )
+//         .then(true)
+//         .else(false)
+//         .end()
+//     )
+//     .else(false)
+//     .end()
+//     .as('isActive')
+// }
+
 function withIsActive(
   eb: ExpressionBuilder<Database, 'customerDaycareSubscriptions'>
 ) {
   return eb
     .case()
     .when(
-      'customerDaycareSubscriptions.effectiveDate',
-      '<=',
+      'customerDaycareSubscriptions.expirationDate',
+      '>=',
       sql<string>`CURRENT_DATE`
     )
-    .then(
-      eb
-        .case()
-        .when(
-          'customerDaycareSubscriptions.expirationDate',
-          '>=',
-          sql<string>`CURRENT_DATE`
-        )
-        .then(true)
-        .else(false)
-        .end()
-    )
+    .then(true)
     .else(false)
     .end()
     .as('isActive')
