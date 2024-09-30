@@ -1053,7 +1053,8 @@ export async function cancelBooking(
             subDays,
             differenceInDays
           },
-          booking: lastApprovedBooking
+          booking: lastApprovedBooking,
+          BOOKING_STATUS
         }))
       }
     } catch (e) {
@@ -1112,7 +1113,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
             .where(
               'bookingStatus.modifiedAt',
               '=',
-              sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+              sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
             )
             .where('bookingStatus.status', '=', status!)
             .select('bookingStatus.bookingId')
@@ -1145,7 +1146,7 @@ export async function checkDownPayments({
           .where(
             'bookingStatus.modifiedAt',
             '=',
-            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
           )
           .where(
             'bookingStatus.status',
