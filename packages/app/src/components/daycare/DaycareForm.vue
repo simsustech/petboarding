@@ -2,14 +2,15 @@
   <q-form v-bind="attrs" ref="formRef" class="row justtify-center">
     <div class="col-12 col-md-6">
       <q-select
-        v-model="modelValue.petIds"
+        :model-value="modelValue.petIds"
         :options="petOptions"
-        :label="lang.booking.fields.pets"
+        :label="`${lang.booking.fields.pets}*`"
         :rules="validations['pets']"
         use-chips
         emit-value
         map-options
         multiple
+        @update:model-value="updateSelectedPets"
       />
       <terms-and-conditions-checkbox
         v-model="termsAndConditions"
@@ -19,13 +20,30 @@
     </div>
   </q-form>
   <daycare-calendar-month
+    v-show="modelValue.petIds.length"
     :selected-dates="selectedDates"
     :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
     :max-number-of-selected-dates="maxNumberOfSelectedDates"
     @update:selected-dates="($event) => (selectedDates = $event)"
   ></daycare-calendar-month>
-  <div v-if="useCustomerDaycareSubscriptions" class="row justify-center">
-    Remaining days: {{ remainingDays }}
+  <div
+    v-if="modelValue.petIds.length && useCustomerDaycareSubscriptions"
+    class="row justify-center"
+  >
+    <a>
+      {{ lang.customerDaycareSubscription.messages.remainingDays }}:
+      {{ remainingDays }}
+    </a>
+  </div>
+  <div
+    v-if="
+      modelValue.petIds.length &&
+      useCustomerDaycareSubscriptions &&
+      remainingDays === 0
+    "
+    class="row justify-center text-red"
+  >
+    {{ lang.customerDaycareSubscription.messages.noRemainingDays }}
   </div>
 </template>
 
@@ -46,7 +64,7 @@ import { ref, useAttrs, computed, toRefs } from 'vue'
 import DaycareCalendarMonth from './DaycareCalendarMonth.vue'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { QForm } from 'quasar'
+import { QForm, QSelect } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
 export interface Props {
@@ -123,7 +141,7 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 
 const maxNumberOfSelectedDates = computed(() => {
   return customerDaycareSubscriptions.value?.reduce((acc, cur) => {
-    acc += cur.numberOfDaysRemaining || 0
+    acc += (cur.numberOfDaysRemaining || 0) / modelValue.value.petIds.length
     return acc
   }, 0)
 })
@@ -134,6 +152,13 @@ const remainingDays = computed(() => {
   }
   return 0
 })
+
+const updateSelectedPets: QSelect['$props']['onUpdate:modelValue'] = (
+  value
+) => {
+  modelValue.value.petIds = value
+  selectedDates.value.splice(maxNumberOfSelectedDates.value || 0)
+}
 
 const variables = ref({
   // header: lang.value.some.nested.prop

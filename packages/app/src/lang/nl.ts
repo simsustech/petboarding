@@ -459,11 +459,15 @@ const lang: Language = {
     labels: {
       overview: 'Overzicht',
       purchase: 'Kopen',
+      purchaseSubscription: 'Dagopvang abonnement kopen',
       checkout: 'Afrekenen'
     },
     messages: {
       daycareSubscriptionRequired:
-        'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.'
+        'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.',
+      remainingDays: 'Resterende dagen',
+      noRemainingDays:
+        'U heeft alle dagen gebruikt. Verzend de geselecteerde datums en koop een nieuw dagopvang abonnement.'
     }
   },
   errors: {

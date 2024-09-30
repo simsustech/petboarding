@@ -425,10 +425,13 @@ export interface Language {
     labels: {
       overview: string
       purchase: string
+      purchaseSubscription: string
       checkout: string
     }
     messages: {
       daycareSubscriptionRequired: string
+      remainingDays: string
+      noRemainingDays: string
     }
   }
   errors: {

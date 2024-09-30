@@ -449,11 +449,15 @@ const lang: Language = {
     labels: {
       overview: 'Overview',
       purchase: 'Purchase',
+      purchaseSubscription: 'Purchase subscription',
       checkout: 'Checkout'
     },
     messages: {
       daycareSubscriptionRequired:
-        'You need to purchase a daycare subscription before you can add daycare dates.'
+        'You need to purchase a daycare subscription before you can add daycare dates.',
+      remainingDays: 'Remaining days',
+      noRemainingDays:
+        'You have used all days. Submit the selected dates and purchase a new daycare subscription.'
     }
   },
   errors: {

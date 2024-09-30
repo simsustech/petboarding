@@ -30,7 +30,7 @@
           </template>
           <template #action>
             <q-btn
-              label="Purchase subscription"
+              :label="lang.customerDaycareSubscription.labels.purchase"
               icon="shopping_cart"
               flat
               @click="
@@ -207,7 +207,6 @@ const create: InstanceType<
 >['$props']['onSubmit'] = async ({ done }) => {
   const afterCreate = (success?: boolean) => {
     done(success)
-    execute()
   }
   createDaycareFormRef.value?.functions.submit({ done: afterCreate })
 }
@@ -230,6 +229,8 @@ const createDaycare: InstanceType<
     $q.dialog({
       message: lang.value.daycare.messages.submitted
     })
+    await execute()
+    await executeCustomerDaycareSubscriptions()
   }
   done(!result.error.value)
 }
