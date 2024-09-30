@@ -1,15 +1,13 @@
 import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
-import {
-  CustomerDaycareSubscription,
-  customerDaycareSubscription
-} from '../../zod/customerDaycareSubscription.js'
+import { customerDaycareSubscription } from '../../zod/customerDaycareSubscription.js'
 // import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
 import {
   createCustomerDaycareSubscription,
   findCustomerDaycareSubscription,
   findCustomerDaycareSubscriptions,
+  ParsedCustomerDaycareSubscription,
   updateCustomerDaycareSubscription
 } from '../../repositories/customerDaycareSubscription.js'
 import { findCustomer } from '../../repositories/customer'
@@ -38,7 +36,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
   locale
 }: {
   fastify: FastifyInstance
-  customerDaycareSubscription: CustomerDaycareSubscription
+  customerDaycareSubscription: ParsedCustomerDaycareSubscription
   customer: Pick<
     Customer,
     'firstName' | 'lastName' | 'address' | 'postalCode' | 'city'

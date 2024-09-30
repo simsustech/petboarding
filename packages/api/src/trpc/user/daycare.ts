@@ -73,7 +73,7 @@ export const userDaycareRoutes = ({
               customerId: customer.id
             }))
             await createOrUpdateDaycareDates(daycareDates, {
-              useCustomerDaycareDateSubscription: !!daycareSubscriptions.length
+              useCustomerDaycareSubscription: !!daycareSubscriptions.length
             })
           }
         }

@@ -210,13 +210,16 @@ export async function findDaycareDates({
 export async function createDaycareDate({
   daycareDate,
   petIds,
-  useCustomerDaycareSubscription
+  options
 }: {
   daycareDate: NewDaycareDate
   petIds: number[]
-  useCustomerDaycareSubscription?: boolean
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
+  }
 }) {
-  if (useCustomerDaycareSubscription) {
+  if (options?.useCustomerDaycareSubscription) {
     const customerDaycareSubscription = await findCustomerDaycareSubscription({
       criteria: {
         customerId: daycareDate.customerId,
@@ -226,10 +229,11 @@ export async function createDaycareDate({
     })
     if (
       customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining &&
       customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
     ) {
       daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
-    } else {
+    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
       throw new Error(
         `No valid customer daycare subscription available for date ${daycareDate.date}`
       )
@@ -263,10 +267,13 @@ export async function updateDaycareDate(
     daycareDate: DaycareDateUpdate
     petIds?: number[]
   },
-  useCustomerDaycareSubscription?: boolean
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
+  }
 ) {
   if (
-    useCustomerDaycareSubscription &&
+    options?.useCustomerDaycareSubscription &&
     updateWith.petIds &&
     !updateWith.daycareDate.customerDaycareSubscriptionId
   ) {
@@ -285,7 +292,7 @@ export async function updateDaycareDate(
     ) {
       updateWith.daycareDate.customerDaycareSubscriptionId =
         customerDaycareSubscription.id
-    } else {
+    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
       throw new Error(
         `No valid customer daycare subscription available for date ${criteria.date}`
       )
@@ -355,7 +362,8 @@ export async function getDaycareDateCount({
 export async function createOrUpdateDaycareDates(
   daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[],
   options?: {
-    useCustomerDaycareDateSubscription?: boolean
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
   }
 ) {
   const customerId = daycareDates[0].customerId
@@ -401,8 +409,7 @@ export async function createOrUpdateDaycareDates(
             status: DAYCARE_DATE_STATUS.PENDING
           },
           petIds: daycareDate.petIds,
-          useCustomerDaycareSubscription:
-            options?.useCustomerDaycareDateSubscription
+          options
         })
       ),
       ...updatedDaycareDates.map((daycareDate) =>

@@ -58,7 +58,8 @@ export const employeeDaycareRoutes = ({
           criteria: {}
         })
         await createOrUpdateDaycareDates(input, {
-          useCustomerDaycareDateSubscription: !!daycareSubscriptions.length
+          useCustomerDaycareSubscription: !!daycareSubscriptions.length,
+          ignoreCustomerDaycareSubscriptionErrors: true
         })
       } catch (e) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
