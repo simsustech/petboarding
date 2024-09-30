@@ -35,7 +35,11 @@
         @submit="updatePet"
       />
     </responsive-dialog>
-    <responsive-dialog ref="editorDialogRef" @submit="submit">
+    <responsive-dialog
+      ref="editorDialogRef"
+      button-type="send"
+      @submit="submit"
+    >
       <template #title>
         <a v-if="replyType">
           {{ lang.booking.replies[replyType] }}
