@@ -2,7 +2,7 @@ import { c } from 'compress-tag'
 import env from '@vitrify/tools/env'
 const hostname = env.read('VITE_API_HOSTNAME') || env.read('API_HOSTNAME')
 
-const subject = c`Your booking has been approved\\{{#if requiredDownPaymentAmount}} (down payment required!)\\{{/if}}.`
+const subject = c`\\{{#if requiredDownPaymentAmount}}Down payment required! \\{{/if}}Your booking has been approved.`
 const body = c`
   <p>
       Dear {{customer.firstName}} {{customer.lastName}},
