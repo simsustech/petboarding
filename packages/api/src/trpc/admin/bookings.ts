@@ -43,6 +43,11 @@ import {
 
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
+const downPaymentPaymentTermDays =
+  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  5
+
 export const compileEmail = async ({
   booking,
   subjectTemplate,
@@ -79,6 +84,7 @@ export const compileEmail = async ({
     }),
     startTime: booking.startTime?.name,
     endTime: booking.endTime?.name,
+    downPaymentPaymentTermDays,
     ...variables
   }
   const subject = handlebars.compile(subjectTemplate)(context)
@@ -166,7 +172,8 @@ export const createOrUpdateSlimfactInvoice = async ({
           differenceInDays,
           subDays
         },
-        booking: lastApprovedBooking
+        booking: lastApprovedBooking,
+        BOOKING_STATUS
       }))
     }
   } catch (e) {
@@ -352,7 +359,7 @@ export const adminBookingRoutes = ({
       })
     )
     .query(async ({ input }) => {
-      const { id, type, localeCode } = input
+      const { id, type, localeCode = env.read('VITE_LANG') } = input
       const booking = await findBooking({
         criteria: {
           id

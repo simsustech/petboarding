@@ -21,7 +21,7 @@ const body = c`
   <p style="color:red;">
     Deze reservering vereist een aanbetaling. Open de rekening met de link hieronder om de aanbetaling te voldoen.
     <br />
-    <b>Als u de aanbetaling niet binnen 5 dagen voldoet zal uw reservering automatisch worden geannuleerd.</b>
+    <b>Als u de aanbetaling niet binnen {{#if downPaymentPaymentTermDays}}{{downPaymentPaymentTermDays}}{{else}}5{{/if}} dagen voldoet zal uw reservering automatisch worden geannuleerd.</b>
   </p>
   \\{{/if}}
   \\{{#if invoiceUrl}}
