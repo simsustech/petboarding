@@ -10,6 +10,7 @@ import type { Insertable, Selectable, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'
 import { FastifyInstance } from 'fastify'
 import { Invoice } from '@modular-api/fastify-checkout'
+import { DaycareSubscription } from './daycareSubscription.js'
 export type CustomerDaycareSubscription =
   Selectable<CustomerDaycareSubscriptions>
 type NewCustomerDaycareSubscription = Insertable<CustomerDaycareSubscriptions>
@@ -17,6 +18,7 @@ type CustomerDaycareSubscriptionUpdate =
   Updateable<CustomerDaycareSubscriptions>
 
 export type ParsedCustomerDaycareSubscription = CustomerDaycareSubscription & {
+  daycareSubscription?: DaycareSubscription | null
   numberOfDaysUsed: number | null
   numberOfDaysRemaining: number | null
   invoice?: Invoice | null
@@ -351,7 +353,7 @@ export async function setCustomerDaycareSubscriptionStatus({
     customerDaycareSubscription &&
     status === CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
   ) {
-    // Add existing daycare dates without subscription to description
+    // Add existing daycare dates without subscription
     await db
       .updateTable('daycareDates')
       .where(
