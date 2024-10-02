@@ -30,7 +30,9 @@
           </template>
           <template #action>
             <q-btn
-              :label="lang.customerDaycareSubscription.labels.purchase"
+              :label="
+                lang.customerDaycareSubscription.labels.purchaseSubscription
+              "
               icon="shopping_cart"
               flat
               @click="
