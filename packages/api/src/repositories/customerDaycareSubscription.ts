@@ -221,6 +221,14 @@ function find({
       .where('customerDaycareSubscriptions.expirationDate', '>=', criteria.date)
   }
 
+  if (criteria.effectiveDate) {
+    query = query.where(
+      'customerDaycareSubscriptions.effectiveDate',
+      '<=',
+      criteria.effectiveDate
+    )
+  }
+
   if (criteria.expirationDate) {
     query = query.where(
       'customerDaycareSubscriptions.expirationDate',
