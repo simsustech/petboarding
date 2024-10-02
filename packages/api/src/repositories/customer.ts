@@ -53,6 +53,17 @@ function withBookings(eb: ExpressionBuilder<Database, 'customers'>) {
   ).as('bookings')
 }
 
+function withCustomerDaycareSubscriptions(
+  eb: ExpressionBuilder<Database, 'customers'>
+) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('customerDaycareSubscriptions')
+      .selectAll()
+      .whereRef('customers.id', '=', 'customerDaycareSubscriptions.customerId')
+  ).as('customerDaycareSubscriptions')
+}
+
 function find({
   criteria,
   select,
@@ -63,6 +74,7 @@ function find({
   relations?: {
     pets?: boolean
     bookings?: boolean
+    customerDaycareSubscriptions?: boolean
   }
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -82,6 +94,8 @@ function find({
 
   if (relations?.pets) query = query.select([withPets])
   if (relations?.bookings) query = query.select([withBookings])
+  if (relations?.customerDaycareSubscriptions)
+    query = query.select([withCustomerDaycareSubscriptions])
   return query.select(select).select([withAccount])
 }
 
@@ -95,6 +109,7 @@ export async function findCustomer({
   relations?: {
     pets?: boolean
     bookings?: boolean
+    customerDaycareSubscriptions?: boolean
   }
 }) {
   const query = find({
@@ -116,6 +131,7 @@ export async function findCustomers({
   relations?: {
     pets?: boolean
     bookings?: boolean
+    customerDaycareSubscriptions?: boolean
   }
 }) {
   const query = find({
