@@ -451,12 +451,14 @@ const createDaycare: InstanceType<
 onMounted(async () => {
   await executeCategories()
   if (route.params.id) {
-    await execute()
-    await executeContactPeople()
-    await executePets()
-    await executeBookings()
-    await executeServices()
-    await executeCustomerDaycareSubscriptions()
+    await Promise.all([
+      execute(),
+      executeContactPeople(),
+      executePets(),
+      executeBookings(),
+      executeServices(),
+      executeCustomerDaycareSubscriptions()
+    ])
   }
 })
 </script>

@@ -1,5 +1,5 @@
 import { useTRPC } from 'use-trpc'
-import { httpLink, getFetch } from '@trpc/client'
+import { getFetch, httpBatchLink } from '@trpc/client'
 import { useOAuthClient } from './oauth.js'
 import { Notify } from 'quasar'
 import { useLang } from './lang/index.js'
@@ -44,13 +44,14 @@ export const createUseTrpc = async () => {
         return res
       } catch (e) {
         console.error(e)
+        return res
       }
     })
   }
   return useTRPC<AppRouter>({
     client: {
       links: [
-        httpLink({
+        httpBatchLink({
           url: import.meta.env.VITE_API_HOSTNAME
             ? `https://${import.meta.env.VITE_API_HOSTNAME}/trpc`
             : '/trpc',
