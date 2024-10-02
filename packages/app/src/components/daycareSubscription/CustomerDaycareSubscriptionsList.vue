@@ -14,6 +14,16 @@
         :key="index"
         :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
       >
+        <q-item-section avatar>
+          <q-icon
+            v-if="
+              customerDaycareSubscription.status ===
+              CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+            "
+            name="paid"
+            color="green"
+          />
+        </q-item-section>
         <q-item-section>
           <q-item-label overline>
             {{
@@ -48,7 +58,10 @@ export default {
 
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'
-import { CustomerDaycareSubscription } from '@petboarding/api/zod'
+import {
+  CustomerDaycareSubscription,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+} from '@petboarding/api/zod'
 // import { useConfiguration } from '../../configuration.js'
 import { useQuasar } from 'quasar'
 import InvoiceButton from '../InvoiceButton.vue'

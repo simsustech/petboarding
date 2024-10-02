@@ -101,6 +101,12 @@
           />
         </q-list>
       </div>
+      <div class="row">
+        <customer-daycare-subscriptions-list
+          v-if="customerDaycareSubscriptions"
+          :model-value="customerDaycareSubscriptions"
+        />
+      </div>
       <div v-show="id">
         <daycare-calendar-month :events="events" @change-date="onChangeDate">
         </daycare-calendar-month>
@@ -171,7 +177,7 @@ import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vu
 import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import { ResourcePage } from '@simsustech/quasar-components'
-
+import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const route = useRoute()
@@ -233,6 +239,17 @@ const { data: contactPeople, execute: executeContactPeople } = useQuery(
     }
   }
 )
+
+const {
+  data: customerDaycareSubscriptions,
+  execute: executeCustomerDaycareSubscriptions
+} = useQuery('employee.getCustomerDaycareSubscriptions', {
+  args: reactive({ from, until, customerId: id }),
+  reactive: {
+    args: true
+  }
+})
+
 const { data: categories, execute: executeCategories } = useQuery(
   'public.getCategories',
   {
@@ -439,6 +456,7 @@ onMounted(async () => {
     await executePets()
     await executeBookings()
     await executeServices()
+    await executeCustomerDaycareSubscriptions()
   }
 })
 </script>

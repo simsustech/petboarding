@@ -459,7 +459,7 @@ const lang: Language = {
     labels: {
       overview: 'Overzicht',
       purchase: 'Kopen',
-      purchaseSubscription: 'Dagopvang abonnement kopen',
+      purchaseSubscription: 'Abonnement kopen',
       checkout: 'Afrekenen'
     },
     messages: {

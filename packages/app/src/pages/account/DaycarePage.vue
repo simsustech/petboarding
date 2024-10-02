@@ -17,13 +17,10 @@
           v-if="customerDaycareSubscriptions?.length"
           :model-value="customerDaycareSubscriptions"
         />
-        <q-banner rounded>
+        <q-banner v-if="daycareSubscriptions.length" rounded>
           <template #avatar>
             <q-icon
-              v-if="
-                daycareSubscriptions?.length &&
-                !customerDaycareSubscriptions?.length
-              "
+              v-if="!customerDaycareSubscriptions?.length"
               name="warning"
               color="warning"
             />
