@@ -468,6 +468,7 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
           `.as('days')
       ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
+      .orderBy('bookingStatus.createdAt desc')
   ).as('statuses')
 }
 
