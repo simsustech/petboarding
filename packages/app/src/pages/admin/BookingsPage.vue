@@ -150,9 +150,9 @@ const submit: InstanceType<
       done(!error.value)
       if (!error.value && replyBookingId.value && replyType.value !== 'reply') {
         handledBookingIds.value.push(replyBookingId.value)
+        replyType.value = undefined
+        replyBookingId.value = undefined
       }
-      replyType.value = undefined
-      replyBookingId.value = undefined
     }
   }
 }
