@@ -23,23 +23,25 @@ export const createUseTrpc = async () => {
         if (!res.ok) {
           const body = await res.clone().json()
 
-          const serverErrors = body?.error
+          const serverErrors = body?.error || body?.[0]?.error
           let caption: string
-          const { message, code, path, expected, received } = serverErrors
-          if (message) {
-            caption = message
-          } else if (path && lang.value.errors?.[code]) {
-            caption = lang.value.errors[code]({ path, expected, received })
-          } else if (path) {
-            caption = `${message}: ${path.join(':')}`
-          } else {
-            caption = ''
+          if (serverErrors) {
+            const { message, code, path, expected, received } = serverErrors
+            if (message) {
+              caption = message
+            } else if (path && lang.value.errors?.[code]) {
+              caption = lang.value.errors[code]({ path, expected, received })
+            } else if (path) {
+              caption = `${message}: ${path.join(':')}`
+            } else {
+              caption = ''
+            }
+            Notify.create({
+              message: lang.value.serverError,
+              caption,
+              type: 'negative'
+            })
           }
-          Notify.create({
-            message: lang.value.serverError,
-            caption,
-            type: 'negative'
-          })
         }
         return res
       } catch (e) {
