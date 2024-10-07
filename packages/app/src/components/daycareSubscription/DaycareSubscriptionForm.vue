@@ -137,7 +137,7 @@ const initialValue = {
 const modelValue = ref<DaycareSubscription>(initialValue)
 
 const setValue = (newValue: DaycareSubscription) => {
-  modelValue.value = extend({}, initialValue, newValue)
+  modelValue.value = extend(true, {}, initialValue, newValue)
 }
 
 const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
