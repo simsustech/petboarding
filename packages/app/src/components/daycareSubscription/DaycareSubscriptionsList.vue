@@ -18,6 +18,8 @@
           {{
             `${daycareSubscription.numberOfDays} ${lang.daycareSubscription.labels.days.toLowerCase()}`
           }}
+          <br />
+          {{ formatValidityPeriod(daycareSubscription.validityPeriod) }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -98,4 +100,14 @@ const emit = defineEmits<{
 
 const lang = useLang()
 const configuration = useConfiguration()
+
+const formatValidityPeriod = (
+  validityPeriod: DaycareSubscription['validityPeriod']
+) => {
+  return `${lang.value.customerDaycareSubscription.fields.validityPeriod}:
+  ${validityPeriod.years ? `${validityPeriod.years} ${lang.value.daycareSubscription.labels.years}` : ''}
+  ${validityPeriod.months ? `${validityPeriod.months} ${lang.value.daycareSubscription.labels.months}` : ''}
+  ${validityPeriod.days ? `${validityPeriod.days} ${lang.value.daycareSubscription.labels.days}` : ''}
+  `
+}
 </script>

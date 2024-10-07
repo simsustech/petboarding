@@ -455,7 +455,8 @@ const lang: Language = {
   customerDaycareSubscription: {
     title: 'Dagopvang abonnementen',
     fields: {
-      effectiveDate: 'Ingangsdatum'
+      effectiveDate: 'Ingangsdatum',
+      validityPeriod: 'Geldigheidsduur'
     },
     labels: {
       overview: 'Overzicht',

@@ -445,7 +445,8 @@ const lang: Language = {
   customerDaycareSubscription: {
     title: 'Daycare subscriptions',
     fields: {
-      effectiveDate: 'Effective date'
+      effectiveDate: 'Effective date',
+      validityPeriod: 'Validity period'
     },
     labels: {
       overview: 'Overview',

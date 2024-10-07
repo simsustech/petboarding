@@ -422,6 +422,7 @@ export interface Language {
     title: string
     fields: {
       effectiveDate: string
+      validityPeriod: string
     }
     labels: {
       overview: string
