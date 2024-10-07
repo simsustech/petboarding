@@ -168,6 +168,7 @@ export interface Language {
   booking: {
     title: string
     booking: string
+    from: string
     until: string
     days: string
     history: string

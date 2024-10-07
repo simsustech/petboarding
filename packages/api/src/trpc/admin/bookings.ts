@@ -332,18 +332,20 @@ export const adminBookingRoutes = ({
   getBookings: procedure
     .input(
       z.object({
-        from: z.string().optional(),
-        until: z.string().optional(),
-        status: z.nativeEnum(BOOKING_STATUS)
+        from: z.string().optional().nullable(),
+        until: z.string().optional().nullable(),
+        status: z.nativeEnum(BOOKING_STATUS),
+        customerId: z.number().optional()
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status } = input
+      const { from, until, status, customerId } = input
       const bookings = await findBookings({
         criteria: {
           from,
           until,
-          status
+          status,
+          customerId
         },
         limit: 25,
         fastify

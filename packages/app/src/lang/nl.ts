@@ -175,6 +175,7 @@ const lang: Language = {
   booking: {
     title: 'Reserveringen',
     booking: 'Reservering',
+    from: 'vanaf',
     until: 'tot en met',
     days: 'dagen',
     history: 'Geschiedenis',

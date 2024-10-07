@@ -1,6 +1,43 @@
 <template>
-  <q-page>
-    <booking-status-select v-model="status" />
+  <resource-page>
+    <template #header>
+      <booking-status-select v-model="status" />
+    </template>
+    <template #header-side>
+      <q-btn icon="search">
+        <q-menu>
+          <div class="q-pa-sm">
+            <customer-select
+              v-model="customerId"
+              :label="lang.customer.customer"
+              :filtered-options="filteredCustomers"
+              @filter="onFilterCustomers"
+            >
+            </customer-select>
+            <date-input
+              v-model="from"
+              :label="capitalizeFirstLetter(lang.booking.from)"
+              format="DD-MM-YYYY"
+              clearable
+              :date="{
+                noUnset: true,
+                firstDayOfWeek: '1'
+              }"
+            />
+            <date-input
+              v-model="until"
+              :label="capitalizeFirstLetter(lang.booking.until)"
+              format="DD-MM-YYYY"
+              clearable
+              :date="{
+                noUnset: true,
+                firstDayOfWeek: '1'
+              }"
+            />
+          </div>
+        </q-menu>
+      </q-btn>
+    </template>
     <q-list separator>
       <booking-expansion-item
         v-for="booking in bookingsData"
@@ -24,42 +61,38 @@
         @open-customer="openCustomer"
       />
     </q-list>
-    <responsive-dialog ref="updatePetDialogRef" @submit="submitPet">
-      <pet-form
-        ref="updatePetFormRef"
-        :categories="categories"
-        use-category
-        use-comments
-        use-rating
-        use-food
-        @submit="updatePet"
-      />
-    </responsive-dialog>
-    <responsive-dialog
-      ref="editorDialogRef"
-      button-type="send"
-      @submit="submit"
-    >
-      <template #title>
-        <a v-if="replyType">
-          {{ lang.booking.replies[replyType] }}
-        </a>
-      </template>
-      <email-input
-        v-model:subject="replyEmailSubject"
-        v-model:body="replyEmailBody"
-      />
-    </responsive-dialog>
-    <responsive-dialog
-      ref="updateBookingServiceDialogRef"
-      @submit="submitBookingService"
-    >
-      <booking-service-form
-        ref="updateBookingServiceFormRef"
-        @submit="updateBookingService"
-      ></booking-service-form>
-    </responsive-dialog>
-  </q-page>
+  </resource-page>
+  <responsive-dialog ref="updatePetDialogRef" @submit="submitPet">
+    <pet-form
+      ref="updatePetFormRef"
+      :categories="categories"
+      use-category
+      use-comments
+      use-rating
+      use-food
+      @submit="updatePet"
+    />
+  </responsive-dialog>
+  <responsive-dialog ref="editorDialogRef" button-type="send" @submit="submit">
+    <template #title>
+      <a v-if="replyType">
+        {{ lang.booking.replies[replyType] }}
+      </a>
+    </template>
+    <email-input
+      v-model:subject="replyEmailSubject"
+      v-model:body="replyEmailBody"
+    />
+  </responsive-dialog>
+  <responsive-dialog
+    ref="updateBookingServiceDialogRef"
+    @submit="submitBookingService"
+  >
+    <booking-service-form
+      ref="updateBookingServiceFormRef"
+      @submit="updateBookingService"
+    ></booking-service-form>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -77,11 +110,12 @@ import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vu
 import BookingItem from '../../components/booking/BookingItem.vue'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
 import { createUseTrpc } from '../../trpc.js'
-import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { EmailInput } from '@simsustech/quasar-components/form'
+import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
+import { EmailInput, DateInput } from '@simsustech/quasar-components/form'
 import PetForm from '../../components/pet/PetForm.vue'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
 import { useRouter } from 'vue-router'
+import CustomerSelect from '../../components/employee/CustomerSelect.vue'
 
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
@@ -98,6 +132,9 @@ const $q = useQuasar()
 const { useQuery, useMutation } = await createUseTrpc()
 
 const status = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+const customerId = ref<number>()
+const from = ref<string | null>(null)
+const until = ref<string | null>(null)
 
 const { data: categories, execute: executeCategories } = useQuery(
   'public.getCategories',
@@ -107,7 +144,7 @@ const { data: categories, execute: executeCategories } = useQuery(
 )
 
 const { data, execute: executeBookings } = useQuery('admin.getBookings', {
-  args: reactive({ status }),
+  args: reactive({ status, customerId, from, until }),
   reactive: {
     args: true
   }
@@ -362,6 +399,27 @@ const settleCancelation: InstanceType<
       if (done) done(!result.error.value)
     })
   }
+}
+
+const filteredCustomers = ref<Customer[]>([])
+
+const onFilterCustomers: InstanceType<
+  typeof CustomerSelect
+>['$props']['onFilter'] = async ({ searchPhrase, ids, done }) => {
+  const result = useQuery('employee.searchCustomers', {
+    args: { searchPhrase, ids },
+    immediate: true
+  })
+
+  await result.immediatePromise
+
+  if (result.data.value) filteredCustomers.value = result.data.value
+
+  if (done) done()
+}
+
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
 onMounted(async () => {

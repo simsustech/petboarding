@@ -174,6 +174,7 @@ const lang: Language = {
   booking: {
     title: 'Bookings',
     booking: 'Booking',
+    from: 'from',
     until: 'until',
     days: 'days',
     history: 'History',
