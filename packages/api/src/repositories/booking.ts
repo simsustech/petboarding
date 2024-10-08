@@ -6,21 +6,28 @@ import {
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
+  isAfter,
   isWithinInterval,
   parseISO,
-  subMonths
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
 import Holidays from 'date-holidays'
 import { findCategories } from './category.js'
 
-import { BOOKING_STATUS, PERIOD_TYPE } from '../zod/index.js'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS,
+  PERIOD_TYPE
+} from '../zod/index.js'
 import type { OpeningTime } from './openingTime.js'
 import {
   withValidVaccinations,
   checkVaccinations,
   type ParsedPet
 } from './pet.js'
-import type { Category } from './category.js'
+import type { ParsedCategory } from './category.js'
 import {
   type Insertable,
   type Selectable,
@@ -33,12 +40,24 @@ import type {
   Bookings,
   BookingStatus as BookingStatusDb
 } from '../kysely/types.d.ts'
+import {
+  type RawInvoiceLine,
+  type RawInvoiceDiscount,
+  type RawInvoiceSurcharge,
+  computeInvoiceCosts,
+  type Invoice
+} from '@modular-api/fastify-checkout'
+import type { BookingCostsHandler } from '../petboarding.d.ts'
+import { FastifyInstance } from 'fastify'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
 type BookingUpdate = Updateable<Bookings>
 
-type BookingStatus = Selectable<BookingStatusDb>
+type BookingStatus = Selectable<BookingStatusDb> & {
+  startTime: OpeningTime
+  endTime: OpeningTime
+}
 
 export interface BookingCostItem {
   name: string
@@ -47,9 +66,19 @@ export interface BookingCostItem {
   discount?: number
 }
 
+// export interface BookingCosts {
+//   lines: RawInvoiceLine[]
+//   discounts: RawInvoiceDiscount[]
+//   surcharges: RawInvoiceSurcharge[]
+// }
 export interface BookingCosts {
-  items: BookingCostItem[]
-  total: number
+  lines: ReturnType<typeof computeInvoiceCosts>['computedLines']
+  discounts: ReturnType<typeof computeInvoiceCosts>['computedDiscounts']
+  surcharges: ReturnType<typeof computeInvoiceCosts>['computedSurcharges']
+  taxSummary: ReturnType<typeof computeInvoiceCosts>['taxSummary']
+  totalIncludingTax: ReturnType<typeof computeInvoiceCosts>['totalIncludingTax']
+  totalExcludingTax: ReturnType<typeof computeInvoiceCosts>['totalExcludingTax']
+  requiredDownPaymentAmount?: number
 }
 
 export interface BookingService {
@@ -78,7 +107,7 @@ interface BookingCustomer {
 
 export interface ParsedBooking extends Booking {
   days: number
-  costs: BookingCosts
+  costs: BookingCosts | null
   startTime: OpeningTime | null
   endTime: OpeningTime | null
   customer: BookingCustomer | null
@@ -86,6 +115,7 @@ export interface ParsedBooking extends Booking {
   services: BookingService[]
   status: BookingStatus | null
   statuses: BookingStatus[]
+  invoice?: Invoice | null
 }
 
 const defaultSelect = [
@@ -95,7 +125,8 @@ const defaultSelect = [
   'endDate',
   'endTimeId',
   'comments',
-  'customerId'
+  'customerId',
+  'invoiceUuid'
 ] as (keyof Booking)[]
 
 export const findIds = ({
@@ -117,8 +148,16 @@ export const findIds = ({
   }
 }
 
-function calculateBookingDays(
-  booking: Omit<ParsedBooking, 'costs' | 'days' | 'status'>
+export function calculateBookingDays(
+  booking: Pick<
+    ParsedBooking,
+    | 'startTime'
+    | 'startTimeId'
+    | 'endTime'
+    | 'endTimeId'
+    | 'startDate'
+    | 'endDate'
+  >
 ) {
   if (booking.startTime && booking.endTime) {
     return (
@@ -134,17 +173,19 @@ function calculateBookingDays(
   return 0
 }
 
-async function calculateBookingCosts({
+export async function calculateBookingCosts({
   booking,
   categories,
   withServices
 }: {
-  booking: Omit<ParsedBooking, 'costs' | 'status'>
-  categories: Category[]
+  booking: Omit<ParsedBooking, 'costs' | 'status' | 'statuses' | 'invoiceUuid'>
+  categories: ParsedCategory[]
   withServices?: boolean
-}) {
-  let items: BookingCostItem[] = []
-  let total = 0
+}): Promise<BookingCosts | null> {
+  let lines: RawInvoiceLine[] = []
+  let discounts: RawInvoiceDiscount[] = []
+  let surcharges: RawInvoiceSurcharge[] = []
+  let requiredDownPaymentAmount: number = 0
   if (
     booking.startDate &&
     booking.endDate &&
@@ -154,15 +195,26 @@ async function calculateBookingCosts({
   ) {
     if (!categories) {
       categories = await findCategories({
-        criteria: {}
+        criteria: {
+          date: booking.startDate
+        }
       })
     }
     const days = booking.days
     if (days && booking.pets && categories) {
-      let bookingCostsHandler
+      if (!booking.pets.every((pet) => pet.categoryId)) {
+        return null
+      }
+
+      let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
-        ;({ items, total } = bookingCostsHandler({
+        ;({
+          lines,
+          discounts,
+          surcharges,
+          requiredDownPaymentAmount = 0
+        } = bookingCostsHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -177,44 +229,102 @@ async function calculateBookingCosts({
             getOverlappingDaysInIntervals,
             parse
           },
-          dateHolidays: Holidays
+          dateHolidays: Holidays,
+          computeInvoiceCosts
         }))
       } catch (e) {
         console.error('Unable to load API config')
-        items = booking.pets.map((pet) => ({
-          name: pet.name,
-          price:
-            categories?.find((category) => category.id === pet.categoryId)
-              ?.price || NaN,
-          quantity: days,
-          discount: 0
+
+        const findActualPrice = ({
+          prices,
+          date
+        }: {
+          prices?: { date: string; listPrice: number }[]
+          date: string
+        }) => {
+          const sortedAndFiltered = prices
+            ?.filter((price) => price.date <= date)
+            .sort((a, b) => {
+              return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
+            })
+
+          return sortedAndFiltered?.at(0)?.listPrice || 0
+        }
+
+        lines = booking.pets.map((pet) => ({
+          description: pet.name,
+          listPrice: findActualPrice({
+            prices: categories?.find(
+              (category) => category.id === pet.categoryId
+            )?.prices,
+            date: booking.startDate
+          }),
+          listPriceIncludesTax: true,
+          quantity: days * 1000,
+          quantityPerMille: true,
+          discount: 0,
+          taxRate: 21
         }))
         if (withServices) {
           for (const service of booking.services) {
             if (service.service && service.listPrice) {
-              items.push({
-                name: service.service?.name,
-                price: service.listPrice,
+              lines.push({
+                description: service.service?.name,
+                listPrice: service.listPrice,
+                listPriceIncludesTax: true,
                 quantity: 1,
-                discount: 0
+                quantityPerMille: false,
+                discount: 0,
+                taxRate: 21
               })
             }
-          }
-        }
-        for (const item of items) {
-          if (item.price && item.quantity) {
-            total += (item.price / 100) * item.quantity - (item.discount || 0)
-          } else {
-            total = 0
-            break
           }
         }
       }
     }
   }
+
+  const {
+    computedLines,
+    computedDiscounts,
+    computedSurcharges,
+    taxSummary,
+    totalExcludingTax,
+    totalIncludingTax
+  } = computeInvoiceCosts({
+    lines,
+    discounts,
+    surcharges
+  })
   return {
-    items,
-    total
+    lines: computedLines,
+    discounts: computedDiscounts,
+    surcharges: computedSurcharges,
+    taxSummary,
+    totalExcludingTax,
+    totalIncludingTax,
+    requiredDownPaymentAmount
+  }
+}
+
+async function getBookingInvoice({
+  booking,
+  fastify
+}: {
+  booking: Booking
+  fastify?: FastifyInstance
+}) {
+  try {
+    if (!booking.invoiceUuid || !fastify?.slimfact)
+      throw new Error('Invoice UUID or fastify not defined')
+
+    const invoice = await fastify.slimfact.admin.getInvoice.query({
+      uuid: booking.invoiceUuid
+    })
+    return invoice
+  } catch (e) {
+    fastify?.log.debug(e)
+    return null
   }
 }
 
@@ -332,7 +442,9 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
               'openingTimes.id',
               'openingTimes.name',
               'openingTimes.startTime',
-              'openingTimes.endTime'
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
             ])
             .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
         ).as('startTime'),
@@ -343,7 +455,9 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
               'openingTimes.id',
               'openingTimes.name',
               'openingTimes.startTime',
-              'openingTimes.endTime'
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
             ])
             .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
         ).as('endTime'),
@@ -354,6 +468,7 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
           `.as('days')
       ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
+      .orderBy('bookingStatus.createdAt desc')
   ).as('statuses')
 }
 
@@ -428,7 +543,7 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
           'daycareDates.status',
           'daycareDates.customerId'
         ])
-        .where('daycareDates.status', '=', 'approved')
+        .where('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED)
         .whereRef('daycareDates.customerId', '=', 'bookings.customerId')
         .whereRef('daycareDates.date', '>=', 'bookings.startDate')
         .whereRef('daycareDates.date', '<=', 'bookings.endDate')
@@ -543,6 +658,10 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
+  if (criteria.invoiceUuid) {
+    query = query.where('invoiceUuid', '=', criteria.invoiceUuid)
+  }
+
   return query
     .select(select)
     .select(({ selectFrom }) => [
@@ -574,7 +693,8 @@ function find({
 
 export async function findBooking({
   criteria,
-  select
+  select,
+  fastify
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -583,6 +703,7 @@ export async function findBooking({
     until?: string
   }
   select?: (keyof Booking)[]
+  fastify?: FastifyInstance
 }): Promise<ParsedBooking | undefined> {
   const query = find({ criteria, select })
 
@@ -601,14 +722,17 @@ export async function findBooking({
       }
     })
 
-    const categories = await db.selectFrom('categories').selectAll().execute()
+    const categories = await findCategories({
+      criteria: {}
+    })
     return {
       ...result,
       costs: await calculateBookingCosts({
         booking: { ...result, days },
         categories,
         withServices: true
-      })
+      }),
+      invoice: await getBookingInvoice({ booking: result, fastify })
     }
   } else {
     return result
@@ -618,7 +742,8 @@ export async function findBooking({
 export async function findBookings({
   criteria,
   select,
-  limit
+  limit,
+  fastify
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -628,6 +753,7 @@ export async function findBookings({
   }
   select?: (keyof Booking)[]
   limit?: number
+  fastify?: FastifyInstance
 }): Promise<ParsedBooking[]> {
   let query = find({
     criteria,
@@ -640,7 +766,9 @@ export async function findBookings({
 
   const results = await query.orderBy('id desc').execute()
 
-  const categories = await db.selectFrom('categories').selectAll().execute()
+  const categories = await findCategories({
+    criteria: {}
+  })
 
   if (results) {
     results.forEach((booking) => {
@@ -665,9 +793,12 @@ export async function findBookings({
         withServices: true
       })
 
+      const invoice = await getBookingInvoice({ booking: result, fastify })
+
       return {
         ...result,
-        costs
+        costs,
+        invoice
       }
     })
   )
@@ -782,7 +913,15 @@ export async function updateBooking(
       query = query.where('customerId', '=', criteria.customerId)
     }
     const updatedBooking = await query
-      .set(updateWith.booking)
+      .set({
+        startDate: updateWith.booking.startDate,
+        startTimeId: updateWith.booking.startTimeId,
+        endDate: updateWith.booking.endDate,
+        endTimeId: updateWith.booking.endTimeId,
+        comments: updateWith.booking.comments,
+        invoiceUuid: updateWith.booking.invoiceUuid,
+        customerId: updateWith.booking.customerId
+      })
       .returningAll()
       .executeTakeFirstOrThrow()
 
@@ -844,9 +983,10 @@ export async function updateBooking(
         .where('status', '=', BOOKING_STATUS.APPROVED)
         .orderBy('modifiedAt desc')
         .limit(1)
-        .executeTakeFirstOrThrow()
+        .executeTakeFirst()
 
       if (
+        lastApprovedStatus &&
         updatedBooking.startDate === lastApprovedStatus.startDate &&
         updatedBooking.endDate === lastApprovedStatus.endDate &&
         updatedBooking.startTimeId === lastApprovedStatus.startTimeId &&
@@ -873,29 +1013,32 @@ export async function updateBooking(
 export async function cancelBooking(
   criteria: Partial<Booking>,
   reason: string,
-  ignoreCancellationPeriod?: boolean
+  ignoreCancelationPeriod?: boolean
 ) {
   const booking = await findBooking({ criteria })
   if (
     booking?.startDate &&
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
-    !ignoreCancellationPeriod
+    !ignoreCancelationPeriod
   ) {
     throw new Error('You cannot cancel dates in the past.')
   }
 
-  if (booking?.status?.status === 'rejected') {
+  if (booking?.status?.status === BOOKING_STATUS.REJECTED) {
     throw new Error('You cannot cancel rejected bookings.')
   }
 
   if (booking) {
-    let bookingCancellationHandler
-    let status = BOOKING_STATUS.CANCELLED
+    let bookingCancelationHandler
+    let status = BOOKING_STATUS.CANCELED
+    let cancelationCosts
     const days = booking.days
+
+    const lastApprovedBooking = getLastApprovedForBooking(booking)
     try {
-      ;({ bookingCancellationHandler } = await import('../api.config.js'))
+      ;({ bookingCancelationHandler } = await import('../api.config.js'))
       if (days) {
-        ;({ status } = bookingCancellationHandler({
+        ;({ status, cancelationCosts } = bookingCancelationHandler({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
@@ -903,25 +1046,32 @@ export async function cancelBooking(
           },
           dateFns: {
             isBefore,
+            isAfter,
             isWithinInterval,
             parse,
             parseISO,
-            subMonths
-          }
+            subMonths,
+            subDays,
+            differenceInDays
+          },
+          booking: lastApprovedBooking,
+          BOOKING_STATUS
         }))
       }
     } catch (e) {
       console.error('Unable to load API config')
-      const maxCancellationDate = subMonths(
+      const maxCancelationDate = subMonths(
         parseISO(booking.startDate),
-        env.read('CANCELLATION_PERIOD_MONTHS') ||
-          env.read('VITE_CANCELLATION_PERIOD_MONTHS') ||
+        env.read('CANCELATION_PERIOD_MONTHS') ||
+          env.read('VITE_CANCELATION_PERIOD_MONTHS') ||
           0
       )
 
-      status = isBefore(new Date(), maxCancellationDate)
-        ? BOOKING_STATUS.CANCELLED
-        : BOOKING_STATUS.CANCELLED_OUTSIDE_PERIOD
+      status =
+        isAfter(new Date(), maxCancelationDate) &&
+        booking.status?.status === BOOKING_STATUS.APPROVED
+          ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+          : BOOKING_STATUS.CANCELED
     }
 
     const petIds = booking.pets.map((pet) => pet.id)
@@ -932,9 +1082,9 @@ export async function cancelBooking(
         comments: reason
       },
       petIds,
-      status: ignoreCancellationPeriod ? BOOKING_STATUS.CANCELLED : status
+      status: ignoreCancelationPeriod ? BOOKING_STATUS.CANCELED : status
     })
-    return true
+    return { status, cancelationCosts }
   }
 }
 
@@ -964,7 +1114,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
             .where(
               'bookingStatus.modifiedAt',
               '=',
-              sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+              sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
             )
             .where('bookingStatus.status', '=', status!)
             .select('bookingStatus.bookingId')
@@ -975,4 +1125,112 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
   )?.count
 
   return count
+}
+
+const downPaymentPaymentTermDays =
+  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  5
+export async function checkDownPayments({
+  fastify
+}: {
+  fastify: FastifyInstance
+}) {
+  const bookings = await db
+    .selectFrom('bookings')
+    .where(({ eb, selectFrom }) =>
+      eb(
+        'bookings.id',
+        '=',
+        selectFrom('bookingStatus')
+          .whereRef('bookingStatus.bookingId', '=', 'bookings.id')
+          .where(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+          )
+          .where(
+            'bookingStatus.status',
+            '=',
+            BOOKING_STATUS.AWAITING_DOWNPAYMENT
+          )
+          .select('bookingStatus.bookingId')
+      )
+    )
+    .select([withPets, withStatus])
+    .selectAll()
+    .execute()
+
+  for (const booking of bookings) {
+    const invoice = await getBookingInvoice({ booking, fastify })
+    if (
+      invoice?.amountPaid &&
+      invoice?.requiredDownPaymentAmount &&
+      invoice.amountPaid >= invoice.requiredDownPaymentAmount
+    ) {
+      createBookingStatus({
+        booking,
+        petIds: booking.pets.map((pet) => pet.id),
+        status: BOOKING_STATUS.APPROVED
+      })
+    } else if (
+      booking.status?.status &&
+      new Date(booking.status?.createdAt) <
+        subDays(new Date(), downPaymentPaymentTermDays)
+    ) {
+      cancelBooking(
+        { id: booking.id },
+        `Down payment not received within ${downPaymentPaymentTermDays} days`,
+        true
+      )
+    }
+  }
+}
+
+export async function getLastApprovedForBooking(booking: ParsedBooking) {
+  const lastApprovedStatus = booking.statuses
+    .filter((status) => status.status === BOOKING_STATUS.APPROVED)
+    .sort((a, b) => {
+      if (a.createdAt < b.createdAt) return -1
+      if (a.createdAt > b.createdAt) return 1
+      return 0
+    })
+    .at(-1)
+
+  if (lastApprovedStatus) {
+    const lastApprovedBookingDays = calculateBookingDays({
+      startDate: lastApprovedStatus.startDate,
+      endDate: lastApprovedStatus.endDate,
+      startTime: lastApprovedStatus.startTime,
+      endTime: lastApprovedStatus.endTime,
+      startTimeId: lastApprovedStatus.startTimeId,
+      endTimeId: lastApprovedStatus.endTimeId
+    })
+    const categories = await findCategories({
+      criteria: {
+        date: lastApprovedStatus.startDate
+      }
+    })
+    const lastApprovedBookingCosts = await calculateBookingCosts({
+      booking: {
+        ...lastApprovedStatus,
+        days: lastApprovedBookingDays,
+        customer: booking.customer,
+        customerId: booking.customerId,
+        pets: booking.pets,
+        services: booking.services
+      },
+      categories
+    })
+    return {
+      ...lastApprovedStatus,
+      days: lastApprovedBookingDays,
+      customer: booking.customer,
+      customerId: booking.customerId,
+      pets: booking.pets,
+      services: booking.services,
+      costs: lastApprovedBookingCosts
+    }
+  }
+  return booking
 }

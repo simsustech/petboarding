@@ -11,7 +11,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
   COUNTRY: string
   TITLE?: string
   ALLOWED_SPECIES?: (typeof PET_SPECIES)[number][]
-  CURRENCY: '€' | '$'
+  CURRENCY: 'EUR' | 'USD'
   HIDE_BRANDING: boolean
   DAYCARE_DISABLED_WEEKDAYS?: number[]
   MANDATORY_VACCINATIONS_DOG?: string[]
@@ -28,29 +28,37 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
     $warning?: string
   }
   UNIT_OF_MASS?: 'kg' | 'lbs'
+  INTEGRATIONS?: {
+    slimfact: {
+      hostname: string
+    }
+  }
+  SUPPORT_EMAIL?: string
 }
 export const BOOKING_ICON = ref({
   approved: 'check',
   rejected: 'block',
-  cancelled: 'clear',
-  cancelledoutsideperiod: 'cancel',
+  canceled: 'clear',
+  canceledoutsideperiod: 'cancel',
   pending: 'hourglass_empty',
-  standby: 'hourglass_full'
+  standby: 'hourglass_full',
+  awaitingdownpayment: 'hourglass_top'
 })
 
 export const BOOKING_ICON_COLOR = ref({
   approved: 'green',
   rejected: 'red',
-  cancelled: 'red',
-  cancelledoutsideperiod: 'red',
+  canceled: 'red',
+  canceledoutsideperiod: 'red',
   pending: 'grey',
-  standby: 'yellow'
+  standby: 'yellow',
+  awaitingdownpayment: 'green'
 })
 
 export const DAYCARE_DATE_COLORS = {
   approved: 'green',
   rejected: 'red',
-  cancelled: 'red',
+  canceled: 'red',
   pending: 'grey',
   standby: 'yellow'
 } as const
@@ -58,7 +66,7 @@ export const DAYCARE_DATE_COLORS = {
 export const DAYCARE_DATE_ICONS = {
   approved: 'check',
   rejected: 'block',
-  cancelled: 'clear',
+  canceled: 'clear',
   pending: 'hourglass_empty',
   standby: 'hourglass_full'
 }
@@ -71,7 +79,7 @@ export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
   LANG: import.meta.env.VITE_LANG || 'en-US',
   COUNTRY: import.meta.env.VITE_COUNTRY || 'NL',
   TITLE: import.meta.env.VITE_TITLE || 'Petboarding',
-  CURRENCY: '€',
+  CURRENCY: 'EUR',
   HIDE_BRANDING: false
 })
 

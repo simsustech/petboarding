@@ -1,27 +1,86 @@
 <template>
   <q-list>
-    <q-item v-for="category in modelValue" :key="category.id">
-      <q-item-section>
-        <q-item-label>
-          {{ category.name }}
-        </q-item-label>
-        <q-item-label caption>
-          <price :model-value="category.price" />
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        <q-btn
-          v-if="showEditButton"
-          icon="edit"
-          @click="emit('update', { data: category })"
-        />
-        <q-btn
-          icon="delete"
-          color="red"
-          @click="emit('delete', { data: category })"
-        />
-      </q-item-section>
-    </q-item>
+    <q-expansion-item v-for="category in modelValue" :key="category.id">
+      <template #header>
+        <q-item-section>
+          <q-item-label>
+            {{ category.name }}
+          </q-item-label>
+          <!-- <q-item-label caption>
+          <price
+            :model-value="category.price"
+            :currency="configuration.CURRENCY"
+          />
+        </q-item-label> -->
+        </q-item-section>
+        <q-item-section side>
+          <q-btn flat icon="more_vert">
+            <q-menu>
+              <q-list>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="emit('update', { data: category })"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.edit }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="emit('addPrice', { data: category })"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.categoryPrice.labels.addPrice }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-close-popup
+                  clickable
+                  class="bg-red"
+                  @click="emit('delete', { data: category })"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.delete }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </q-item-section>
+      </template>
+      <q-item
+        v-for="price in category.prices"
+        :key="price.date"
+        :inset-level="1"
+      >
+        <q-item-section>
+          <q-item-label overline>
+            {{ price.date }}
+          </q-item-label>
+          <q-item-label>
+            <price
+              :model-value="price.listPrice"
+              :currency="configuration.CURRENCY"
+            />
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            icon="delete"
+            color="red"
+            @click="emit('deletePrice', { data: price })"
+          />
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
   </q-list>
 </template>
 
@@ -34,7 +93,9 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import Price from '../Price.vue'
+import { useConfiguration } from '../../configuration.js'
 import type { Category } from '@petboarding/api/zod'
+import { useLang } from '../../lang/index.js'
 
 export interface Props {
   modelValue: Category[]
@@ -64,7 +125,30 @@ const emit = defineEmits<{
       done?: (success?: boolean) => void
     }
   ): void
+  (
+    e: 'addPrice',
+    {
+      data,
+      done
+    }: {
+      data: Category
+      done?: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'deletePrice',
+    {
+      data,
+      done
+    }: {
+      data: { id: number; date: string; listPrice: number }
+      done?: (success?: boolean) => void
+    }
+  ): void
 }>()
+
+const configuration = useConfiguration()
+const lang = useLang()
 
 const variables = ref({
   // header: lang.value.some.nested.prop

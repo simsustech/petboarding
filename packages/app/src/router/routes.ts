@@ -13,9 +13,23 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/AvailabilityPage.vue')
       },
       {
+        path: 'information',
+        alias: ['informatie'],
+        component: () => import('../pages/InformationPage.vue')
+      },
+      {
         path: 'redirect',
         name: redirectRouteKey,
-        component: () => import('../pages/RedirectPage.vue')
+        children: [
+          {
+            path: '',
+            component: () => import('../pages/RedirectPage.vue')
+          },
+          {
+            path: 'slimfact',
+            component: () => import('../pages/redirect/AuthenticatedPage.vue')
+          }
+        ]
       },
       {
         path: 'user',
@@ -82,6 +96,18 @@ const routes: RouteRecordRaw[] = [
                 path: 'openingtimes',
                 component: () =>
                   import('../pages/admin/configuration/OpeningTimesPage.vue')
+              },
+              {
+                path: 'integrations',
+                component: () =>
+                  import('../pages/admin/configuration/IntegrationsPage.vue')
+              },
+              {
+                path: 'daycaresubscriptions',
+                component: () =>
+                  import(
+                    '../pages/admin/configuration/DaycareSubscriptionsPage.vue'
+                  )
               }
             ]
           }

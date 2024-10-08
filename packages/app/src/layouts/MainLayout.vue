@@ -8,6 +8,22 @@
           </q-btn>
 
           <q-toolbar-title> {{ title }} </q-toolbar-title>
+          <q-btn v-if="configuration.SUPPORT_EMAIL" icon="help" flat>
+            <q-menu>
+              <q-list>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="email" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>
+                      {{ configuration.SUPPORT_EMAIL }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
           <q-language-select
             v-model="language"
             :language-imports="languageImports"
@@ -211,6 +227,13 @@
                       <q-item-label> {{ lang.category.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item to="/admin/configuration/daycaresubscriptions">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.daycareSubscription.title }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item to="/admin/configuration/services">
                     <q-item-section>
                       <q-item-label> {{ lang.service.title }} </q-item-label>
@@ -227,6 +250,13 @@
                     <q-item-section>
                       <q-item-label>
                         {{ lang.configuration.openingTimes }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/integrations">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.integrations }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -285,6 +315,7 @@ import { createUseTrpc } from '../trpc.js'
 import type { QuasarLanguage } from 'quasar'
 import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
+import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
 const configuration = useConfiguration()
 
 const router = useRouter()
@@ -332,6 +363,7 @@ if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
 watch($q.lang, () => {
   loadLang($q.lang.isoName)
   loadComponentsFormLang($q.lang.isoName)
+  loadModularApiQuasarComponentsCheckoutLang($q.lang.isoName)
 })
 
 watch(route, (val) => {

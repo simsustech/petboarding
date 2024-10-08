@@ -6,7 +6,16 @@ export const categoryValidation = {
   order: z.number().nullable(),
   name: z.string(),
   price: z.number().nullable(),
-  productId: z.string().nullable()
+  productId: z.string().nullable(),
+  prices: z
+    .array(
+      z.object({
+        id: z.number(),
+        date: z.string(),
+        listPrice: z.number()
+      })
+    )
+    .optional()
 }
 
 export const category = z.object(categoryValidation)

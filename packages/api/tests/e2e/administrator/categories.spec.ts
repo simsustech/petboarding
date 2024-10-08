@@ -12,8 +12,8 @@ let page: Page
 const time = new Date().getTime()
 
 const category = {
-  name: `Category ${time}`,
-  price: 111
+  name: `Category ${time}`
+  // price: 111
 }
 
 test.describe.configure({ mode: 'serial' })
@@ -38,23 +38,30 @@ test.beforeAll(async ({ browser }) => {
   await expect(
     page.getByText('Administrator').locator(':scope.q-item__label')
   ).toBeVisible()
+
+  await page.goto('/admin/configuration/categories')
+  await page.waitForLoadState('networkidle')
 })
 
 test.describe('Categories', async () => {
   test('Create category', async () => {
-    await page.goto('/admin/configuration/categories')
-    await page.waitForLoadState('networkidle')
-
     await page.locator('button >> text=Add').click()
     await page.getByLabel('Name').fill(category.name)
-    await page.getByLabel('Price').fill(`${category.price}`)
+    // await page.getByLabel('Price').fill(`${category.price}`)
 
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    // await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    await page
+      .getByRole('main')
+      .getByLabel('Expand')
+      .getByRole('button')
+      .last()
+      .click()
+    await page.getByText('Edit').click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -63,8 +70,34 @@ test.describe('Categories', async () => {
     await expect(page.getByText('UpdatedName').first()).toBeVisible()
   })
 
+  test('Add category price', async () => {
+    await page
+      .getByRole('main')
+      .getByLabel('Expand')
+      .getByRole('button')
+      .last()
+      .click()
+    await page.getByText('Add price').click()
+    const dialog = page.locator('.q-dialog')
+    await dialog.isVisible()
+    const [YYYY, MM, DD] = '2030-01-01'.split('-')
+    await page.getByPlaceholder('DD').first().fill(DD)
+    await page.getByPlaceholder('MM').first().fill(MM)
+    await page.getByPlaceholder('YYYY').first().fill(YYYY)
+    await page.getByLabel('Price').fill('200')
+
+    await dialog.locator('text=Submit').click()
+  })
+
   test('Delete category', async () => {
-    await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    // await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    await page
+      .getByRole('main')
+      .getByLabel('Expand')
+      .getByRole('button')
+      .last()
+      .click()
+    await page.getByText('Delete', { exact: true }).click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

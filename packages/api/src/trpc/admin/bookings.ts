@@ -8,9 +8,15 @@ import {
   parseISO,
   eachDayOfInterval,
   startOfMonth,
-  endOfMonth
+  endOfMonth,
+  parse,
+  isBefore,
+  isAfter,
+  isWithinInterval,
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
-
 import type { FastifyInstance } from 'fastify'
 import {
   createBookingStatus,
@@ -18,11 +24,29 @@ import {
   findBookings,
   getBookingsCount,
   updateBookingService,
-  cancelBooking
+  cancelBooking,
+  updateBooking,
+  getLastApprovedForBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
-import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { findCustomer } from '../../repositories/customer.js'
+import env from '@vitrify/tools/env'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+import type { Customer } from '../../zod/customer.js'
+import {
+  computeInvoiceCosts,
+  Invoice,
+  RawInvoiceDiscount,
+  RawInvoiceLine,
+  RawInvoiceSurcharge
+} from '@modular-api/fastify-checkout'
+
+import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
+
+const downPaymentPaymentTermDays =
+  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
+  5
 
 export const compileEmail = async ({
   booking,
@@ -60,6 +84,7 @@ export const compileEmail = async ({
     }),
     startTime: booking.startTime?.name,
     endTime: booking.endTime?.name,
+    downPaymentPaymentTermDays,
     ...variables
   }
   const subject = handlebars.compile(subjectTemplate)(context)
@@ -68,6 +93,232 @@ export const compileEmail = async ({
   return {
     subject,
     body
+  }
+}
+
+const slimfactHostname =
+  env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+export const createOrUpdateSlimfactInvoice = async ({
+  fastify,
+  booking,
+  customer,
+  locale
+}: {
+  fastify: FastifyInstance
+  booking: ParsedBooking
+  customer: Pick<
+    Customer,
+    'firstName' | 'lastName' | 'address' | 'postalCode' | 'city'
+  > & { account: { email: string } | null }
+  locale?: 'en-US' | 'nl'
+}): Promise<
+  | {
+      success: true
+      invoice: Invoice
+    }
+  | { success: false; errorMessage: string }
+> => {
+  if (!fastify.slimfact) throw new Error('SlimFact not configured')
+  if (!customer.account) throw new Error('Customer is not linked to an account')
+
+  if (!locale) locale = env.read('VITE_LANG') || 'en-US'
+
+  const dateFormatter = (date: Date) =>
+    new Intl.DateTimeFormat(locale, {
+      dateStyle: 'full',
+      timeZone: 'UTC'
+    }).format(date)
+
+  let numberPrefixes, companyDetails
+  try {
+    numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
+
+    companyDetails = await fastify.slimfact.admin.getCompany.query({
+      id: Number(
+        env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
+      )
+    })
+  } catch (e) {
+    throw new Error('SlimFact not authorized.')
+  }
+
+  const clientDetails = {
+    address: customer.address,
+    postalCode: customer.postalCode,
+    city: customer.city,
+    email: customer.account.email,
+    contactPersonName: [customer.firstName, customer.lastName].join(' ')
+  }
+
+  const lastApprovedBooking = await getLastApprovedForBooking(booking)
+  let bookingCancelationHandler
+  let cancelationCosts
+  try {
+    ;({ bookingCancelationHandler } = await import('../../api.config.js'))
+    if (booking.days) {
+      ;({ cancelationCosts } = bookingCancelationHandler({
+        period: {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          days: booking.days
+        },
+        dateFns: {
+          isBefore,
+          isAfter,
+          isWithinInterval,
+          parse,
+          parseISO,
+          subMonths,
+          differenceInDays,
+          subDays
+        },
+        booking: lastApprovedBooking,
+        BOOKING_STATUS
+      }))
+    }
+  } catch (e) {
+    fastify.log.debug(e)
+    console.error('Unable to load API config')
+  }
+
+  let lines: RawInvoiceLine[] = booking.costs?.lines || []
+  let discounts: RawInvoiceDiscount[] | undefined =
+    booking.costs?.discounts || []
+  let surcharges: RawInvoiceSurcharge[] | undefined =
+    booking.costs?.surcharges || []
+  let requiredDownPaymentAmount: number =
+    booking.costs?.requiredDownPaymentAmount || 0
+
+  if (
+    booking.status?.status &&
+    [BOOKING_STATUS.CANCELED, BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD].includes(
+      booking.status?.status
+    ) &&
+    cancelationCosts
+  ) {
+    ;({
+      lines,
+      surcharges,
+      discounts,
+      requiredDownPaymentAmount = 0
+    } = cancelationCosts)
+  }
+
+  const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
+  →
+  ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
+
+  const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+
+  let computedCancelationCosts
+  let cancelationSurcharge: RawInvoiceSurcharge
+  if (cancelationCosts) {
+    const computedInvoiceCosts = computeInvoiceCosts({
+      lines,
+      discounts,
+      surcharges
+    })
+    computedCancelationCosts = computeInvoiceCosts(cancelationCosts)
+
+    if (
+      computedCancelationCosts.totalIncludingTax -
+        computedInvoiceCosts.totalIncludingTax >
+      0
+    ) {
+      cancelationSurcharge = {
+        ...cancelationCosts.lines.at(0),
+        listPriceIncludesTax: true,
+        taxRate: 21,
+        listPrice:
+          computedCancelationCosts.totalIncludingTax -
+          computedInvoiceCosts.totalIncludingTax
+      }
+      surcharges?.push(cancelationSurcharge)
+    }
+  }
+
+  try {
+    if (booking.invoiceUuid) {
+      const invoice = await fastify.slimfact.admin.updateInvoice.mutate({
+        uuid: booking.invoiceUuid ? booking.invoiceUuid : undefined,
+        companyDetails: companyDetails,
+        clientDetails,
+        companyPrefix: companyDetails.prefix,
+        numberPrefixTemplate:
+          companyDetails.defaultNumberPrefixTemplate ||
+          numberPrefixes.at(0)?.template,
+        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        lines,
+        discounts,
+        surcharges,
+        paymentTermDays: 14,
+        locale,
+        notes,
+        companyId: companyDetails.id,
+        requiredDownPaymentAmount,
+        metadata: {
+          referenceId: 'petboarding',
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${hostname}/webhook/slimfact`
+        }
+      })
+
+      return {
+        success: true,
+        invoice
+      }
+    } else {
+      const invoice = await fastify.slimfact.admin.createInvoice.mutate({
+        companyDetails: companyDetails,
+        clientDetails,
+        companyPrefix: companyDetails.prefix,
+        numberPrefixTemplate:
+          companyDetails.defaultNumberPrefixTemplate ||
+          numberPrefixes.at(0)?.template,
+        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        lines,
+        discounts,
+        surcharges,
+        paymentTermDays: 14,
+        locale,
+        notes,
+        companyId: companyDetails.id,
+        status: InvoiceStatus.BILL,
+        requiredDownPaymentAmount,
+        metadata: {
+          referenceId: 'petboarding',
+          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${hostname}/webhook/slimfact`
+        }
+      })
+
+      await updateBooking(
+        {
+          id: booking.id
+        },
+        {
+          booking: {
+            ...booking,
+            invoiceUuid: invoice.uuid
+          },
+          petIds: booking.pets.map((pet) => pet.id),
+          serviceIds: booking.services.map((service) => service.id)
+        },
+        {
+          skipStatusUpdate: true
+        }
+      )
+
+      return {
+        success: true,
+        invoice
+      }
+    }
+  } catch (e) {
+    return {
+      success: false,
+      errorMessage: 'Could not create or update booking invoice.'
+    }
   }
 }
 
@@ -81,20 +332,23 @@ export const adminBookingRoutes = ({
   getBookings: procedure
     .input(
       z.object({
-        from: z.string().optional(),
-        until: z.string().optional(),
-        status: z.nativeEnum(BOOKING_STATUS)
+        from: z.string().optional().nullable(),
+        until: z.string().optional().nullable(),
+        status: z.nativeEnum(BOOKING_STATUS),
+        customerId: z.number().optional()
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status } = input
+      const { from, until, status, customerId } = input
       const bookings = await findBookings({
         criteria: {
           from,
           until,
-          status
+          status,
+          customerId
         },
-        limit: 25
+        limit: 25,
+        fastify
       })
       return bookings
     }),
@@ -107,18 +361,19 @@ export const adminBookingRoutes = ({
       })
     )
     .query(async ({ input }) => {
-      const { id, type, localeCode } = input
+      const { id, type, localeCode = env.read('VITE_LANG') } = input
       const booking = await findBooking({
         criteria: {
           id
         }
       })
       if (booking) {
-        const template = await findEmailTemplate({
-          criteria: {
-            name: type + 'Booking'
-          }
-        })
+        let template: { subject: string; body: string }
+        try {
+          template = await bookingEmailTemplates[`./${type}/${localeCode}.ts`]()
+        } catch (e) {
+          template = await bookingEmailTemplates[`./${type}/en-US.ts`]()
+        }
 
         if (template) {
           const { subject: subjectTemplate, body: bodyTemplate } = template
@@ -149,33 +404,78 @@ export const adminBookingRoutes = ({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, emailText, emailSubject } = input
+      let { emailText, emailSubject } = input
+      const { id } = input
       const booking = await findBooking({
         criteria: {
           id
-        }
+        },
+        fastify
       })
+
       if (booking) {
-        await createBookingStatus({
-          booking,
-          status: BOOKING_STATUS.APPROVED,
-          petIds: booking.pets.map((pet) => pet.id)
-        })
+        if (!booking.pets.every((pet) => pet.categoryId)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Not all pets have not been assigned to a cateogry'
+          })
+        }
+
         if (booking?.customerId) {
           const customer = await findCustomer({
             criteria: {
               id: booking.customerId
             }
           })
+
+          let requiredDownPaymentAmount, invoiceUrl
+          if (customer && fastify.slimfact && booking.costs) {
+            const result = await createOrUpdateSlimfactInvoice({
+              fastify,
+              booking,
+              customer
+            })
+            if (!result.success) {
+              fastify.log.debug(result.errorMessage)
+              await createBookingStatus({
+                booking,
+                status: BOOKING_STATUS.APPROVED,
+                petIds: booking.pets.map((pet) => pet.id)
+              })
+            }
+            if (result.success) {
+              invoiceUrl = `https://${slimfactHostname}/invoice/${result.invoice.uuid}`
+              requiredDownPaymentAmount =
+                (booking.costs?.requiredDownPaymentAmount || 0) -
+                (booking.invoice?.amountPaid || 0)
+
+              await createBookingStatus({
+                booking,
+                status:
+                  requiredDownPaymentAmount > 0
+                    ? BOOKING_STATUS.AWAITING_DOWNPAYMENT
+                    : BOOKING_STATUS.APPROVED,
+                petIds: booking.pets.map((pet) => pet.id)
+              })
+            }
+          }
+
           if (customer?.account?.email) {
             if (fastify?.mailer) {
+              emailText = handlebars.compile(emailText)({
+                invoiceUrl,
+                requiredDownPaymentAmount
+              })
+              emailSubject = handlebars.compile(emailSubject)({
+                invoiceUrl,
+                requiredDownPaymentAmount
+              })
               await fastify.mailer.sendMail({
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
               })
             }
-            return true
           }
         }
         return true
@@ -357,6 +657,27 @@ export const adminBookingRoutes = ({
             price: input.price || null
           }
         )
+
+        const booking = await findBooking({
+          criteria: {
+            id: updatedBookingService.bookingId
+          }
+        })
+        const customer = await findCustomer({
+          criteria: {
+            id: booking?.customerId
+          }
+        })
+
+        if (fastify.slimfact && booking?.costs && customer) {
+          const result = await createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+          if (!result.success) fastify.log.debug(result.errorMessage)
+        }
+
         if (updatedBookingService) return bookingService
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
@@ -375,7 +696,7 @@ export const adminBookingRoutes = ({
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
-  settleBookingCancellation: procedure
+  settleBookingCancelation: procedure
     .input(
       z.object({
         id: z.number()

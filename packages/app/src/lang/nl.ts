@@ -25,6 +25,9 @@ const lang: Language = {
   boarding: 'Pension',
   update: 'Update',
   page: 'Pagina',
+  next: 'Volgende',
+  previous: 'Vorige',
+  delete: 'Verwijderen',
   account: {
     title: 'Account',
     fields: {
@@ -64,7 +67,8 @@ const lang: Language = {
       'Er is een fout opgetreden bij het laden van de configuratie.',
     periods: 'Periodes',
     emailTemplates: 'Email sjablonen',
-    openingTimes: 'Openingstijden'
+    openingTimes: 'Openingstijden',
+    integrations: 'Integraties'
   },
   customer: {
     title: 'Klantgegevens',
@@ -171,6 +175,7 @@ const lang: Language = {
   booking: {
     title: 'Reserveringen',
     booking: 'Reservering',
+    from: 'vanaf',
     until: 'tot en met',
     days: 'dagen',
     history: 'Geschiedenis',
@@ -187,10 +192,11 @@ const lang: Language = {
     status: {
       pending: 'Wacht op goedkeuring.',
       approved: 'Goedgekeurd.',
-      cancelled: 'Geannuleerd.',
-      cancelledoutsideperiod: 'Geannuleerd buiten annuleringstermijn.',
+      canceled: 'Geannuleerd.',
+      canceledoutsideperiod: 'Geannuleerd buiten annuleringstermijn.',
       rejected: 'Geweigerd.',
-      standby: 'Reserve lijst.'
+      standby: 'Reserve lijst.',
+      awaitingdownpayment: 'In afwachting van aanbetaling.'
     },
     fields: {
       startDate: 'Datum brengen',
@@ -208,7 +214,7 @@ const lang: Language = {
       termsAndConditions: 'Ik ga akkoord met de algemene voorwaarden.',
       viewTermsAndConditions:
         'Klik hier om de algemene voorwaarden in te zien.',
-      cancellationReason:
+      cancelationReason:
         'Geef a.u.b. de reden voor het annuleren van de reservering.',
       openCustomer: 'Open klantgegevens',
       openBooking: 'Reservering openen',
@@ -217,7 +223,7 @@ const lang: Language = {
         'Deze reservering overlapt met een andere reservering of dagopvang.',
       cancelDoubleBookings:
         'Voorkom onnodige kosten en annuleer de overlappende datums.',
-      settleCancellation:
+      settleCancelation:
         'Weet u zeker dat u de annulering van de volgende reservering wilt afhandelen?',
       bookingModified: 'Reservering is gewijzigd.',
       changeDaycareToBooking:
@@ -225,17 +231,21 @@ const lang: Language = {
       upcomingBookings: 'Komende reserveringen',
       otherBookings: 'Overige reserveringen',
       overlapsWithUnavailablePeriod:
-        'Reservering overlapt met een onbeschikbare periode.'
+        'Reservering overlapt met een onbeschikbare periode.',
+      openInvoice: 'Open rekening of factuur.',
+      invoiceSynchronized:
+        'Kosten van rekening of factuur zijn gesynchroniseerd.'
     },
     helpers: {
       status: {
         pending: 'Reservering wacht op goedkeuring.',
         approved: 'Reservering is goedgekeurd.',
-        cancelled: 'Reservering is geannuleerd.',
-        cancelledoutsideperiod:
+        canceled: 'Reservering is geannuleerd.',
+        canceledoutsideperiod:
           'Reservering is geannuleerd buiten de annuleringstermijn.',
         rejected: 'Reservering is geweigerd.',
-        standby: 'Uw reservering staat op de reserve lijst.'
+        standby: 'Uw reservering staat op de reserve lijst.',
+        awaitingdownpayment: 'In afwachting van de aanbetaling.'
       }
     },
     replies: {
@@ -243,7 +253,8 @@ const lang: Language = {
       reject: 'Reservering weigeren',
       standby: 'Reservering op reservelijst plaatsen',
       reply: 'Reactie op reservering',
-      cancel: 'Reservering annuleren'
+      cancel: 'Reservering annuleren',
+      settleCancelation: 'Annulering afhandelen'
     },
     validations: {
       fieldRequired: 'Veld is vereist',
@@ -284,7 +295,7 @@ const lang: Language = {
     messages: {
       addPets: 'Voeg a.u.b. eerst één of meerdere huisdieren toe.',
       cancelSelected: 'Annuleer geselecteerde datums',
-      verifyCancellation:
+      verifyCancelation:
         'Weet u zeker dat u de volgende datums wilt annuleren?',
       verifyApproval: 'Weet u zeker dat u de volgende datums wilt goedkeuren?',
       verifyRejection: 'Weet u zeker dat u de volgende datums wilt weigeren?',
@@ -302,7 +313,7 @@ const lang: Language = {
     status: {
       pending: 'Wacht op goedkeuring.',
       approved: 'Goedgekeurd.',
-      cancelled: 'Geannuleerd.',
+      canceled: 'Geannuleerd.',
       rejected: 'Geweigerd.',
       standby: 'Reserve lijst'
     }
@@ -369,7 +380,8 @@ const lang: Language = {
     type: {
       general: 'Algemeen',
       important: 'Belangrijk',
-      priority: 'Prioriteit'
+      priority: 'Prioriteit',
+      urgent: 'Urgent'
     },
     messages: {
       verifyDeletion:
@@ -393,6 +405,71 @@ const lang: Language = {
     messages: {
       verifyDeletion:
         'Weet u zeker dat u de volgende categorie wilt verwijderen?'
+    }
+  },
+  categoryPrice: {
+    fields: {
+      date: 'Datum',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      addPrice: 'Prijs toevoegen'
+    },
+    messages: {
+      verifyDeletion:
+        'Weet u zeker dat u de volgende categorie prijs wilt verwijderen?'
+    }
+  },
+  information: {
+    messages: {
+      termsAndConditions:
+        'Zorg ervoor dat u op de hoogte bent van de algemene voorwaarden.',
+      openingTimes:
+        'Kom a.u.b. op de tijd zoals aangegeven in uw reservering. Bent u verhinderd? Laat dit dan op tijd weten.',
+      petHealth:
+        'Zorg ervoor dat uw hond in goede gezondheid verkeerd, ontwormd en ontvlooid is en alle verplichte vaccinaties heeft.',
+      vaccinations:
+        'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!'
+    }
+  },
+  daycareSubscription: {
+    title: 'Dagopvang abonnementen',
+    fields: {
+      description: 'Omschrijving',
+      numberOfDays: 'Aantal dagen',
+      validityPeriod: 'Geldigheidsduur',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      years: 'Jaren',
+      months: 'Maanden',
+      days: 'Dagen'
+    },
+    messages: {
+      verifyDeletion:
+        'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?',
+      addDaycareSubscriptionNotification:
+        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.'
+    }
+  },
+  customerDaycareSubscription: {
+    title: 'Dagopvang abonnementen',
+    fields: {
+      effectiveDate: 'Ingangsdatum',
+      validityPeriod: 'Geldigheidsduur'
+    },
+    labels: {
+      overview: 'Overzicht',
+      purchase: 'Kopen',
+      purchaseSubscription: 'Abonnement kopen',
+      checkout: 'Afrekenen'
+    },
+    messages: {
+      daycareSubscriptionRequired:
+        'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.',
+      remainingDays: 'Resterende dagen',
+      noRemainingDays:
+        'U heeft alle dagen gebruikt. Verzend de geselecteerde datums en koop een nieuw dagopvang abonnement.'
     }
   },
   errors: {

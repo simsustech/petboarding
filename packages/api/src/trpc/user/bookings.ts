@@ -13,8 +13,9 @@ import {
 } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer'
 import env from '@vitrify/tools/env'
-import { findEmailTemplate } from '../../repositories/emailTemplate.js'
 import { compileEmail } from '../admin/bookings'
+import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
+import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 const MAIL_BCC = env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC')
 
@@ -84,7 +85,8 @@ export const userBookingRoutes = ({
         const bookings = await findBookings({
           criteria: {
             customerId: customer.id
-          }
+          },
+          fastify
         })
         return bookings
       }
@@ -171,11 +173,6 @@ export const userBookingRoutes = ({
         })
 
         if (customer?.id) {
-          const booking = await findBooking({
-            criteria: {
-              id
-            }
-          })
           await cancelBooking(
             {
               id,
@@ -183,33 +180,56 @@ export const userBookingRoutes = ({
             },
             reason
           )
-          if (fastify?.mailer && booking) {
-            const template = await findEmailTemplate({
-              criteria: {
-                name: 'cancelBooking'
+          const booking = await findBooking({
+            criteria: {
+              id
+            }
+          })
+          if (booking) {
+            if (
+              fastify?.slimfact &&
+              booking?.statuses
+                .map((status) => status.status)
+                .includes(BOOKING_STATUS.APPROVED)
+            ) {
+              const result = await createOrUpdateSlimfactInvoice({
+                fastify,
+                booking,
+                customer
+              })
+              if (!result.success) fastify.log.debug(result.errorMessage)
+            }
+            if (fastify?.mailer) {
+              let template: { subject: string; body: string }
+              try {
+                template =
+                  await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
+              } catch (e) {
+                template = await bookingEmailTemplates[`./cancel/en-US.ts`]()
               }
-            })
 
-            if (template) {
-              const { subject: subjectTemplate, body: bodyTemplate } = template
+              if (template) {
+                const { subject: subjectTemplate, body: bodyTemplate } =
+                  template
 
-              if (subjectTemplate !== null && bodyTemplate !== null) {
-                const { subject, body } = await compileEmail({
-                  booking,
-                  subjectTemplate,
-                  bodyTemplate,
-                  localeCode,
-                  variables: {
-                    reason
-                  }
-                })
+                if (subjectTemplate !== null && bodyTemplate !== null) {
+                  const { subject, body } = await compileEmail({
+                    booking,
+                    subjectTemplate,
+                    bodyTemplate,
+                    localeCode,
+                    variables: {
+                      reason
+                    }
+                  })
 
-                await fastify.mailer.sendMail({
-                  to: customer.account?.email,
-                  bcc: MAIL_BCC,
-                  subject,
-                  html: body
-                })
+                  await fastify.mailer.sendMail({
+                    to: customer.account?.email,
+                    bcc: MAIL_BCC,
+                    subject,
+                    html: body
+                  })
+                }
               }
             }
           }

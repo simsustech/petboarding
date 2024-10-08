@@ -2,15 +2,27 @@
   <q-form ref="formRef" class="row justtify-center">
     <div class="row q-gutter-md">
       <q-input
+        :model-value="modelValue.price ? modelValue.price / 100 : 0"
+        :label="lang.service.fields.price"
+        class="col-12"
+        :prefix="currencySymbols[configuration.CURRENCY]"
+        :lang="$q.lang.isoName"
+        type="number"
+        step="0.01"
+        @update:model-value="
+          ($event) => (modelValue.price = Math.round(Number($event) * 100))
+        "
+      />
+      <!-- <q-input
         v-model.number="modelValue.price"
         class="col-12"
         :label="lang.service.fields.price"
-        :prefix="configuration.CURRENCY"
+        :prefix="currencySymbols[configuration.CURRENCY]"
         mask="#.##"
         fill-mask="0"
         unmasked-value
         reverse-fill-mask
-      />
+      /> -->
     </div>
     <q-input
       v-bind="input"
@@ -54,6 +66,12 @@ export interface Props {
     | ('label' & { style?: Partial<CSSStyleDeclaration> })
   >
 }
+
+const currencySymbols = ref({
+  EUR: '€',
+  USD: '$'
+})
+
 const configuration = useConfiguration()
 defineProps<Props>()
 

@@ -23,6 +23,9 @@ export interface Language {
   boarding: string
   update: string
   page: string
+  next: string
+  previous: string
+  delete: string
   account: {
     title: string
     fields: {
@@ -61,6 +64,7 @@ export interface Language {
     periods: string
     emailTemplates: string
     openingTimes: string
+    integrations: string
   }
   customer: {
     title: string
@@ -164,6 +168,7 @@ export interface Language {
   booking: {
     title: string
     booking: string
+    from: string
     until: string
     days: string
     history: string
@@ -180,10 +185,11 @@ export interface Language {
     status: {
       pending: string
       approved: string
-      cancelled: string
-      cancelledoutsideperiod: string
+      canceled: string
+      canceledoutsideperiod: string
       rejected: string
       standby: string
+      awaitingdownpayment: string
     }
     fields: {
       startDate: string
@@ -200,27 +206,30 @@ export interface Language {
       addPets: string
       termsAndConditions: string
       viewTermsAndConditions: string
-      cancellationReason: string
+      cancelationReason: string
       openCustomer: string
       openBooking: string
       openPets: string
       isDoubleBooked: string
       cancelDoubleBookings: string
-      settleCancellation: string
+      settleCancelation: string
       bookingModified: string
       changeDaycareToBooking: string
       upcomingBookings: string
       otherBookings: string
       overlapsWithUnavailablePeriod: string
+      openInvoice: string
+      invoiceSynchronized: string
     }
     helpers: {
       status: {
         pending: string
         approved: string
-        cancelled: string
-        cancelledoutsideperiod: string
+        canceled: string
+        canceledoutsideperiod: string
         rejected: string
         standby: string
+        awaitingdownpayment: string
       }
     }
     replies: {
@@ -229,6 +238,7 @@ export interface Language {
       standby: string
       reply: string
       cancel: string
+      settleCancelation: string
     }
     validations: {
       fieldRequired: string
@@ -268,7 +278,7 @@ export interface Language {
     messages: {
       addPets: string
       cancelSelected: string
-      verifyCancellation: string
+      verifyCancelation: string
       verifyApproval: string
       verifyRejection: string
       verifyStandby: string
@@ -283,7 +293,7 @@ export interface Language {
     status: {
       pending: string
       approved: string
-      cancelled: string
+      canceled: string
       rejected: string
       standby: string
     }
@@ -347,6 +357,7 @@ export interface Language {
       general: string
       important: string
       priority: string
+      urgent: string
     }
     messages: {
       verifyDeletion: string
@@ -367,6 +378,62 @@ export interface Language {
     }
     messages: {
       verifyDeletion: string
+    }
+  }
+  categoryPrice: {
+    fields: {
+      date: string
+      listPrice: string
+    }
+    labels: {
+      addPrice: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  information: {
+    messages: {
+      termsAndConditions: string
+      openingTimes: string
+      petHealth: string
+      vaccinations: string
+    }
+  }
+  daycareSubscription: {
+    title: string
+    fields: {
+      description: string
+      numberOfDays: string
+      validityPeriod: string
+      listPrice: string
+    }
+    labels: {
+      years: string
+      months: string
+      days: string
+    }
+    messages: {
+      verifyDeletion: string
+      addDaycareSubscriptionNotification: string
+    }
+  }
+  customerDaycareSubscription: {
+    title: string
+    fields: {
+      effectiveDate: string
+      validityPeriod: string
+    }
+    labels: {
+      overview: string
+      purchase: string
+      purchaseSubscription: string
+      checkout: string
+    }
+    messages: {
+      daycareSubscriptionRequired: string
+      remainingDays: string
+      noRemainingDays: string
     }
   }
   errors: {

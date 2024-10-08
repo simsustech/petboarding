@@ -22,8 +22,8 @@ export const bookingService = z.object(bookingServiceValidation).omit({})
 //   APPROVED = 'approved',
 //   REJECTED = 'rejected',
 //   STANDBY = 'standby',
-//   CANCELLED = 'cancelled',
-//   CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+//   CANCELED = 'canceled',
+//   CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod'
 // }
 
 export const bookingStatusValidation = {
@@ -37,7 +37,7 @@ export const bookingStatusValidation = {
   endTime: openingTime.optional(),
   pets: z.string().array().optional(),
   days: z.number().optional(),
-  comments: z.string().optional(),
+  comments: z.string().optional().nullable(),
   modifiedAt: z.string()
 }
 export const bookingStatus = z.object(bookingStatusValidation)
@@ -53,7 +53,7 @@ export const bookingValidation = {
   petIds: z.number().array(),
   pets: pet.array().optional(),
   days: z.number().optional(),
-  comments: z.string().optional(),
+  comments: z.string().optional().nullable(),
   orderId: z.string().optional(),
   customerId: z.number().optional(),
   customer: customer.optional(),
@@ -62,6 +62,18 @@ export const bookingValidation = {
   services: bookingService.array().optional(),
   serviceIds: z.number().array().optional(),
   isDoubleBooked: z.boolean().optional(),
+  invoiceUuid: z.string().optional().nullable(),
+  invoice: z
+    .object({
+      uuid: z.string(),
+      totalIncludingTax: z.number().optional(),
+      amountDue: z.number().optional().nullable(),
+      amountPaid: z.number().optional().nullable(),
+      requiredDownPaymentAmount: z.number().optional().nullable(),
+      currency: z.union([z.literal('EUR'), z.literal('USD')])
+    })
+    .nullable()
+    .optional(),
   overlapsWithUnavailablePeriod: z.boolean().optional()
 }
 

@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import modularapiPlugin from '@modular-api/api'
 import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
@@ -6,6 +6,19 @@ import env from '@vitrify/tools/env'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
 import { onRendered as appOnRendered } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
+import { oidcClientPlugin } from '@modular-api/api'
+import { createSlimfactTrpcClient } from './slimfact/index.js'
+import { initialize } from './pgboss.js'
+import {
+  findCustomerDaycareSubscription,
+  setCustomerDaycareSubscriptionStatus
+} from './repositories/customerDaycareSubscription.js'
+import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
+import {
+  BOOKING_STATUS,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+} from './kysely/types.js'
+import { createBookingStatus, findBooking } from './repositories/booking.js'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
@@ -55,10 +68,101 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_LANG') || 'en-US'
   )
 
+  const slimfactHostname =
+    env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+
+  if (slimfactHostname) {
+    await fastify.register(oidcClientPlugin, {
+      name: 'slimfact',
+      clientId: 'petboarding',
+      clientHostname: hostname,
+      serverHostname: slimfactHostname,
+      // serverHostname: 'demo.slimfact.app'
+      kysely
+    })
+
+    createSlimfactTrpcClient({
+      hostname: slimfactHostname,
+      fastify
+    })
+
+    fastify.post(
+      '/webhook/slimfact',
+      async (
+        request: FastifyRequest<{ Body: { uuid: string } }>,
+        reply: FastifyReply
+      ) => {
+        const { uuid } = request.body
+        const invoice = await fastify.slimfact.admin.getInvoice.query({ uuid })
+        if (invoice) {
+          const customerDaycareSubscription =
+            await findCustomerDaycareSubscription({
+              criteria: {
+                invoiceUuid: uuid
+              }
+            })
+          const booking = await findBooking({
+            criteria: {
+              invoiceUuid: uuid
+            }
+          })
+          if (customerDaycareSubscription) {
+            const getCustomerDaycareSubscriptionStatus = ({
+              invoice,
+              customerDaycareSubscriptionStatus
+            }: {
+              invoice: Invoice
+              customerDaycareSubscriptionStatus: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+            }) => {
+              if (invoice.status === InvoiceStatus.PAID)
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+              if (invoice.status === InvoiceStatus.CANCELED)
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
+              if (
+                typeof invoice.amountDue === 'number' &&
+                invoice.amountDue <= 0
+              ) {
+                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+              }
+              return customerDaycareSubscriptionStatus
+            }
+            await setCustomerDaycareSubscriptionStatus({
+              id: customerDaycareSubscription.id,
+              status: getCustomerDaycareSubscriptionStatus({
+                invoice: invoice,
+                customerDaycareSubscriptionStatus:
+                  customerDaycareSubscription.status
+              })
+            })
+          }
+
+          if (booking) {
+            if (
+              booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT
+            ) {
+              if (
+                invoice.amountPaid &&
+                invoice.requiredDownPaymentAmount &&
+                invoice.amountPaid >= invoice.requiredDownPaymentAmount
+              ) {
+                await createBookingStatus({
+                  booking,
+                  petIds: booking.pets.map((pet) => pet.id),
+                  status: BOOKING_STATUS.APPROVED
+                })
+              }
+            }
+          }
+        }
+        return reply.send()
+      }
+    )
+  }
+
   await fastify.register(modularapiPlugin, {
     kysely,
     cors: {
-      origin: [`https://${hostname}`]
+      origin: [`https://${hostname}`, `https://localhost:3001`]
     },
     trpc: {
       createRouter,
@@ -165,12 +269,26 @@ export default async function (fastify: FastifyInstance) {
       )?.split(','),
       TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
       SASS_VARIABLES: sassVariables,
-      UNIT_OF_MASS: env.read('UNIT_OF_MASS') || env.read('VITE_UNIT_OF_MASS')
+      UNIT_OF_MASS: env.read('UNIT_OF_MASS') || env.read('VITE_UNIT_OF_MASS'),
+      CURRENCY: env.read('CURRENCY') || env.read('VITE_CURRENCY'),
+      INTEGRATIONS: {
+        slimfact: {
+          hostname: slimfactHostname
+        }
+      },
+      SUPPORT_EMAIL: env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL')
     })
   })
 
-  fastify.register(appSsrPlugin, {
+  await fastify.register(appSsrPlugin, {
     host,
     onRendered: appOnRendered
+  })
+
+  const boss = await initialize({ fastify })
+  fastify.decorate('pg-boss', boss)
+
+  fastify.addHook('onClose', async () => {
+    await boss.stop()
   })
 }

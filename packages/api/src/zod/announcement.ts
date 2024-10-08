@@ -3,7 +3,8 @@ import * as z from 'zod'
 export enum ANNOUNCEMENT_TYPE {
   GENERAL = 'general',
   IMPORTANT = 'important',
-  PRIORITY = 'priority'
+  PRIORITY = 'priority',
+  URGENT = 'urgent'
 }
 
 export const announcementValidation = {

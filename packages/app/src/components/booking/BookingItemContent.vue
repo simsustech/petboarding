@@ -71,66 +71,156 @@
         modelValue.services.map((service) => service.service?.name).join(', ')
       }}
     </q-item-label>
-    <q-item-label v-if="modelValue.costs?.total" class="text-bold" caption>
-      {{ configuration.CURRENCY + modelValue.costs.total.toFixed(2) }}
+    <q-item-label
+      v-if="modelValue.costs?.totalIncludingTax"
+      class="text-bold"
+      caption
+    >
+      <price
+        :model-value="modelValue.costs?.totalIncludingTax"
+        :currency="configuration.CURRENCY"
+      />
     </q-item-label>
   </q-item-section>
   <q-item-section side>
-    <div v-if="showHandleCancellationButton">
-      <q-btn
-        icon="check"
-        color="red"
-        :size="$q.screen.lt.sm ? 'sm' : 'md'"
-        @click.stop="settleCancellation(modelValue)"
-      />
-    </div>
-    <div v-if="showApprovalButtons">
-      <div class="row">
-        <q-btn
-          v-if="modelValue.status.status !== 'approved'"
-          icon="check"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          color="green"
-          @click.stop="approve(modelValue)"
-        />
-        <q-btn
-          v-if="modelValue.status.status !== 'rejected'"
-          icon="cancel"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          color="red"
-          @click.stop="reject(modelValue)"
-        />
+    <div class="row">
+      <div
+        v-if="
+          configuration.INTEGRATIONS?.slimfact.hostname &&
+          modelValue.invoiceUuid &&
+          modelValue.invoice
+        "
+        class="col-sm-auto"
+      >
+        <invoice-button :model-value="modelValue.invoice" />
+        <!-- <q-btn
+          :dense="$q.screen.lt.sm"
+          class="q-pt-none q-pb-none"
+          data-html2canvas-ignore="true"
+          :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
+          target="_blank"
+          :text-color="getInvoiceTextColor(modelValue)"
+        >
+          <div class="column">
+            <q-icon class="col-12" name="receipt" />
+            <div class="col-12 text-caption">
+              <price
+                :model-value="modelValue.invoice.totalIncludingTax || 0"
+                :currency="modelValue.invoice.currency"
+              />
+            </div>
+          </div>
+          <q-tooltip>
+            {{ lang.booking.messages.openInvoice }}
+          </q-tooltip>
+        </q-btn> -->
       </div>
-      <div class="row">
-        <q-btn
-          v-if="modelValue.status.status !== 'standby'"
-          icon="hourglass_full"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          color="yellow"
-          @click.stop="standby(modelValue)"
-        />
 
-        <q-btn
-          icon="reply"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          @click.stop="reply(modelValue)"
-        />
-      </div>
-    </div>
-    <q-item-label v-if="showEditButton">
-      <q-btn icon="edit" :size="$q.screen.lt.sm ? 'sm' : 'md'" @click.stop>
+      <q-btn
+        v-if="
+          showApprovalButtons || showEditButton || showHandleCancelationButton
+        "
+        class="col-auto"
+        icon="more_vert"
+        flat
+      >
         <q-menu>
           <q-list>
-            <q-item v-close-popup clickable @click.stop="update(modelValue)">
+            <q-item
+              v-if="
+                showApprovalButtons &&
+                modelValue.status?.status !== BOOKING_STATUS.APPROVED
+              "
+              v-close-popup
+              clickable
+              class="bg-green"
+              @click="approve(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.booking.replies.approve }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="
+                showApprovalButtons &&
+                modelValue.status?.status !== BOOKING_STATUS.REJECTED
+              "
+              v-close-popup
+              clickable
+              class="bg-red"
+              @click="reject(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.booking.replies.reject }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="
+                showApprovalButtons &&
+                modelValue.status?.status !== BOOKING_STATUS.STANDBY
+              "
+              v-close-popup
+              clickable
+              class="bg-yellow"
+              @click="standby(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.booking.replies.standby }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="showApprovalButtons"
+              v-close-popup
+              clickable
+              @click="reply(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.booking.replies.reply }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="showHandleCancelationButton"
+              v-close-popup
+              clickable
+              @click="settleCancelation(modelValue)"
+            >
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.booking.replies.settleCancelation }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              v-if="showEditButton"
+              v-close-popup
+              clickable
+              @click="update(modelValue)"
+            >
               <q-item-section>
                 <q-item-label>
                   {{ lang.edit }}
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-close-popup clickable @click.stop="cancel(modelValue)">
+
+            <q-item
+              v-if="showEditButton"
+              v-close-popup
+              class="text-red"
+              clickable
+              @click="cancel(modelValue)"
+            >
               <q-item-section>
-                <q-item-label class="text-red">
+                <q-item-label>
                   {{ lang.cancel }}
                 </q-item-label>
               </q-item-section>
@@ -138,12 +228,13 @@
           </q-list>
         </q-menu>
       </q-btn>
-    </q-item-label>
+    </div>
   </q-item-section>
 </template>
 
 <script lang="ts">
 import type { Language } from '../../lang/index.js'
+import Price from '../Price.vue'
 export default {
   name: 'BookingItemContent'
 }
@@ -181,12 +272,13 @@ import { useLang, loadLang } from '../../lang/index.js'
 import { Booking, BOOKING_STATUS } from '@petboarding/api/zod'
 import { BOOKING_ICON, BOOKING_ICON_COLOR } from '../../configuration.js'
 import { useConfiguration } from '../../configuration.js'
+import InvoiceButton from '../InvoiceButton.vue'
 export interface Props {
   modelValue: Booking
   showIcon?: boolean
   showApprovalButtons?: boolean
   showEditButton?: boolean
-  showHandleCancellationButton?: boolean
+  showHandleCancelationButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
   showHistory?: boolean
 }
@@ -258,7 +350,7 @@ const emit = defineEmits<{
     }
   ): void
   (
-    e: 'settleCancellation',
+    e: 'settleCancelation',
     {
       data,
       done
@@ -306,7 +398,8 @@ const cancel = (booking: Booking) => {
     //
   }
   $q.dialog({
-    message: lang.value.booking.messages.cancellationReason,
+    message: lang.value.booking.messages.cancelationReason,
+    cancel: true,
     prompt: {
       model: '',
       isValid: (val) => !!val,
@@ -347,8 +440,8 @@ const reply = (booking: Booking) =>
     }
   })
 
-const settleCancellation = (booking: Booking) =>
-  emit('settleCancellation', {
+const settleCancelation = (booking: Booking) =>
+  emit('settleCancelation', {
     data: booking,
     done: () => {}
   })

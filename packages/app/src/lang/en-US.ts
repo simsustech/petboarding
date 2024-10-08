@@ -25,6 +25,9 @@ const lang: Language = {
   boarding: 'Boarding',
   update: 'Update',
   page: 'Page',
+  next: 'Next',
+  previous: 'Previous',
+  delete: 'Delete',
   account: {
     title: 'Account',
     fields: {
@@ -63,7 +66,8 @@ const lang: Language = {
     errorLoading: 'An error has occured while loading the configuration.',
     periods: 'Periods',
     emailTemplates: 'Email templates',
-    openingTimes: 'Opening times'
+    openingTimes: 'Opening times',
+    integrations: 'Integrations'
   },
   customer: {
     title: 'Customer details',
@@ -170,6 +174,7 @@ const lang: Language = {
   booking: {
     title: 'Bookings',
     booking: 'Booking',
+    from: 'from',
     until: 'until',
     days: 'days',
     history: 'History',
@@ -186,10 +191,11 @@ const lang: Language = {
     status: {
       pending: 'Pending',
       approved: 'Approved',
-      cancelled: 'Cancelled',
-      cancelledoutsideperiod: 'Cancelled outside cancellation period.',
+      canceled: 'Canceled',
+      canceledoutsideperiod: 'Canceled outside cancelation period.',
       rejected: 'Rejected',
-      standby: 'Reserve list'
+      standby: 'Reserve list',
+      awaitingdownpayment: 'Awaiting down payment'
     },
     fields: {
       startDate: 'Start date',
@@ -206,7 +212,7 @@ const lang: Language = {
       addPets: 'Please add one or more pets first.',
       termsAndConditions: 'I agree to the terms and conditions.',
       viewTermsAndConditions: 'Click here to view the terms and conditions.',
-      cancellationReason:
+      cancelationReason:
         'Please provide the reason for cancelling the booking.',
       openCustomer: 'Open customer details',
       openBooking: 'Open booking',
@@ -214,25 +220,28 @@ const lang: Language = {
       isDoubleBooked: 'This booking overlaps with another booking or daycare.',
       cancelDoubleBookings:
         'Avoid unnecessary costs and cancel overlapping dates.',
-      settleCancellation:
-        'Are you sure you want to settle the cancellation of the following booking?',
+      settleCancelation:
+        'Are you sure you want to settle the cancelation of the following booking?',
       bookingModified: 'Booking has been modified.',
       changeDaycareToBooking:
         'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.',
       upcomingBookings: 'Upcoming bookings',
       otherBookings: 'Other bookings',
       overlapsWithUnavailablePeriod:
-        'Booking overlaps with an unavailable period.'
+        'Booking overlaps with an unavailable period.',
+      openInvoice: 'Open bill or invoice.',
+      invoiceSynchronized: 'Costs of bill or invoice have been synchronized.'
     },
     helpers: {
       status: {
         pending: 'Booking is waiting for approval.',
         approved: 'Booking has been approved.',
-        cancelled: 'Booking has been cancelled.',
-        cancelledoutsideperiod:
-          'Booking has been cancelled outside cancellation period.',
+        canceled: 'Booking has been canceled.',
+        canceledoutsideperiod:
+          'Booking has been canceled outside cancelation period.',
         rejected: 'Booking has been rejected.',
-        standby: 'Your booking is placed on the reserve list.'
+        standby: 'Your booking is placed on the reserve list.',
+        awaitingdownpayment: 'Awaiting the down payment'
       }
     },
     replies: {
@@ -240,10 +249,11 @@ const lang: Language = {
       reject: 'Reject booking',
       standby: 'Place booking on reserve list',
       reply: 'Reply to booking',
-      cancel: 'Cancel booking'
+      cancel: 'Cancel booking',
+      settleCancelation: 'Settle cancelation'
     },
     validations: {
-      fieldRequired: 'Veld is vereist',
+      fieldRequired: 'Field is required',
       termsAndConditions: 'You need to acccept the terms and conditions.'
     }
   },
@@ -281,8 +291,7 @@ const lang: Language = {
     messages: {
       addPets: 'Please add one or more pets first.',
       cancelSelected: 'Cancel selected dates',
-      verifyCancellation:
-        'Are you sure you want to cancel the following dates?',
+      verifyCancelation: 'Are you sure you want to cancel the following dates?',
       verifyApproval: 'Are you sure you want to approve the following dates?',
       verifyRejection: 'Are you sure you want to reject the following dates?',
       verifyStandby:
@@ -299,7 +308,7 @@ const lang: Language = {
     status: {
       pending: 'Pending',
       approved: 'Approved',
-      cancelled: 'Cancelled',
+      canceled: 'Canceled',
       rejected: 'Rejected',
       standby: 'Reserve list'
     }
@@ -364,7 +373,8 @@ const lang: Language = {
     type: {
       general: 'General',
       important: 'Important',
-      priority: 'Priority'
+      priority: 'Priority',
+      urgent: 'Urgent'
     },
     messages: {
       verifyDeletion:
@@ -386,6 +396,70 @@ const lang: Language = {
     },
     messages: {
       verifyDeletion: 'Are you sure you want to delete the following category?'
+    }
+  },
+  categoryPrice: {
+    fields: {
+      date: 'Date',
+      listPrice: 'Price'
+    },
+    labels: {
+      addPrice: 'Add price'
+    },
+    messages: {
+      verifyDeletion:
+        'Are you sure you want to delete the following category price?'
+    }
+  },
+  information: {
+    messages: {
+      termsAndConditions:
+        'Make sure you have read and understand the terms and conditions.',
+      openingTimes:
+        'Please arrive at the time as is shown in your booking. If you are unable to make it, let us know in time.',
+      petHealth:
+        'Make sure your pet is in good health, dewormed and treated for fleas and has all mandatory vaccinations.',
+      vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`
+    }
+  },
+  daycareSubscription: {
+    title: 'Daycare subscriptions',
+    fields: {
+      description: 'Omschrijving',
+      numberOfDays: 'Aantal dagen',
+      validityPeriod: 'Validity period',
+      listPrice: 'Prijs'
+    },
+    labels: {
+      years: 'Years',
+      months: 'Months',
+      days: 'Days'
+    },
+    messages: {
+      verifyDeletion:
+        'Are you sure you want to delete the following daycare subscription?',
+      addDaycareSubscriptionNotification:
+        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.'
+    }
+  },
+  customerDaycareSubscription: {
+    title: 'Daycare subscriptions',
+    fields: {
+      effectiveDate: 'Effective date',
+      validityPeriod: 'Validity period'
+    },
+    labels: {
+      overview: 'Overview',
+      purchase: 'Purchase',
+      purchaseSubscription: 'Purchase subscription',
+      checkout: 'Checkout'
+    },
+    messages: {
+      daycareSubscriptionRequired:
+        'You need to purchase a daycare subscription before you can add daycare dates.',
+      remainingDays: 'Remaining days',
+      noRemainingDays:
+        'You have used all days. Submit the selected dates and purchase a new daycare subscription.'
     }
   },
   errors: {

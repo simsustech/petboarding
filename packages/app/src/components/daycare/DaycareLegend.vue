@@ -6,8 +6,8 @@
       }}</a>
     </div>
     <div class="col-12 col-sm">
-      <q-badge rounded :color="DAYCARE_DATE_COLORS.cancelled" /><a>{{
-        lang.daycare.status.cancelled
+      <q-badge rounded :color="DAYCARE_DATE_COLORS.canceled" /><a>{{
+        lang.daycare.status.canceled
       }}</a>
     </div>
     <div class="col-12 col-sm">

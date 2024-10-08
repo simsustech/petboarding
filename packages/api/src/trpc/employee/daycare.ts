@@ -6,7 +6,13 @@ import {
   createOrUpdateDaycareDates,
   findDaycareDates
 } from '../../repositories/daycare.js'
-import { DAYCARE_DATE_STATUS, daycareDate } from '../../zod/index.js'
+import {
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  DAYCARE_DATE_STATUS,
+  daycareDate
+} from '../../zod/index.js'
+import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
+import { findCustomerDaycareSubscriptions } from 'src/repositories/customerDaycareSubscription.js'
 
 export const employeeDaycareValidation = daycareDate
   .omit({
@@ -53,9 +59,40 @@ export const employeeDaycareRoutes = ({
     .input(employeeDaycareValidation.array())
     .mutation(async ({ input }) => {
       try {
-        await createOrUpdateDaycareDates(input)
+        const daycareSubscriptions = await findDaycareSubscriptions({
+          criteria: {}
+        })
+        await createOrUpdateDaycareDates(input, {
+          useCustomerDaycareSubscription: !!daycareSubscriptions.length,
+          ignoreCustomerDaycareSubscriptionErrors: true
+        })
       } catch (e) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
+    }),
+  getCustomerDaycareSubscriptions: procedure
+    .input(
+      z.object({
+        from: z.string(),
+        until: z.string(),
+        status: z.nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
+        customerId: z.number().optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const { customerId, status, from, until } = input
+      if (from && until) {
+        const customerDaycareSubscriptions =
+          await findCustomerDaycareSubscriptions({
+            criteria: {
+              customerId,
+              status,
+              effectiveDate: until,
+              expirationDate: from
+            }
+          })
+        return customerDaycareSubscriptions
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
     })
 })

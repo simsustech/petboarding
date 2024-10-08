@@ -11,6 +11,8 @@ import {
   findBookingService,
   updateBooking
 } from '../../repositories/booking.js'
+import { findCustomer } from 'src/repositories/customer.js'
+import { createOrUpdateSlimfactInvoice } from '../admin/bookings.js'
 
 export const employeeBookingValidation = booking
   .omit({
@@ -33,10 +35,10 @@ export const employeeUpdateBookingValidation = employeeBookingValidation.omit({
 })
 
 export const employeeBookingRoutes = ({
-  // fastify,
+  fastify,
   procedure
 }: {
-  fastify?: FastifyInstance
+  fastify: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
   createBooking: procedure
@@ -65,7 +67,8 @@ export const employeeBookingRoutes = ({
         const booking = findBooking({
           criteria: {
             id
-          }
+          },
+          fastify
         })
 
         return booking
@@ -80,7 +83,8 @@ export const employeeBookingRoutes = ({
         const bookings = findBookings({
           criteria: {
             ids
-          }
+          },
+          fastify
         })
 
         return bookings
@@ -105,7 +109,8 @@ export const employeeBookingRoutes = ({
             until,
             status,
             customerId
-          }
+          },
+          fastify
         })
         return bookings
       }
@@ -148,10 +153,10 @@ export const employeeBookingRoutes = ({
             },
             petIds: input.petIds,
             serviceIds: input.serviceIds!
-          },
-          {
-            skipStatusUpdate: true
           }
+          // {
+          //   skipStatusUpdate: true
+          // }
         )
         return booking
       }
@@ -173,6 +178,43 @@ export const employeeBookingRoutes = ({
           return true
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
+    }),
+  updateBookingInvoice: procedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .mutation(async ({ input }) => {
+      if (fastify.slimfact) {
+        const { id } = input
+        const booking = await findBooking({
+          criteria: {
+            id
+          }
+        })
+
+        const customer = await findCustomer({
+          criteria: {
+            id: booking?.customerId
+          }
+        })
+
+        if (booking?.costs && customer) {
+          const result = await createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+          if (!result.success) {
+            fastify.log.debug(result.errorMessage)
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: result.errorMessage
+            })
+          }
+        }
       }
     })
 })

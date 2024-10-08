@@ -9,7 +9,11 @@ import type {
   Selectable,
   Updateable
 } from 'kysely'
-import { DAYCARE_DATE_STATUS } from '../zod/index.js'
+import {
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  DAYCARE_DATE_STATUS
+} from '../zod/index.js'
+import { findCustomerDaycareSubscription } from './customerDaycareSubscription.js'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>
@@ -20,7 +24,7 @@ const defaultSelect = [
   'status',
   'comments',
   'customerId',
-  'daycareSubscriptionId'
+  'customerDaycareSubscriptionId'
 ] as (keyof DaycareDate)[]
 
 function withPets(eb: ExpressionBuilder<Database, 'daycareDates'>) {
@@ -73,6 +77,27 @@ function withCustomer(eb: ExpressionBuilder<Database, 'daycareDates'>) {
   ).as('customer')
 }
 
+function withCustomerDaycareSubscription(
+  eb: ExpressionBuilder<Database, 'daycareDates'>
+) {
+  return jsonObjectFrom(
+    eb
+      .selectFrom('customerDaycareSubscriptions')
+      .select([
+        'customerDaycareSubscriptions.id',
+        'customerDaycareSubscriptions.effectiveDate',
+        'customerDaycareSubscriptions.expirationDate',
+        'customerDaycareSubscriptions.status',
+        'customerDaycareSubscriptions.invoiceUuid'
+      ])
+      .whereRef(
+        'daycareDates.customerDaycareSubscriptionId',
+        '=',
+        'customerDaycareSubscriptions.id'
+      )
+  ).as('customerDaycareSubscription')
+}
+
 function find({
   criteria,
   select
@@ -111,7 +136,9 @@ function find({
   if (criteria.dates && criteria.dates.length) {
     query = query.where('date', 'in', criteria.dates)
   }
-  return query.select(select).select([withCustomer, withPets])
+  return query
+    .select(select)
+    .select([withCustomer, withPets, withCustomerDaycareSubscription])
 }
 
 export async function findDaycareDate({
@@ -182,11 +209,37 @@ export async function findDaycareDates({
 
 export async function createDaycareDate({
   daycareDate,
-  petIds
+  petIds,
+  options
 }: {
   daycareDate: NewDaycareDate
   petIds: number[]
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
+  }
 }) {
+  if (options?.useCustomerDaycareSubscription) {
+    const customerDaycareSubscription = await findCustomerDaycareSubscription({
+      criteria: {
+        customerId: daycareDate.customerId,
+        date: daycareDate.date,
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+      }
+    })
+    if (
+      customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining &&
+      customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
+    ) {
+      daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
+    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
+      throw new Error(
+        `No valid customer daycare subscription available for date ${daycareDate.date}`
+      )
+    }
+  }
+
   const newDaycareDate = await db
     .insertInto('daycareDates')
     .values(daycareDate)
@@ -213,8 +266,39 @@ export async function updateDaycareDate(
   updateWith: {
     daycareDate: DaycareDateUpdate
     petIds?: number[]
+  },
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
   }
 ) {
+  if (
+    options?.useCustomerDaycareSubscription &&
+    updateWith.petIds &&
+    !updateWith.daycareDate.customerDaycareSubscriptionId
+  ) {
+    const customerDaycareSubscription = await findCustomerDaycareSubscription({
+      criteria: {
+        customerId: criteria.customerId,
+        date: criteria.date,
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+      }
+    })
+    if (
+      customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining !== null &&
+      customerDaycareSubscription.numberOfDaysRemaining >=
+        updateWith.petIds.length
+    ) {
+      updateWith.daycareDate.customerDaycareSubscriptionId =
+        customerDaycareSubscription.id
+    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
+      throw new Error(
+        `No valid customer daycare subscription available for date ${criteria.date}`
+      )
+    }
+  }
+
   let query = db.updateTable('daycareDates')
 
   if (criteria.ids && !criteria.ids.length) {
@@ -276,7 +360,11 @@ export async function getDaycareDateCount({
 }
 
 export async function createOrUpdateDaycareDates(
-  daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[]
+  daycareDates: (Omit<NewDaycareDate, 'status'> & { petIds: number[] })[],
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
+  }
 ) {
   const customerId = daycareDates[0].customerId
   if (customerId) {
@@ -297,7 +385,7 @@ export async function createOrUpdateDaycareDates(
     const updatedDaycareDates = currentDaycareDates
       .filter((daycareDate) =>
         [
-          DAYCARE_DATE_STATUS.CANCELLED,
+          DAYCARE_DATE_STATUS.CANCELED,
           DAYCARE_DATE_STATUS.APPROVED,
           DAYCARE_DATE_STATUS.PENDING
         ].includes(daycareDate.status)
@@ -320,7 +408,8 @@ export async function createOrUpdateDaycareDates(
             customerId,
             status: DAYCARE_DATE_STATUS.PENDING
           },
-          petIds: daycareDate.petIds
+          petIds: daycareDate.petIds,
+          options
         })
       ),
       ...updatedDaycareDates.map((daycareDate) =>
@@ -334,7 +423,9 @@ export async function createOrUpdateDaycareDates(
               date: daycareDate.date,
               comments: daycareDate.comments,
               customerId,
-              status: DAYCARE_DATE_STATUS.PENDING
+              status: DAYCARE_DATE_STATUS.PENDING,
+              customerDaycareSubscriptionId:
+                daycareDate.customerDaycareSubscriptionId
             },
             petIds: daycareDate.petIds
           }

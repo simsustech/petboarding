@@ -125,7 +125,7 @@ const createDaycareDate = ({
             DAYCARE_DATE_STATUS.REJECTED,
             DAYCARE_DATE_STATUS.PENDING,
             DAYCARE_DATE_STATUS.STANDBY,
-            DAYCARE_DATE_STATUS.CANCELLED
+            DAYCARE_DATE_STATUS.CANCELED
           ])
         : DAYCARE_DATE_STATUS.APPROVED,
     id: daycareDateId
@@ -192,7 +192,7 @@ export default () => {
                 ? faker.helpers.arrayElement([
                     'rejected',
                     'standby',
-                    'cancelled'
+                    'canceled'
                   ])
                 : 'approved'
           })

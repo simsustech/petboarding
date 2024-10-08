@@ -10,8 +10,9 @@ export enum BOOKING_STATUS {
   APPROVED = 'approved',
   REJECTED = 'rejected',
   STANDBY = 'standby',
-  CANCELLED = 'cancelled',
-  CANCELLED_OUTSIDE_PERIOD = 'cancelledoutsideperiod'
+  CANCELED = 'canceled',
+  CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod',
+  AWAITING_DOWNPAYMENT = 'awaitingdownpayment'
 }
 
 export enum OPENING_TIME_TYPE {
@@ -24,7 +25,7 @@ export enum DAYCARE_DATE_STATUS {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
-  CANCELLED = 'cancelled',
+  CANCELED = 'canceled',
   STANDBY = 'standby'
 }
 
@@ -83,6 +84,7 @@ export interface Bookings {
   endTimeId: number
   comments: string | null
   customerId: number
+  invoiceUuid: string | null
   createdAt: Generated<string>
 }
 
@@ -124,7 +126,14 @@ export interface Categories {
   name: string
   price: number | null
   order: number | null
-  productId: string | null
+  createdAt: Generated<string>
+}
+
+export interface CategoryPrices {
+  id: Generated<number>
+  categoryId: number
+  date: string
+  listPrice: number
   createdAt: Generated<string>
 }
 
@@ -140,7 +149,7 @@ export interface ContactPeople {
 export interface Customers {
   id: Generated<number>
   rating: number | null
-  gender: string
+  gender: 'male' | 'female' | 'other'
   firstName: string
   lastName: string
   address: string
@@ -165,19 +174,38 @@ export interface DaycareDates {
   date: string
   comments: string | null
   status: DAYCARE_DATE_STATUS
-  customerId: number | null
-  daycareSubscriptionId: number | null
+  customerId: number
+  customerDaycareSubscriptionId: number | null
   createdAt: Generated<string>
+}
+
+export enum CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS {
+  OPEN = 'open',
+  PAID = 'paid',
+  CANCELED = 'canceled'
 }
 
 export interface DaycareSubscriptions {
   id: Generated<number>
-  name: string
-  period: string | null
-  amount: number
-  productId: number | null
-  customerId: number | null
+  description: string
+  numberOfDays: number
+  validityPeriod: JSONColumnType<{
+    years: number
+    months: number
+    days: number
+  }>
+  listPrice: number
   createdAt: Generated<string>
+}
+
+export interface CustomerDaycareSubscriptions {
+  id: Generated<number>
+  effectiveDate: string
+  expirationDate: string
+  status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+  invoiceUuid: string | null
+  daycareSubscriptionId: number
+  customerId: number
 }
 
 export interface EmailTemplates {
@@ -293,11 +321,13 @@ export interface DB {
   bookingStatus: BookingStatus
   buildings: Buildings
   categories: Categories
+  categoryPrices: CategoryPrices
   contactPeople: ContactPeople
   customers: Customers
   daycareDatePetKennel: DaycareDatePetKennel
   daycareDates: DaycareDates
   daycareSubscriptions: DaycareSubscriptions
+  customerDaycareSubscriptions: CustomerDaycareSubscriptions
   emailTemplates: EmailTemplates
   kennels: Kennels
   openingTimes: OpeningTimes

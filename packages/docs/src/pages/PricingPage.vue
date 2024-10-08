@@ -139,7 +139,7 @@ const options = ref({
         },
         {
           message:
-            'Custom strategies for calculating the booking- and cancellation costs.'
+            'Custom strategies for calculating the booking- and cancelation costs.'
         },
         {
           message: 'Custom email templates for handling bookings.'

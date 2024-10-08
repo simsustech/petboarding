@@ -10,7 +10,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       },
       ssr: {
         fastify: {
-          bodyLimit: 10e6
+          bodyLimit: 10e6,
+          maxParamLength: 5000
         },
         serverModules: [
           '@petboarding/app',
@@ -23,6 +24,7 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           '@vitrify/plugin-env',
           '@modular-api/fastify-oidc',
           '@modular-api/oidc-interactions',
+          '@modular-api/fastify-checkout',
           'bcrypt',
           'kysely',
           'jose',
@@ -31,10 +33,11 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           'otplib',
           'date-holidays',
           'pg',
-          'sharp'
+          'sharp',
+          'compress-tag'
         ]
       },
-      manualChunks: ['api.config', 'zod', 'date-fns']
+      manualChunks: ['api.config', 'zod', 'date-fns', 'types']
     }
   }
   if (mode === 'development') {

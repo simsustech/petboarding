@@ -14,8 +14,20 @@ const seed = async () => {
     {
       species: 'dog',
       order: 1,
-      name: 'Small',
-      price: 1000
+      name: 'Small'
+      // price: 1000
+    }
+  ]
+  const categoryPrices = [
+    {
+      categoryId: 1,
+      date: '2024-01-01',
+      listPrice: 1000
+    },
+    {
+      categoryId: 1,
+      date: '2025-01-01',
+      listPrice: 1500
     }
   ]
   const openingTimes = [
@@ -75,8 +87,8 @@ const seed = async () => {
   const emailTemplates = [
     {
       name: 'cancelBooking',
-      subject: 'Your booking has been cancelled.',
-      body: c`<h4>Your booking has been cancelled.</h4>
+      subject: 'Your booking has been canceled.',
+      body: c`<h4>Your booking has been canceled.</h4>
       <p>
           Dear {{customer.firstName}} {{customer.lastName}},
       </p>
@@ -85,9 +97,9 @@ const seed = async () => {
           <b>{{startDate}} {{startTime}}</b> until
           <b>{{endDate}} {{endTime}}</b> for your pets
           <b>{{pets}}</b>
-          has been cancelled with the following reason:
+          has been canceled with the following reason:
           {{reason}}.
-          Please note that a cancellation fee may apply.
+          Please note that a cancelation fee may apply.
       </p>
       <p>
           Kind regards
@@ -95,11 +107,23 @@ const seed = async () => {
     },
     {
       name: 'approveBooking',
-      subject: 'Your booking has been approved.',
+      subject: c`Your booking has been approved\\{{#if requiredDownPaymentAmount}} (down payment required!)\\{{/if}}.`,
       body: c`<h4>Thanks for your booking.</h4>
       <p>
           Dear {{customer.firstName}} {{customer.lastName}},
       </p>
+      \\{{#if requiredDownPaymentAmount}}
+        <p style="color:red;">
+          This booking requires a down payment. Open the bill with the link below to pay the down payment.
+          <br />
+          <b>If you do not pay the down payment within 5 days your booking will automatically be canceled.</b>
+        </p>
+      \\{{/if}}
+      \\{{#if invoiceUrl}}
+        <p>
+        <a href="\\{{invoiceUrl}}">Click here to view and pay the bill for this booking.</a>
+        </p>
+      \\{{/if}}
       <p>
           This email is to inform you that the booking from
           <b>{{startDate}} {{startTime}}</b> until
@@ -155,6 +179,7 @@ const seed = async () => {
 
   // await db.insertInto('announcements').values(announcements).execute()
   await db.insertInto('categories').values(categories).execute()
+  await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
   await db.insertInto('emailTemplates').values(emailTemplates).execute()

@@ -1,17 +1,25 @@
-import type { Category } from './zod/category.js'
+import type { ParsedCategory } from './zod/category.js'
 import type { BookingPets, BookingService } from './repositories/booking.js'
-import type { BookingCostsItem } from './models/Booking.js'
 import type { BOOKING_STATUS } from './zod/booking.js'
 import type {
   eachDayOfInterval,
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
+  isAfter,
   isWithinInterval,
   parseISO,
-  subMonths
+  subMonths,
+  subDays,
+  differenceInDays
 } from 'date-fns'
 import type Holidays from 'date-holidays'
+import {
+  type RawInvoiceDiscount,
+  type RawInvoiceLine,
+  type RawInvoiceSurcharge,
+  computeInvoiceCosts
+} from '@modular-api/fastify-checkout'
 
 export type BookingCostsHandler = (params: {
   period: {
@@ -20,7 +28,7 @@ export type BookingCostsHandler = (params: {
     days: number
   }
   pets: BookingPets
-  categories: Category[]
+  categories: ParsedCategory[]
   services: BookingService[]
   withServices?: boolean
   dateFns: {
@@ -33,12 +41,15 @@ export type BookingCostsHandler = (params: {
     subMonths?: typeof subMonths
   }
   dateHolidays?: typeof Holidays
+  computeInvoiceCosts?: typeof computeInvoiceCosts
 }) => {
-  items: BookingCostsItem[]
-  total: number
+  lines: RawInvoiceLine[]
+  discounts: RawInvoiceDiscount[]
+  surcharges: RawInvoiceSurcharge[]
+  requiredDownPaymentAmount?: number
 }
 
-export type BookingCancellationHandler = (params: {
+export type BookingCancelationHandler = (params: {
   period: {
     startDate: string
     endDate: string
@@ -48,13 +59,23 @@ export type BookingCancellationHandler = (params: {
     getOverlappingDaysInIntervals?: getOverlappingDaysInIntervals
     parse: parse
     isBefore: isBefore
+    isAfter: isAfter
     isWithinInterval: isWithinInterval
     parseISO: parseISO
     subMonths: subMonths
+    subDays: subDays
+    differenceInDays: differenceInDays
   }
+  booking: Booking
+  BOOKING_STATUS: typeof BOOKING_STATUS
 }) => {
   status: BOOKING_STATUS
-  cancellationCosts: number
+  cancelationCosts?: {
+    lines: RawInvoiceLine[]
+    discounts?: RawInvoiceDiscount[]
+    surcharges?: RawInvoiceSurcharge[]
+    requiredDownPaymentAmount?: number
+  }
 }
 
 export interface Configuration {

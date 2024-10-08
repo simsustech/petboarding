@@ -36,7 +36,7 @@
         :label="lang.category.fields.order"
       />
 
-      <q-input
+      <!-- <q-input
         v-model.number="modelValue.price"
         class="col-12"
         :label="lang.category.fields.price"
@@ -45,7 +45,7 @@
         fill-mask="0"
         unmasked-value
         reverse-fill-mask
-      />
+      /> -->
     </div>
   </q-form>
 </template>
@@ -62,7 +62,7 @@ import { extend, QForm } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { Category } from '@petboarding/api/zod'
-import { useConfiguration } from '../../configuration.js'
+// import { useConfiguration } from '../../configuration.js'
 import PetSpeciesSelect from '../pet/PetSpeciesSelect.vue'
 import { FormInput } from '@simsustech/quasar-components/form'
 import type { QFormProps, QInputProps } from 'quasar'
@@ -98,7 +98,7 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
-const configuration = useConfiguration()
+// const configuration = useConfiguration()
 
 const formRef = ref<QForm>()
 

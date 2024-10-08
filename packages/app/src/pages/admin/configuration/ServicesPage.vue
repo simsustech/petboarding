@@ -86,9 +86,9 @@ const openUpdateServiceDialog = ({ data }: { data: Service }) => {
 const update: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
-  const afterUpdate = (success?: boolean) => {
+  const afterUpdate = async (success?: boolean) => {
     done(success)
-    execute()
+    await execute()
   }
   updateServiceFormRef.value?.functions.submit({ done: afterUpdate })
 }

@@ -41,6 +41,10 @@ const options = [
   {
     label: lang.value.announcement.type[ANNOUNCEMENT_TYPE.PRIORITY],
     value: ANNOUNCEMENT_TYPE.PRIORITY
+  },
+  {
+    label: lang.value.announcement.type[ANNOUNCEMENT_TYPE.URGENT],
+    value: ANNOUNCEMENT_TYPE.URGENT
   }
 ]
 </script>

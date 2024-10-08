@@ -5,6 +5,7 @@ import { userBookingRoutes } from './bookings.js'
 import { userDaycareRoutes } from './daycare.js'
 import { t } from '../index.js'
 import type { FastifyInstance } from 'fastify'
+import { userCustomerDaycareSubscriptionRoutes } from './customerDaycareSubscriptions.js'
 
 export const userRoutes = ({
   fastify,
@@ -17,5 +18,6 @@ export const userRoutes = ({
   ...userContactPeopleRoutes({ fastify, procedure }),
   ...userPetRoutes({ fastify, procedure }),
   ...userBookingRoutes({ fastify, procedure }),
-  ...userDaycareRoutes({ fastify, procedure })
+  ...userDaycareRoutes({ fastify, procedure }),
+  ...userCustomerDaycareSubscriptionRoutes({ fastify, procedure })
 })

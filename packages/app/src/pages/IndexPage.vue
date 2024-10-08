@@ -78,7 +78,16 @@
         </q-styled-card>
       </div>
       <div class="col-md-4">
-        <availability-card v-if="periods" :periods="periods" />
+        <q-banner rounded>
+          <template v-slot:avatar>
+            <q-icon name="info" color="info" />
+          </template>
+          <router-link to="/availability">{{
+            lang.availability.title
+          }}</router-link>
+        </q-banner>
+
+        <!-- <availability-card v-if="periods" :periods="periods" /> -->
       </div>
     </div>
     <div class="row justify-center q-gutter-md"></div>
@@ -100,11 +109,13 @@ import { useConfiguration } from '../configuration.js'
 import { useLang } from '../lang/index.js'
 import { createUseTrpc } from '../trpc.js'
 import { computed, onMounted, ref } from 'vue'
-import AvailabilityCard from '../components/AvailabilityCard.vue'
 import petboardingLogo from '../assets/logo.svg'
+import { useQuasar } from 'quasar'
+
 const { useQuery } = await createUseTrpc()
 const configuration = useConfiguration()
 const lang = useLang()
+const $q = useQuasar()
 
 const title = computed(() => configuration.value.TITLE)
 const logo = ref(petboardingLogo)
@@ -113,13 +124,25 @@ const login = () => {
 }
 
 const { data: announcements, execute } = useQuery('public.getAnnouncements')
-const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
+const { data: urgentAnnouncements, execute: executeUrgentAnnouncements } =
+  useQuery('public.getUrgentAnnouncements')
+
+// const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
 
 onMounted(async () => {
-  fetch('./logo.svg').then(() => {
+  await fetch('./logo.svg').then(() => {
     logo.value = './logo.svg'
   })
-  execute()
-  executePeriods()
+  await execute()
+  await executeUrgentAnnouncements()
+  // executePeriods()
+  if (urgentAnnouncements.value) {
+    for (const urgentAnnouncement of urgentAnnouncements.value) {
+      $q.dialog({
+        title: urgentAnnouncement.title,
+        message: urgentAnnouncement.message
+      })
+    }
+  }
 })
 </script>
