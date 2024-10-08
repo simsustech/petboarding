@@ -1,4 +1,4 @@
-import { jsonObjectFrom } from 'kysely/helpers/postgres'
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
@@ -182,6 +182,22 @@ function withNumberOfDaysRemaining(
     .as('numberOfDaysRemaining')
 }
 
+function withDaycareDates(
+  eb: ExpressionBuilder<Database, 'customerDaycareSubscriptions'>
+) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('daycareDates')
+      .whereRef(
+        'daycareDates.customerDaycareSubscriptionId',
+        '=',
+        'customerDaycareSubscriptions.id'
+      )
+      .orderBy('daycareDates.date asc')
+      .select('daycareDates.date')
+  ).as('daycareDates')
+}
+
 function find({
   criteria,
   select
@@ -251,7 +267,8 @@ function find({
       withDaycareSubscription,
       withNumberOfDaysUsed,
       withNumberOfDaysRemaining,
-      withIsActive
+      withIsActive,
+      withDaycareDates
     ])
 }
 
@@ -349,7 +366,7 @@ export async function setCustomerDaycareSubscriptionStatus({
   id: number
   status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 }) {
-  const customerDaycareSubscription = await updateCustomerDaycareSubscription(
+  await updateCustomerDaycareSubscription(
     {
       id
     },
@@ -357,13 +374,18 @@ export async function setCustomerDaycareSubscriptionStatus({
       status
     }
   )
+  const customerDaycareSubscription = await findCustomerDaycareSubscription({
+    criteria: {
+      id
+    }
+  })
   if (
     customerDaycareSubscription &&
     status === CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
   ) {
     // Add existing daycare dates without subscription
-    await db
-      .updateTable('daycareDates')
+    const existingDaycareDateIds = await db
+      .selectFrom('daycareDates')
       .where(
         'daycareDates.customerId',
         '=',
@@ -387,6 +409,15 @@ export async function setCustomerDaycareSubscriptionStatus({
           web('daycareDates.status', '=', DAYCARE_DATE_STATUS.STANDBY)
         ])
       )
+      .orderBy('daycareDates.date asc')
+      .limit(customerDaycareSubscription.daycareSubscription?.numberOfDays || 0)
+      .select('id')
+      .execute()
+      .then((result) => result.map(({ id }) => id))
+
+    await db
+      .updateTable('daycareDates')
+      .where('daycareDates.id', 'in', existingDaycareDateIds)
       .set({
         customerDaycareSubscriptionId: customerDaycareSubscription.id
       })

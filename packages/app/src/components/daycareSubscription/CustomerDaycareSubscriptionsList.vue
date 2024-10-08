@@ -9,43 +9,57 @@
         </q-item-section>
       </template>
 
-      <q-item
+      <q-expansion-item
         v-for="(customerDaycareSubscription, index) in modelValue"
         :key="index"
         :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
+        :content-inset-level="1"
       >
-        <q-item-section avatar>
-          <q-icon
-            v-if="
-              customerDaycareSubscription.status ===
-              CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-            "
-            name="paid"
-            color="green"
-          />
-        </q-item-section>
-        <q-item-section>
-          <q-item-label overline>
-            {{
-              `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
-            }}
-          </q-item-label>
-          <q-item-label>
-            {{ customerDaycareSubscription.daycareSubscription?.description }}
-          </q-item-label>
-          <q-item-label caption>
-            {{
-              `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
-            }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <invoice-button
-            v-if="customerDaycareSubscription.invoice"
-            :model-value="customerDaycareSubscription.invoice"
-          />
-        </q-item-section>
-      </q-item>
+        <template #header>
+          <q-item-section avatar>
+            <q-icon
+              v-if="
+                customerDaycareSubscription.status ===
+                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+              "
+              name="paid"
+              color="green"
+            />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label overline>
+              {{
+                `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
+              }}
+            </q-item-label>
+            <q-item-label>
+              {{ customerDaycareSubscription.daycareSubscription?.description }}
+            </q-item-label>
+            <q-item-label caption>
+              {{
+                `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
+              }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <invoice-button
+              v-if="customerDaycareSubscription.invoice"
+              :model-value="customerDaycareSubscription.invoice"
+            />
+          </q-item-section>
+        </template>
+        <q-item>
+          <q-item-section>
+            <q-item-label>
+              {{
+                customerDaycareSubscription.daycareDates
+                  ?.map((daycareDate) => formatDate(daycareDate.date))
+                  .join(', ')
+              }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-expansion-item>
     </q-expansion-item>
   </q-list>
 </template>
