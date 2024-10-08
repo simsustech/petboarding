@@ -148,7 +148,9 @@ const maxNumberOfSelectedDates = computed(() => {
 
 const remainingDays = computed(() => {
   if (maxNumberOfSelectedDates.value) {
-    return maxNumberOfSelectedDates.value - selectedDates.value.length
+    const remainingDays =
+      maxNumberOfSelectedDates.value - selectedDates.value.length
+    if (remainingDays > 0) return remainingDays
   }
   return 0
 })
