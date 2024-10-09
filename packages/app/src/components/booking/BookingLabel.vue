@@ -57,8 +57,10 @@
       </div>
     </div>
     <div class="row">
-      <a v-if="modelValue.costs?.total">
-        {{ `${configuration.CURRENCY}${modelValue.costs.total.toFixed(2)}` }}
+      <a v-if="modelValue.costs?.totalIncludingTax">
+        {{
+          `${currencySymbols[configuration.CURRENCY]}${(modelValue.costs.totalIncludingTax / 100).toFixed(2)}`
+        }}
       </a>
     </div>
   </div>
@@ -86,6 +88,11 @@ defineProps<Props>()
 const lang = useLang()
 const $q = useQuasar()
 const configuration = useConfiguration()
+
+const currencySymbols = ref({
+  EUR: '€',
+  USD: '$'
+})
 
 const dateFormatter = (date: Date, locale: string) =>
   new Intl.DateTimeFormat(locale, {
