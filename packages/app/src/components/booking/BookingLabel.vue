@@ -75,15 +75,17 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { Booking, Pet, Service } from '@petboarding/api/zod'
+import { Pet } from '@petboarding/api/zod'
+import type { ParsedBooking, BookingService } from '@petboarding/api'
 import { useQuasar } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 
 export interface Props {
-  modelValue: Booking
+  modelValue: ParsedBooking
   width: number
   height: number
 }
+
 defineProps<Props>()
 const lang = useLang()
 const $q = useQuasar()
@@ -109,7 +111,7 @@ const getPetNames = (pets?: Pet[]) => {
   return ''
 }
 
-const getServiceNames = (services?: { service: Service }[]) => {
+const getServiceNames = (services?: BookingService[]) => {
   if (services)
     return services.map((service) => service.service?.name).join(', ')
   return ''
