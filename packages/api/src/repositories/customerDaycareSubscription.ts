@@ -415,13 +415,15 @@ export async function setCustomerDaycareSubscriptionStatus({
       .execute()
       .then((result) => result.map(({ id }) => id))
 
-    await db
-      .updateTable('daycareDates')
-      .where('daycareDates.id', 'in', existingDaycareDateIds)
-      .set({
-        customerDaycareSubscriptionId: customerDaycareSubscription.id
-      })
-      .execute()
+    if (existingDaycareDateIds.length) {
+      await db
+        .updateTable('daycareDates')
+        .where('daycareDates.id', 'in', existingDaycareDateIds)
+        .set({
+          customerDaycareSubscriptionId: customerDaycareSubscription.id
+        })
+        .execute()
+    }
   }
   return customerDaycareSubscription
 }
