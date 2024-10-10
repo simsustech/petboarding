@@ -85,11 +85,13 @@ const lang = useLang()
 const icon = {
   general: 'info',
   important: 'warning',
-  priority: 'priority_high'
+  priority: 'priority_high',
+  urgent: 'crisis_alert'
 }
 const iconColor = {
   general: 'blue',
   important: 'yellow',
-  priority: 'red'
+  priority: 'red',
+  urgent: 'red'
 }
 </script>
