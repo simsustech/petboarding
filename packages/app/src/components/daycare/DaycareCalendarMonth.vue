@@ -40,9 +40,10 @@
               :disabled="!selectedDates"
               class="q-mb-sm q-mt-sm"
               size="md"
-              outline
+              :outline="!getButtonColor(scope.timestamp.date)"
               rounded
               :label="scope.dayLabel"
+              :color="getButtonColor(scope.timestamp.date)"
               @click="onClickDate({ scope })"
             />
           </template>
@@ -122,6 +123,8 @@ import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useQuasar } from 'quasar'
+import { DaycareDate } from '@petboarding/api/zod'
+import { DAYCARE_DATE_COLORS } from 'src/configuration.js'
 
 export interface QCalendarEvent {
   id: number
@@ -141,6 +144,7 @@ export interface Props {
   hoverable?: boolean
   onOpenPets?: unknown
   maxNumberOfSelectedDates?: number
+  currentDaycareDates?: DaycareDate[]
 }
 const props = defineProps<Props>()
 const emit = defineEmits<{
@@ -171,8 +175,13 @@ const $q = useQuasar()
 
 const calendarRef = ref<QCalendarMonth>()
 const selectedDate = ref(today())
-const { events, selectedDates, disabledWeekdays, maxNumberOfSelectedDates } =
-  toRefs(props)
+const {
+  events,
+  selectedDates,
+  disabledWeekdays,
+  maxNumberOfSelectedDates,
+  currentDaycareDates
+} = toRefs(props)
 const weekdays = ref(
   [1, 2, 3, 4, 5, 6, 0].filter((day) => !disabledWeekdays?.value?.includes(day))
 )
@@ -272,5 +281,14 @@ const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
 ) => {
   contentSize.value.width = '100%'
   contentSize.value.height = `${size.height}px`
+}
+
+const getButtonColor = (date: string) => {
+  const existingDaycareDate = currentDaycareDates.value?.find(
+    (daycareDate) => daycareDate.date === date
+  )
+  if (existingDaycareDate?.status) {
+    return DAYCARE_DATE_COLORS[existingDaycareDate.status]
+  }
 }
 </script>

@@ -24,6 +24,7 @@
     :selected-dates="selectedDates"
     :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
     :max-number-of-selected-dates="maxNumberOfSelectedDates"
+    :current-daycare-dates="currentDaycareDates"
     @update:selected-dates="($event) => (selectedDates = $event)"
   ></daycare-calendar-month>
   <div
@@ -73,6 +74,7 @@ export interface Props {
   ignoreTermsAndConditions?: boolean
   useCustomerDaycareSubscriptions?: boolean
   customerDaycareSubscriptions?: CustomerDaycareSubscription[]
+  currentDaycareDates?: DaycareDate[]
 }
 
 const props = defineProps<Props>()
