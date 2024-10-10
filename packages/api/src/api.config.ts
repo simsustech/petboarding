@@ -230,6 +230,19 @@ const bookingCostsHandler: BookingCostsHandler = ({
     taxRate: 21
   }))
 
+  // // Multiple pets discount
+  // lines = lines
+  //   .sort((a, b) => b.listPrice - a.listPrice)
+  //   .map((item, index) => ({
+  //     ...item,
+  //     discount:
+  //       index > 0
+  //         ? 0.15 *
+  //           ((item.listPrice * item.quantity) /
+  //             (item.quantityPerMille ? 1000 : 1))
+  //         : 0
+  //   }))
+
   if (withServices) {
     for (const service of services) {
       if (service.service && service.listPrice) {
