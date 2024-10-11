@@ -1164,8 +1164,8 @@ export async function checkDownPayments({
   for (const booking of bookings) {
     const invoice = await getBookingInvoice({ booking, fastify })
     if (
-      invoice?.amountPaid &&
-      invoice?.requiredDownPaymentAmount &&
+      typeof invoice?.amountPaid === 'number' &&
+      typeof invoice?.requiredDownPaymentAmount === 'number' &&
       invoice.amountPaid >= invoice.requiredDownPaymentAmount
     ) {
       createBookingStatus({
