@@ -165,7 +165,7 @@ export const userBookingRoutes = ({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.id && ctx.account?.id) {
-        const { id, reason, localeCode } = input
+        const { id, reason, localeCode = env.read('VITE_LANG') } = input
         const customer = await findCustomer({
           criteria: {
             accountId: Number(ctx.account.id)
