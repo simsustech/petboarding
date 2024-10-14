@@ -228,7 +228,7 @@ const lang: Language = {
       upcomingBookings: 'Upcoming bookings',
       otherBookings: 'Other bookings',
       overlapsWithUnavailablePeriod:
-        'Booking overlaps with an unavailable period.',
+        'Booking possibly overlaps with a busy period. Please check your confirmation email.',
       openInvoice: 'Open bill or invoice.',
       invoiceSynchronized: 'Costs of bill or invoice have been synchronized.'
     },

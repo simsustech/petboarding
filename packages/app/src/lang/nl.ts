@@ -231,7 +231,7 @@ const lang: Language = {
       upcomingBookings: 'Komende reserveringen',
       otherBookings: 'Overige reserveringen',
       overlapsWithUnavailablePeriod:
-        'Reservering overlapt met een onbeschikbare periode.',
+        'Reservering overlapt mogelijk met een drukke periode. Let op uw bevestigings email.',
       openInvoice: 'Open rekening of factuur.',
       invoiceSynchronized:
         'Kosten van rekening of factuur zijn gesynchroniseerd.'
