@@ -140,7 +140,8 @@ onMounted(async () => {
     for (const urgentAnnouncement of urgentAnnouncements.value) {
       $q.dialog({
         title: urgentAnnouncement.title,
-        message: urgentAnnouncement.message
+        message: urgentAnnouncement.message,
+        persistent: true
       })
     }
   }
