@@ -9,8 +9,9 @@ import {
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'
 import { FastifyInstance } from 'fastify'
-import { Invoice } from '@modular-api/fastify-checkout'
+import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
 import { DaycareSubscription } from './daycareSubscription.js'
+import { subDays, subMonths } from 'date-fns'
 export type CustomerDaycareSubscription =
   Selectable<CustomerDaycareSubscriptions>
 type NewCustomerDaycareSubscription = Insertable<CustomerDaycareSubscriptions>
@@ -205,6 +206,8 @@ function find({
   criteria: Partial<CustomerDaycareSubscription> & {
     statuses?: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS[]
     date?: string
+    from?: string
+    until?: string
   }
   select?: (keyof CustomerDaycareSubscription)[]
 }) {
@@ -250,6 +253,22 @@ function find({
       'customerDaycareSubscriptions.expirationDate',
       '>=',
       criteria.expirationDate
+    )
+  }
+
+  if (criteria.from) {
+    query = query.where(
+      'customerDaycareSubscriptions.createdAt',
+      '>=',
+      criteria.from
+    )
+  }
+
+  if (criteria.until) {
+    query = query.where(
+      'customerDaycareSubscriptions.createdAt',
+      '<=',
+      criteria.until
     )
   }
 
@@ -308,6 +327,8 @@ export async function findCustomerDaycareSubscriptions({
   criteria: Partial<CustomerDaycareSubscription> & {
     statuses?: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS[]
     date?: string
+    from?: string
+    until?: string
   }
   select?: (keyof CustomerDaycareSubscription)[]
   fastify?: FastifyInstance
@@ -426,4 +447,74 @@ export async function setCustomerDaycareSubscriptionStatus({
     }
   }
   return customerDaycareSubscription
+}
+
+export const createReceiptsForCustomerDaycareSubscriptions = async ({
+  fastify
+}: {
+  fastify: FastifyInstance
+}) => {
+  const threeMonthsInThePast = subMonths(new Date(), 3)
+  const oneWeekInThePast = subDays(new Date(), 7)
+
+  const paidCustomerDaycareSubscriptions =
+    await findCustomerDaycareSubscriptions({
+      criteria: {
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+        from: threeMonthsInThePast.toISOString().slice(0, 10),
+        until: oneWeekInThePast.toISOString().slice(0, 10)
+      },
+      fastify
+    })
+
+  const notPaidCustomerDaycareSubscriptions =
+    await findCustomerDaycareSubscriptions({
+      criteria: {
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN,
+        from: threeMonthsInThePast.toISOString().slice(0, 10),
+        until: oneWeekInThePast.toISOString().slice(0, 10)
+      },
+      fastify
+    })
+
+  const paidCustomerDaycareSubscriptionsWithBills =
+    paidCustomerDaycareSubscriptions.filter(
+      (customerDaycareSubscription) =>
+        customerDaycareSubscription.invoice?.status === InvoiceStatus.BILL
+    )
+
+  for (const customerDaycareSubscription of paidCustomerDaycareSubscriptionsWithBills) {
+    const invoiceId = customerDaycareSubscription.invoice?.id
+    if (invoiceId) {
+      await fastify.slimfact?.admin.setInvoiceStatus.mutate({
+        id: invoiceId,
+        status: InvoiceStatus.RECEIPT
+      })
+      console.log(
+        `Created receipt for customer daycare subscription ${customerDaycareSubscription.id}`
+      )
+    }
+  }
+
+  for (const customerDaycareSubscription of notPaidCustomerDaycareSubscriptions) {
+    await updateCustomerDaycareSubscription(
+      {
+        id: customerDaycareSubscription.id
+      },
+      {
+        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
+      }
+    )
+    const customerDaycareSubscriptionInvoiceId =
+      customerDaycareSubscription.invoice?.id
+    if (customerDaycareSubscriptionInvoiceId) {
+      await fastify.slimfact?.admin.setInvoiceStatus.mutate({
+        id: customerDaycareSubscriptionInvoiceId,
+        status: InvoiceStatus.CANCELED
+      })
+    }
+    console.log(
+      `Canceled customer daycare subscription ${customerDaycareSubscription.id}`
+    )
+  }
 }

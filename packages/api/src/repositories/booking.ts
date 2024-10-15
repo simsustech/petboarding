@@ -45,7 +45,8 @@ import {
   type RawInvoiceDiscount,
   type RawInvoiceSurcharge,
   computeInvoiceCosts,
-  type Invoice
+  type Invoice,
+  InvoiceStatus
 } from '@modular-api/fastify-checkout'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
 import { FastifyInstance } from 'fastify'
@@ -654,6 +655,14 @@ function find({
     query = query.where('startDate', '<=', criteria.until)
   }
 
+  if (criteria.startDate) {
+    query = query.where('startDate', '>=', criteria.startDate)
+  }
+
+  if (criteria.endDate) {
+    query = query.where('endDate', '<=', criteria.endDate)
+  }
+
   if (criteria.customerId) {
     query = query.where('customerId', '=', criteria.customerId)
   }
@@ -1233,4 +1242,35 @@ export async function getLastApprovedForBooking(booking: ParsedBooking) {
     }
   }
   return booking
+}
+
+export const createReceiptsForBookings = async ({
+  fastify
+}: {
+  fastify: FastifyInstance
+}) => {
+  const threeMonthsInThePast = subMonths(new Date(), 3)
+  const oneWeekInThePast = subDays(new Date(), 7)
+  const pastBookings = await findBookings({
+    criteria: {
+      from: threeMonthsInThePast.toISOString().slice(0, 10),
+      endDate: oneWeekInThePast.toISOString().slice(0, 10)
+    },
+    fastify
+  })
+
+  const pastBookingsWithBills = pastBookings.filter(
+    (booking) => booking.invoice?.status === InvoiceStatus.BILL
+  )
+
+  for (const booking of pastBookingsWithBills) {
+    const invoiceId = booking.invoice?.id
+    if (invoiceId) {
+      await fastify.slimfact?.admin.setInvoiceStatus.mutate({
+        id: invoiceId,
+        status: InvoiceStatus.RECEIPT
+      })
+      console.log(`Created receipt for booking: ${booking.id}`)
+    }
+  }
 }

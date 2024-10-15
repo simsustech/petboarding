@@ -206,6 +206,7 @@ export interface CustomerDaycareSubscriptions {
   invoiceUuid: string | null
   daycareSubscriptionId: number
   customerId: number
+  createdAt: Generated<string>
 }
 
 export interface EmailTemplates {
