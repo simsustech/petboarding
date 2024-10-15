@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely'
+import { sql } from 'kysely'
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
@@ -13,6 +14,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .addColumn('customer_id', 'integer', (col) =>
       col.references('customers.id').onDelete('cascade').notNull()
+    )
+    .addColumn('created_at', 'text', (col) =>
+      col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull()
     )
     .execute()
 }
