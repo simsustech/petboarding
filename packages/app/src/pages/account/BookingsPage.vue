@@ -89,6 +89,9 @@ import { extend } from 'quasar'
 import { computed } from 'vue'
 import { useConfiguration } from '../../configuration.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 const configuration = useConfiguration()
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
@@ -211,7 +214,13 @@ const createBooking: InstanceType<
 
   await result.immediatePromise
 
-  if (!result.error.value) await execute()
+  if (!result.error.value) {
+    $q.dialog({
+      message: lang.value.booking.messages.submitted,
+      persistent: true
+    })
+    await execute()
+  }
 
   done(!result.error.value)
 }

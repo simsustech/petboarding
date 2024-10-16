@@ -234,7 +234,9 @@ const lang: Language = {
         'Reservering overlapt mogelijk met een drukke periode. Let op uw bevestigings email.',
       openInvoice: 'Open rekening of factuur.',
       invoiceSynchronized:
-        'Kosten van rekening of factuur zijn gesynchroniseerd.'
+        'Kosten van rekening of factuur zijn gesynchroniseerd.',
+      submitted:
+        'Uw reservering is verstuurd. U krijgt een bevestiging per email. Houd rekening met een eventuele aanbetaling.'
     },
     helpers: {
       status: {

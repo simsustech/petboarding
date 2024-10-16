@@ -220,6 +220,7 @@ export interface Language {
       overlapsWithUnavailablePeriod: string
       openInvoice: string
       invoiceSynchronized: string
+      submitted: string
     }
     helpers: {
       status: {
