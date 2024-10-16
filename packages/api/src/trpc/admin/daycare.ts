@@ -56,6 +56,10 @@ export const adminDaycareRoutes = ({
             daycareDate: {
               status: DAYCARE_DATE_STATUS.APPROVED
             }
+          },
+          {
+            useCustomerDaycareSubscription: true,
+            ignoreCustomerDaycareSubscriptionErrors: true
           }
         )
 
