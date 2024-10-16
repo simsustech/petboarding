@@ -225,6 +225,7 @@ watch(selectedDate, async () => {
   await dateInputRef.value?.validate()
   if (!dateError.value) {
     executeGetBookings()
+    executeAwaitingDownPaymentBookings()
     executeDaycareDates()
   }
 })
@@ -240,6 +241,18 @@ const { data: bookingsData, execute: executeGetBookings } = useQuery(
       })
   }
 )
+
+const {
+  data: awaitingDownPaymentBookings,
+  execute: executeAwaitingDownPaymentBookings
+} = useQuery('employee.getBookings', {
+  args: () =>
+    reactive({
+      from: parsedDate.value,
+      until: parsedDate.value,
+      status: BOOKING_STATUS.AWAITING_DOWNPAYMENT
+    })
+})
 
 const { data: daycareDatesData, execute: executeDaycareDates } = useQuery(
   'employee.getDaycareDates',
@@ -257,19 +270,33 @@ const { data: openingTimesData, execute: executeOpeningTimes } = useQuery(
   'public.getOpeningTimes'
 )
 
-const arrivals = computed(
-  () =>
+const arrivals = computed(() => {
+  const approved =
     bookingsData?.value?.filter(
       (booking) => booking.startDate.replaceAll('-', '/') === selectedDate.value
     ) || []
-)
 
-const departures = computed(
-  () =>
+  const awaitingDownPayments =
+    awaitingDownPaymentBookings?.value?.filter(
+      (booking) => booking.startDate.replaceAll('-', '/') === selectedDate.value
+    ) || []
+
+  return [...approved, ...awaitingDownPayments]
+})
+
+const departures = computed(() => {
+  const approved =
     bookingsData?.value?.filter(
       (booking) => booking.endDate.replaceAll('-', '/') === selectedDate.value
     ) || []
-)
+
+  const awaitingDownPayments =
+    awaitingDownPaymentBookings?.value?.filter(
+      (booking) => booking.endDate.replaceAll('-', '/') === selectedDate.value
+    ) || []
+
+  return [...approved, ...awaitingDownPayments]
+})
 
 const sortedOpeningTimes = computed(() => {
   if (openingTimesData.value) {
@@ -310,6 +337,7 @@ onMounted(async () => {
   await dateInputRef.value?.validate()
   if (!dateError.value) {
     executeGetBookings()
+    executeAwaitingDownPaymentBookings()
     executeDaycareDates()
   }
 })
