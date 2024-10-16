@@ -250,6 +250,7 @@ test.describe('Account', async () => {
 
     await page.locator('text=Submit').click()
 
+    await page.getByRole('button', { name: 'OK' }).click()
     await expect(page.getByText('hourglass_empty')).toBeVisible()
 
     // await page.locator('button >> text=edit').click()
