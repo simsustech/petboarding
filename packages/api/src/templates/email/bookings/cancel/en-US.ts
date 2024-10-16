@@ -14,6 +14,7 @@ const body = c`
       <b>{{pets}}</b>
       has been canceled with the following reason:
       {{reason}}.
+      <br />
       Please note that a cancelation fee may apply.
   </p>`
 

@@ -14,6 +14,7 @@ const body = c`
       <b>{{pets}}</b>
       is geannuleerd om de volgende reden:
       {{reason}}.
+      <br />
       Houdt rekening met eventuele annuleringskosten.
   </p>`
 

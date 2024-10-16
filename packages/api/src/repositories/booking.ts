@@ -50,6 +50,10 @@ import {
 } from '@modular-api/fastify-checkout'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
 import { FastifyInstance } from 'fastify'
+import { bookingEmailTemplates } from '../templates/email/bookings/index.js'
+import { compileEmail } from '../trpc/admin/bookings.js'
+import { findCustomer } from './customer.js'
+import { bookingTemplates } from '../templates/booking/index.js'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
@@ -469,7 +473,7 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
           `.as('days')
       ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
-      .orderBy('bookingStatus.createdAt desc')
+      .orderBy('bookingStatus.modifiedAt desc')
   ).as('statuses')
 }
 
@@ -1136,7 +1140,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
   return count
 }
 
-const downPaymentPaymentTermDays =
+export const downPaymentPaymentTermDays =
   env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
   env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
   5
@@ -1170,6 +1174,17 @@ export async function checkDownPayments({
     .selectAll()
     .execute()
 
+  const localeCode = env.read('VITE_LANG')
+
+  console.log(bookings)
+  let reason: string
+  try {
+    ;({ reason } =
+      await bookingTemplates[`./downPaymentNotReceived/${localeCode}.ts`]())
+  } catch (e) {
+    ;({ reason } =
+      await bookingTemplates[`./downPaymentNotReceived/en-US.ts`]())
+  }
   for (const booking of bookings) {
     const invoice = await getBookingInvoice({ booking, fastify })
     if (
@@ -1184,14 +1199,51 @@ export async function checkDownPayments({
       })
     } else if (
       booking.status?.status &&
-      new Date(booking.status?.createdAt) <
+      new Date(booking.status?.modifiedAt) <
         subDays(new Date(), downPaymentPaymentTermDays)
     ) {
-      cancelBooking(
-        { id: booking.id },
-        `Down payment not received within ${downPaymentPaymentTermDays} days`,
-        true
-      )
+      await cancelBooking({ id: booking.id }, reason, true)
+      if (fastify?.mailer) {
+        const localeCode = env.read('VITE_LANG')
+        let template: { subject: string; body: string }
+        try {
+          template = await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
+        } catch (e) {
+          template = await bookingEmailTemplates[`./cancel/en-US.ts`]()
+        }
+        const parsedBooking = await findBooking({
+          criteria: {
+            id: booking.id
+          }
+        })
+        const customer = await findCustomer({
+          criteria: {
+            id: booking.customerId
+          }
+        })
+        if (template && parsedBooking && customer) {
+          const { subject: subjectTemplate, body: bodyTemplate } = template
+
+          if (subjectTemplate !== null && bodyTemplate !== null) {
+            const { subject, body } = await compileEmail({
+              booking: parsedBooking,
+              subjectTemplate,
+              bodyTemplate,
+              localeCode,
+              variables: {
+                reason
+              }
+            })
+
+            await fastify.mailer.sendMail({
+              to: customer.account?.email,
+              bcc: env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC'),
+              subject,
+              html: body
+            })
+          }
+        }
+      }
     }
   }
 }
@@ -1200,8 +1252,8 @@ export async function getLastApprovedForBooking(booking: ParsedBooking) {
   const lastApprovedStatus = booking.statuses
     .filter((status) => status.status === BOOKING_STATUS.APPROVED)
     .sort((a, b) => {
-      if (a.createdAt < b.createdAt) return -1
-      if (a.createdAt > b.createdAt) return 1
+      if (a.modifiedAt < b.modifiedAt) return -1
+      if (a.modifiedAt > b.modifiedAt) return 1
       return 0
     })
     .at(-1)
