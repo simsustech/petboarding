@@ -13,7 +13,7 @@ import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   DAYCARE_DATE_STATUS
 } from '../zod/index.js'
-import { findCustomerDaycareSubscription } from './customerDaycareSubscription.js'
+import { findCustomerDaycareSubscriptions } from './customerDaycareSubscription.js'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>
@@ -220,13 +220,19 @@ export async function createDaycareDate({
   }
 }) {
   if (options?.useCustomerDaycareSubscription) {
-    const customerDaycareSubscription = await findCustomerDaycareSubscription({
-      criteria: {
-        customerId: daycareDate.customerId,
-        date: daycareDate.date,
-        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+    const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
+      {
+        criteria: {
+          customerId: daycareDate.customerId,
+          date: daycareDate.date,
+          status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+        }
       }
-    })
+    )
+    const customerDaycareSubscription = customerDaycareSubscriptions.find(
+      (customerDaycareSubscription) =>
+        customerDaycareSubscription.numberOfDaysRemaining || 0 > 0
+    )
     if (
       customerDaycareSubscription &&
       customerDaycareSubscription.numberOfDaysRemaining &&
@@ -277,13 +283,19 @@ export async function updateDaycareDate(
     updateWith.petIds &&
     !updateWith.daycareDate.customerDaycareSubscriptionId
   ) {
-    const customerDaycareSubscription = await findCustomerDaycareSubscription({
-      criteria: {
-        customerId: criteria.customerId,
-        date: criteria.date,
-        status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+    const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
+      {
+        criteria: {
+          customerId: criteria.customerId,
+          date: criteria.date,
+          status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+        }
       }
-    })
+    )
+    const customerDaycareSubscription = customerDaycareSubscriptions.find(
+      (customerDaycareSubscription) =>
+        customerDaycareSubscription.numberOfDaysRemaining || 0 > 0
+    )
     if (
       customerDaycareSubscription &&
       customerDaycareSubscription.numberOfDaysRemaining !== null &&

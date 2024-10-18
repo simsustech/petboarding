@@ -288,6 +288,7 @@ function find({
   }
 
   return query
+    .orderBy('customerDaycareSubscriptions.effectiveDate')
     .select(select)
     .select([
       withDaycareSubscription,
