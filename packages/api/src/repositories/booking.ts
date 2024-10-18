@@ -1176,7 +1176,6 @@ export async function checkDownPayments({
 
   const localeCode = env.read('VITE_LANG')
 
-  console.log(bookings)
   let reason: string
   try {
     ;({ reason } =
@@ -1188,9 +1187,10 @@ export async function checkDownPayments({
   for (const booking of bookings) {
     const invoice = await getBookingInvoice({ booking, fastify })
     if (
-      typeof invoice?.amountPaid === 'number' &&
-      typeof invoice?.requiredDownPaymentAmount === 'number' &&
-      invoice.amountPaid >= invoice.requiredDownPaymentAmount
+      (typeof invoice?.amountPaid === 'number' &&
+        typeof invoice?.requiredDownPaymentAmount === 'number' &&
+        invoice.amountPaid >= invoice.requiredDownPaymentAmount) ||
+      booking.startDate <= new Date().toISOString()
     ) {
       createBookingStatus({
         booking,
