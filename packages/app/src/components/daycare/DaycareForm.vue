@@ -142,12 +142,12 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 }
 
 const maxNumberOfSelectedDates = computed(() => {
-  return customerDaycareSubscriptions.value?.reduce((acc, cur) => {
-    acc += Math.floor(
-      (cur.numberOfDaysRemaining || 0) / modelValue.value.petIds.length
-    )
-    return acc
-  }, 0)
+  return Math.floor(
+    customerDaycareSubscriptions.value?.reduce((acc, cur) => {
+      acc += (cur.numberOfDaysRemaining || 0) / modelValue.value.petIds.length
+      return acc
+    }, 0) || 0
+  )
 })
 
 const remainingDays = computed(() => {
