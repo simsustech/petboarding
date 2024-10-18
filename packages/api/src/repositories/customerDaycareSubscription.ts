@@ -194,6 +194,13 @@ function withDaycareDates(
         '=',
         'customerDaycareSubscriptions.id'
       )
+      .where((web) =>
+        web.or([
+          web('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED),
+          web('daycareDates.status', '=', DAYCARE_DATE_STATUS.STANDBY),
+          web('daycareDates.status', '=', DAYCARE_DATE_STATUS.PENDING)
+        ])
+      )
       .orderBy('daycareDates.date asc')
       .select('daycareDates.date')
   ).as('daycareDates')

@@ -41,7 +41,7 @@
     "uqr": "^0.1.2"
   },
   "devDependencies": {
-    "@modular-api/fastify-checkout": "^0.4.3",
+    "@modular-api/fastify-checkout": "^0.4.4",
     "@modular-api/quasar-components": "^0.3.1",
     "@petboarding/api": "^0.1.0",
     "@quasar/extras": "1.16.12",

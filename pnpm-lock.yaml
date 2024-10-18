@@ -50,11 +50,11 @@ importers:
         specifier: 8.0.1
         version: 8.0.1
       '@modular-api/api':
-        specifier: ^0.5.3
-        version: 0.5.3(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.7.0)(otplib@12.0.1)(typescript@5.6.2)(vue@3.5.8(typescript@5.6.2))
+        specifier: ^0.5.4
+        version: 0.5.4(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.7.0)(otplib@12.0.1)(typescript@5.6.2)(vue@3.5.8(typescript@5.6.2))
       '@modular-api/fastify-checkout':
-        specifier: ^0.4.3
-        version: 0.4.3(kysely@0.27.4)
+        specifier: ^0.4.4
+        version: 0.4.4(kysely@0.27.4)
       '@modular-api/fastify-oidc':
         specifier: ^0.6.0
         version: 0.6.0(@fastify/static@8.0.1)(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.6.2)
@@ -187,8 +187,8 @@ importers:
         version: 0.1.2
     devDependencies:
       '@modular-api/fastify-checkout':
-        specifier: ^0.4.3
-        version: 0.4.3(kysely@0.27.4)
+        specifier: ^0.4.4
+        version: 0.4.4(kysely@0.27.4)
       '@modular-api/quasar-components':
         specifier: ^0.3.1
         version: 0.3.1(quasar@2.17.0)
@@ -299,7 +299,7 @@ importers:
         version: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vitrify:
         specifier: ^0.16.0
-        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.1)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.0)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.2)(vue-router@4.4.5(vue@3.5.8(typescript@5.6.2)))(vue@3.5.8(typescript@5.6.2))(workbox-build@7.1.1)
+        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.1)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.0)(rollup@4.20.0)(terser@5.31.5)(typescript@5.6.2)(vue-router@4.4.5(vue@3.5.8(typescript@5.6.2)))(vue@3.5.8(typescript@5.6.2))(workbox-build@7.1.1)
       vue:
         specifier: 3.5.8
         version: 3.5.8(typescript@5.6.2)
@@ -405,7 +405,7 @@ importers:
         version: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vitrify:
         specifier: ^0.16.0
-        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.1)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.0)(rollup@4.20.0)(terser@5.31.5)(typescript@5.6.2)(vue-router@4.4.5(vue@3.5.8(typescript@5.6.2)))(vue@3.5.8(typescript@5.6.2))(workbox-build@7.1.1)
+        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.1)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.0)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.2)(vue-router@4.4.5(vue@3.5.8(typescript@5.6.2)))(vue@3.5.8(typescript@5.6.2))(workbox-build@7.1.1)
       vue:
         specifier: 3.5.8
         version: 3.5.8(typescript@5.6.2)
@@ -1657,8 +1657,8 @@ packages:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
 
-  '@modular-api/api@0.5.3':
-    resolution: {integrity: sha512-0xx56nzL9Q5m1i372mPVryNGaCgIlFVGWMKL82MUB1b3O7uqF81+jKiegivPeoGfu+9SgWBo8fkPGex++/zJ9g==}
+  '@modular-api/api@0.5.4':
+    resolution: {integrity: sha512-/IRgVyLxJKX3YrvQCIicd0qbM0pRTtB+vNtO24Ooic+DK12JDFNjhGlC9V2ph3UgYTGUXMynGnHkSH0cBmxDoQ==}
     peerDependencies:
       kysely: ^0.27.4
       openid-client: ^5.6.5
@@ -1668,8 +1668,8 @@ packages:
     peerDependencies:
       kysely: ^0.27.4
 
-  '@modular-api/fastify-checkout@0.4.3':
-    resolution: {integrity: sha512-SG9HbROksjo8Dyv2urAWLKYYq/Beno2x6TRzLM1M4VK0NbWE69w59woBOxUT7eykcy9KmpcuMRmgjAyLdIpLfQ==}
+  '@modular-api/fastify-checkout@0.4.4':
+    resolution: {integrity: sha512-WQNx5RldDAJUWwdJCshNNyY9X1rpydhbV5EYZgQWCWxWi48JEDDSWo2JqmwRL+PVOEwbUnwf7gtTxy7nFl2wvg==}
     peerDependencies:
       kysely: ^0.27.4
 
@@ -7144,7 +7144,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@modular-api/api@0.5.3(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.7.0)(otplib@12.0.1)(typescript@5.6.2)(vue@3.5.8(typescript@5.6.2))':
+  '@modular-api/api@0.5.4(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@5.7.0)(otplib@12.0.1)(typescript@5.6.2)(vue@3.5.8(typescript@5.6.2))':
     dependencies:
       '@fastify/cookie': 10.0.1
       '@fastify/cors': 10.0.1
@@ -7152,7 +7152,7 @@ snapshots:
       '@fastify/middie': 9.0.2
       '@fastify/static': 8.0.1
       '@modular-api/fastify-cart': 0.3.0(kysely@0.27.4)
-      '@modular-api/fastify-checkout': 0.4.3(kysely@0.27.4)
+      '@modular-api/fastify-checkout': 0.4.4(kysely@0.27.4)
       '@modular-api/fastify-oidc': 0.6.0(@fastify/static@8.0.1)(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(otplib@12.0.1)(typescript@5.6.2)
       '@trpc/server': 10.45.2
       '@types/compression': 1.7.5
@@ -7190,7 +7190,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@modular-api/fastify-checkout@0.4.3(kysely@0.27.4)':
+  '@modular-api/fastify-checkout@0.4.4(kysely@0.27.4)':
     dependencies:
       '@fastify/cookie': 10.0.1
       '@fastify/middie': 9.0.2
