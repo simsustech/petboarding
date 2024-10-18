@@ -26,6 +26,7 @@
     :max-number-of-selected-dates="maxNumberOfSelectedDates"
     :current-daycare-dates="currentDaycareDates"
     @update:selected-dates="($event) => (selectedDates = $event)"
+    @change-date="onChangeDate"
   ></daycare-calendar-month>
   <div
     v-if="modelValue.petIds.length && useCustomerDaycareSubscriptions"
@@ -68,6 +69,7 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { QForm, QSelect } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
+import { Timestamp } from '@quasar/quasar-ui-qcalendar'
 export interface Props {
   pets: Pet[]
   termsAndConditionsUrl?: string
@@ -92,6 +94,18 @@ const emit = defineEmits<{
     }: {
       data: DaycareDate[]
       done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'changeDate',
+    {
+      start,
+      end,
+      days
+    }: {
+      start: string
+      end: string
+      days: Timestamp[]
     }
   ): void
 }>()
@@ -164,6 +178,12 @@ const updateSelectedPets: QSelect['$props']['onUpdate:modelValue'] = (
 ) => {
   modelValue.value.petIds = value
   selectedDates.value.splice(maxNumberOfSelectedDates.value || 0)
+}
+
+const onChangeDate: InstanceType<
+  typeof DaycareCalendarMonth
+>['$props']['onChangeDate'] = (data) => {
+  emit('changeDate', data)
 }
 
 const variables = ref({

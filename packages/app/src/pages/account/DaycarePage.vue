@@ -94,6 +94,7 @@
         :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
         :current-daycare-dates="data"
         @submit="createDaycare"
+        @change-date="onChangeDate"
       ></daycare-form>
     </responsive-dialog>
     <responsive-dialog
