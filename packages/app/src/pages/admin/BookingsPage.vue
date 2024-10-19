@@ -79,6 +79,16 @@
         {{ lang.booking.replies[replyType] }}
       </a>
     </template>
+    <q-checkbox
+      v-if="replyType === 'approve'"
+      v-model="skipDownPayment"
+      color="primary"
+      class="q-mb-sm"
+    >
+      <template #default>
+        {{ lang.booking.messages.skipDownPayment }}
+      </template>
+    </q-checkbox>
     <email-input
       v-model:subject="replyEmailSubject"
       v-model:body="replyEmailBody"
@@ -162,6 +172,7 @@ const editorDialogRef = ref<typeof ResponsiveDialog>()
 const replyEmailBody = ref('')
 const replyEmailSubject = ref('')
 const handledBookingIds = ref<number[]>([])
+const skipDownPayment = ref(false)
 
 const openEditor = () => {
   editorDialogRef.value?.functions.open()
@@ -178,7 +189,9 @@ const submit: InstanceType<
         args: {
           id: replyBookingId.value,
           emailText: replyEmailBody.value,
-          emailSubject: replyEmailSubject.value
+          emailSubject: replyEmailSubject.value,
+          skipDownPayment:
+            replyType.value === 'approve' ? skipDownPayment.value : undefined
         },
         immediate: true
       })

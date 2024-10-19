@@ -236,7 +236,8 @@ const lang: Language = {
       invoiceSynchronized:
         'Kosten van rekening of factuur zijn gesynchroniseerd.',
       submitted:
-        'Uw reservering is verstuurd. U krijgt een bevestiging per email. Houd rekening met een eventuele aanbetaling.'
+        'Uw reservering is verstuurd. U krijgt een bevestiging per email. Houd rekening met een eventuele aanbetaling.',
+      skipDownPayment: 'Aanbetaling overslaan'
     },
     helpers: {
       status: {

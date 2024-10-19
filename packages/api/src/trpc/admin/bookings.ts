@@ -400,12 +400,14 @@ export const adminBookingRoutes = ({
       z.object({
         id: z.number(),
         emailText: z.string(),
-        emailSubject: z.string()
+        emailSubject: z.string(),
+        skipDownPayment: z.boolean().optional()
       })
     )
     .mutation(async ({ input }) => {
       let { emailText, emailSubject } = input
       const { id } = input
+      const { skipDownPayment = false } = input
       const booking = await findBooking({
         criteria: {
           id
@@ -448,6 +450,8 @@ export const adminBookingRoutes = ({
               requiredDownPaymentAmount =
                 (booking.costs?.requiredDownPaymentAmount || 0) -
                 (booking.invoice?.amountPaid || 0)
+
+              if (skipDownPayment) requiredDownPaymentAmount = 0
 
               await createBookingStatus({
                 booking,

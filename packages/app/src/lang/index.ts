@@ -221,6 +221,7 @@ export interface Language {
       openInvoice: string
       invoiceSynchronized: string
       submitted: string
+      skipDownPayment: string
     }
     helpers: {
       status: {
