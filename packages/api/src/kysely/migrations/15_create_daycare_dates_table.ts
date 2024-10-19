@@ -19,7 +19,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('created_at', 'text', (col) =>
       col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull()
     )
-    .addUniqueConstraint('daycare_date_unique', ['customer_id', 'date'])
+    .addUniqueConstraint('daycare_date_unique', [
+      'customer_id',
+      'date',
+      'daycare_subscription_id'
+    ])
     .execute()
 }
 

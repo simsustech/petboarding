@@ -218,7 +218,7 @@ export async function createDaycareDate({
     useCustomerDaycareSubscription?: boolean
     ignoreCustomerDaycareSubscriptionErrors?: boolean
   }
-}) {
+}): Promise<boolean> {
   if (options?.useCustomerDaycareSubscription) {
     const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
       {
@@ -231,7 +231,7 @@ export async function createDaycareDate({
     )
     const customerDaycareSubscription = customerDaycareSubscriptions.find(
       (customerDaycareSubscription) =>
-        customerDaycareSubscription.numberOfDaysRemaining || 0 > 0
+        (customerDaycareSubscription.numberOfDaysRemaining || 0) > 0
     )
     if (
       customerDaycareSubscription &&
@@ -239,6 +239,22 @@ export async function createDaycareDate({
       customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
     ) {
       daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
+    } else if (
+      customerDaycareSubscription &&
+      customerDaycareSubscription.numberOfDaysRemaining &&
+      customerDaycareSubscription.numberOfDaysRemaining < petIds.length
+    ) {
+      await createDaycareDate({
+        daycareDate,
+        petIds: petIds.slice(0, 1),
+        options
+      })
+      await createDaycareDate({
+        daycareDate,
+        petIds: petIds.slice(1),
+        options
+      })
+      return true
     } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
       throw new Error(
         `No valid customer daycare subscription available for date ${daycareDate.date}`
@@ -261,6 +277,7 @@ export async function createDaycareDate({
       }))
     )
     .executeTakeFirstOrThrow()
+  return true
 }
 
 export async function updateDaycareDate(
@@ -294,7 +311,8 @@ export async function updateDaycareDate(
     )
     const customerDaycareSubscription = customerDaycareSubscriptions.find(
       (customerDaycareSubscription) =>
-        customerDaycareSubscription.numberOfDaysRemaining || 0 > 0
+        (customerDaycareSubscription.numberOfDaysRemaining || 0) >=
+        (updateWith.petIds?.length || 1)
     )
     if (
       customerDaycareSubscription &&
@@ -411,38 +429,37 @@ export async function createOrUpdateDaycareDates(
         }
       })
 
-    await Promise.all([
-      ...newDaycareDates.map((daycareDate) =>
-        createDaycareDate({
+    for (const newDaycareDate of newDaycareDates) {
+      await createDaycareDate({
+        daycareDate: {
+          date: newDaycareDate.date,
+          comments: newDaycareDate.comments,
+          customerId,
+          status: DAYCARE_DATE_STATUS.PENDING
+        },
+        petIds: newDaycareDate.petIds,
+        options
+      })
+    }
+    for (const updatedDaycareDate of updatedDaycareDates) {
+      await updateDaycareDate(
+        {
+          date: updatedDaycareDate.date,
+          customerId
+        },
+        {
           daycareDate: {
-            date: daycareDate.date,
-            comments: daycareDate.comments,
+            date: updatedDaycareDate.date,
+            comments: updatedDaycareDate.comments,
             customerId,
-            status: DAYCARE_DATE_STATUS.PENDING
+            status: DAYCARE_DATE_STATUS.PENDING,
+            customerDaycareSubscriptionId:
+              updatedDaycareDate.customerDaycareSubscriptionId
           },
-          petIds: daycareDate.petIds,
-          options
-        })
-      ),
-      ...updatedDaycareDates.map((daycareDate) =>
-        updateDaycareDate(
-          {
-            date: daycareDate.date,
-            customerId
-          },
-          {
-            daycareDate: {
-              date: daycareDate.date,
-              comments: daycareDate.comments,
-              customerId,
-              status: DAYCARE_DATE_STATUS.PENDING,
-              customerDaycareSubscriptionId:
-                daycareDate.customerDaycareSubscriptionId
-            },
-            petIds: daycareDate.petIds
-          }
-        )
+          petIds: updatedDaycareDate.petIds
+        }
       )
-    ])
+    }
+    return true
   }
 }
