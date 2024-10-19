@@ -27,6 +27,7 @@
           </template>
           <template #action>
             <q-btn
+              v-if="allowPurchase"
               :label="
                 lang.customerDaycareSubscription.labels.purchaseSubscription
               "
@@ -338,6 +339,21 @@ const paidAndActiveCustomerDaycareSubscriptions = computed(() =>
       customerDaycareSubscription.isActive
   )
 )
+
+const allowPurchase = computed(() => {
+  const currentSubscriptions =
+    customerDaycareSubscriptions.value?.filter(
+      (customerDaycareSubscription) =>
+        customerDaycareSubscription.status ===
+          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID &&
+        customerDaycareSubscription.expirationDate >=
+          new Date().toISOString().slice(0, 10) &&
+        (customerDaycareSubscription.numberOfDaysRemaining || 0) >= 5
+    ) || []
+
+  return currentSubscriptions.length < 1
+})
+
 const ready = ref<boolean>(false)
 onMounted(async () => {
   await executeCustomer()
