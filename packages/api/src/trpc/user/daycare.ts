@@ -103,7 +103,8 @@ export const userDaycareRoutes = ({
         if (customer?.id && daycareDateIds.length) {
           await updateDaycareDate(
             {
-              ids: daycareDateIds
+              ids: daycareDateIds,
+              customerId: customer.id
             },
             {
               daycareDate: {
