@@ -106,6 +106,7 @@ function find({
     from?: string
     until?: string
     dates?: string[]
+    ids?: number[]
   }
   select?: (keyof DaycareDate)[]
 }) {
@@ -116,6 +117,8 @@ function find({
 
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
+  } else if (criteria.ids) {
+    query = query.where('id', 'in', criteria.ids.length ? criteria.ids : [null])
   }
 
   if (criteria.customerId) {
@@ -180,6 +183,7 @@ export async function findDaycareDates({
     from?: string
     until?: string
     dates?: string[]
+    ids?: number[]
   }
   select?: (keyof DaycareDate)[]
 }) {

@@ -48,20 +48,33 @@ export const adminDaycareRoutes = ({
       const ids = input
 
       if (ids?.length) {
-        await updateDaycareDate(
-          {
+        const daycareDates = await findDaycareDates({
+          criteria: {
             ids
-          },
-          {
-            daycareDate: {
-              status: DAYCARE_DATE_STATUS.APPROVED
-            }
-          },
-          {
-            useCustomerDaycareSubscription: true,
-            ignoreCustomerDaycareSubscriptionErrors: true
           }
-        )
+        })
+        for (const daycareDate of daycareDates) {
+          updateDaycareDate(
+            {
+              id: daycareDate.id
+            },
+            {
+              daycareDate: {
+                date: daycareDate.date,
+                comments: daycareDate.comments,
+                customerDaycareSubscriptionId:
+                  daycareDate.customerDaycareSubscriptionId,
+                customerId: daycareDate.customerId,
+                status: DAYCARE_DATE_STATUS.APPROVED
+              },
+              petIds: daycareDate.pets.map((pet) => pet.id)
+            },
+            {
+              useCustomerDaycareSubscription: true,
+              ignoreCustomerDaycareSubscriptionErrors: true
+            }
+          )
+        }
 
         return true
       }
