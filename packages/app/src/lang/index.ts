@@ -9,6 +9,7 @@ export interface Language {
   administrator: string
   employee: string
   overview: string
+  dayOverview: string
   customers: string
   bookings: string
   labels: string
@@ -222,6 +223,8 @@ export interface Language {
       invoiceSynchronized: string
       submitted: string
       skipDownPayment: string
+      unpaidBookings: (days: number) => string
+      approvedAfterDownPayment: string
     }
     helpers: {
       status: {

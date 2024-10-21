@@ -149,7 +149,7 @@ export declare const userProcedure: import('@trpc/server').ProcedureBuilder<{
   _ctx_out: {
     account: {
       id: string
-      roles?: string[] | undefined
+      roles?: string[]
     } | null
   }
   _input_in: typeof import('@trpc/server').unsetMarker
@@ -173,7 +173,7 @@ export declare const adminProcedure: import('@trpc/server').ProcedureBuilder<{
   _ctx_out: {
     account: {
       id: string
-      roles?: string[] | undefined
+      roles?: string[]
     } | null
   }
   _input_in: typeof import('@trpc/server').unsetMarker
@@ -197,7 +197,7 @@ export declare const employeeProcedure: import('@trpc/server').ProcedureBuilder<
   _ctx_out: {
     account: {
       id: string
-      roles?: string[] | undefined
+      roles?: string[]
     } | null
   }
   _input_in: typeof import('@trpc/server').unsetMarker
@@ -542,24 +542,7 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            id: any
-            uuid: any
-            name: string | null
-            active: boolean | undefined
-            companyId: number
-            clientId: number
-            numberPrefixTemplate: string
-            locale: string
-            currency: 'EUR' | 'USD'
-            lines: any
-            discounts: any
-            surcharges: any
-            paymentTermDays: number
-            startDate: string
-            endDate: string | null
-            cronSchedule: string
-            type: 'invoice' | 'bill'
-            createdAt: any
+            [x: string]: any
           }
         >
         updateSubscription: import('@trpc/server').BuildProcedure<
@@ -843,9 +826,9 @@ export declare const createRouter: (
                   pagination?:
                     | {
                         sortBy: 'id'
-                        descending: boolean
                         limit: number
                         offset: number
+                        descending: boolean
                       }
                     | undefined
                 }
@@ -858,9 +841,9 @@ export declare const createRouter: (
                   pagination?:
                     | {
                         sortBy: 'id'
-                        descending: boolean
                         limit: number
                         offset: number
+                        descending: boolean
                       }
                     | undefined
                 }
@@ -870,39 +853,21 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
-            id: any
-            uuid: any
-            name: string | null
-            active: boolean | undefined
-            companyId: number
-            clientId: number
-            numberPrefixTemplate: string
-            locale: string
-            currency: 'EUR' | 'USD'
-            lines: any
-            discounts: any
-            surcharges: any
-            paymentTermDays: number
-            startDate: string
-            endDate: string | null
-            cronSchedule: string
-            type: 'invoice' | 'bill'
-            createdAt: any
             client: {
               contactPersonName: import('node_modules/kysely/dist/esm/util/type-utils.js').ExtractColumnType<
-                import('../kysely/index.js').Database,
+                import('../kysely/types.js').DB,
                 'subscriptions' | 'clients',
                 'contactPersonName'
               >
               companyName: import('node_modules/kysely/dist/esm/util/type-utils.js').ExtractColumnType<
-                import('../kysely/index.js').Database,
+                import('../kysely/types.js').DB,
                 'subscriptions' | 'clients',
                 'companyName'
               >
             } | null
             company: {
               name: import('node_modules/kysely/dist/esm/util/type-utils.js').ExtractColumnType<
-                import('../kysely/index.js').Database,
+                import('../kysely/types.js').DB,
                 'subscriptions' | 'companies',
                 'name'
               >
@@ -946,10 +911,7 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            id: any
-            companyId: number
-            numberPrefix: string
-            initialNumber: number
+            [x: string]: any
           }
         >
         getInitialNumberForPrefixes: import('@trpc/server').BuildProcedure<
@@ -979,10 +941,7 @@ export declare const createRouter: (
             _meta: object
           },
           {
-            id: any
-            companyId: number
-            numberPrefix: string
-            initialNumber: number
+            [x: string]: any
             company: {
               name: string
             } | null
@@ -1061,9 +1020,7 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            id: any
-            name: string
-            template: string
+            [x: string]: any
           }
         >
         getNumberPrefixes: import('@trpc/server').BuildProcedure<
@@ -1093,9 +1050,7 @@ export declare const createRouter: (
             _meta: object
           },
           {
-            id: any
-            name: string
-            template: string
+            [x: string]: any
           }[]
         >
         updateNumberPrefix: import('@trpc/server').BuildProcedure<
@@ -1185,18 +1140,7 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            number: string | null
-            id: any
-            createdAt: any
-            address: string
-            city: string
-            contactPersonName: string | null
-            country: string
-            email: string
-            postalCode: string
-            vatIdNumber: string | null
-            companyName: string | null
-            accountId: number | null
+            [x: string]: any
           }
         >
         getClients: import('@trpc/server').BuildProcedure<
@@ -1224,9 +1168,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id'
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }
@@ -1234,9 +1178,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id'
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }
@@ -1244,19 +1188,8 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
+            [x: string]: any
             total?: number | undefined
-            number: string | null
-            id: any
-            createdAt: any
-            address: string
-            city: string
-            contactPersonName: string | null
-            country: string
-            email: string
-            postalCode: string
-            vatIdNumber: string | null
-            companyName: string | null
-            accountId: number | null
           }[]
         >
         updateClient: import('@trpc/server').BuildProcedure<
@@ -1337,9 +1270,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id'
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }
@@ -1348,9 +1281,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id'
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }
@@ -1358,19 +1291,8 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
+            [x: string]: any
             total?: number | undefined
-            number: string | null
-            id: any
-            createdAt: any
-            address: string
-            city: string
-            contactPersonName: string | null
-            country: string
-            email: string
-            postalCode: string
-            vatIdNumber: string | null
-            companyName: string | null
-            accountId: number | null
           }[]
         >
         createCompany: import('@trpc/server').BuildProcedure<
@@ -1442,27 +1364,7 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            id: any
-            name: string
-            createdAt: any
-            address: string
-            bic: string
-            city: string
-            cocNumber: string
-            contactPersonName: string | null | undefined
-            country: string
-            email: string
-            emailBcc: string | null | undefined
-            iban: string
-            logoSvg: string | null | undefined
-            postalCode: string
-            prefix: string
-            telephoneNumber: string | null | undefined
-            vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
+            [x: string]: any
           }
         >
         getCompanies: import('@trpc/server').BuildProcedure<
@@ -1493,27 +1395,6 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
-            id: any
-            name: string
-            createdAt: any
-            address: string
-            bic: string
-            city: string
-            cocNumber: string
-            contactPersonName: string | null | undefined
-            country: string
-            email: string
-            emailBcc: string | null | undefined
-            iban: string
-            logoSvg: string | null | undefined
-            postalCode: string
-            prefix: string
-            telephoneNumber: string | null | undefined
-            vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         getCompany: import('@trpc/server').BuildProcedure<
@@ -1548,27 +1429,6 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
-            id: any
-            name: string
-            createdAt: any
-            address: string
-            bic: string
-            city: string
-            cocNumber: string
-            contactPersonName: string | null | undefined
-            country: string
-            email: string
-            emailBcc: string | null | undefined
-            iban: string
-            logoSvg: string | null | undefined
-            postalCode: string
-            prefix: string
-            telephoneNumber: string | null | undefined
-            vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }
         >
         updateCompany: import('@trpc/server').BuildProcedure<
@@ -1669,27 +1529,6 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
-            id: any
-            name: string
-            createdAt: any
-            address: string
-            bic: string
-            city: string
-            cocNumber: string
-            contactPersonName: string | null | undefined
-            country: string
-            email: string
-            emailBcc: string | null | undefined
-            iban: string
-            logoSvg: string | null | undefined
-            postalCode: string
-            prefix: string
-            telephoneNumber: string | null | undefined
-            vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         createInvoice: import('@trpc/server').BuildProcedure<
@@ -1750,10 +1589,10 @@ export declare const createRouter: (
                 | null
                 | undefined
               metadata?: Record<string, unknown> | null | undefined
-              paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
+              paymentId?: number | null | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1837,10 +1676,10 @@ export declare const createRouter: (
                 | null
                 | undefined
               metadata?: Record<string, unknown> | null | undefined
-              paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
+              paymentId?: number | null | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -1950,10 +1789,10 @@ export declare const createRouter: (
                 | null
                 | undefined
               metadata?: Record<string, unknown> | null | undefined
-              paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
+              paymentId?: number | null | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -2037,10 +1876,10 @@ export declare const createRouter: (
                 | null
                 | undefined
               metadata?: Record<string, unknown> | null | undefined
-              paymentId?: number | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
+              paymentId?: number | null | undefined
               companyPrefix?: string | undefined
               numberPrefix?: string | null | undefined
               companyDetails?:
@@ -2120,6 +1959,12 @@ export declare const createRouter: (
                     | null
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  clientDetails?:
+                    | {
+                        name: string | null
+                      }
+                    | null
+                    | undefined
                   pagination?:
                     | {
                         sortBy:
@@ -2127,11 +1972,13 @@ export declare const createRouter: (
                           | 'companyId'
                           | 'clientId'
                           | 'totalIncludingTax'
-                        descending: boolean
                         limit: number
                         offset: number
+                        descending: boolean
                       }
                     | undefined
+                  uuids?: string[] | undefined
+                  paid?: boolean | undefined
                 }
               | undefined
             _input_out:
@@ -2141,6 +1988,12 @@ export declare const createRouter: (
                     | null
                   companyId?: number | null | undefined
                   clientId?: number | null | undefined
+                  clientDetails?:
+                    | {
+                        name: string | null
+                      }
+                    | null
+                    | undefined
                   pagination?:
                     | {
                         sortBy:
@@ -2148,11 +2001,13 @@ export declare const createRouter: (
                           | 'companyId'
                           | 'clientId'
                           | 'totalIncludingTax'
-                        descending: boolean
                         limit: number
                         offset: number
+                        descending: boolean
                       }
                     | undefined
+                  uuids?: string[] | undefined
+                  paid?: boolean | undefined
                 }
               | undefined
             _output_in: typeof import('@trpc/server').unsetMarker
@@ -2470,8 +2325,8 @@ export declare const createRouter: (
               id: number
               payment: {
                 currency: 'EUR' | 'USD'
-                amount: number
                 method: import('@modular-api/fastify-checkout').PaymentMethod
+                amount: number
                 description?: string | undefined
                 redirectUrl?: string | undefined
               }
@@ -2480,8 +2335,8 @@ export declare const createRouter: (
               id: number
               payment: {
                 currency: 'EUR' | 'USD'
-                amount: number
                 method: import('@modular-api/fastify-checkout').PaymentMethod
+                amount: number
                 description?: string | undefined
                 redirectUrl?: string | undefined
               }
@@ -2498,14 +2353,14 @@ export declare const createRouter: (
               createdAt: string
               description: string
               metadata: Record<string, unknown> | null
-              externalId: string | null
-              paymentServiceProvider: 'mollie' | null
-              amount: number
-              status: import('@modular-api/fastify-checkout').PaymentStatus
-              method: import('@modular-api/fastify-checkout').PaymentMethod
               orderId: number | null
               invoiceId: number | null
+              paymentServiceProvider: 'mollie' | null
+              method: import('@modular-api/fastify-checkout').PaymentMethod
+              externalId: string | null
               transactionReference: string | null
+              amount: number
+              status: import('@modular-api/fastify-checkout').PaymentStatus
               paidAt: string | null
               details:
                 | import('node_modules/@modular-api/fastify-checkout/dist/types/kysely/types/Payment.js').PaymentDetails
@@ -2584,11 +2439,11 @@ export declare const createRouter: (
             createdAt: string
             description: string
             metadata: Record<string, unknown> | null
-            externalId: string | null
-            paymentId: number
             paymentServiceProvider: 'mollie' | null
+            externalId: string | null
             amount: number
             status: import('@modular-api/fastify-checkout').RefundStatus
+            paymentId: number
           }
         >
         getAccount: import('@trpc/server').BuildProcedure<
@@ -2665,9 +2520,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id' | 'name' | 'email' | null
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }
@@ -2682,9 +2537,9 @@ export declare const createRouter: (
               pagination?:
                 | {
                     sortBy: 'id' | 'name' | 'email' | null
-                    descending: boolean
                     limit: number
                     offset: number
+                    descending: boolean
                   }
                 | undefined
             }

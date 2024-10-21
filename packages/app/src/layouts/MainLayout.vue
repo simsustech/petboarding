@@ -116,7 +116,7 @@
               >
                 <q-item :inset-level="1" to="/employee/overview">
                   <q-item-section>
-                    <q-item-label> {{ lang.overview }} </q-item-label>
+                    <q-item-label> {{ lang.dayOverview }} </q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item :inset-level="1" to="/employee/agenda">
@@ -175,6 +175,11 @@
                     />
                   </q-item-section>
                 </template>
+                <q-item :inset-level="1" to="/admin/overview">
+                  <q-item-section>
+                    <q-item-label> {{ lang.overview }} </q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item :inset-level="1" to="/admin/accounts">
                   <q-item-section>
                     <q-item-label> Accounts </q-item-label>

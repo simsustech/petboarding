@@ -10,7 +10,8 @@ const lang: Language = {
   goTo: 'Go to',
   administrator: 'Administrator',
   employee: 'Employee',
-  overview: 'Day overview',
+  overview: 'Overview',
+  dayOverview: 'Day overview',
   customers: 'Customers',
   bookings: 'Bookings boarding',
   labels: 'Labels',
@@ -233,7 +234,8 @@ const lang: Language = {
       invoiceSynchronized: 'Costs of bill or invoice have been synchronized.',
       submitted:
         'Your booking has been submitted. You will receive an confirmation by email. Please take into account that a down payment may be required.',
-      skipDownPayment: 'Skip down payment'
+      skipDownPayment: 'Skip down payment',
+      unpaidBookings: (days) => `Unpaid bookings of last ${days} days.`,
     },
     helpers: {
       status: {

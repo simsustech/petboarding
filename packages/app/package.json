@@ -46,7 +46,7 @@
     "@petboarding/api": "^0.1.0",
     "@quasar/extras": "1.16.12",
     "@quasar/quasar-ui-qcalendar": "4.0.0-beta.16",
-    "@simsustech/quasar-components": "^0.10.5",
+    "@simsustech/quasar-components": "^0.10.6",
     "@trpc/client": "^10.45.2",
     "@typescript-eslint/eslint-plugin": "8.7.0",
     "@typescript-eslint/parser": "8.7.0",

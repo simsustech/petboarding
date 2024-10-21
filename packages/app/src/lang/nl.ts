@@ -10,7 +10,8 @@ const lang: Language = {
   goTo: 'Ga naar',
   administrator: 'Administrator',
   employee: 'Medewerker',
-  overview: 'Dag overzicht',
+  overview: 'Overzicht',
+  dayOverview: 'Dag overzicht',
   customers: 'Klanten',
   bookings: 'Reserveringen pension',
   labels: 'Labels',
@@ -237,7 +238,9 @@ const lang: Language = {
         'Kosten van rekening of factuur zijn gesynchroniseerd.',
       submitted:
         'Uw reservering is verstuurd. U krijgt een bevestiging per email. Houd rekening met een eventuele aanbetaling.',
-      skipDownPayment: 'Aanbetaling overslaan'
+      skipDownPayment: 'Aanbetaling overslaan',
+      unpaidBookings: (days) =>
+        `Niet betaalde reserveringen van afgelopen ${days} dagen.`,
     },
     helpers: {
       status: {

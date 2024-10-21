@@ -711,5 +711,45 @@ export const adminBookingRoutes = ({
       const success = await cancelBooking({ id }, '', true)
       if (success) return true
       throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  getUnpaidBookings: procedure
+    .input(
+      z.object({
+        days: z.number()
+      })
+    )
+    .query(async ({ input }) => {
+      const { days } = input
+      const bookings = await findBookings({
+        criteria: {
+          until: new Date().toISOString().slice(0, 10),
+          from: subDays(new Date(), days).toISOString().slice(0, 10),
+          status: BOOKING_STATUS.APPROVED
+        }
+      })
+      if (fastify.slimfact) {
+        const unpaidBills = await fastify.slimfact.admin.getInvoices.query({
+          uuids: bookings
+            .map((booking) => booking.invoiceUuid)
+            .filter((uuid): uuid is string => !!uuid),
+          status: InvoiceStatus.BILL,
+          paid: false
+        })
+
+        const unpaidBillUuids = unpaidBills?.map((bill) => bill.uuid)
+
+        return findBookings({
+          criteria: {
+            ids: bookings
+              .filter(
+                (booking) =>
+                  booking.invoiceUuid &&
+                  unpaidBillUuids?.includes(booking.invoiceUuid)
+              )
+              .map((booking) => booking.id)
+          },
+          fastify
+        })
+      }
     })
 })
