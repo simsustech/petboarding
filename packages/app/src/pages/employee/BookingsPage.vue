@@ -55,6 +55,7 @@
         :services="servicesData"
         allow-hidden-services
         ignore-terms-and-conditions
+        hide-approved-after-down-payment
         allow-past-dates
         @submit="updateBooking"
       ></booking-form>

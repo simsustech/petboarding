@@ -57,6 +57,9 @@
         :pets="petsData"
         :services="servicesData"
         :terms-and-conditions-url="termsAndConditionsUrl"
+        :hide-approved-after-down-payment="
+          !configuration.INTEGRATIONS?.slimfact.hostname
+        "
         @submit="updateBooking"
       ></booking-form>
     </responsive-dialog>
@@ -66,6 +69,9 @@
         :pets="petsData"
         :services="servicesData"
         :terms-and-conditions-url="termsAndConditionsUrl"
+        :hide-approved-after-down-payment="
+          !configuration.INTEGRATIONS?.slimfact.hostname
+        "
         @submit="createBooking"
       ></booking-form>
     </responsive-dialog>

@@ -241,6 +241,8 @@ const lang: Language = {
       skipDownPayment: 'Aanbetaling overslaan',
       unpaidBookings: (days) =>
         `Niet betaalde reserveringen van afgelopen ${days} dagen.`,
+      approvedAfterDownPayment:
+        'Mijn reservering wordt pas goedgekeurd nadat de aanbetaling is ontvangen.'
     },
     helpers: {
       status: {
@@ -264,7 +266,9 @@ const lang: Language = {
     },
     validations: {
       fieldRequired: 'Veld is vereist',
-      termsAndConditions: 'U moet akkoord gaan met de algemene voorwaarden.'
+      termsAndConditions:
+        'U dient akkoord te gaan met de algemene voorwaarden.',
+      approvedAfterDownPayment: 'U dient akkoord te gaan.'
     }
   },
   service: {

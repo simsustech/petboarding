@@ -65,6 +65,11 @@
           :terms-and-conditions-url="termsAndConditionsUrl"
           :ignore-terms-and-conditions="ignoreTermsAndConditions"
         />
+
+        <approved-after-down-payment-checkbox
+          v-model="approvedAfterDownPayment"
+          :hide-approved-after-down-payment="hideApprovedAfterDownPayment"
+        />
       </div>
     </div>
   </q-form>
@@ -111,6 +116,7 @@ export interface Props {
   >
   termsAndConditionsUrl?: string
   ignoreTermsAndConditions?: boolean
+  hideApprovedAfterDownPayment?: boolean
   pets: Pet[]
   services?: Service[]
   allowHiddenServices?: boolean
@@ -201,6 +207,8 @@ const dateRange = ref({
   to: ''
 })
 const termsAndConditions = ref(false)
+const approvedAfterDownPayment = ref(false)
+
 const limitDateOptionsFn = (date: string) => {
   return (
     date >

@@ -1,26 +1,19 @@
 <template>
-  <div v-if="termsAndConditionsUrl" class="row">
-    <a :href="termsAndConditionsUrl" target="_blank" class="col-12">
-      {{ lang.booking.messages.viewTermsAndConditions }}
-    </a>
-  </div>
-
-  <div v-show="!ignoreTermsAndConditions" class="row">
+  <div v-show="!hideApprovedAfterDownPayment">
     <q-field
       :rules="rules"
       :model-value="modelValue"
       borderless
-      hide-bottom-space
-      :error-message="lang.booking.validations.termsAndConditions"
+      :error-message="lang.booking.validations.approvedAfterDownPayment"
     >
       <q-checkbox
-        ref="termsAndConditionsRef"
+        ref="approvedAfterDownPaymentRef"
         :model-value="modelValue"
         color="primary"
         @update:model-value="(evt) => $emit('update:model-value', evt)"
       >
         <template #default>
-          {{ lang.booking.messages.termsAndConditions }}
+          {{ lang.booking.messages.approvedAfterDownPayment }}
         </template>
       </q-checkbox>
     </q-field>
@@ -39,17 +32,16 @@ import { useLang } from '../lang/index.js'
 
 export interface Props {
   modelValue: boolean
-  termsAndConditionsUrl?: string
-  ignoreTermsAndConditions?: boolean
+  hideApprovedAfterDownPayment?: boolean
 }
 const props = defineProps<Props>()
 const lang = useLang()
 
-const { ignoreTermsAndConditions } = toRefs(props)
+const { hideApprovedAfterDownPayment } = toRefs(props)
 
 const rules = ref([
   (val: boolean) => {
-    return !!val || !!ignoreTermsAndConditions.value
+    return !!val || !!hideApprovedAfterDownPayment.value
   }
 ])
 </script>

@@ -236,6 +236,8 @@ const lang: Language = {
         'Your booking has been submitted. You will receive an confirmation by email. Please take into account that a down payment may be required.',
       skipDownPayment: 'Skip down payment',
       unpaidBookings: (days) => `Unpaid bookings of last ${days} days.`,
+      approvedAfterDownPayment:
+        'My booking will only be approved after the down payment has been received.'
     },
     helpers: {
       status: {
@@ -259,7 +261,8 @@ const lang: Language = {
     },
     validations: {
       fieldRequired: 'Field is required',
-      termsAndConditions: 'You need to acccept the terms and conditions.'
+      termsAndConditions: 'You need to acccept the terms and conditions.',
+      approvedAfterDownPayment: 'You need to accept.'
     }
   },
   service: {

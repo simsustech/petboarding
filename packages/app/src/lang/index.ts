@@ -248,6 +248,7 @@ export interface Language {
     validations: {
       fieldRequired: string
       termsAndConditions: string
+      approvedAfterDownPayment: string
     }
   }
   service: {
