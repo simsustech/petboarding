@@ -56,7 +56,8 @@ export const adminDaycareRoutes = ({
         for (const daycareDate of daycareDates) {
           updateDaycareDate(
             {
-              id: daycareDate.id
+              id: daycareDate.id,
+              customerId: daycareDate.customerId
             },
             {
               daycareDate: {
