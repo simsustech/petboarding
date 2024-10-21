@@ -428,10 +428,10 @@ const lang: Language = {
   daycareSubscription: {
     title: 'Daycare subscriptions',
     fields: {
-      description: 'Omschrijving',
-      numberOfDays: 'Aantal dagen',
+      description: 'Description',
+      numberOfDays: 'Number of days',
       validityPeriod: 'Validity period',
-      listPrice: 'Prijs'
+      listPrice: 'Price'
     },
     labels: {
       years: 'Years',
