@@ -5,36 +5,34 @@
     </template>
     <template #header-side>
       <q-btn icon="search">
-        <q-menu>
-          <div class="q-pa-sm">
-            <customer-select
-              v-model="customerId"
-              :label="lang.customer.customer"
-              :filtered-options="filteredCustomers"
-              @filter="onFilterCustomers"
-            >
-            </customer-select>
-            <date-input
-              v-model="from"
-              :label="capitalizeFirstLetter(lang.booking.from)"
-              format="DD-MM-YYYY"
-              clearable
-              :date="{
-                noUnset: true,
-                firstDayOfWeek: '1'
-              }"
-            />
-            <date-input
-              v-model="until"
-              :label="capitalizeFirstLetter(lang.booking.until)"
-              format="DD-MM-YYYY"
-              clearable
-              :date="{
-                noUnset: true,
-                firstDayOfWeek: '1'
-              }"
-            />
-          </div>
+        <q-menu class="q-pa-sm">
+          <customer-select
+            v-model="customerId"
+            :label="lang.customer.customer"
+            :filtered-options="filteredCustomers"
+            @filter="onFilterCustomers"
+          >
+          </customer-select>
+          <date-input
+            v-model="from"
+            :label="capitalizeFirstLetter(lang.booking.from)"
+            format="DD-MM-YYYY"
+            clearable
+            :date="{
+              noUnset: true,
+              firstDayOfWeek: '1'
+            }"
+          />
+          <date-input
+            v-model="until"
+            :label="capitalizeFirstLetter(lang.booking.until)"
+            format="DD-MM-YYYY"
+            clearable
+            :date="{
+              noUnset: true,
+              firstDayOfWeek: '1'
+            }"
+          />
         </q-menu>
       </q-btn>
     </template>
