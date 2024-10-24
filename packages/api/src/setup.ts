@@ -54,6 +54,8 @@ export default async function (fastify: FastifyInstance) {
       'Please define a API_HOSTNAME or VITE_API_HOSTNAME environment variable'
     )
 
+  const corsOrigin = [`https://${hostname}`]
+
   console.log('Running setup function....')
   const accountMethods = await createAccountMethods(
     fastify,
@@ -72,6 +74,7 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
 
   if (slimfactHostname) {
+    corsOrigin.push(slimfactHostname)
     await fastify.register(oidcClientPlugin, {
       name: 'slimfact',
       clientId: 'petboarding',
@@ -84,7 +87,7 @@ export default async function (fastify: FastifyInstance) {
     await fastify.oidcClients.slimfact?.refreshTokenSet()
 
     createSlimfactTrpcClient({
-      hostname: slimfactHostname,
+      hostname: `https://${slimfactHostname}`,
       fastify
     })
 
@@ -164,7 +167,7 @@ export default async function (fastify: FastifyInstance) {
   await fastify.register(modularapiPlugin, {
     kysely,
     cors: {
-      origin: [`https://${hostname}`, `https://localhost:3001`]
+      origin: corsOrigin
     },
     trpc: {
       createRouter,
