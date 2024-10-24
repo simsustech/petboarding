@@ -16,34 +16,41 @@
     </q-banner>
     <div v-if="ready">
       <div v-if="petsData?.length">
-        <q-list v-if="upcomingBookings?.length">
-          <q-item-label header>{{
-            lang.booking.messages.upcomingBookings
-          }}</q-item-label>
-          <booking-expansion-item
-            v-for="booking in upcomingBookings"
-            :key="booking.id"
-            :model-value="booking"
-            show-icon
-            show-edit-button
-            @update="openUpdateDialog"
-            @cancel="cancelBooking"
-          />
-        </q-list>
-        <q-list v-if="otherBookings?.length">
-          <q-item-label header>{{
-            lang.booking.messages.otherBookings
-          }}</q-item-label>
-          <booking-expansion-item
-            v-for="booking in otherBookings"
-            :key="booking.id"
-            :model-value="booking"
-            show-icon
-            show-edit-button
-            @update="openUpdateDialog"
-            @cancel="cancelBooking"
-          />
-        </q-list>
+        <div class="row">
+          <q-list v-if="upcomingBookings?.length" class="col-12 col-md-6">
+            <q-item-label header>{{
+              lang.booking.messages.upcomingBookings
+            }}</q-item-label>
+            <booking-expansion-item
+              v-for="booking in upcomingBookings"
+              :key="booking.id"
+              :model-value="booking"
+              show-icon
+              show-edit-button
+              @update="openUpdateDialog"
+              @cancel="cancelBooking"
+            />
+          </q-list>
+          <q-expansion-item class="col-12 col-md-6">
+            <template #header>
+              <q-item-label header>{{
+                lang.booking.messages.otherBookings
+              }}</q-item-label>
+            </template>
+
+            <q-list v-if="otherBookings?.length">
+              <booking-expansion-item
+                v-for="booking in otherBookings"
+                :key="booking.id"
+                :model-value="booking"
+                show-icon
+                show-edit-button
+                @update="openUpdateDialog"
+                @cancel="cancelBooking"
+              />
+            </q-list>
+          </q-expansion-item>
+        </div>
       </div>
       <div v-else>
         <router-link to="/account/pets">{{

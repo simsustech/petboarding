@@ -95,7 +95,7 @@ export const userDaycareRoutes = ({
         const daycareDateIds = daycareDates
           .filter(
             (daycareDate) =>
-              daycareDate.date >
+              daycareDate.date >=
               addDays(new Date(), 1).toISOString().slice(0, 10)
           )
           .map((daycareDate) => daycareDate.id)

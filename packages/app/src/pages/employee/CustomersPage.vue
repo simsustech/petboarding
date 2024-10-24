@@ -82,11 +82,11 @@
         </q-list>
       </div>
       <div class="row">
-        <q-list v-if="bookings">
+        <q-list v-if="upcomingBookings" class="col-12 col-md-6">
           <q-item>
             <q-item-section>
               <q-item-label header>{{
-                `${lang.booking.title} ${fromFormatted} -> ${untilFormatted}`
+                `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -94,12 +94,29 @@
             </q-item-section>
           </q-item>
           <booking-item
-            v-for="booking in bookings"
+            v-for="booking in upcomingBookings"
             :key="booking.id"
             show-icon
             :model-value="booking"
           />
         </q-list>
+        <q-expansion-item v-if="otherBookings" class="col-12 col-md-6">
+          <template #header>
+            <q-item-label header>
+              {{
+                `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
+              }}
+            </q-item-label>
+          </template>
+          <q-list v-if="otherBookings">
+            <booking-item
+              v-for="booking in otherBookings"
+              :key="booking.id"
+              show-icon
+              :model-value="booking"
+            />
+          </q-list>
+        </q-expansion-item>
       </div>
       <div class="row">
         <customer-daycare-subscriptions-list
@@ -172,18 +189,24 @@ import PetItem from '../../components/pet/PetItem.vue'
 import ContactPersonItem from '../../components/contactperson/ContactPersonItem.vue'
 import { useLang } from '../../lang/index.js'
 import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
-import { Customer, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
+import {
+  BOOKING_STATUS,
+  Customer,
+  DAYCARE_DATE_STATUS
+} from '@petboarding/api/zod'
 import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
 import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import { ResourcePage } from '@simsustech/quasar-components'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
+import { useQuasar } from 'quasar'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const route = useRoute()
 const router = useRouter()
 const lang = useLang()
+const $q = useQuasar()
 const { useQuery, useMutation } = await createUseTrpc()
 
 const id = ref(Number(route.params.id))
@@ -201,20 +224,27 @@ const { data, execute } = useQuery('employee.getCustomer', {
   }
 })
 
-const from = dateUtil.formatDate(
-  dateUtil.subtractFromDate(new Date(), { years: 2 }),
-  'YYYY-MM-DD'
-)
-const until = dateUtil.formatDate(
-  dateUtil.addToDate(new Date(), { years: 1 }),
-  'YYYY-MM-DD'
-)
-const fromFormatted = computed(() => dateUtil.formatDate(from, 'DD-MM-YYYY'))
-const untilFormatted = computed(() => dateUtil.formatDate(until, 'DD-MM-YYYY'))
+const dateFormatter = (date: Date) =>
+  new Intl.DateTimeFormat($q.lang.isoName, {
+    dateStyle: 'full',
+    timeZone: 'UTC'
+  }).format(date)
+
+const from = dateUtil.subtractFromDate(new Date(), { years: 2 })
+
+const until = dateUtil.addToDate(new Date(), { years: 1 })
+
+const todayFormatted = computed(() => dateFormatter(new Date()))
+const fromFormatted = computed(() => dateFormatter(from))
+const untilFormatted = computed(() => dateFormatter(until))
 const { data: bookings, execute: executeBookings } = useQuery(
   'employee.getBookings',
   {
-    args: reactive({ from, until, customerId: id }),
+    args: reactive({
+      from: from.toISOString().slice(0, 10),
+      until: until.toISOString().slice(0, 10),
+      customerId: id
+    }),
     reactive: {
       args: true
     }
@@ -245,7 +275,11 @@ const {
   data: customerDaycareSubscriptions,
   execute: executeCustomerDaycareSubscriptions
 } = useQuery('employee.getCustomerDaycareSubscriptions', {
-  args: reactive({ from, until, customerId: id }),
+  args: reactive({
+    from: from.toISOString().slice(0, 10),
+    until: until.toISOString().slice(0, 10),
+    customerId: id
+  }),
   reactive: {
     args: true
   }
@@ -260,6 +294,23 @@ const { data: categories, execute: executeCategories } = useQuery(
 
 const { data: services, execute: executeServices } =
   useQuery('public.getServices')
+
+const upcomingBookings = computed(() =>
+  bookings.value?.filter(
+    (booking) =>
+      (booking.status?.status === BOOKING_STATUS.APPROVED ||
+        booking.status?.status === BOOKING_STATUS.PENDING) &&
+      booking.endDate >= new Date().toISOString().slice(0, 10)
+  )
+)
+const otherBookings = computed(() =>
+  bookings.value?.filter(
+    (booking) =>
+      !upcomingBookings.value
+        ?.map((upcomingBooking) => upcomingBooking.id)
+        .includes(booking.id)
+  )
+)
 
 const daycareDatesFrom = ref('')
 const daycareDatesUntil = ref('')
@@ -307,7 +358,7 @@ const events = computed(() =>
     petNames: daycareDate.pets.map((pet) => pet.name),
     petIds: daycareDate.pets.map((pet) => pet.id),
     date: daycareDate.date,
-    details: daycareDate.customer.lastName,
+    details: daycareDate.customer?.lastName,
     // details: lang.value.daycare.status[daycareDate.status],
     icon: DAYCARE_DATE_ICONS[daycareDate.status]
   }))
