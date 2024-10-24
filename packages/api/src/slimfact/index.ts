@@ -1,6 +1,7 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
 import type { FastifyInstance } from 'fastify'
 import type { AppRouter } from './slimfact'
+import type { TokenSet } from '@modular-api/api'
 
 declare module 'fastify' {
   export interface FastifyInstance {
@@ -8,6 +9,7 @@ declare module 'fastify' {
   }
 }
 
+let newTokenSetPromise: Promise<TokenSet | null>
 export const createSlimfactTrpcClient = ({
   hostname,
   fastify
@@ -25,10 +27,12 @@ export const createSlimfactTrpcClient = ({
         if (res.status === 401) {
           console.error('SlimFact not authorized, refreshing token set')
           try {
+            await newTokenSetPromise
             const tokenSet = await fastify.oidcClients?.slimfact.getTokenSet()
             if (tokenSet) {
-              const newTokenSet =
-                await fastify.oidcClients?.slimfact.refreshTokenSet()
+              newTokenSetPromise =
+                fastify.oidcClients?.slimfact.refreshTokenSet()
+              const newTokenSet = await newTokenSetPromise
               return handleErrorFetch(
                 input,
                 {
