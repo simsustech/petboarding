@@ -21,7 +21,7 @@ const body = c`
   <p style="color:red;">
     This booking requires a down payment. Open the bill with the link below to pay the down payment.
     <br />
-    <b>If you do not pay the down payment within {{#if downPaymentPaymentTermDays}}{{downPaymentPaymentTermDays}}{{else}}5{{/if}} days your booking will automatically be canceled.</b>
+    <b>Please make sure that you pay the down payment within {{#if downPaymentPaymentTermDays}}{{downPaymentPaymentTermDays}}{{else}}5{{/if}} days, otherwise your booking will automatically be canceled.</b>
   </p>
   \\{{/if}}
   \\{{#if invoiceUrl}}
