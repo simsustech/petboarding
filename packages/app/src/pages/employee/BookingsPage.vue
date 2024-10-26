@@ -32,6 +32,7 @@
           @update="openUpdateDialog"
           @cancel="cancelBooking"
           @open-customer="openCustomer"
+          @update-booking-invoice="updateBookingInvoice"
         />
       </q-list>
 
