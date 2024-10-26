@@ -59,7 +59,7 @@ export const createSlimfactTrpcClient = ({
   const client = createTRPCProxyClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: `https://${hostname}/trpc`,
+        url: `${hostname}/trpc`,
         // You can pass any HTTP headers you wish here
         async headers() {
           const tokenSet = await fastify.oidcClients?.slimfact.getTokenSet()

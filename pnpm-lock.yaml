@@ -50,8 +50,8 @@ importers:
         specifier: 8.0.2
         version: 8.0.2
       '@modular-api/api':
-        specifier: ^0.5.8
-        version: 0.5.8(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@6.1.3)(otplib@12.0.1)(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))
+        specifier: ^0.5.9
+        version: 0.5.9(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@6.1.3)(otplib@12.0.1)(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))
       '@modular-api/fastify-checkout':
         specifier: ^0.4.7
         version: 0.4.7(kysely@0.27.4)
@@ -302,7 +302,7 @@ importers:
         version: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.80.4)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vitrify:
         specifier: ^0.16.1
-        version: 0.16.1(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@4.20.0)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1)
+        version: 0.16.1(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1)
       vue:
         specifier: 3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -408,7 +408,7 @@ importers:
         version: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vitrify:
         specifier: ^0.16.0
-        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1)
+        version: 0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@4.20.0)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1)
       vue:
         specifier: 3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -1667,8 +1667,8 @@ packages:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
 
-  '@modular-api/api@0.5.8':
-    resolution: {integrity: sha512-JrUcU53e+Yg7P1nD31TK3napKclpw4ZIBhqSQLA6/vMlhoITNgJwdHc93yph/3By+dDxxmSvpN/09Wk+zjFBfg==}
+  '@modular-api/api@0.5.9':
+    resolution: {integrity: sha512-M9xy4o0fLgDswil/4dKnUwp5cfDftBd3mIvCz6x2oGNs1G2gXsFV7KGEV5M/bStX7DYPxFdRyNsGID5Z1+miqw==}
     peerDependencies:
       kysely: ^0.27.4
       openid-client: ^6.1.3
@@ -2019,8 +2019,8 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
-  '@types/express-serve-static-core@5.0.0':
-    resolution: {integrity: sha512-AbXMTZGt40T+KON9/Fdxx0B2WK5hsgxcfXJLr5bFpZ7b4JCex2WyQPTEKdXqfHiY5nKKBScZ7yCoO6Pvgxfvnw==}
+  '@types/express-serve-static-core@5.0.1':
+    resolution: {integrity: sha512-CRICJIl0N5cXDONAdlTv5ShATZ4HEwk6kDDIW2/w9qOWKg+NU/5F8wYRWCrONad0/UKkloNSmmyN/wX4rtpbVA==}
 
   '@types/express@5.0.0':
     resolution: {integrity: sha512-DvZriSMehGHL1ZNLzi6MidnsDhUZM/x2pRdDIKdwbUNqqwHxMlRdkxtn6/EPKyqKpHqTl/4nRZsRNLpZxZRpPQ==}
@@ -7324,7 +7324,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@modular-api/api@0.5.8(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@6.1.3)(otplib@12.0.1)(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))':
+  '@modular-api/api@0.5.9(bcrypt@5.1.1)(fastify@5.0.0)(handlebars@4.7.8)(kysely@0.27.4)(openid-client@6.1.3)(otplib@12.0.1)(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))':
     dependencies:
       '@fastify/cookie': 11.0.1
       '@fastify/cors': 10.0.1
@@ -7688,7 +7688,7 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
-  '@types/express-serve-static-core@5.0.0':
+  '@types/express-serve-static-core@5.0.1':
     dependencies:
       '@types/node': 22.7.4
       '@types/qs': 6.9.16
@@ -7698,7 +7698,7 @@ snapshots:
   '@types/express@5.0.0':
     dependencies:
       '@types/body-parser': 1.19.5
-      '@types/express-serve-static-core': 5.0.0
+      '@types/express-serve-static-core': 5.0.1
       '@types/qs': 6.9.16
       '@types/serve-static': 1.15.7
 
@@ -11541,7 +11541,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitrify@0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1):
+  vitrify@0.16.0(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@4.20.0)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1):
     dependencies:
       '@fastify/middie': 9.0.2
       '@fastify/static': 8.0.2
@@ -11560,14 +11560,66 @@ snapshots:
       merge-deep: 3.0.3
       quasar: 2.17.1
       readline: 1.3.0
-      rollup-plugin-visualizer: 5.12.0(rollup@2.79.1)
+      rollup-plugin-visualizer: 5.12.0(rollup@4.20.0)
       sass: 1.79.3
       ts-node: 10.9.2(@types/node@22.7.4)(typescript@5.6.3)
-      unplugin-vue-components: 0.27.4(@babel/parser@7.25.3)(rollup@2.79.1)(vue@3.5.12(typescript@5.6.3))
+      unplugin-vue-components: 0.27.4(@babel/parser@7.25.3)(rollup@4.20.0)(vue@3.5.12(typescript@5.6.3))
       vite: 5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5)
       vite-plugin-pwa: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vitefu: 1.0.2(vite@5.2.9(@types/node@22.7.4)(sass@1.79.3)(terser@5.31.5))
       vitest: 2.1.1(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.79.3)(terser@5.31.5)
+      vue: 3.5.12(typescript@5.6.3)
+      vue-router: 4.4.5(vue@3.5.12(typescript@5.6.3))
+      workbox-window: 7.1.0
+    transitivePeerDependencies:
+      - '@babel/parser'
+      - '@edge-runtime/vm'
+      - '@nuxt/kit'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - '@vite-pwa/assets-generator'
+      - '@vitest/browser'
+      - '@vitest/ui'
+      - jsdom
+      - less
+      - lightningcss
+      - msw
+      - rollup
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - typescript
+      - workbox-build
+
+  vitrify@0.16.1(@babel/parser@7.25.3)(@fastify/static@8.0.2)(@types/node@22.7.4)(fastify@5.0.0)(quasar@2.17.1)(rollup@2.79.1)(terser@5.31.5)(typescript@5.6.3)(vue-router@4.4.5(vue@3.5.12(typescript@5.6.3)))(vue@3.5.12(typescript@5.6.3))(workbox-build@7.1.1):
+    dependencies:
+      '@fastify/middie': 9.0.2
+      '@fastify/static': 8.0.2
+      '@vitejs/plugin-vue': 5.1.4(vite@5.2.9(@types/node@22.7.4)(sass@1.80.4)(terser@5.31.5))(vue@3.5.12(typescript@5.6.3))
+      ajv: 8.17.1
+      cac: 6.7.14
+      chalk: 5.3.0
+      critters: 0.0.25
+      cross-env: 7.0.3
+      esbuild: 0.24.0
+      fastify: 5.0.0
+      glob: 11.0.0
+      happy-dom: 15.7.4
+      is-port-reachable: 4.0.0
+      magic-string: 0.30.12
+      merge-deep: 3.0.3
+      quasar: 2.17.1
+      readline: 1.3.0
+      rollup-plugin-visualizer: 5.12.0(rollup@2.79.1)
+      sass: 1.80.4
+      ts-node: 10.9.2(@types/node@22.7.4)(typescript@5.6.3)
+      unplugin-vue-components: 0.27.4(@babel/parser@7.25.3)(rollup@2.79.1)(vue@3.5.12(typescript@5.6.3))
+      vite: 5.2.9(@types/node@22.7.4)(sass@1.80.4)(terser@5.31.5)
+      vite-plugin-pwa: 0.20.5(vite@5.2.9(@types/node@22.7.4)(sass@1.80.4)(terser@5.31.5))(workbox-build@7.1.1)(workbox-window@7.1.0)
+      vitefu: 1.0.3(vite@5.2.9(@types/node@22.7.4)(sass@1.80.4)(terser@5.31.5))
+      vitest: 2.1.3(@types/node@22.7.4)(happy-dom@15.7.4)(sass@1.80.4)(terser@5.31.5)
       vue: 3.5.12(typescript@5.6.3)
       vue-router: 4.4.5(vue@3.5.12(typescript@5.6.3))
       workbox-window: 7.1.0
