@@ -74,7 +74,7 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
 
   if (slimfactHostname) {
-    corsOrigin.push(slimfactHostname)
+    corsOrigin.push(`https://${slimfactHostname}`)
     await fastify.register(oidcClientPlugin, {
       name: 'slimfact',
       clientId: 'petboarding',
