@@ -122,7 +122,8 @@ const upcomingBookings = computed(() =>
   data.value?.filter(
     (booking) =>
       (booking.status?.status === BOOKING_STATUS.APPROVED ||
-        booking.status?.status === BOOKING_STATUS.PENDING) &&
+        booking.status?.status === BOOKING_STATUS.PENDING ||
+        booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT) &&
       booking.endDate >= new Date().toISOString().slice(0, 10)
   )
 )
