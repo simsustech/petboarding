@@ -113,12 +113,14 @@ const upcomingBookings = computed(() =>
   )
 )
 const otherBookings = computed(() =>
-  data.value?.filter(
-    (booking) =>
-      !upcomingBookings.value
-        ?.map((upcomingBooking) => upcomingBooking.id)
-        .includes(booking.id)
-  )
+  data.value
+    ?.filter(
+      (booking) =>
+        !upcomingBookings.value
+          ?.map((upcomingBooking) => upcomingBooking.id)
+          .includes(booking.id)
+    )
+    .sort((a, b) => (a.startDate > b.startDate ? -1 : 1))
 )
 
 const updateBookingFormRef = ref<typeof BookingForm>()
