@@ -59,9 +59,14 @@ export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
 type BookingUpdate = Updateable<Bookings>
 
+type BookingOpeningTime = Pick<
+  OpeningTime,
+  'id' | 'name' | 'startTime' | 'startDayCounted' | 'endDayCounted' | 'endTime'
+> | null
+
 type BookingStatus = Selectable<BookingStatusDb> & {
-  startTime: OpeningTime
-  endTime: OpeningTime
+  startTime: BookingOpeningTime | null
+  endTime: BookingOpeningTime | null
 }
 
 export interface BookingCostItem {
@@ -113,8 +118,8 @@ interface BookingCustomer {
 export interface ParsedBooking extends Booking {
   days: number
   costs: BookingCosts | null
-  startTime: OpeningTime | null
-  endTime: OpeningTime | null
+  startTime: BookingOpeningTime | null
+  endTime: BookingOpeningTime | null
   customer: BookingCustomer | null
   pets: BookingPets
   services: BookingService[]
@@ -389,12 +394,7 @@ function withStartTime(eb: ExpressionBuilder<Database, 'bookings'>) {
         'openingTimes.startTime',
         'openingTimes.endTime',
         'openingTimes.startDayCounted',
-        'openingTimes.endDayCounted',
-        'openingTimes.daysOfWeek',
-        'openingTimes.disabled',
-        'openingTimes.unavailableHolidays',
-        'openingTimes.type',
-        'openingTimes.createdAt'
+        'openingTimes.endDayCounted'
       ])
       .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
   ).as('startTime')
@@ -410,12 +410,7 @@ function withEndTime(eb: ExpressionBuilder<Database, 'bookings'>) {
         'openingTimes.startTime',
         'openingTimes.endTime',
         'openingTimes.startDayCounted',
-        'openingTimes.endDayCounted',
-        'openingTimes.daysOfWeek',
-        'openingTimes.disabled',
-        'openingTimes.unavailableHolidays',
-        'openingTimes.type',
-        'openingTimes.createdAt'
+        'openingTimes.endDayCounted'
       ])
       .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
   ).as('endTime')
@@ -501,6 +496,39 @@ function withStatus(eb: ExpressionBuilder<Database, 'bookings'>) {
         'bookingStatus.createdAt',
         'bookingStatus.bookingId'
       ])
+      .select(({ eb: eb1 }) => [
+        jsonObjectFrom(
+          eb1
+            .selectFrom('openingTimes')
+            .select([
+              'openingTimes.id',
+              'openingTimes.name',
+              'openingTimes.startTime',
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
+            ])
+            .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
+        ).as('startTime'),
+        jsonObjectFrom(
+          eb1
+            .selectFrom('openingTimes')
+            .select([
+              'openingTimes.id',
+              'openingTimes.name',
+              'openingTimes.startTime',
+              'openingTimes.endTime',
+              'openingTimes.startDayCounted',
+              'openingTimes.endDayCounted'
+            ])
+            .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
+        ).as('endTime'),
+        sql<number>`booking_status.end_date - 
+          booking_status.start_date - 1
+          + (select "opening_times"."start_day_counted" from "opening_times" where "booking_status"."start_time_id" = "opening_times"."id")
+          + (select "opening_times"."end_day_counted" from "opening_times" where "booking_status"."end_time_id" = "opening_times"."id")
+          `.as('days')
+      ])
   ).as('status')
 }
 
@@ -562,7 +590,7 @@ function withIsDoubleBooked(eb: ExpressionBuilder<Database, 'bookings'>) {
           .whereRef(
             'bookingStatus.modifiedAt',
             '=',
-            sql`(select max(modified_at) from booking_status where booking_status.booking_id = b.id)`
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = b.id)`
           )
           .where('bookingStatus.status', '=', BOOKING_STATUS.APPROVED)
           .whereRef('bookings.id', '!=', 'b.id')
@@ -598,7 +626,7 @@ function withOverlapsWithUnavailablePeriod(
           .whereRef(
             'bookingStatus.modifiedAt',
             '=',
-            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
           )
           .where('bookingStatus.status', '!=', BOOKING_STATUS.APPROVED)
       )
@@ -612,6 +640,7 @@ function find({
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
+    statuses?: BOOKING_STATUS[]
     ids?: number[]
     from?: string
     until?: string
@@ -637,9 +666,31 @@ function find({
           .where(
             'bookingStatus.modifiedAt',
             '=',
-            sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
           )
           .where('bookingStatus.status', '=', criteria.status!)
+          .select('bookingStatus.bookingId')
+      )
+    )
+  } else if (criteria.statuses) {
+    query = query.where(({ eb, selectFrom }) =>
+      eb(
+        'bookings.id',
+        '=',
+        selectFrom('bookingStatus')
+          .whereRef('bookingStatus.bookingId', '=', 'bookings.id')
+          .where(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+          )
+          .where((web) =>
+            web.or(
+              criteria.statuses!.map((status) =>
+                web('bookingStatus.status', '=', status)
+              )
+            )
+          )
           .select('bookingStatus.bookingId')
       )
     )
@@ -711,6 +762,7 @@ export async function findBooking({
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
+    statuses?: BOOKING_STATUS[]
     ids?: number[]
     from?: string
     until?: string
@@ -760,6 +812,7 @@ export async function findBookings({
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
+    statuses?: BOOKING_STATUS[]
     ids?: number[]
     from?: string
     until?: string

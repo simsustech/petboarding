@@ -38,7 +38,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="`/employee/labels/bookings/${arrivals
+            :to="`/employee/labels/bookings/${(arrivalsData || [])
               .map((booking) => booking.id)
               .join('/')}`"
           >
@@ -49,7 +49,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            :to="`/employee/labels/pets/${arrivals
+            :to="`/employee/labels/pets/${(arrivalsData || [])
               .map((booking) => booking.pets.map((pet) => pet.id).join('/'))
               .join('/')}`"
           >
@@ -78,7 +78,7 @@
                   {{ openingTime.name }}
                 </q-item-label>
                 <booking-item
-                  v-for="booking in arrivals.filter(
+                  v-for="booking in (arrivalsData || []).filter(
                     (booking) => booking.startTimeId === openingTime.id
                   )"
                   :key="booking.id"
@@ -111,7 +111,7 @@
                   {{ openingTime.name }}
                 </q-item-label>
                 <booking-item
-                  v-for="booking in departures.filter(
+                  v-for="booking in (departuresData || []).filter(
                     (booking) => booking.endTimeId === openingTime.id
                   )"
                   :key="booking.id"
@@ -209,7 +209,7 @@ const route = useRoute()
 const selectedDate = ref(
   !Array.isArray(route.params.date)
     ? route.params.date.replaceAll('-', '/')
-    : null || dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+    : dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
 )
 
 onBeforeRouteUpdate((to) => {
@@ -224,35 +224,37 @@ const dateError = computed(() => dateInputRef.value?.hasError)
 watch(selectedDate, async () => {
   await dateInputRef.value?.validate()
   if (!dateError.value) {
-    executeGetBookings()
-    executeAwaitingDownPaymentBookings()
+    executeGetArrivals()
+    executeGetDepartures()
     executeDaycareDates()
   }
 })
 
-const { data: bookingsData, execute: executeGetBookings } = useQuery(
+const { data: arrivalsData, execute: executeGetArrivals } = useQuery(
   'employee.getBookings',
   {
     args: () =>
       reactive({
         from: parsedDate.value,
         until: parsedDate.value,
-        status: BOOKING_STATUS.APPROVED
+        startDate: parsedDate.value,
+        statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
       })
   }
 )
 
-const {
-  data: awaitingDownPaymentBookings,
-  execute: executeAwaitingDownPaymentBookings
-} = useQuery('employee.getBookings', {
-  args: () =>
-    reactive({
-      from: parsedDate.value,
-      until: parsedDate.value,
-      status: BOOKING_STATUS.AWAITING_DOWNPAYMENT
-    })
-})
+const { data: departuresData, execute: executeGetDepartures } = useQuery(
+  'employee.getBookings',
+  {
+    args: () =>
+      reactive({
+        from: parsedDate.value,
+        until: parsedDate.value,
+        endDate: parsedDate.value,
+        statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
+      })
+  }
+)
 
 const { data: daycareDatesData, execute: executeDaycareDates } = useQuery(
   'employee.getDaycareDates',
@@ -269,34 +271,6 @@ const { data: daycareDatesData, execute: executeDaycareDates } = useQuery(
 const { data: openingTimesData, execute: executeOpeningTimes } = useQuery(
   'public.getOpeningTimes'
 )
-
-const arrivals = computed(() => {
-  const approved =
-    bookingsData?.value?.filter(
-      (booking) => booking.startDate.replaceAll('-', '/') === selectedDate.value
-    ) || []
-
-  const awaitingDownPayments =
-    awaitingDownPaymentBookings?.value?.filter(
-      (booking) => booking.startDate.replaceAll('-', '/') === selectedDate.value
-    ) || []
-
-  return [...approved, ...awaitingDownPayments]
-})
-
-const departures = computed(() => {
-  const approved =
-    bookingsData?.value?.filter(
-      (booking) => booking.endDate.replaceAll('-', '/') === selectedDate.value
-    ) || []
-
-  const awaitingDownPayments =
-    awaitingDownPaymentBookings?.value?.filter(
-      (booking) => booking.endDate.replaceAll('-', '/') === selectedDate.value
-    ) || []
-
-  return [...approved, ...awaitingDownPayments]
-})
 
 const sortedOpeningTimes = computed(() => {
   if (openingTimesData.value) {
@@ -336,8 +310,10 @@ onMounted(async () => {
   await executeOpeningTimes()
   await dateInputRef.value?.validate()
   if (!dateError.value) {
-    executeGetBookings()
-    executeAwaitingDownPaymentBookings()
+    // executeGetBookings()
+    executeGetArrivals()
+    executeGetDepartures()
+    // executeAwaitingDownPaymentBookings()
     executeDaycareDates()
   }
 })
