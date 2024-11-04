@@ -155,12 +155,12 @@ export const createOrUpdateSlimfactInvoice = async ({
   let cancelationCosts
   try {
     ;({ bookingCancelationHandler } = await import('../../api.config.js'))
-    if (booking.days) {
+    if (lastApprovedBooking.days) {
       ;({ cancelationCosts } = bookingCancelationHandler({
         period: {
-          startDate: booking.startDate,
-          endDate: booking.endDate,
-          days: booking.days
+          startDate: lastApprovedBooking.startDate,
+          endDate: lastApprovedBooking.endDate,
+          days: lastApprovedBooking.days
         },
         dateFns: {
           isBefore,

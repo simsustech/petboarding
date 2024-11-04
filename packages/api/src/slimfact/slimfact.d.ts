@@ -542,7 +542,30 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
+            id: number
+            uuid: string
+            name: string | null
+            active: boolean | undefined
+            companyId: number
+            clientId: number
+            numberPrefixTemplate: string
+            locale: string
+            currency: 'EUR' | 'USD'
+            lines: import('@modular-api/fastify-checkout').RawInvoiceLine[]
+            discounts:
+              | import('@modular-api/fastify-checkout').RawInvoiceDiscount[]
+              | null
+              | undefined
+            surcharges:
+              | import('@modular-api/fastify-checkout').RawInvoiceSurcharge[]
+              | null
+              | undefined
+            paymentTermDays: number
+            startDate: string
+            endDate: string | null
+            cronSchedule: string
+            type: 'invoice' | 'bill'
+            createdAt: string
           }
         >
         updateSubscription: import('@trpc/server').BuildProcedure<
@@ -853,6 +876,30 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
+            id: number
+            uuid: string
+            name: string | null
+            active: boolean | undefined
+            companyId: number
+            clientId: number
+            numberPrefixTemplate: string
+            locale: string
+            currency: 'EUR' | 'USD'
+            lines: import('@modular-api/fastify-checkout').RawInvoiceLine[]
+            discounts:
+              | import('@modular-api/fastify-checkout').RawInvoiceDiscount[]
+              | null
+              | undefined
+            surcharges:
+              | import('@modular-api/fastify-checkout').RawInvoiceSurcharge[]
+              | null
+              | undefined
+            paymentTermDays: number
+            startDate: string
+            endDate: string | null
+            cronSchedule: string
+            type: 'invoice' | 'bill'
+            createdAt: string
             client: {
               contactPersonName: import('node_modules/kysely/dist/esm/util/type-utils.js').ExtractColumnType<
                 import('../kysely/types.js').DB,
@@ -911,7 +958,10 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
+            id: number
+            companyId: number
+            numberPrefix: string
+            initialNumber: number
           }
         >
         getInitialNumberForPrefixes: import('@trpc/server').BuildProcedure<
@@ -941,7 +991,10 @@ export declare const createRouter: (
             _meta: object
           },
           {
-            [x: string]: any
+            id: number
+            companyId: number
+            numberPrefix: string
+            initialNumber: number
             company: {
               name: string
             } | null
@@ -1020,7 +1073,9 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
+            id: number
+            name: string
+            template: string
           }
         >
         getNumberPrefixes: import('@trpc/server').BuildProcedure<
@@ -1050,7 +1105,9 @@ export declare const createRouter: (
             _meta: object
           },
           {
-            [x: string]: any
+            id: number
+            name: string
+            template: string
           }[]
         >
         updateNumberPrefix: import('@trpc/server').BuildProcedure<
@@ -1140,7 +1197,18 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
+            number: string | null
+            id: number
+            createdAt: string
+            address: string
+            city: string
+            contactPersonName: string | null
+            country: string
+            email: string
+            postalCode: string
+            vatIdNumber: string | null
+            companyName: string | null
+            accountId: number | null
           }
         >
         getClients: import('@trpc/server').BuildProcedure<
@@ -1188,8 +1256,19 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
             total?: number | undefined
+            number: string | null
+            id: number
+            createdAt: string
+            address: string
+            city: string
+            contactPersonName: string | null
+            country: string
+            email: string
+            postalCode: string
+            vatIdNumber: string | null
+            companyName: string | null
+            accountId: number | null
           }[]
         >
         updateClient: import('@trpc/server').BuildProcedure<
@@ -1291,8 +1370,19 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
             total?: number | undefined
+            number: string | null
+            id: number
+            createdAt: string
+            address: string
+            city: string
+            contactPersonName: string | null
+            country: string
+            email: string
+            postalCode: string
+            vatIdNumber: string | null
+            companyName: string | null
+            accountId: number | null
           }[]
         >
         createCompany: import('@trpc/server').BuildProcedure<
@@ -1364,7 +1454,27 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
-            [x: string]: any
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null | undefined
+            country: string
+            email: string
+            emailBcc: string | null | undefined
+            iban: string
+            logoSvg: string | null | undefined
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null | undefined
+            vatIdNumber: string
+            website: string | null | undefined
+            defaultNumberPrefixTemplate: string | null | undefined
+            defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }
         >
         getCompanies: import('@trpc/server').BuildProcedure<
@@ -1395,6 +1505,27 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null | undefined
+            country: string
+            email: string
+            emailBcc: string | null | undefined
+            iban: string
+            logoSvg: string | null | undefined
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null | undefined
+            vatIdNumber: string
+            website: string | null | undefined
+            defaultNumberPrefixTemplate: string | null | undefined
+            defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         getCompany: import('@trpc/server').BuildProcedure<
@@ -1429,6 +1560,27 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null | undefined
+            country: string
+            email: string
+            emailBcc: string | null | undefined
+            iban: string
+            logoSvg: string | null | undefined
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null | undefined
+            vatIdNumber: string
+            website: string | null | undefined
+            defaultNumberPrefixTemplate: string | null | undefined
+            defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }
         >
         updateCompany: import('@trpc/server').BuildProcedure<
@@ -1529,6 +1681,27 @@ export declare const createRouter: (
           },
           {
             [x: string]: any
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null | undefined
+            country: string
+            email: string
+            emailBcc: string | null | undefined
+            iban: string
+            logoSvg: string | null | undefined
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null | undefined
+            vatIdNumber: string
+            website: string | null | undefined
+            defaultNumberPrefixTemplate: string | null | undefined
+            defaultLocale: string | null | undefined
+            defaultCurrency: 'EUR' | 'USD' | null | undefined
           }[]
         >
         createInvoice: import('@trpc/server').BuildProcedure<
@@ -1565,6 +1738,7 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
+              metadata?: Record<string, unknown> | null | undefined
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1588,7 +1762,6 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
-              metadata?: Record<string, unknown> | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
@@ -1652,6 +1825,7 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
+              metadata?: Record<string, unknown> | null | undefined
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1675,7 +1849,6 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
-              metadata?: Record<string, unknown> | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
@@ -1765,6 +1938,7 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
+              metadata?: Record<string, unknown> | null | undefined
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1788,7 +1962,6 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
-              metadata?: Record<string, unknown> | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
@@ -1852,6 +2025,7 @@ export declare const createRouter: (
                 discount: number
               }[]
               paymentTermDays: number
+              metadata?: Record<string, unknown> | null | undefined
               id?: number | undefined
               uuid?: string | undefined
               companyId?: number | undefined
@@ -1875,7 +2049,6 @@ export declare const createRouter: (
                   }[]
                 | null
                 | undefined
-              metadata?: Record<string, unknown> | null | undefined
               status?:
                 | import('@modular-api/fastify-checkout').InvoiceStatus
                 | undefined
@@ -2328,6 +2501,7 @@ export declare const createRouter: (
                 method: import('@modular-api/fastify-checkout').PaymentMethod
                 amount: number
                 description?: string | undefined
+                transactionReference?: string | undefined
                 redirectUrl?: string | undefined
               }
             }
@@ -2338,6 +2512,7 @@ export declare const createRouter: (
                 method: import('@modular-api/fastify-checkout').PaymentMethod
                 amount: number
                 description?: string | undefined
+                transactionReference?: string | undefined
                 redirectUrl?: string | undefined
               }
             }
@@ -2347,12 +2522,12 @@ export declare const createRouter: (
           {
             checkoutUrl: string | null | undefined
             payment: {
+              description: string
+              metadata: Record<string, unknown> | null
               id: number
               uuid: string | null
               currency: 'EUR' | 'USD'
               createdAt: string
-              description: string
-              metadata: Record<string, unknown> | null
               orderId: number | null
               invoiceId: number | null
               paymentServiceProvider: 'mollie' | null
@@ -2433,12 +2608,12 @@ export declare const createRouter: (
             _output_out: typeof import('@trpc/server').unsetMarker
           },
           {
+            description: string
+            metadata: Record<string, unknown> | null
             id: number
             uuid: string | null
             currency: 'EUR' | 'USD'
             createdAt: string
-            description: string
-            metadata: Record<string, unknown> | null
             paymentServiceProvider: 'mollie' | null
             externalId: string | null
             amount: number
