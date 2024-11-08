@@ -8,7 +8,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('effective_date', 'date', (col) => col.notNull())
     .addColumn('expiration_date', 'date', (col) => col.notNull())
     .addColumn('status', 'varchar', (col) => col.notNull())
-    .addColumn('invoice_uuid', 'varchar')
+    .addColumn('invoice_uuid', 'varchar', (col) => col.unique())
     .addColumn('daycare_subscription_id', 'integer', (col) =>
       col.references('daycare_subscriptions.id').onDelete('set null').notNull()
     )
