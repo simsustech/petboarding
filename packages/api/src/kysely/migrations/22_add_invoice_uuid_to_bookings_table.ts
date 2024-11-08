@@ -3,7 +3,7 @@ import type { Kysely } from 'kysely'
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
     .alterTable('bookings')
-    .addColumn('invoice_uuid', 'varchar')
+    .addColumn('invoice_uuid', 'varchar', (col) => col.unique())
     .execute()
 }
 
