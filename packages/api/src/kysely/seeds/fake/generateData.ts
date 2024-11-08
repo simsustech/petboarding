@@ -2,15 +2,15 @@ import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
 import { DAYCARE_DATE_STATUS } from '../../types.js'
 
-const NUMBER_OF_CUSTOMERS = 200
+const NUMBER_OF_CUSTOMERS = 1000
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2
 const MAX_PETS_PER_CUSTOMER = 3
-const MAX_BOOKINGS_PER_CUSTOMER = 3
+const MAX_BOOKINGS_PER_CUSTOMER = 25
 const MAX_DAYCARE_DATES_PER_CUSTOMER = 10
 
-const createAccount = () => ({
-  email: faker.internet.email()
-})
+// const createAccount = () => ({
+//   email: faker.internet.email()
+// })
 
 const createCustomer = (accountId: number) => ({
   gender: faker.person.sex(),
@@ -56,7 +56,8 @@ const createPet = (customerId: number) => {
         ? faker.date.past({ years: 1 }).toISOString().split('T')[0]
         : undefined,
     customerId: customerId,
-    id: petId
+    id: petId,
+    categoryId: 1
   }
 }
 
@@ -133,7 +134,7 @@ const createDaycareDate = ({
 }
 
 export default () => {
-  const accounts: unknown[] = []
+  const accounts: { email: string }[] = []
   const customers = []
   const contactPeople = []
   const pets = []
@@ -143,87 +144,104 @@ export default () => {
   const daycareDates = []
   const daycarePet: unknown[] = []
 
-  for (let i = 1; i < NUMBER_OF_CUSTOMERS + 1; i++) {
-    accounts.push(createAccount())
-    customers.push(createCustomer(i))
-    for (let j = 1; j <= getRandomInt(MAX_CONTACT_PEOPLE_PER_CUSTOMER); j++) {
-      contactPeople.push(createContactPerson(i))
-    }
-    const ownedPets = []
-    for (let j = 1; j <= getRandomInt(MAX_PETS_PER_CUSTOMER); j++) {
-      const pet = createPet(i)
-      pets.push(pet)
-      ownedPets.push(pet)
-    }
-    let booking = {
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: new Date().toISOString().split('T')[0],
-      startTimeId: 1,
-      endTimeId: 1,
-      id: 0,
-      customerId: i
-    }
-    if (getRandomInt(2) === 2) {
-      for (let j = 1; j <= getRandomInt(MAX_BOOKINGS_PER_CUSTOMER); j++) {
-        booking = createBooking({ startDate: booking.endDate, customerId: i })
-        const bookingStatus = {
-          startDate: booking.startDate,
-          endDate: booking.endDate,
-          startTimeId: booking.startTimeId,
-          endTimeId: booking.endTimeId,
-          bookingId: booking.id,
-          petIds: `[${ownedPets.map((pet) => pet.id).toString()}]`,
-          modifiedAt: new Date().toISOString(),
-          status: 'pending'
-        }
+  const emailAddressess = faker.helpers.uniqueArray(
+    faker.internet.email,
+    NUMBER_OF_CUSTOMERS
+  )
 
-        bookingStatuses.push(bookingStatus)
-        if (getRandomInt(10) > 2) {
-          bookingStatuses.push({
-            ...bookingStatus,
-            modifiedAt: faker.date
-              .soon({
-                days: 1,
-                refDate: new Date()
-              })
-              .toISOString(),
-            status:
-              getRandomInt(10) > 9
-                ? faker.helpers.arrayElement([
-                    'rejected',
-                    'standby',
-                    'canceled'
-                  ])
-                : 'approved'
+  // for (let i = 1; i < NUMBER_OF_CUSTOMERS + 1; i++) {
+  let i = 0
+  for (const email of emailAddressess) {
+    const newAccount = {
+      email
+    }
+    if (!accounts.find((account) => account.email === newAccount.email)) {
+      i++
+      accounts.push(newAccount)
+      customers.push(createCustomer(i))
+      for (let j = 1; j <= getRandomInt(MAX_CONTACT_PEOPLE_PER_CUSTOMER); j++) {
+        contactPeople.push(createContactPerson(i))
+      }
+      const ownedPets = []
+      for (let j = 1; j <= getRandomInt(MAX_PETS_PER_CUSTOMER); j++) {
+        const pet = createPet(i)
+        pets.push(pet)
+        ownedPets.push(pet)
+      }
+      let booking = {
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        startTimeId: 1,
+        endTimeId: 1,
+        id: 0,
+        customerId: i
+      }
+      if (getRandomInt(100) !== 1) {
+        for (let j = 1; j <= getRandomInt(MAX_BOOKINGS_PER_CUSTOMER); j++) {
+          booking = createBooking({ startDate: booking.endDate, customerId: i })
+          const bookingStatus = {
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+            startTimeId: booking.startTimeId,
+            endTimeId: booking.endTimeId,
+            bookingId: booking.id,
+            petIds: `[${ownedPets.map((pet) => pet.id).toString()}]`,
+            modifiedAt: new Date().toISOString(),
+            status: 'pending'
+          }
+
+          bookingStatuses.push(bookingStatus)
+          if (getRandomInt(10) > 2) {
+            bookingStatuses.push({
+              ...bookingStatus,
+              modifiedAt: faker.date
+                .soon({
+                  days: 1,
+                  refDate: new Date()
+                })
+                .toISOString(),
+              status:
+                getRandomInt(10) > 9
+                  ? faker.helpers.arrayElement([
+                      'rejected',
+                      'standby',
+                      'canceled'
+                    ])
+                  : 'approved'
+            })
+          }
+          bookings.push(booking)
+          ownedPets.forEach((pet) => {
+            bookingPet.push({
+              petId: pet.id,
+              bookingId: booking.id
+            })
           })
         }
-        bookings.push(booking)
-        ownedPets.forEach((pet) => {
-          bookingPet.push({
-            petId: pet.id,
-            bookingId: booking.id
+      } else {
+        let daycareDate = {
+          date: new Date().toISOString().split('T')[0],
+          customerId: i,
+          status: DAYCARE_DATE_STATUS.PENDING,
+          id: 0
+        }
+        for (
+          let j = 1;
+          j <= getRandomInt(MAX_DAYCARE_DATES_PER_CUSTOMER);
+          j++
+        ) {
+          daycareDate = createDaycareDate({
+            startDate: daycareDate.date,
+            customerId: i
           })
-        })
-      }
-    } else {
-      let daycareDate = {
-        date: new Date().toISOString().split('T')[0],
-        customerId: i,
-        status: DAYCARE_DATE_STATUS.PENDING,
-        id: 0
-      }
-      for (let j = 1; j <= getRandomInt(MAX_DAYCARE_DATES_PER_CUSTOMER); j++) {
-        daycareDate = createDaycareDate({
-          startDate: daycareDate.date,
-          customerId: i
-        })
-        daycareDates.push(daycareDate)
-        ownedPets.forEach((pet) => {
-          daycarePet.push({
-            petId: pet.id,
-            daycareDateId: daycareDate.id
+          daycareDates.push(daycareDate)
+          ownedPets.forEach((pet) => {
+            daycarePet.push({
+              petId: pet.id,
+              daycareDateId: daycareDate.id
+            })
           })
-        })
+        }
       }
     }
   }

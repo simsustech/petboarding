@@ -5,6 +5,13 @@ import { sql } from 'kysely'
 import { readFileSync } from 'fs'
 import { OPENING_TIME_TYPE } from '../types.js'
 import { c } from 'compress-tag'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const chunk = (arr: any[], size: number) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+    arr.slice(i * size, i * size + size)
+  )
+
 const seed = async () => {
   const {
     accounts,
@@ -213,32 +220,60 @@ const seed = async () => {
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
-  await db.insertInto('accounts').values(accounts).execute()
 
-  await db.insertInto('customers').values(customers).execute()
+  for (const insertAccounts of chunk(accounts, 1000)) {
+    await db.insertInto('accounts').values(insertAccounts).execute()
+  }
+
+  for (const insertCustomers of chunk(customers, 1000)) {
+    await db.insertInto('customers').values(insertCustomers).execute()
+  }
   await sql`ALTER SEQUENCE customers_id_seq RESTART WITH ${sql.lit(
     customers.length + 1
   )}`.execute(db)
-  await db.insertInto('contactPeople').values(contactPeople).execute()
 
+  for (const insertContactPeople of chunk(contactPeople, 1000)) {
+    await db.insertInto('contactPeople').values(insertContactPeople).execute()
+  }
   await sql`ALTER SEQUENCE contact_people_id_seq RESTART WITH ${sql.lit(
     contactPeople.length + 1
   )}`.execute(db)
-  await db.insertInto('pets').values(pets).execute()
+
+  for (const insertPets of chunk(pets, 1000)) {
+    await db.insertInto('pets').values(insertPets).execute()
+  }
   await sql`ALTER SEQUENCE pets_id_seq RESTART WITH ${sql.lit(
     pets.length + 1
   )}`.execute(db)
-  await db.insertInto('bookings').values(bookings).execute()
+
+  for (const insertBookings of chunk(bookings, 1000)) {
+    await db.insertInto('bookings').values(insertBookings).execute()
+  }
   await sql`ALTER SEQUENCE bookings_id_seq RESTART WITH ${sql.lit(
     bookings.length + 1
   )}`.execute(db)
-  await db.insertInto('bookingPetKennel').values(bookingPet).execute()
-  await db.insertInto('bookingStatus').values(bookingStatuses).execute()
-  await db.insertInto('daycareDates').values(daycareDates).execute()
+
+  for (const insertBookingPets of chunk(bookingPet, 1000)) {
+    await db.insertInto('bookingPetKennel').values(insertBookingPets).execute()
+  }
+
+  for (const insertBookingStatuses of chunk(bookingStatuses, 1000)) {
+    await db.insertInto('bookingStatus').values(insertBookingStatuses).execute()
+  }
+
+  for (const insertDaycareDates of chunk(daycareDates, 1000)) {
+    await db.insertInto('daycareDates').values(insertDaycareDates).execute()
+  }
   await sql`ALTER SEQUENCE daycare_dates_id_seq RESTART WITH ${sql.lit(
     daycareDates.length + 1
   )}`.execute(db)
-  await db.insertInto('daycareDatePetKennel').values(daycarePet).execute()
+
+  for (const insertDaycarePets of chunk(daycarePet, 1000)) {
+    await db
+      .insertInto('daycareDatePetKennel')
+      .values(insertDaycarePets)
+      .execute()
+  }
   await db.insertInto('emailTemplates').values(emailTemplates).execute()
 
   const adminAccounts = await db
