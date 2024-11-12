@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import * as z from 'zod'
-import { booking, BOOKING_STATUS } from '../../zod/booking.js'
+import { booking, BOOKING_STATUS, bookingService } from '../../zod/booking.js'
 import type { FastifyInstance } from 'fastify'
 import {
   cancelBooking,
@@ -9,7 +9,8 @@ import {
   findBooking,
   findBookings,
   findBookingService,
-  updateBooking
+  updateBooking,
+  updateBookingService
 } from '../../repositories/booking.js'
 import { findCustomer } from 'src/repositories/customer.js'
 import { createOrUpdateSlimfactInvoice } from '../admin/bookings.js'
@@ -223,5 +224,44 @@ export const employeeBookingRoutes = ({
           }
         }
       }
+    }),
+  updateBookingService: procedure
+    .input(bookingService)
+    .mutation(async ({ input }) => {
+      const { id } = input
+      if (id) {
+        const updatedBookingService = await updateBookingService(
+          {
+            id
+          },
+          {
+            comments: input.comments || null,
+            price: input.price || null
+          }
+        )
+
+        const booking = await findBooking({
+          criteria: {
+            id: updatedBookingService.bookingId
+          }
+        })
+        const customer = await findCustomer({
+          criteria: {
+            id: booking?.customerId
+          }
+        })
+
+        if (fastify.slimfact && booking?.costs && customer) {
+          const result = await createOrUpdateSlimfactInvoice({
+            fastify,
+            booking,
+            customer
+          })
+          if (!result.success) fastify.log.debug(result.errorMessage)
+        }
+
+        if (updatedBookingService) return updatedBookingService
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
     })
 })

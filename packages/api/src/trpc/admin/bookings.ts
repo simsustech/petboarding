@@ -682,7 +682,7 @@ export const adminBookingRoutes = ({
           if (!result.success) fastify.log.debug(result.errorMessage)
         }
 
-        if (updatedBookingService) return bookingService
+        if (updatedBookingService) return updatedBookingService
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),

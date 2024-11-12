@@ -12,10 +12,12 @@
           show-edit-button
           show-history
           show-icon
+          show-booking-services-edit-button
           @update="openUpdateDialog"
           @cancel="cancelBooking"
           @open-customer="openCustomer"
           @update-booking-invoice="updateBookingInvoice"
+          @edit-booking-service="openUpdateBookingServiceDialog"
         />
       </q-list>
       <q-list v-if="otherBookings?.length">
@@ -61,6 +63,15 @@
         @submit="updateBooking"
       ></booking-form>
     </responsive-dialog>
+    <responsive-dialog
+      ref="updateBookingServiceDialogRef"
+      @submit="submitBookingService"
+    >
+      <booking-service-form
+        ref="updateBookingServiceFormRef"
+        @submit="updateBookingService"
+      ></booking-service-form>
+    </responsive-dialog>
   </q-page>
 </template>
 
@@ -81,6 +92,7 @@ import BookingForm from '../../components/booking/BookingForm.vue'
 import { extend, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
+import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
 
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -226,6 +238,52 @@ const openCustomer: InstanceType<
   typeof BookingExpansionItem
 >['$props']['onOpenCustomer'] = ({ id }) =>
   router.push(`/employee/customers/${id}`)
+
+const updateBookingServiceDialogRef = ref<typeof ResponsiveDialog>()
+const updateBookingServiceFormRef = ref<typeof BookingServiceForm>()
+const openUpdateBookingServiceDialog: InstanceType<
+  typeof BookingExpansionItem
+>['$props']['onEditBookingService'] = async ({ data, done }) => {
+  if (data.id) {
+    const {
+      data: bookingServiceData,
+      immediatePromise,
+      error
+    } = useQuery('employee.getBookingService', {
+      args: {
+        id: data.id
+      },
+      immediate: true
+    })
+
+    await immediatePromise
+
+    updateBookingServiceDialogRef.value?.functions.open()
+    nextTick(() => {
+      updateBookingServiceFormRef.value?.functions.setValue(
+        bookingServiceData.value
+      )
+    })
+  }
+}
+const submitBookingService: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  updateBookingServiceFormRef.value?.functions.submit({ done })
+}
+
+const updateBookingService: InstanceType<
+  typeof BookingServiceForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  const result = useMutation('admin.updateBookingService', {
+    args: data,
+    immediate: true
+  })
+
+  await result.immediatePromise
+  if (!result.error.value) execute()
+  if (done) done(!result.error.value)
+}
 
 onMounted(async () => {
   await executeServices()
