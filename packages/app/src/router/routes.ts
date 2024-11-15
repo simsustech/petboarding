@@ -112,6 +112,11 @@ const routes: RouteRecordRaw[] = [
                   import(
                     '../pages/admin/configuration/DaycareSubscriptionsPage.vue'
                   )
+              },
+              {
+                path: 'buildings',
+                component: () =>
+                  import('../pages/admin/configuration/BuildingsPage.vue')
               }
             ]
           }

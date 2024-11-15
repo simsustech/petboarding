@@ -227,6 +227,11 @@
                   :content-inset-level="2"
                   :label="lang.configuration.title"
                 >
+                  <q-item to="/admin/configuration/buildings">
+                    <q-item-section>
+                      <q-item-label> {{ lang.building.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item to="/admin/configuration/categories">
                     <q-item-section>
                       <q-item-label> {{ lang.category.title }} </q-item-label>

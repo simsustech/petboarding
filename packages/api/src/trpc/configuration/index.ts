@@ -8,6 +8,7 @@ import type { FastifyInstance } from 'fastify'
 import { configurationServiceRoutes } from './services'
 import { configurationDaycareSubscriptionRoutes } from './daycareSubscriptions.js'
 import { configurationCategoryPriceRoutes } from './categoryPrices.js'
+import { configurationBuildingRoutes } from './buildings.js'
 
 export const configurationRoutes = ({
   fastify,
@@ -23,5 +24,6 @@ export const configurationRoutes = ({
   ...configurationCategoryRoutes({ procedure, fastify }),
   ...configurationServiceRoutes({ procedure, fastify }),
   ...configurationDaycareSubscriptionRoutes({ procedure, fastify }),
-  ...configurationCategoryPriceRoutes({ procedure, fastify })
+  ...configurationCategoryPriceRoutes({ procedure, fastify }),
+  ...configurationBuildingRoutes({ procedure, fastify })
 })

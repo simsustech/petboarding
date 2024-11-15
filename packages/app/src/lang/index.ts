@@ -453,6 +453,21 @@ export interface Language {
       received?: string
     }) => string
   }
+  building: {
+    title: string
+    fields: {
+      name: string
+      location: string
+      description: string
+      order: string
+    }
+    helpers: {
+      orderHint: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
 }
 
 import type { Ref } from 'vue'

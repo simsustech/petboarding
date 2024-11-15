@@ -497,6 +497,21 @@ const lang: Language = {
           ? `Verwacht ${expected}, ontvangen ${received}.`
           : ''
       }`
+  },
+  building: {
+    title: 'Gebouwen',
+    fields: {
+      name: 'Naam',
+      location: 'Locatie',
+      description: 'Omschrijving',
+      order: 'Volgorde'
+    },
+    helpers: {
+      orderHint: 'De volgorde waarin het gebouw in een lijst wordt weergegeven.'
+    },
+    messages: {
+      verifyDeletion: 'Weet u zeker dat u het volgende gebouw wilt verwijderen?'
+    }
   }
 }
 

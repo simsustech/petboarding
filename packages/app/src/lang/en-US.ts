@@ -485,6 +485,21 @@ const lang: Language = {
           ? `Expected ${expected}, received ${received}.`
           : ''
       }`
+  },
+  building: {
+    title: 'Buildings',
+    fields: {
+      name: 'Name',
+      location: 'Location',
+      description: 'Description',
+      order: 'Order'
+    },
+    helpers: {
+      orderHint: 'The order of the item in the buildings list.'
+    },
+    messages: {
+      verifyDeletion: 'Are you sure you want to delete the following building?'
+    }
   }
 }
 
