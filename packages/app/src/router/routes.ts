@@ -117,6 +117,11 @@ const routes: RouteRecordRaw[] = [
                 path: 'buildings',
                 component: () =>
                   import('../pages/admin/configuration/BuildingsPage.vue')
+              },
+              {
+                path: 'kennels',
+                component: () =>
+                  import('../pages/admin/configuration/KennelsPage.vue')
               }
             ]
           }
@@ -175,6 +180,10 @@ const routes: RouteRecordRaw[] = [
                   import('../pages/employee/labels/BookingLabelsPage.vue')
               }
             ]
+          },
+          {
+            path: 'kennellayout',
+            component: () => import('../pages/employee/KennelLayout.vue')
           }
         ]
       },

@@ -455,6 +455,7 @@ export interface Language {
   }
   building: {
     title: string
+    building: string
     fields: {
       name: string
       location: string
@@ -467,6 +468,25 @@ export interface Language {
     messages: {
       verifyDeletion: string
     }
+  }
+  kennel: {
+    title: string
+    kennel: string
+    fields: {
+      name: string
+      description: string
+      order: string
+      capacity: string
+    }
+    helpers: {
+      orderHint: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  kennellayout: {
+    title: string
   }
 }
 

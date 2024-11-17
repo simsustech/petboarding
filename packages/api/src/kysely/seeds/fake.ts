@@ -27,6 +27,32 @@ const seed = async () => {
     readFileSync(new URL('./fake/data.json', import.meta.url).pathname, 'utf-8')
   )
 
+  const buildings = [
+    {
+      name: 'Main building',
+      location: 'A',
+      description: 'The main building'
+    },
+    {
+      name: 'Secondary building',
+      location: 'B',
+      description: 'The secondary building'
+    }
+  ]
+
+  const kennels = []
+  for (const buildingId of Array.from(
+    { length: buildings.length },
+    (_, i) => i + 1
+  )) {
+    kennels.push(
+      ...[1, 2, 3, 4, 5].map((id) => ({
+        name: id.toString(),
+        buildingId: buildingId
+      }))
+    )
+  }
+
   const categories = [
     {
       species: 'dog',
@@ -216,6 +242,8 @@ const seed = async () => {
   ]
 
   await db.insertInto('announcements').values(announcements).execute()
+  await db.insertInto('buildings').values(buildings).execute()
+  await db.insertInto('kennels').values(kennels).execute()
   await db.insertInto('categories').values(categories).execute()
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()

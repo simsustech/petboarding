@@ -488,6 +488,7 @@ const lang: Language = {
   },
   building: {
     title: 'Buildings',
+    building: 'Building',
     fields: {
       name: 'Name',
       location: 'Location',
@@ -500,6 +501,25 @@ const lang: Language = {
     messages: {
       verifyDeletion: 'Are you sure you want to delete the following building?'
     }
+  },
+  kennel: {
+    title: 'Kennels',
+    kennel: 'Kennel',
+    fields: {
+      name: 'Name',
+      description: 'Description',
+      order: 'Order',
+      capacity: 'Capacity'
+    },
+    helpers: {
+      orderHint: 'The order of the item in the kennels list.'
+    },
+    messages: {
+      verifyDeletion: 'Are you sure you want to delete the following kennel?'
+    }
+  },
+  kennellayout: {
+    title: 'Kennel layout'
   }
 }
 

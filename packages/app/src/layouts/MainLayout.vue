@@ -141,6 +141,11 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
+                <q-item :inset-level="1" to="/employee/kennellayout">
+                  <q-item-section>
+                    <q-item-label> {{ lang.kennellayout.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
                 <!-- <q-item :inset-level="1" to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>
@@ -230,6 +235,11 @@
                   <q-item to="/admin/configuration/buildings">
                     <q-item-section>
                       <q-item-label> {{ lang.building.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/kennels">
+                    <q-item-section>
+                      <q-item-label> {{ lang.kennel.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item to="/admin/configuration/categories">

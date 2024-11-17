@@ -1,7 +1,9 @@
-import { db } from '../kysely/index.js'
+import { type ExpressionBuilder } from 'kysely'
+import { Database, db } from '../kysely/index.js'
 import type { Buildings } from '../kysely/types.d.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
+import { jsonArrayFrom } from 'kysely/helpers/postgres'
 type Building = Selectable<Buildings>
 type NewBuilding = Insertable<Buildings>
 type BuildingUpdate = Updateable<Buildings>
@@ -13,6 +15,15 @@ const defaultSelect = [
   'description',
   'order'
 ] as (keyof Building)[]
+
+function withKennels(eb: ExpressionBuilder<Database, 'buildings'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('kennels')
+      .selectAll()
+      .whereRef('buildings.id', '=', 'kennels.buildingId')
+  ).as('kennels')
+}
 
 function find({
   criteria,
@@ -34,7 +45,7 @@ function find({
     query = query.where('name', '=', criteria.name)
   }
 
-  return query.select(select)
+  return query.select(select).select([withKennels])
 }
 
 export async function findBuilding({

@@ -500,6 +500,7 @@ const lang: Language = {
   },
   building: {
     title: 'Gebouwen',
+    building: 'Gebouw',
     fields: {
       name: 'Naam',
       location: 'Locatie',
@@ -512,6 +513,25 @@ const lang: Language = {
     messages: {
       verifyDeletion: 'Weet u zeker dat u het volgende gebouw wilt verwijderen?'
     }
+  },
+  kennel: {
+    title: 'Kennels',
+    kennel: 'Kennel',
+    fields: {
+      name: 'Naam',
+      description: 'Omschrijving',
+      order: 'Volgorde',
+      capacity: 'Capaciteit'
+    },
+    helpers: {
+      orderHint: 'De volgorde waarin de kennel in een lijst wordt weergegeven.'
+    },
+    messages: {
+      verifyDeletion: 'Weet u zeker dat u de volgende kennel wilt verwijderen?'
+    }
+  },
+  kennellayout: {
+    title: 'Kennel indeling'
   }
 }
 

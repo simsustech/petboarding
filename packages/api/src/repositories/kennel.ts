@@ -1,0 +1,190 @@
+import { ExpressionBuilder } from 'kysely'
+import { Database, db } from '../kysely/index.js'
+import type { Kennels } from '../kysely/types.d.ts'
+
+import type { Insertable, Selectable, Updateable } from 'kysely'
+import { jsonObjectFrom } from 'kysely/helpers/postgres'
+type Kennel = Selectable<Kennels>
+type NewKennel = Insertable<Kennels>
+type KennelUpdate = Updateable<Kennels>
+
+const defaultSelect = [
+  'id',
+  'name',
+  'description',
+  'capacity',
+  'order',
+  'buildingId'
+] as (keyof Kennel)[]
+
+function withBuilding(eb: ExpressionBuilder<Database, 'kennels'>) {
+  return jsonObjectFrom(
+    eb
+      .selectFrom('buildings')
+      .selectAll()
+      .whereRef('kennels.buildingId', '=', 'buildings.id')
+  ).as('building')
+}
+
+function find({
+  criteria,
+  select
+}: {
+  criteria: Partial<Kennel>
+  select?: (keyof Kennel)[]
+}) {
+  if (select) select = [...defaultSelect, ...select]
+  else select = [...defaultSelect]
+
+  let query = db.selectFrom('kennels')
+
+  if (criteria.id) {
+    query = query.where('id', '=', criteria.id)
+  }
+
+  if (criteria.name) {
+    query = query.where('name', '=', criteria.name)
+  }
+
+  return query.select(select).select([withBuilding])
+}
+
+export async function findKennel({
+  criteria,
+  select
+}: {
+  criteria: Partial<Kennel>
+  select?: (keyof Kennel)[]
+}) {
+  const query = find({ criteria, select })
+
+  return query.executeTakeFirst()
+}
+
+export async function findKennels({
+  criteria,
+  select
+}: {
+  criteria: Partial<Kennel>
+  select?: (keyof Kennel)[]
+}) {
+  const query = find({
+    criteria,
+    select
+  })
+  return query.execute()
+}
+
+export async function createKennel(kennel: NewKennel) {
+  return db
+    .insertInto('kennels')
+    .values({
+      name: kennel.name,
+      buildingId: kennel.buildingId,
+      description: kennel.description,
+      order: kennel.order,
+      capacity: kennel.capacity
+    })
+    .returningAll()
+    .executeTakeFirstOrThrow()
+}
+
+export async function updateKennel(
+  criteria: Partial<Kennel>,
+  updateWith: KennelUpdate
+) {
+  let query = db.updateTable('kennels')
+
+  if (criteria.id) {
+    query = query.where('id', '=', criteria.id)
+  }
+
+  return query
+    .set({
+      name: updateWith.name,
+      buildingId: updateWith.buildingId,
+      description: updateWith.description,
+      order: updateWith.order,
+      capacity: updateWith.capacity
+    })
+    .executeTakeFirstOrThrow()
+}
+
+export async function deleteKennel(id: number) {
+  return db.deleteFrom('kennels').where('id', '=', id).executeTakeFirst()
+}
+
+export async function getBookingPetKennels() {
+  const date = new Date().toISOString()
+  return db
+    .selectFrom('pets')
+    .innerJoin('bookingPetKennel', 'pets.id', 'bookingPetKennel.petId')
+    .innerJoin('bookings', 'bookings.id', 'bookingPetKennel.bookingId')
+    .innerJoin('customers', 'customers.id', 'pets.customerId')
+    .where('bookings.startDate', '<=', date)
+    .where('bookings.endDate', '>=', date)
+    .select([
+      'pets.id as id',
+      'pets.name as name',
+      'bookingPetKennel.kennelId as kennelId',
+      'bookingPetKennel.bookingId as bookingId',
+      'customers.lastName as lastName'
+    ])
+    .execute()
+}
+
+export async function getDaycareDatePetKennels() {
+  const date = new Date().toISOString()
+  return db
+    .selectFrom('pets')
+    .innerJoin('daycareDatePetKennel', 'pets.id', 'daycareDatePetKennel.petId')
+    .innerJoin(
+      'daycareDates',
+      'daycareDates.id',
+      'daycareDatePetKennel.daycareDateId'
+    )
+    .innerJoin('customers', 'customers.id', 'pets.customerId')
+    .where('daycareDates.date', '=', date)
+    .select([
+      'pets.id as id',
+      'pets.name as name',
+      'daycareDatePetKennel.kennelId as kennelId',
+      'daycareDatePetKennel.daycareDateId as daycareDateId',
+      'customers.lastName as lastName'
+    ])
+    .execute()
+}
+
+export async function setBookingPetKennel(bookingPetKennel: {
+  id: number
+  kennelId: number
+  bookingId: number
+}) {
+  return db
+    .updateTable('bookingPetKennel')
+    .where('bookingPetKennel.petId', '=', bookingPetKennel.id)
+    .where('bookingPetKennel.bookingId', '=', bookingPetKennel.bookingId)
+    .set({
+      kennelId: bookingPetKennel.kennelId
+    })
+    .execute()
+}
+
+export async function setDaycareDatePetKennel(daycareDatePetKennel: {
+  id: number
+  kennelId: number
+  bookingId: number
+}) {
+  return db
+    .updateTable('daycareDatePetKennel')
+    .where('daycareDatePetKennel.petId', '=', daycareDatePetKennel.id)
+    .where(
+      'daycareDatePetKennel.daycareDateId',
+      '=',
+      daycareDatePetKennel.bookingId
+    )
+    .set({
+      kennelId: daycareDatePetKennel.kennelId
+    })
+    .execute()
+}
