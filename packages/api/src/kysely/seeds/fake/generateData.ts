@@ -2,11 +2,11 @@ import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
 import { DAYCARE_DATE_STATUS } from '../../types.js'
 
-const NUMBER_OF_CUSTOMERS = 1000
+const NUMBER_OF_CUSTOMERS = 200
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2
 const MAX_PETS_PER_CUSTOMER = 3
-const MAX_BOOKINGS_PER_CUSTOMER = 25
-const MAX_DAYCARE_DATES_PER_CUSTOMER = 150
+const MAX_BOOKINGS_PER_CUSTOMER = 10
+const MAX_DAYCARE_DATES_PER_CUSTOMER = 30
 
 // const createAccount = () => ({
 //   email: faker.internet.email()
@@ -177,7 +177,7 @@ export default () => {
         id: 0,
         customerId: i
       }
-      if (getRandomInt(100) !== 1) {
+      if (getRandomInt(100) < 50) {
         for (let j = 1; j <= getRandomInt(MAX_BOOKINGS_PER_CUSTOMER); j++) {
           booking = createBooking({ startDate: booking.endDate, customerId: i })
           const bookingStatus = {

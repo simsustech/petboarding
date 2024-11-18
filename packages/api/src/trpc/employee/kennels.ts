@@ -6,7 +6,8 @@ import type { FastifyInstance } from 'fastify'
 import {
   findKennels,
   getDaycareDatePetKennels,
-  setBookingPetKennel
+  setBookingPetKennel,
+  setDaycareDatePetKennel
 } from 'src/repositories/kennel.js'
 import { getBookingPetKennels } from 'src/repositories/kennel.js'
 import { findBuildings } from 'src/repositories/building.js'
@@ -49,5 +50,16 @@ export const employeeKennelRoutes = ({
     )
     .mutation(async ({ input }) => {
       await setBookingPetKennel(input)
+    }),
+  setDaycareDatePetKennel: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        kennelId: z.number(),
+        daycareDateId: z.number()
+      })
+    )
+    .mutation(async ({ input }) => {
+      await setDaycareDatePetKennel(input)
     })
 })

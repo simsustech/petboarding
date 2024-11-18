@@ -173,7 +173,7 @@ export async function setBookingPetKennel(bookingPetKennel: {
 export async function setDaycareDatePetKennel(daycareDatePetKennel: {
   id: number
   kennelId: number
-  bookingId: number
+  daycareDateId: number
 }) {
   return db
     .updateTable('daycareDatePetKennel')
@@ -181,7 +181,7 @@ export async function setDaycareDatePetKennel(daycareDatePetKennel: {
     .where(
       'daycareDatePetKennel.daycareDateId',
       '=',
-      daycareDatePetKennel.bookingId
+      daycareDatePetKennel.daycareDateId
     )
     .set({
       kennelId: daycareDatePetKennel.kennelId

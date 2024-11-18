@@ -1,27 +1,21 @@
 <template>
-  <q-page padding>
-    <div class="row justify-center">
-      <q-btn icon="print" to="/print/kennellayout" />
-    </div>
+  <q-page padding class="page">
     <div class="row" style="height: 150px">
-      <div class="col-12 col-md-3">
-        <q-chip
-          v-for="pet in internalPetKennels.filter(
-            (pet) => pet.kennelId === null
-          )"
-          :id="`pet${pet.id}`"
-          :key="pet.id"
-          :class="{
-            'bg-primary': pet.bookingId,
-            'bg-accent': pet.daycareDateId
-          }"
-          draggable="true"
-          @dragstart="onDragStart"
-        >
-          {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-        </q-chip>
-      </div>
-      <div class="col-12 col-md-9 q-col-gutter-md">
+      <q-chip
+        v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
+        :id="`pet${pet.id}`"
+        :key="pet.id"
+        :class="{
+          'col-auto': true,
+          'bg-primary': pet.bookingId,
+          'bg-accent': pet.daycareDateId
+        }"
+        draggable="true"
+        @dragstart="onDragStart"
+      >
+        {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
+      </q-chip>
+      <div class="col-12 q-col-gutter-md">
         <div v-for="building in buildings" :key="building.id" class="row">
           <div class="col-12 row">
             {{ building.name }}
@@ -30,7 +24,7 @@
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-6 col-md-3"
+              class="col-3"
             >
               <q-card-section header>
                 {{ kennel.name }}
@@ -71,9 +65,13 @@
 import { onMounted, ref } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import { extend } from 'quasar'
+import { useMeta } from 'quasar'
 
 const { useQuery, useMutation } = await createUseTrpc()
 
+useMeta({
+  title: `kennel layout ${new Date().toISOString().slice(0, 10)}`
+})
 // const pets = ref([
 //   {
 //     id: 1,
@@ -181,9 +179,21 @@ onMounted(async () => {
 
 <style lang="sass">
 .drop-target
-  min-height: 50px
+  min-height: 70px
   background-color: gainsboro
 
 .drag-enter
   outline-style: dashed
+
+.page
+    width: 210mm !important
+    height: 297mm !important
+</style>
+
+<style>
+@media print {
+  @page {
+    margin: 0mm;
+  }
+}
 </style>

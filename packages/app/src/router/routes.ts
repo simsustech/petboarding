@@ -226,8 +226,17 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/Error404Page.vue')
       }
     ]
+  },
+  {
+    path: '/print',
+    component: () => import('../layouts/PrintLayout.vue'),
+    children: [
+      {
+        path: 'kennellayout',
+        component: () => import('../pages/print/KennelLayout.vue')
+      }
+    ]
   }
-
   // Always leave this as last one,
   // but you can also remove it
 ]
