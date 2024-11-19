@@ -531,7 +531,12 @@ const lang: Language = {
     }
   },
   kennellayout: {
-    title: 'Kennel indeling'
+    title: 'Kennel indeling',
+    labels: {
+      date: 'Datum',
+      today: 'Vandaag',
+      tomorrow: 'Morgen'
+    }
   }
 }
 

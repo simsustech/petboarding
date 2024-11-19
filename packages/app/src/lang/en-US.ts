@@ -519,7 +519,12 @@ const lang: Language = {
     }
   },
   kennellayout: {
-    title: 'Kennel layout'
+    title: 'Kennel layout',
+    labels: {
+      date: 'Date',
+      today: 'Today',
+      tomorrow: 'Tomorrow'
+    }
   }
 }
 

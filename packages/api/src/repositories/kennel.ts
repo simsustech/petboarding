@@ -1,6 +1,10 @@
-import { ExpressionBuilder } from 'kysely'
+import { ExpressionBuilder, sql } from 'kysely'
 import { Database, db } from '../kysely/index.js'
-import type { Kennels } from '../kysely/types.d.ts'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS,
+  type Kennels
+} from '../kysely/types.js'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
@@ -114,8 +118,7 @@ export async function deleteKennel(id: number) {
   return db.deleteFrom('kennels').where('id', '=', id).executeTakeFirst()
 }
 
-export async function getBookingPetKennels() {
-  const date = new Date().toISOString()
+export async function getBookingPetKennels(date: string) {
   return db
     .selectFrom('pets')
     .innerJoin('bookingPetKennel', 'pets.id', 'bookingPetKennel.petId')
@@ -123,6 +126,21 @@ export async function getBookingPetKennels() {
     .innerJoin('customers', 'customers.id', 'pets.customerId')
     .where('bookings.startDate', '<=', date)
     .where('bookings.endDate', '>=', date)
+    .where(({ eb, selectFrom }) =>
+      eb(
+        'bookings.id',
+        '=',
+        selectFrom('bookingStatus')
+          .whereRef('bookingStatus.bookingId', '=', 'bookings.id')
+          .where(
+            'bookingStatus.modifiedAt',
+            '=',
+            sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
+          )
+          .where('bookingStatus.status', '=', BOOKING_STATUS.APPROVED)
+          .select('bookingStatus.bookingId')
+      )
+    )
     .select([
       'pets.id as id',
       'pets.name as name',
@@ -133,8 +151,7 @@ export async function getBookingPetKennels() {
     .execute()
 }
 
-export async function getDaycareDatePetKennels() {
-  const date = new Date().toISOString()
+export async function getDaycareDatePetKennels(date: string) {
   return db
     .selectFrom('pets')
     .innerJoin('daycareDatePetKennel', 'pets.id', 'daycareDatePetKennel.petId')
@@ -145,6 +162,7 @@ export async function getDaycareDatePetKennels() {
     )
     .innerJoin('customers', 'customers.id', 'pets.customerId')
     .where('daycareDates.date', '=', date)
+    .where('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED)
     .select([
       'pets.id as id',
       'pets.name as name',
@@ -157,7 +175,7 @@ export async function getDaycareDatePetKennels() {
 
 export async function setBookingPetKennel(bookingPetKennel: {
   id: number
-  kennelId: number
+  kennelId: number | null
   bookingId: number
 }) {
   return db
@@ -172,7 +190,7 @@ export async function setBookingPetKennel(bookingPetKennel: {
 
 export async function setDaycareDatePetKennel(daycareDatePetKennel: {
   id: number
-  kennelId: number
+  kennelId: number | null
   daycareDateId: number
 }) {
   return db

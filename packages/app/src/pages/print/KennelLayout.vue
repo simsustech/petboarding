@@ -1,5 +1,8 @@
 <template>
   <q-page padding class="page">
+    <div class="row justify-center">
+      {{ selectedDate }}
+    </div>
     <div class="row" style="height: 150px">
       <q-chip
         v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
@@ -29,14 +32,7 @@
               <q-card-section header>
                 {{ kennel.name }}
               </q-card-section>
-              <q-card-section
-                :id="`kennel${kennel.id}`"
-                class="drop-target rounded-borders overflow-hidden"
-                @dragenter="onDragEnter"
-                @dragleave="onDragLeave"
-                @dragover="onDragOver"
-                @drop="onDrop"
-              >
+              <q-card-section :id="`kennel${kennel.id}`">
                 <q-chip
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
@@ -62,108 +58,64 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
-import { extend } from 'quasar'
-import { useMeta } from 'quasar'
+import { extend, useMeta } from 'quasar'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 
-const { useQuery, useMutation } = await createUseTrpc()
+const { useQuery } = await createUseTrpc()
+
+const route = useRoute()
+const selectedDate = ref(
+  !Array.isArray(route.params.date)
+    ? route.params.date
+    : new Date().toISOString().slice(0, 10)
+)
+
+onBeforeRouteUpdate((to) => {
+  if (to.params.date && !Array.isArray(to.params.date)) {
+    selectedDate.value = to.params.date
+  }
+})
 
 useMeta({
-  title: `kennel layout ${new Date().toISOString().slice(0, 10)}`
+  title: `kennel layout ${selectedDate.value}`
 })
-// const pets = ref([
-//   {
-//     id: 1,
-//     name: 'Max',
-//     kennelId: null
-//   },
-//   {
-//     id: 2,
-//     name: 'Diesel',
-//     kennelId: 2
-//   }
-// ])
 
-// const kennels = ref([
-//   {
-//     id: 1,
-//     name: 'Hok 1'
-//   },
-//   {
-//     id: 2,
-//     name: 'Hok 2'
-//   }
-// ])
-const internalPetKennels = ref([])
+const internalPetKennels = ref<
+  {
+    id: number
+    name: string
+    lastName: string
+    kennelId: number | null
+    bookingId?: number
+    daycareDateId?: number
+  }[]
+>([])
 const { data: buildings, execute: executeBuildings } = useQuery(
   'employee.getBuildings'
 )
 const { data: petKennels, execute: executePets } = useQuery(
-  'employee.getPetKennels'
+  'employee.getPetKennels',
+  {
+    args: reactive({
+      date: selectedDate
+    })
+  }
+)
+
+watch(
+  () => petKennels.value,
+  () => {
+    if (petKennels.value)
+      internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
+  }
 )
 
 // store the id of the draggable element
 function onDragStart(e) {
   e.dataTransfer.setData('text', e.target.id)
   e.dataTransfer.dropEffect = 'move'
-}
-
-function onDragEnter(e) {
-  // don't drop on other draggables
-  if (e.target.draggable !== true) {
-    e.target.classList.add('drag-enter')
-  }
-}
-
-function onDragLeave(e) {
-  e.target.classList.remove('drag-enter')
-}
-
-function onDragOver(e) {
-  e.preventDefault()
-}
-
-function onDrop(e) {
-  e.preventDefault()
-
-  // don't drop on other draggables
-  if (e.target.draggable === true) {
-    return
-  }
-
-  const draggedId = e.dataTransfer.getData('text')
-  const draggedEl = document.getElementById(draggedId)
-  let petId: number | undefined
-  if (draggedId) petId = Number(draggedId.match(/pet(.*)/).at(1))
-  let kennelId: number | undefined
-  if (e.target.id) kennelId = Number(e.target.id?.match(/kennel(.*)/).at(1))
-
-  // check if original parent node
-  if (draggedEl?.parentNode === e.target || !kennelId) {
-    e.target.classList.remove('drag-enter')
-    return
-  }
-
-  const petKennel =
-    internalPetKennels.value[
-      internalPetKennels.value.findIndex((pet) => pet.id === petId)
-    ]
-  petKennel.kennelId = kennelId
-
-  if (petKennel.bookingId) {
-    useMutation('employee.setBookingPetKennel', {
-      args: petKennel,
-      immediate: true
-    })
-  } else if (petKennel.daycareDateId) {
-    useMutation('employee.setDaycareDatePetKennel', {
-      args: petKennel,
-      immediate: true
-    })
-  }
-
-  e.target.classList.remove('drag-enter')
 }
 
 function truncate(str: string, n: number) {
@@ -173,27 +125,15 @@ function truncate(str: string, n: number) {
 onMounted(async () => {
   await executeBuildings()
   await executePets()
-  internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
+  // internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
 })
 </script>
 
 <style lang="sass">
 .drop-target
-  min-height: 70px
+  min-height: 50px
   background-color: gainsboro
 
 .drag-enter
   outline-style: dashed
-
-.page
-    width: 210mm !important
-    height: 297mm !important
-</style>
-
-<style>
-@media print {
-  @page {
-    margin: 0mm;
-  }
-}
 </style>

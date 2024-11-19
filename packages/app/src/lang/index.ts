@@ -487,6 +487,11 @@ export interface Language {
   }
   kennellayout: {
     title: string
+    labels: {
+      date: string
+      today: string
+      tomorrow: string
+    }
   }
 }
 

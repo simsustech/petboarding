@@ -1,25 +1,59 @@
 <template>
   <q-page padding>
     <div class="row justify-center">
-      <q-btn icon="print" to="/print/kennellayout" />
+      <date-input
+        v-model="selectedDate"
+        :label="lang.kennellayout.labels.date"
+        format="DD-MM-YYYY"
+        required
+        clearable
+        class="col-auto"
+        :date="{
+          noUnset: true,
+          firstDayOfWeek: '1'
+        }"
+      />
     </div>
-    <div class="row" style="height: 150px">
+    <div class="row justify-center">
+      <q-btn
+        class="col-auto"
+        :label="lang.kennellayout.labels.today"
+        @click="setToToday"
+      />
+      <q-btn
+        class="col-auto"
+        :label="lang.kennellayout.labels.tomorrow"
+        @click="setToTomorrow"
+      />
+      <q-btn icon="print" :to="`/print/kennellayout/${selectedDate}`" />
+    </div>
+    <div class="row q-col-gutter-sm" style="height: 150px">
       <div class="col-12 col-md-3">
-        <q-chip
-          v-for="pet in internalPetKennels.filter(
-            (pet) => pet.kennelId === null
-          )"
-          :id="`pet${pet.id}`"
-          :key="pet.id"
-          :class="{
-            'bg-primary': pet.bookingId,
-            'bg-accent': pet.daycareDateId
-          }"
-          draggable="true"
-          @dragstart="onDragStart"
-        >
-          {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-        </q-chip>
+        <q-card>
+          <q-card-section
+            id="waitlist"
+            @dragenter="onDragEnter"
+            @dragleave="onDragLeave"
+            @dragover="onDragOver"
+            @drop="onDrop"
+          >
+            <q-chip
+              v-for="pet in internalPetKennels.filter(
+                (pet) => pet.kennelId === null
+              )"
+              :id="`pet${pet.id}`"
+              :key="pet.id"
+              :class="{
+                'bg-primary': pet.bookingId,
+                'bg-accent': pet.daycareDateId
+              }"
+              draggable="true"
+              @dragstart="onDragStart"
+            >
+              {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
+            </q-chip>
+          </q-card-section>
+        </q-card>
       </div>
       <div class="col-12 col-md-9 q-col-gutter-md">
         <div v-for="building in buildings" :key="building.id" class="row">
@@ -68,12 +102,29 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
-import { extend } from 'quasar'
+import { extend, date as dateUtil } from 'quasar'
+import { useLang } from '../../lang/index.js'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import { DateInput } from '@simsustech/quasar-components/form'
 
 const { useQuery, useMutation } = await createUseTrpc()
+const lang = useLang()
 
+const router = useRouter()
+const route = useRoute()
+const selectedDate = ref(
+  !Array.isArray(route.params.date)
+    ? route.params.date
+    : new Date().toISOString().slice(0, 10)
+)
+
+onBeforeRouteUpdate((to) => {
+  if (to.params.date && !Array.isArray(to.params.date)) {
+    selectedDate.value = to.params.date
+  }
+})
 // const pets = ref([
 //   {
 //     id: 1,
@@ -97,12 +148,35 @@ const { useQuery, useMutation } = await createUseTrpc()
 //     name: 'Hok 2'
 //   }
 // ])
-const internalPetKennels = ref([])
+const internalPetKennels = ref<
+  {
+    id: number
+    name: string
+    lastName: string
+    kennelId: number | null
+    bookingId?: number
+    daycareDateId?: number
+  }[]
+>([])
+
 const { data: buildings, execute: executeBuildings } = useQuery(
   'employee.getBuildings'
 )
 const { data: petKennels, execute: executePets } = useQuery(
-  'employee.getPetKennels'
+  'employee.getPetKennels',
+  {
+    args: reactive({
+      date: selectedDate
+    })
+  }
+)
+
+watch(
+  () => petKennels.value,
+  () => {
+    if (petKennels.value)
+      internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
+  }
 )
 
 // store the id of the draggable element
@@ -138,11 +212,14 @@ function onDrop(e) {
   const draggedEl = document.getElementById(draggedId)
   let petId: number | undefined
   if (draggedId) petId = Number(draggedId.match(/pet(.*)/).at(1))
-  let kennelId: number | undefined
-  if (e.target.id) kennelId = Number(e.target.id?.match(/kennel(.*)/).at(1))
+  let kennelId: number | undefined | null
+  if (e.target.id) {
+    if (e.target.id === 'waitlist') kennelId = null
+    else kennelId = Number(e.target.id?.match(/kennel(.*)/).at(1))
+  }
 
   // check if original parent node
-  if (draggedEl?.parentNode === e.target || !kennelId) {
+  if (draggedEl?.parentNode === e.target || kennelId === undefined) {
     e.target.classList.remove('drag-enter')
     return
   }
@@ -172,10 +249,31 @@ function truncate(str: string, n: number) {
   return str.length > n ? str.slice(0, n - 1) + '...' : str
 }
 
+const setToToday = () => {
+  router.push({
+    name: 'employeekennellayout',
+    params: {
+      date: new Date().toISOString().slice(0, 10)
+    }
+  })
+}
+
+const setToTomorrow = () => {
+  router.push({
+    name: 'employeekennellayout',
+    params: {
+      date: dateUtil
+        .addToDate(new Date(), { days: 1 })
+        .toISOString()
+        .slice(0, 10)
+    }
+  })
+}
+
 onMounted(async () => {
   await executeBuildings()
   await executePets()
-  internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
+  // internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
 })
 </script>
 

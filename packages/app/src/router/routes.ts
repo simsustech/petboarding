@@ -182,8 +182,16 @@ const routes: RouteRecordRaw[] = [
             ]
           },
           {
-            path: 'kennellayout',
-            component: () => import('../pages/employee/KennelLayout.vue')
+            path: 'kennellayout/:date?',
+            name: 'employeekennellayout',
+            component: () => import('../pages/employee/KennelLayout.vue'),
+            beforeEnter: (route) => {
+              if (!route.params.date) {
+                return {
+                  path: route.path + '/' + today()
+                }
+              }
+            }
           }
         ]
       },
@@ -232,8 +240,16 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../layouts/PrintLayout.vue'),
     children: [
       {
-        path: 'kennellayout',
-        component: () => import('../pages/print/KennelLayout.vue')
+        path: 'kennellayout/:date?',
+        name: 'printkennellayout',
+        component: () => import('../pages/print/KennelLayout.vue'),
+        beforeEnter: (route) => {
+          if (!route.params.date) {
+            return {
+              path: route.path + '/' + today()
+            }
+          }
+        }
       }
     ]
   }

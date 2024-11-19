@@ -35,16 +35,23 @@ export const employeeKennelRoutes = ({
       code: 'BAD_REQUEST'
     })
   }),
-  getPetKennels: procedure.query(async () => {
-    const bookingPetKennels = await getBookingPetKennels()
-    const daycareDatePetKennels = await getDaycareDatePetKennels()
-    return [...bookingPetKennels, ...daycareDatePetKennels]
-  }),
+  getPetKennels: procedure
+    .input(
+      z.object({
+        date: z.string()
+      })
+    )
+    .query(async ({ input }) => {
+      const { date } = input
+      const bookingPetKennels = await getBookingPetKennels(date)
+      const daycareDatePetKennels = await getDaycareDatePetKennels(date)
+      return [...bookingPetKennels, ...daycareDatePetKennels]
+    }),
   setBookingPetKennel: procedure
     .input(
       z.object({
         id: z.number(),
-        kennelId: z.number(),
+        kennelId: z.number().nullable(),
         bookingId: z.number()
       })
     )
@@ -55,7 +62,7 @@ export const employeeKennelRoutes = ({
     .input(
       z.object({
         id: z.number(),
-        kennelId: z.number(),
+        kennelId: z.number().nullable(),
         daycareDateId: z.number()
       })
     )
