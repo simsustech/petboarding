@@ -20,7 +20,7 @@
       </div>
     </template>
   </daycare-calendar-month>
-  <div v-if="selectedEvents.length" class="row justify-center">
+  <div v-if="selectedEvents.length" class="row justify-center q-ma-lg">
     <q-btn
       :label="lang.daycare.replies.approve"
       color="green"
