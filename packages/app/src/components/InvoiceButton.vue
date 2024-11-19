@@ -61,7 +61,7 @@ const invoiceTextColor = computed(() => {
     modelValue.value.amountDue !== void 0 &&
     modelValue.value.amountDue !== null
   ) {
-    if (modelValue.value.amountDue <= 0) return 'green-6'
+    if (modelValue.value.amountDue <= 0) return 'green'
     if (
       modelValue.value.amountPaid &&
       modelValue.value.requiredDownPaymentAmount
@@ -70,9 +70,9 @@ const invoiceTextColor = computed(() => {
         modelValue.value.amountPaid >=
         modelValue.value.requiredDownPaymentAmount
       )
-        return 'orange-6'
+        return 'orange'
     }
   }
-  return ''
+  return 'grey'
 })
 </script>
