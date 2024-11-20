@@ -201,7 +201,7 @@ const responsiveSlides = ref({
       imgSrc: '/landing/en-US/browser.png'
     },
     {
-      title: 'And naturally also on your tablet.',
+      title: 'And of course also on your tablet.',
       imgSrc: '/landing/en-US/tablet.png'
     }
   ]
@@ -224,6 +224,11 @@ const features = ref({
       title: 'Dag overzicht',
       content: 'Handig overzicht van de aankomsten en vertrekken van de dag.',
       imgSrc: '/features/nl/overview.png'
+    },
+    {
+      title: 'Kennel indeling',
+      content: 'Beheer uw kennel indeling online.',
+      imgSrc: '/features/nl/kennellayout.png'
     }
   ],
   'en-US': [
@@ -242,6 +247,11 @@ const features = ref({
       title: 'Overview',
       content: 'Useful overview of the arrivals and departures of the day.',
       imgSrc: '/features/en-US/overview.png'
+    },
+    {
+      title: 'Kennel layout',
+      content: 'Manage your kennel layout online.',
+      imgSrc: '/features/en-US/kennellayout.png'
     }
   ]
 })

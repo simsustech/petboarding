@@ -124,6 +124,11 @@
                     <q-item-label> {{ lang.agenda.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item :inset-level="1" to="/employee/kennellayout">
+                  <q-item-section>
+                    <q-item-label> {{ lang.kennellayout.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item :inset-level="1" to="/employee/customers">
                   <q-item-section>
                     <q-item-label> {{ lang.customers }} </q-item-label>
@@ -227,9 +232,31 @@
                   :content-inset-level="2"
                   :label="lang.configuration.title"
                 >
+                  <q-item to="/admin/configuration/buildings">
+                    <q-item-section>
+                      <q-item-label> {{ lang.building.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/kennels">
+                    <q-item-section>
+                      <q-item-label> {{ lang.kennel.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item to="/admin/configuration/categories">
                     <q-item-section>
                       <q-item-label> {{ lang.category.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/openingtimes">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.openingTimes }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/services">
+                    <q-item-section>
+                      <q-item-label> {{ lang.service.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item to="/admin/configuration/daycaresubscriptions">
@@ -239,11 +266,6 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item to="/admin/configuration/services">
-                    <q-item-section>
-                      <q-item-label> {{ lang.service.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
                   <!-- <q-item to="/admin/configuration/email">
                     <q-item-section>
                       <q-item-label>
@@ -251,13 +273,6 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item> -->
-                  <q-item to="/admin/configuration/openingtimes">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.configuration.openingTimes }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
                   <q-item to="/admin/configuration/integrations">
                     <q-item-section>
                       <q-item-label>

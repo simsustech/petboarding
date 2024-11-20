@@ -497,6 +497,50 @@ const lang: Language = {
           ? `Verwacht ${expected}, ontvangen ${received}.`
           : ''
       }`
+  },
+  building: {
+    title: 'Gebouwen',
+    building: 'Gebouw',
+    fields: {
+      name: 'Naam',
+      location: 'Locatie',
+      description: 'Omschrijving',
+      order: 'Volgorde'
+    },
+    helpers: {
+      orderHint: 'De volgorde waarin het gebouw in een lijst wordt weergegeven.'
+    },
+    messages: {
+      verifyDeletion: 'Weet u zeker dat u het volgende gebouw wilt verwijderen?'
+    }
+  },
+  kennel: {
+    title: 'Kennels',
+    kennel: 'Kennel',
+    fields: {
+      name: 'Naam',
+      description: 'Omschrijving',
+      order: 'Volgorde',
+      capacity: 'Capaciteit',
+      building: 'Gebouw'
+    },
+    helpers: {
+      orderHint: 'De volgorde waarin de kennel in een lijst wordt weergegeven.'
+    },
+    messages: {
+      verifyDeletion: 'Weet u zeker dat u de volgende kennel wilt verwijderen?'
+    }
+  },
+  kennellayout: {
+    title: 'Kennel indeling',
+    labels: {
+      date: 'Datum',
+      today: 'Vandaag',
+      tomorrow: 'Morgen'
+    },
+    messages: {
+      dragAndDrop: 'Sleep de huisdieren naar de kenels.'
+    }
   }
 }
 

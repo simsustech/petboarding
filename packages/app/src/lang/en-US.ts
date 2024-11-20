@@ -485,6 +485,50 @@ const lang: Language = {
           ? `Expected ${expected}, received ${received}.`
           : ''
       }`
+  },
+  building: {
+    title: 'Buildings',
+    building: 'Building',
+    fields: {
+      name: 'Name',
+      location: 'Location',
+      description: 'Description',
+      order: 'Order'
+    },
+    helpers: {
+      orderHint: 'The order of the item in the buildings list.'
+    },
+    messages: {
+      verifyDeletion: 'Are you sure you want to delete the following building?'
+    }
+  },
+  kennel: {
+    title: 'Kennels',
+    kennel: 'Kennel',
+    fields: {
+      name: 'Name',
+      description: 'Description',
+      order: 'Order',
+      capacity: 'Capacity',
+      building: 'Building'
+    },
+    helpers: {
+      orderHint: 'The order of the item in the kennels list.'
+    },
+    messages: {
+      verifyDeletion: 'Are you sure you want to delete the following kennel?'
+    }
+  },
+  kennellayout: {
+    title: 'Kennel layout',
+    labels: {
+      date: 'Date',
+      today: 'Today',
+      tomorrow: 'Tomorrow'
+    },
+    messages: {
+      dragAndDrop: 'Drag and drop the pets into the kennels.'
+    }
   }
 }
 

@@ -112,6 +112,16 @@ const routes: RouteRecordRaw[] = [
                   import(
                     '../pages/admin/configuration/DaycareSubscriptionsPage.vue'
                   )
+              },
+              {
+                path: 'buildings',
+                component: () =>
+                  import('../pages/admin/configuration/BuildingsPage.vue')
+              },
+              {
+                path: 'kennels',
+                component: () =>
+                  import('../pages/admin/configuration/KennelsPage.vue')
               }
             ]
           }
@@ -170,6 +180,18 @@ const routes: RouteRecordRaw[] = [
                   import('../pages/employee/labels/BookingLabelsPage.vue')
               }
             ]
+          },
+          {
+            path: 'kennellayout/:date?',
+            name: 'employeekennellayout',
+            component: () => import('../pages/employee/KennelLayout.vue'),
+            beforeEnter: (route) => {
+              if (!route.params.date) {
+                return {
+                  path: route.path + '/' + today()
+                }
+              }
+            }
           }
         ]
       },
@@ -212,8 +234,25 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/Error404Page.vue')
       }
     ]
+  },
+  {
+    path: '/print',
+    component: () => import('../layouts/PrintLayout.vue'),
+    children: [
+      {
+        path: 'kennellayout/:date?',
+        name: 'printkennellayout',
+        component: () => import('../pages/print/KennelLayout.vue'),
+        beforeEnter: (route) => {
+          if (!route.params.date) {
+            return {
+              path: route.path + '/' + today()
+            }
+          }
+        }
+      }
+    ]
   }
-
   // Always leave this as last one,
   // but you can also remove it
 ]

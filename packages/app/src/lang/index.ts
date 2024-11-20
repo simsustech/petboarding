@@ -453,6 +453,50 @@ export interface Language {
       received?: string
     }) => string
   }
+  building: {
+    title: string
+    building: string
+    fields: {
+      name: string
+      location: string
+      description: string
+      order: string
+    }
+    helpers: {
+      orderHint: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  kennel: {
+    title: string
+    kennel: string
+    fields: {
+      name: string
+      description: string
+      order: string
+      capacity: string
+      building: string
+    }
+    helpers: {
+      orderHint: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
+  kennellayout: {
+    title: string
+    labels: {
+      date: string
+      today: string
+      tomorrow: string
+    }
+    messages: {
+      dragAndDrop: string
+    }
+  }
 }
 
 import type { Ref } from 'vue'
