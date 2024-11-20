@@ -287,4 +287,5 @@ onMounted(async () => {
 
 .drag-enter
   outline-style: dashed
+  outline-offset: -2px
 </style>
