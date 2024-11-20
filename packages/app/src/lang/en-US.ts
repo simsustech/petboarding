@@ -525,6 +525,9 @@ const lang: Language = {
       date: 'Date',
       today: 'Today',
       tomorrow: 'Tomorrow'
+    },
+    messages: {
+      dragAndDrop: 'Drag and drop the pets into the kennels.'
     }
   }
 }

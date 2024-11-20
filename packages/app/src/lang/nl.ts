@@ -537,6 +537,9 @@ const lang: Language = {
       date: 'Datum',
       today: 'Vandaag',
       tomorrow: 'Morgen'
+    },
+    messages: {
+      dragAndDrop: 'Sleep de huisdieren naar de kenels.'
     }
   }
 }

@@ -10,8 +10,8 @@
         :key="pet.id"
         :class="{
           'col-auto': true,
-          'bg-primary': pet.bookingId,
-          'bg-accent': pet.daycareDateId
+          'bg-blue-2': pet.bookingId,
+          'bg-yellow-2': pet.daycareDateId
         }"
         draggable="true"
         @dragstart="onDragStart"
@@ -38,8 +38,8 @@
                     (pet) => pet.kennelId === kennel.id
                   )"
                   :class="{
-                    'bg-primary': pet.bookingId,
-                    'bg-accent': pet.daycareDateId
+                    'bg-blue-2': pet.bookingId,
+                    'bg-yellow-2': pet.daycareDateId
                   }"
                   :id="`pet${pet.id}`"
                   :key="pet.id"

@@ -27,6 +27,19 @@
       />
       <q-btn icon="print" :to="`/print/kennellayout/${selectedDate}`" />
     </div>
+    <div class="row q-col-gutter-md">
+      <div class="col-auto">
+        <q-badge rounded text-color="black" color="blue-2"></q-badge
+        ><a>{{ lang.booking.title }}</a>
+      </div>
+      <div class="col-auto">
+        <q-badge rounded text-color="black" color="yellow-2"></q-badge
+        ><a>{{ lang.daycare.title }}</a>
+      </div>
+      <div class="col-auto">
+        <a>{{ lang.kennellayout.messages.dragAndDrop }}</a>
+      </div>
+    </div>
     <div class="row q-col-gutter-sm" style="height: 150px">
       <div class="col-12 col-md-3">
         <q-card>
@@ -44,8 +57,8 @@
               :id="`pet${pet.id}`"
               :key="pet.id"
               :class="{
-                'bg-primary': pet.bookingId,
-                'bg-accent': pet.daycareDateId
+                'bg-blue-2': pet.bookingId,
+                'bg-yellow-2': pet.daycareDateId
               }"
               :draggable="true"
               @dragstart="onDragStart"
@@ -85,8 +98,8 @@
                   :id="`pet${pet.id}`"
                   :key="pet.id"
                   :class="{
-                    'bg-primary': pet.bookingId,
-                    'bg-accent': pet.daycareDateId
+                    'bg-blue-2': pet.bookingId,
+                    'bg-yellow-2': pet.daycareDateId
                   }"
                   :draggable="true"
                   @dragstart="onDragStart"

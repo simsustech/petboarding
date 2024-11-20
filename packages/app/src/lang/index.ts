@@ -493,6 +493,9 @@ export interface Language {
       today: string
       tomorrow: string
     }
+    messages: {
+      dragAndDrop: string
+    }
   }
 }
 
