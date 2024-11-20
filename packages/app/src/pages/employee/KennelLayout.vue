@@ -47,7 +47,7 @@
                 'bg-primary': pet.bookingId,
                 'bg-accent': pet.daycareDateId
               }"
-              draggable="true"
+              :draggable="true"
               @dragstart="onDragStart"
             >
               {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
@@ -81,13 +81,13 @@
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
+                  :id="`pet${pet.id}`"
+                  :key="pet.id"
                   :class="{
                     'bg-primary': pet.bookingId,
                     'bg-accent': pet.daycareDateId
                   }"
-                  :id="`pet${pet.id}`"
-                  :key="pet.id"
-                  draggable="true"
+                  :draggable="true"
                   @dragstart="onDragStart"
                 >
                   {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
@@ -187,7 +187,10 @@ function onDragStart(e) {
 
 function onDragEnter(e) {
   // don't drop on other draggables
-  if (e.target.draggable !== true) {
+  if (
+    e.target.draggable !== true &&
+    ![...e.target.classList].includes('q-chip__content')
+  ) {
     e.target.classList.add('drag-enter')
   }
 }
