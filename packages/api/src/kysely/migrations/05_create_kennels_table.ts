@@ -6,7 +6,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .createTable('kennels')
     .addColumn('id', 'serial', (col) => col.primaryKey())
     .addColumn('building_id', 'integer', (col) =>
-      col.references('buildings.id')
+      col.references('buildings.id').onDelete('cascade')
     )
     .addColumn('name', 'varchar', (col) => col.notNull())
     .addColumn('description', 'varchar')
