@@ -124,6 +124,11 @@
                     <q-item-label> {{ lang.agenda.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item :inset-level="1" to="/employee/kennellayout">
+                  <q-item-section>
+                    <q-item-label> {{ lang.kennellayout.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item :inset-level="1" to="/employee/customers">
                   <q-item-section>
                     <q-item-label> {{ lang.customers }} </q-item-label>
@@ -141,11 +146,6 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <q-item :inset-level="1" to="/employee/kennellayout">
-                  <q-item-section>
-                    <q-item-label> {{ lang.kennellayout.title }} </q-item-label>
-                  </q-item-section>
-                </q-item>
                 <!-- <q-item :inset-level="1" to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>

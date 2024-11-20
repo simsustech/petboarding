@@ -14,7 +14,7 @@
         }"
       />
     </div>
-    <div class="row justify-center">
+    <div class="row justify-center q-ma-sm">
       <q-btn
         class="col-auto"
         :label="lang.kennellayout.labels.today"
