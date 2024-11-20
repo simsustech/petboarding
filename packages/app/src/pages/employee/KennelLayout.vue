@@ -64,14 +64,15 @@
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-6 col-md-3"
+              class="col-6 col-md-3 column"
+              :style="{ 'min-height': '120px' }"
             >
               <q-card-section header>
                 {{ kennel.name }}
               </q-card-section>
               <q-card-section
                 :id="`kennel${kennel.id}`"
-                class="drop-target rounded-borders overflow-hidden"
+                class="col drop-target rounded-borders overflow-hidden"
                 @dragenter="onDragEnter"
                 @dragleave="onDragLeave"
                 @dragover="onDragOver"
@@ -282,7 +283,6 @@ onMounted(async () => {
 
 <style lang="sass">
 .drop-target
-  min-height: 50px
   background-color: gainsboro
 
 .drag-enter
