@@ -122,7 +122,7 @@ const openDeleteKennelDialog = ({ data }: { data: Kennel }) => {
     cancel: true,
     message: `${lang.value.kennel.messages.verifyDeletion}<br />
     ${lang.value.kennel.fields.name}: ${data.name}<br />
-    ${lang.value.kennel.fields.location}: ${data.location}
+    ${lang.value.kennel.fields.building}: ${data.building?.name}
     `
   }).onOk(async () => {
     const result = useMutation('configuration.deleteKennel', {

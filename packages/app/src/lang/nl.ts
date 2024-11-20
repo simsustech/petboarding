@@ -521,7 +521,8 @@ const lang: Language = {
       name: 'Naam',
       description: 'Omschrijving',
       order: 'Volgorde',
-      capacity: 'Capaciteit'
+      capacity: 'Capaciteit',
+      building: 'Gebouw'
     },
     helpers: {
       orderHint: 'De volgorde waarin de kennel in een lijst wordt weergegeven.'

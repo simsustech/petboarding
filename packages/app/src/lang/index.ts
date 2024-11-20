@@ -477,6 +477,7 @@ export interface Language {
       description: string
       order: string
       capacity: string
+      building: string
     }
     helpers: {
       orderHint: string

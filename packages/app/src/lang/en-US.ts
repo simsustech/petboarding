@@ -509,7 +509,8 @@ const lang: Language = {
       name: 'Name',
       description: 'Description',
       order: 'Order',
-      capacity: 'Capacity'
+      capacity: 'Capacity',
+      building: 'Building'
     },
     helpers: {
       orderHint: 'The order of the item in the kennels list.'
