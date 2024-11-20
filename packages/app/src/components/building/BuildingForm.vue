@@ -64,7 +64,7 @@ import { extend, QForm } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { FormInput } from '@simsustech/quasar-components/form'
-import { Building, ANNOUNCEMENT_TYPE } from '@petboarding/api/zod'
+import { Building } from '@petboarding/api/zod'
 import type { QFormProps, QInputProps } from 'quasar'
 
 export interface Props {
@@ -102,11 +102,10 @@ const lang = useLang()
 const formRef = ref<QForm>()
 
 const initialValue = {
-  title: '',
-  message: '',
-  expirationDate: '',
-  type: ANNOUNCEMENT_TYPE.GENERAL,
-  comments: ''
+  name: '',
+  location: '',
+  description: '',
+  order: null
 }
 const modelValue = ref<Building>(initialValue)
 

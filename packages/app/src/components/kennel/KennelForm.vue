@@ -4,6 +4,7 @@
       <building-select
         v-model="modelValue.buildingId"
         class="col-12 col-md-6"
+        required
         :filtered-options="buildings"
       />
       <form-input
@@ -21,7 +22,6 @@
         v-bind="input"
         id="description"
         v-model="modelValue.description"
-        required
         class="col-12 col-md-6"
         name="description"
         :label="lang.kennel.fields.description"
@@ -71,7 +71,7 @@ import { extend, QForm } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { FormInput } from '@simsustech/quasar-components/form'
-import { Kennel, ANNOUNCEMENT_TYPE, Building } from '@petboarding/api/zod'
+import { Kennel, Building } from '@petboarding/api/zod'
 import BuildingSelect from '../building/BuildingSelect.vue'
 import type { QFormProps, QInputProps } from 'quasar'
 
@@ -111,11 +111,11 @@ const lang = useLang()
 const formRef = ref<QForm>()
 
 const initialValue = {
-  title: '',
-  message: '',
-  expirationDate: '',
-  type: ANNOUNCEMENT_TYPE.GENERAL,
-  comments: ''
+  buildingId: NaN,
+  name: '',
+  description: '',
+  capacity: null,
+  order: null
 }
 const modelValue = ref<Kennel>(initialValue)
 
