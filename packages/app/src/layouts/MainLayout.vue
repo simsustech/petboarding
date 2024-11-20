@@ -259,13 +259,13 @@
                       <q-item-label> {{ lang.service.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item to="/admin/configuration/email">
+                  <!-- <q-item to="/admin/configuration/email">
                     <q-item-section>
                       <q-item-label>
                         {{ lang.configuration.emailTemplates }}
                       </q-item-label>
                     </q-item-section>
-                  </q-item>
+                  </q-item> -->
                   <q-item to="/admin/configuration/openingtimes">
                     <q-item-section>
                       <q-item-label>
