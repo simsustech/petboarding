@@ -247,16 +247,23 @@
                       <q-item-label> {{ lang.category.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item to="/admin/configuration/daycaresubscriptions">
+                  <q-item to="/admin/configuration/openingtimes">
                     <q-item-section>
                       <q-item-label>
-                        {{ lang.daycareSubscription.title }}
+                        {{ lang.configuration.openingTimes }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item to="/admin/configuration/services">
                     <q-item-section>
                       <q-item-label> {{ lang.service.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/daycaresubscriptions">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.daycareSubscription.title }}
+                      </q-item-label>
                     </q-item-section>
                   </q-item>
                   <!-- <q-item to="/admin/configuration/email">
@@ -266,13 +273,6 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item> -->
-                  <q-item to="/admin/configuration/openingtimes">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.configuration.openingTimes }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
                   <q-item to="/admin/configuration/integrations">
                     <q-item-section>
                       <q-item-label>
