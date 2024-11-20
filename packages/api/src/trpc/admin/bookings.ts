@@ -727,11 +727,12 @@ export const adminBookingRoutes = ({
           status: BOOKING_STATUS.APPROVED
         }
       })
-      if (fastify.slimfact) {
+      const unpaidBookingUuids = bookings
+        .map((booking) => booking.invoiceUuid)
+        .filter((uuid): uuid is string => !!uuid)
+      if (fastify.slimfact && unpaidBookingUuids.length) {
         const unpaidBills = await fastify.slimfact.admin.getInvoices.query({
-          uuids: bookings
-            .map((booking) => booking.invoiceUuid)
-            .filter((uuid): uuid is string => !!uuid),
+          uuids: unpaidBookingUuids,
           status: InvoiceStatus.BILL,
           paid: false
         })
