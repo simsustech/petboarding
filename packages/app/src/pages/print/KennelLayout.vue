@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="page">
+  <q-page class="page" :style="{ padding: '2cm' }">
     <div class="row justify-center">
       {{ selectedDate }}
     </div>
@@ -18,8 +18,8 @@
       >
         {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
       </q-chip>
-      <div class="col-12 q-col-gutter-md">
-        <div v-for="building in buildings" :key="building.id" class="row">
+      <div class="col-12 q-col-gutter-md row">
+        <div v-for="building in buildings" :key="building.id" class="col-auto">
           <div class="col-12 row">
             {{ building.name }}
           </div>
@@ -27,12 +27,20 @@
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-3"
+              class="col-2"
             >
               <q-card-section header>
                 {{ kennel.name }}
               </q-card-section>
-              <q-card-section :id="`kennel${kennel.id}`">
+              <q-card-section
+                v-if="
+                  internalPetKennels.findIndex(
+                    (pet) => pet.kennelId === kennel.id
+                  )
+                "
+                :id="`kennel${kennel.id}`"
+                class="q-pl-none q-pr-none q-pt-none"
+              >
                 <q-chip
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
@@ -129,11 +137,11 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="sass">
-.drop-target
-  min-height: 50px
-  background-color: gainsboro
-
-.drag-enter
-  outline-style: dashed
+<style>
+@media print {
+  @page {
+    size: auto;
+    margin: 0mm;
+  }
+}
 </style>
