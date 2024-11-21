@@ -539,7 +539,7 @@ const lang: Language = {
       tomorrow: 'Morgen'
     },
     messages: {
-      dragAndDrop: 'Sleep de huisdieren naar de kenels.'
+      dragAndDrop: 'Sleep de huisdieren naar de kennels.'
     }
   }
 }
