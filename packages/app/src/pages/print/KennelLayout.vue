@@ -1,6 +1,6 @@
 <template>
   <q-page class="page" :style="{ padding: '2cm' }">
-    <div class="row justify-center">
+    <div class="row justify-center text-h6">
       {{ selectedDate }}
     </div>
     <div class="row" style="height: 150px">
@@ -27,9 +27,12 @@
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-2"
+              class="col-3"
             >
-              <q-card-section header>
+              <q-card-section
+                header
+                class="text-h6 text-center q-pt-sm q-pb-none"
+              >
                 {{ kennel.name }}
               </q-card-section>
               <q-card-section
@@ -39,7 +42,7 @@
                   )
                 "
                 :id="`kennel${kennel.id}`"
-                class="q-pl-none q-pr-none q-pt-none"
+                class="text-center q-pl-none q-pr-none q-pt-none"
               >
                 <q-chip
                   v-for="pet in internalPetKennels.filter(
