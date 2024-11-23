@@ -200,6 +200,16 @@
         @update:model-value="($event) => (modelValue.rating = $event)"
       />
     </div>
+    <q-list v-if="modelValue.details">
+      <q-item-label header>
+        Details <q-btn icon="add" flat @click="addDetail" />
+      </q-item-label>
+      <q-item v-for="(detail, index) in modelValue.details" :key="index">
+        <q-item-section>
+          <q-input v-model="modelValue.details[index].comment" />
+        </q-item-section>
+      </q-item>
+    </q-list>
   </q-form>
 </template>
 
@@ -227,7 +237,11 @@ import {
   DateInput,
   BooleanSelect
 } from '@simsustech/quasar-components/form'
-import type { Pet as PetType, Category } from '@petboarding/api/zod'
+import {
+  type Pet as PetType,
+  type Category,
+  PET_DETAIL_TYPES
+} from '@petboarding/api/zod'
 import PetSpeciesSelect from './PetSpeciesSelect.vue'
 import PetBreedSelect from './PetBreedSelect.vue'
 import PetCategorySelect from './PetCategorySelect.vue'
@@ -302,7 +316,7 @@ watch($q.lang, (val) => {
 const formRef = ref<QForm>()
 
 const setValue = (newValue: Pet) => {
-  modelValue.value = extend({}, initialValue, newValue)
+  modelValue.value = extend(true, {}, initialValue, newValue)
 }
 
 const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
@@ -321,6 +335,16 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 
 const pastDateOptionsFn = (date: string) => {
   return date < dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+}
+
+const addDetail = () => {
+  if (modelValue.value.details)
+    modelValue.value.details.push({
+      type: PET_DETAIL_TYPES.BEHAVIOR,
+      startDate: null,
+      endDate: null,
+      comment: ''
+    })
 }
 
 const configuration = useConfiguration()

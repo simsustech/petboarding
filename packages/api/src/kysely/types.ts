@@ -288,6 +288,15 @@ export interface Pets {
   fulltext: Generated<string | null>
 }
 
+export interface PetDetails {
+  id: Generated<number>
+  petId: number
+  type: 'comment' | 'behavior' | 'food' | 'medical' | 'inheat'
+  startDate: string | null
+  endDate: string | null
+  comment: string
+}
+
 export interface Services {
   id: Generated<number>
   name: string
@@ -334,6 +343,7 @@ export interface DB {
   openingTimes: OpeningTimes
   periods: Periods
   pets: Pets
+  petDetails: PetDetails
   services: Services
   vaccinations: Vaccinations
 }

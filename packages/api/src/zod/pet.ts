@@ -3,6 +3,12 @@ import { customer } from './customer.js'
 import { vaccination } from './vaccination.js'
 
 export const PET_SPECIES = ['dog', 'cat'] as const
+export enum PET_DETAIL_TYPES {
+  BEHAVIOR = 'behavior',
+  FOOD = 'food',
+  MEDICAL = 'medical',
+  INHEAT = 'inheat'
+}
 
 export const PET_IMAGE_SIZE = {
   width: 1024,
@@ -33,7 +39,16 @@ export const petValidation = {
   customer: customer.optional(),
   vaccinations: vaccination.array().optional(),
   hasMandatoryVaccinations: z.boolean().optional(),
-  insured: z.boolean().nullable().optional()
+  insured: z.boolean().nullable().optional(),
+  details: z
+    .object({
+      id: z.number().optional(),
+      type: z.nativeEnum(PET_DETAIL_TYPES),
+      startDate: z.string().optional().nullable(),
+      endDate: z.string().optional().nullable(),
+      comment: z.string().optional().nullable()
+    })
+    .array()
 }
 // yo
 

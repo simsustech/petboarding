@@ -89,7 +89,8 @@ export const employeePetRoutes = ({
           },
           select: ['rating', 'comments'],
           relations: {
-            vaccinations: true
+            vaccinations: true,
+            details: true
           }
         })
         return pets
@@ -113,7 +114,8 @@ export const employeePetRoutes = ({
           },
           select: ['rating', 'comments'],
           relations: {
-            vaccinations: true
+            vaccinations: true,
+            details: true
           }
         })
         return pets

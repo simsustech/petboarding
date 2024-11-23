@@ -1,7 +1,7 @@
 import { Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
-import type { Pets } from '../kysely/types.d.ts'
+import type { Pets, PetDetails } from '../kysely/types.d.ts'
 import env from '@vitrify/tools/env'
 import {
   type Insertable,
@@ -13,8 +13,9 @@ import {
 import { Vaccination } from '../zod/index.js'
 import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
-type NewPet = Insertable<Pets>
-type PetUpdate = Updateable<Pets>
+export type PetDetail = Selectable<PetDetails>
+type NewPet = Insertable<Pets> & { details?: Insertable<PetDetails>[] }
+type PetUpdate = Updateable<Pets> & { details?: Insertable<PetDetails>[] }
 
 export interface ParsedPet extends Omit<Pet, 'image'> {
   image: string | null
@@ -119,6 +120,15 @@ function withCustomer(eb: ExpressionBuilder<Database, 'pets'>) {
   ).as('customer')
 }
 
+function withDetails(eb: ExpressionBuilder<Database, 'pets'>) {
+  return jsonArrayFrom(
+    eb
+      .selectFrom('petDetails')
+      .selectAll()
+      .whereRef('pets.id', '=', 'petDetails.petId')
+  ).as('details')
+}
+
 function find({
   criteria,
   select,
@@ -128,6 +138,7 @@ function find({
   select?: (keyof Pet)[]
   relations?: {
     vaccinations?: boolean
+    details?: boolean
   }
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -153,14 +164,18 @@ function find({
     query = query.where('deceased', '=', criteria.deceased)
   }
 
-  if (relations?.vaccinations) {
-    query = query.select([withVaccinations, withValidVaccinations])
-  }
+  // if (relations?.vaccinations) {
+  //   query = query.select([withVaccinations, withValidVaccinations])
+  // }
 
   return query
     .select(select)
     .select([convertImageSql.as('image')])
     .select([withCustomer])
+    .$if(Boolean(relations?.vaccinations), (qb) =>
+      qb.select([withVaccinations, withValidVaccinations])
+    )
+    .$if(Boolean(relations?.details), (qb) => qb.select([withDetails]))
 }
 
 export async function findPet({
@@ -172,6 +187,7 @@ export async function findPet({
   select?: (keyof Pet)[]
   relations?: {
     vaccinations?: boolean
+    details?: boolean
   }
 }): Promise<ParsedPet | undefined> {
   const query = find({ criteria, select, relations })
@@ -196,6 +212,7 @@ export async function findPets({
   select?: (keyof Pet)[]
   relations?: {
     vaccinations?: boolean
+    details?: boolean
   }
 }) {
   const query = find({
@@ -221,11 +238,44 @@ export async function createPet(pet: NewPet) {
   pet.name = pet.name.trim()
   pet.breed = pet.breed.trim()
 
-  return db
+  const insertedPet = await db
     .insertInto('pets')
-    .values(pet)
+    .values({
+      name: pet.name,
+      species: pet.species,
+      rating: pet.rating,
+      breed: pet.breed,
+      birthDate: pet.birthDate,
+      sterilized: pet.sterilized,
+      gender: pet.gender,
+      chemicalSterilizationDate: pet.chemicalSterilizationDate,
+      chipNumber: pet.chipNumber,
+      color: pet.color,
+      deceased: pet.deceased,
+      food: pet.food,
+      insured: pet.insured,
+      medicines: pet.medicines,
+      particularities: pet.particularities,
+      weight: pet.weight,
+      customerId: pet.customerId,
+      categoryId: pet.categoryId,
+      comments: pet.comments
+    })
     .returningAll()
     .executeTakeFirstOrThrow()
+
+  if (pet.details?.length) {
+    await db
+      .insertInto('petDetails')
+      .values(
+        pet.details.map((detail) => ({
+          ...detail,
+          petId: insertedPet.id
+        }))
+      )
+      .execute()
+  }
+  return insertedPet
 }
 
 export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
@@ -241,7 +291,58 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
   if (updateWith.name) updateWith.name = updateWith.name.trim()
   if (updateWith.breed) updateWith.breed = updateWith.breed.trim()
 
-  return query.set(updateWith).returningAll().executeTakeFirstOrThrow()
+  const updatedPet = await query
+    .set({
+      name: updateWith.name,
+      species: updateWith.species,
+      rating: updateWith.rating,
+      breed: updateWith.breed,
+      birthDate: updateWith.birthDate,
+      sterilized: updateWith.sterilized,
+      gender: updateWith.gender,
+      chemicalSterilizationDate: updateWith.chemicalSterilizationDate,
+      chipNumber: updateWith.chipNumber,
+      color: updateWith.color,
+      deceased: updateWith.deceased,
+      food: updateWith.food,
+      insured: updateWith.insured,
+      medicines: updateWith.medicines,
+      particularities: updateWith.particularities,
+      weight: updateWith.weight,
+      customerId: updateWith.customerId,
+      categoryId: updateWith.categoryId,
+      comments: updateWith.comments
+    })
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  if (updateWith.details?.length) {
+    for (const detail of updateWith.details) {
+      if (detail.id) {
+        await db
+          .updateTable('petDetails')
+          .where('petDetails.id', '=', detail.id)
+          .where('petDetails.petId', '=', updatedPet.id)
+          .set({
+            type: detail.type,
+            startDate: detail.startDate,
+            endDate: detail.endDate,
+            comment: detail.comment
+          })
+          .execute()
+      } else {
+        await db
+          .insertInto('petDetails')
+          .values({
+            ...detail,
+            petId: updatedPet.id
+          })
+          .execute()
+      }
+    }
+  }
+
+  return updatedPet
 }
 
 export async function searchPets(searchPhrase: string) {
