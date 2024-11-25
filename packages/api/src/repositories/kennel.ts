@@ -123,7 +123,6 @@ export async function getBookingPetKennels(date: string) {
     .selectFrom('pets')
     .innerJoin('bookingPetKennel', 'pets.id', 'bookingPetKennel.petId')
     .innerJoin('bookings', 'bookings.id', 'bookingPetKennel.bookingId')
-    .innerJoin('customers', 'customers.id', 'pets.customerId')
     .where('bookings.startDate', '<=', date)
     .where('bookings.endDate', '>=', date)
     .where(({ eb, selectFrom }) =>
@@ -141,12 +140,17 @@ export async function getBookingPetKennels(date: string) {
           .select('bookingStatus.bookingId')
       )
     )
-    .select([
+    .select((seb) => [
       'pets.id as id',
       'pets.name as name',
       'bookingPetKennel.kennelId as kennelId',
       'bookingPetKennel.bookingId as bookingId',
-      'customers.lastName as lastName'
+      jsonObjectFrom(
+        seb
+          .selectFrom('customers')
+          .select('customers.lastName')
+          .whereRef('customers.id', '=', 'pets.customerId')
+      ).as('customer')
     ])
     .execute()
 }
@@ -160,15 +164,19 @@ export async function getDaycareDatePetKennels(date: string) {
       'daycareDates.id',
       'daycareDatePetKennel.daycareDateId'
     )
-    .innerJoin('customers', 'customers.id', 'pets.customerId')
     .where('daycareDates.date', '=', date)
     .where('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED)
-    .select([
+    .select((seb) => [
       'pets.id as id',
       'pets.name as name',
       'daycareDatePetKennel.kennelId as kennelId',
       'daycareDatePetKennel.daycareDateId as daycareDateId',
-      'customers.lastName as lastName'
+      jsonObjectFrom(
+        seb
+          .selectFrom('customers')
+          .select('customers.lastName')
+          .whereRef('customers.id', '=', 'pets.customerId')
+      ).as('customer')
     ])
     .execute()
 }

@@ -50,12 +50,13 @@
             @dragover="onDragOver"
             @drop="onDrop"
           >
-            <q-chip
+            <pet-chip
               v-for="pet in internalPetKennels.filter(
                 (pet) => pet.kennelId === null
               )"
               :id="`pet${pet.id}`"
               :key="pet.id"
+              :model-value="pet"
               :class="{
                 'bg-blue-2': pet.bookingId,
                 'bg-yellow-2': pet.daycareDateId
@@ -63,8 +64,7 @@
               :draggable="true"
               @dragstart="onDragStart"
             >
-              {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-            </q-chip>
+            </pet-chip>
           </q-card-section>
         </q-card>
       </div>
@@ -91,12 +91,13 @@
                 @dragover="onDragOver"
                 @drop="onDrop"
               >
-                <q-chip
+                <pet-chip
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
                   :id="`pet${pet.id}`"
                   :key="pet.id"
+                  :model-value="pet"
                   :class="{
                     'bg-blue-2': pet.bookingId,
                     'bg-yellow-2': pet.daycareDateId
@@ -104,8 +105,7 @@
                   :draggable="true"
                   @dragstart="onDragStart"
                 >
-                  {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-                </q-chip>
+                </pet-chip>
               </q-card-section>
             </q-card>
           </div>
@@ -122,6 +122,7 @@ import { extend, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
+import PetChip from '../../components/pet/PetChip.vue'
 
 const { useQuery, useMutation } = await createUseTrpc()
 const lang = useLang()
@@ -166,7 +167,9 @@ const internalPetKennels = ref<
   {
     id: number
     name: string
-    lastName: string
+    customer: {
+      lastName: string
+    }
     kennelId: number | null
     bookingId?: number
     daycareDateId?: number
@@ -260,10 +263,6 @@ function onDrop(e) {
   }
 
   e.target.classList.remove('drag-enter')
-}
-
-function truncate(str: string, n: number) {
-  return str.length > n ? str.slice(0, n - 1) + '...' : str
 }
 
 const setToToday = () => {

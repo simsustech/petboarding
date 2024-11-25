@@ -4,7 +4,7 @@
       {{ selectedDate }}
     </div>
     <div class="row" style="height: 150px">
-      <q-chip
+      <pet-chip
         v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
         :id="`pet${pet.id}`"
         :key="pet.id"
@@ -13,11 +13,11 @@
           'bg-blue-2': pet.bookingId,
           'bg-yellow-2': pet.daycareDateId
         }"
+        :model-value="pet"
         draggable="true"
         @dragstart="onDragStart"
       >
-        {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-      </q-chip>
+      </pet-chip>
       <div class="col-12 q-col-gutter-md row">
         <div v-for="building in buildings" :key="building.id" class="col-auto">
           <div class="col-12 row justify-center text-h6 q-mb-none">
@@ -46,21 +46,21 @@
                 :id="`kennel${kennel.id}`"
                 class="text-center q-pl-none q-pr-none q-pt-none q-pb-xs"
               >
-                <q-chip
+                <pet-chip
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
+                  :id="`pet${pet.id}`"
+                  :key="pet.id"
                   :class="{
                     'bg-blue-2': pet.bookingId,
                     'bg-yellow-2': pet.daycareDateId
                   }"
-                  :id="`pet${pet.id}`"
-                  :key="pet.id"
+                  :model-value="pet"
                   draggable="true"
                   @dragstart="onDragStart"
                 >
-                  {{ `${pet.name} ${truncate(pet.lastName, 6)}` }}
-                </q-chip>
+                </pet-chip>
               </q-card-section>
             </q-card>
           </div>
@@ -99,7 +99,9 @@ const internalPetKennels = ref<
   {
     id: number
     name: string
-    lastName: string
+    customer: {
+      lastName: string
+    }
     kennelId: number | null
     bookingId?: number
     daycareDateId?: number
@@ -129,10 +131,6 @@ watch(
 function onDragStart(e) {
   e.dataTransfer.setData('text', e.target.id)
   e.dataTransfer.dropEffect = 'move'
-}
-
-function truncate(str: string, n: number) {
-  return str.length > n ? str.slice(0, n - 1) + '...' : str
 }
 
 onMounted(async () => {
