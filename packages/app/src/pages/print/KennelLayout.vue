@@ -20,7 +20,7 @@
       </q-chip>
       <div class="col-12 q-col-gutter-md row">
         <div v-for="building in buildings" :key="building.id" class="col-auto">
-          <div class="col-12 row">
+          <div class="col-12 row justify-center text-h6 q-mb-none">
             {{ building.name }}
           </div>
           <div class="col-12 row">
@@ -28,10 +28,14 @@
               v-for="kennel in building.kennels"
               :key="kennel.id"
               class="col-3"
+              bordered
+              :style="{
+                'border-width': '3px'
+              }"
             >
               <q-card-section
                 header
-                class="text-h6 text-center q-pt-sm q-pb-none"
+                class="text-h6 text-center q-pt-xs q-pb-none"
               >
                 {{ kennel.name }}
               </q-card-section>
@@ -42,7 +46,7 @@
                   )
                 "
                 :id="`kennel${kennel.id}`"
-                class="text-center q-pl-none q-pr-none q-pt-none"
+                class="text-center q-pl-none q-pr-none q-pt-none q-pb-xs"
               >
                 <q-chip
                   v-for="pet in internalPetKennels.filter(
