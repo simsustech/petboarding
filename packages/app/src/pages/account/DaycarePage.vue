@@ -19,7 +19,10 @@
         />
         <q-banner
           v-if="daycareSubscriptions.length"
-          class="bg-warning q-mb-md"
+          :class="{
+            'q-mb-md': true,
+            'bg-warning': !customerDaycareSubscriptions?.length
+          }"
           rounded
         >
           <template #avatar>
