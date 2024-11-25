@@ -30,7 +30,8 @@
               class="col-3"
               bordered
               :style="{
-                'border-width': '3px'
+                'border-width': '3px',
+                'min-width': '75px'
               }"
             >
               <q-card-section
