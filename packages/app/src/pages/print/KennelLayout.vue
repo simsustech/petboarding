@@ -41,9 +41,7 @@
               </q-card-section>
               <q-card-section
                 v-if="
-                  internalPetKennels.findIndex(
-                    (pet) => pet.kennelId === kennel.id
-                  )
+                  internalPetKennels.find((pet) => pet.kennelId === kennel.id)
                 "
                 :id="`kennel${kennel.id}`"
                 class="text-center q-pl-none q-pr-none q-pt-none q-pb-xs"
