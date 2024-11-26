@@ -36,6 +36,7 @@ https://demo.petboarding.app
 🖨️ Create label printer friendly pet information cards.  
 
 ## Self hosted
+You will need a running [Caddy](https://github.com/lucaslorentz/caddy-docker-proxy) container.
 ```sh
 wget https://raw.githubusercontent.com/simsustech/petboarding/main/docker-compose.yaml
 wget https://raw.githubusercontent.com/simsustech/petboarding/main/.env.example -O .env
