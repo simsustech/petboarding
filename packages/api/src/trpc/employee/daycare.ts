@@ -76,17 +76,22 @@ export const employeeDaycareRoutes = ({
         from: z.string(),
         until: z.string(),
         status: z.nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
+        statuses: z
+          .nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS)
+          .array()
+          .optional(),
         customerId: z.number().optional()
       })
     )
     .query(async ({ input }) => {
-      const { customerId, status, from, until } = input
+      const { customerId, status, statuses, from, until } = input
       if (from && until) {
         const customerDaycareSubscriptions =
           await findCustomerDaycareSubscriptions({
             criteria: {
               customerId,
               status,
+              statuses,
               effectiveDate: until,
               expirationDate: from
             }

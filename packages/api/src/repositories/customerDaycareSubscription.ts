@@ -229,9 +229,7 @@ function find({
 
   if (criteria.status) {
     query = query.where('status', '=', criteria.status)
-  }
-
-  if (criteria.statuses?.length) {
+  } else if (criteria.statuses?.length) {
     query = query.where((web) =>
       web.or(
         criteria.statuses!.map((status) =>

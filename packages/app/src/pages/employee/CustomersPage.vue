@@ -192,6 +192,7 @@ import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.
 import {
   BOOKING_STATUS,
   Customer,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   DAYCARE_DATE_STATUS
 } from '@petboarding/api/zod'
 import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
@@ -278,7 +279,11 @@ const {
   args: reactive({
     from: from.toISOString().slice(0, 10),
     until: until.toISOString().slice(0, 10),
-    customerId: id
+    customerId: id,
+    statuses: [
+      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+    ]
   }),
   reactive: {
     args: true
