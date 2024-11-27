@@ -61,7 +61,7 @@
       v-bind="input"
       id="postalCode"
       v-model="modelValue.postalCode"
-      locale="nl"
+      :country="configuration.COUNTRY"
       required
       class="col-md-4 col-12"
       name="zip"
@@ -138,6 +138,8 @@ import {
   TelephoneNumberInput
 } from '@simsustech/quasar-components/form'
 import type { Customer } from '@petboarding/api/zod'
+import { useConfiguration } from '../../configuration.js'
+
 export interface Props {
   form?: QFormProps & Partial<HTMLFormElement> & Partial<HTMLDivElement>
   input?: Omit<
@@ -169,6 +171,8 @@ const emit = defineEmits<{
     }
   ): void
 }>()
+
+const configuration = useConfiguration()
 
 const validations = computed<
   Record<string, ((val: string) => boolean | string)[]>
