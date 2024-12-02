@@ -58,6 +58,7 @@
           </a>
         </q-banner>
         <daycare-legend />
+        {{ lang.daycare.messages.addDaycareDates }}
         <daycare-calendar-month
           :events="events"
           :selected-events="selectedEvents"

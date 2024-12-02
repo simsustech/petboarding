@@ -306,7 +306,8 @@ const lang: Language = {
         'Are you sure you want to place the following dates on the reserve list?',
       submitted:
         'The dates have been submitted. Check the status on this page, you will not receive an email.',
-      openPets: 'Open pets'
+      openPets: 'Open pets',
+      addDaycareDates: 'Use the + button at the top to add dates.'
     },
     replies: {
       approve: 'Approve dates',

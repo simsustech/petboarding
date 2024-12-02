@@ -313,7 +313,8 @@ const lang: Language = {
         'Weet u zeker dat u de volgende datums op de reserve lijst wil plaatsen?',
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.',
-      openPets: 'Huisdieren openen'
+      openPets: 'Huisdieren openen',
+      addDaycareDates: 'Gebruik de + knop bovenaan om datums toe te voegen.'
     },
     replies: {
       approve: 'Datumns goedkeuren',

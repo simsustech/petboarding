@@ -290,6 +290,7 @@ export interface Language {
       verifyStandby: string
       submitted: string
       openPets: string
+      addDaycareDates: string
     }
     replies: {
       approve: string
