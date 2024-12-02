@@ -136,7 +136,16 @@ export async function getBookingPetKennels(date: string) {
             '=',
             sql<string>`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
           )
-          .where('bookingStatus.status', '=', BOOKING_STATUS.APPROVED)
+          .where((web) =>
+            web.or([
+              web('bookingStatus.status', '=', BOOKING_STATUS.APPROVED),
+              web(
+                'bookingStatus.status',
+                '=',
+                BOOKING_STATUS.AWAITING_DOWNPAYMENT
+              )
+            ])
+          )
           .select('bookingStatus.bookingId')
       )
     )
