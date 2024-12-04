@@ -84,8 +84,6 @@ export default async function (fastify: FastifyInstance) {
       kysely
     })
 
-    await fastify.oidcClients.slimfact?.refreshTokenSet()
-
     createSlimfactTrpcClient({
       hostname: `https://${slimfactHostname}`,
       fastify
