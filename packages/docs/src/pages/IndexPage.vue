@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <div class="row justify-center q-col-gutter-x-md q-ma-md">
+    <div class="row justify-center q-gutter-sm q-ma-md">
       <feature-card
         v-for="(feature, index) in features[lang]"
         class="col-12 col-md-4"

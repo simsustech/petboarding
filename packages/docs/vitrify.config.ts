@@ -24,7 +24,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           $primary: '#4EBDC2',
           $secondary: '#237175',
           $accent: '#C2AF3A'
-        }
+        },
+        global: ['@quasar/quasar-ui-qmarkdown/src/QMarkdown.sass']
       },
       ssr: {
         serverModules: []

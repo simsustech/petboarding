@@ -17,6 +17,17 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'contact',
         component: () => import('../pages/ContactPage.vue')
+      },
+      {
+        path: 'documentation',
+        component: () => import('../pages/DocumentationPage.vue'),
+        children: [
+          {
+            path: 'users',
+            component: () =>
+              import('../pages/documentation/UsersDocumentationPage.vue')
+          }
+        ]
       }
     ]
   },

@@ -12,6 +12,12 @@ export interface Language {
   developers: {
     title: string
   }
+  documentation: {
+    title: string
+    users: string
+    employees: string
+    administrators: string
+  }
 }
 
 import type { Ref } from 'vue'

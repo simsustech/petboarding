@@ -13,6 +13,12 @@ const lang: Language = {
   },
   developers: {
     title: 'Developers'
+  },
+  documentation: {
+    title: 'Documentation',
+    users: 'Users',
+    employees: 'Employees',
+    administrators: 'Administrators'
   }
 }
 

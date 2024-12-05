@@ -18,7 +18,13 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { useMeta } from 'quasar'
+import { useMeta, QBtn } from 'quasar'
+
+QBtn.props.rounded = {
+  type: QBtn.props.rounded,
+  default: true
+}
+
 useMeta(() => ({
   titleTemplate: (title) => `${title} - Petboarding`,
   meta: {

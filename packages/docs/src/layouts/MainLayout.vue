@@ -9,21 +9,40 @@
         <q-avatar
           square
           style="height: 50px; width: 50px"
-          class="q-mt-xs q-mb-xs q-ml-lg"
+          :class="{
+            'q-mt-xs': true,
+            'q-mb-xs': true,
+            'q-ml-sm': $q.screen.lt.lg,
+            'q-ml-md': $q.screen.gt.md
+          }"
         >
           <img alt="Logo" :src="logo" />
         </q-avatar>
 
-        <q-toolbar-title> Petboarding </q-toolbar-title>
+        <q-toolbar-title :shrink="$q.screen.lt.md">
+          Petboarding
+        </q-toolbar-title>
 
         <q-tabs v-model="tab" class="gt-sm">
           <q-route-tab
             v-for="page in pages[$q.lang.isoName]"
             :key="page.id"
             :name="page.label"
-            :to="page.id"
+            :to="'/' + page.id"
             :label="page.label"
           ></q-route-tab>
+          <q-btn-dropdown
+            auto-close
+            stretch
+            flat
+            :label="lang.documentation.title"
+          >
+            <q-list>
+              <q-item clickable to="/documentation/users">
+                <q-item-section>{{ lang.documentation.users }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-tabs>
         <q-space horizontal />
         <q-language-select
@@ -87,6 +106,19 @@
             </q-item-label>
           </q-item-section>
         </q-item>
+        <q-expansion-item
+          :content-inset-level="1"
+          :label="lang.documentation.title"
+          icon="menu_book"
+        >
+          <q-item to="/documentation/users">
+            <q-item-section>
+              <q-item-label>
+                {{ lang.documentation.users }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-expansion-item>
         <q-item href="https://github.com/simsustech/petboarding">
           <q-item-section>
             <q-item-label>
