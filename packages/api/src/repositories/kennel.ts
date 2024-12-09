@@ -8,6 +8,7 @@ import {
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
+import { convertImageSql } from './index.js'
 type Kennel = Selectable<Kennels>
 type NewKennel = Insertable<Kennels>
 type KennelUpdate = Updateable<Kennels>
@@ -152,6 +153,7 @@ export async function getBookingPetKennels(date: string) {
     .select((seb) => [
       'pets.id as id',
       'pets.name as name',
+      convertImageSql.as('image'),
       'bookingPetKennel.kennelId as kennelId',
       'bookingPetKennel.bookingId as bookingId',
       jsonObjectFrom(
@@ -178,6 +180,7 @@ export async function getDaycareDatePetKennels(date: string) {
     .select((seb) => [
       'pets.id as id',
       'pets.name as name',
+      convertImageSql.as('image'),
       'daycareDatePetKennel.kennelId as kennelId',
       'daycareDatePetKennel.daycareDateId as daycareDateId',
       jsonObjectFrom(

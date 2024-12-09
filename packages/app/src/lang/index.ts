@@ -165,6 +165,9 @@ export interface Language {
       vaccinationsMissing: string
       delete: string
     }
+    labels: {
+      goTo: string
+    }
   }
   booking: {
     title: string

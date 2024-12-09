@@ -63,6 +63,7 @@
               }"
               :draggable="true"
               @dragstart="onDragStart"
+              @go-to-pet="openPet"
             >
             </pet-chip>
           </q-card-section>
@@ -285,6 +286,11 @@ const setToTomorrow = () => {
     }
   })
 }
+
+const openPet = (id: number) =>
+  router.push({
+    path: `/employee/pets/${id}`
+  })
 
 onMounted(async () => {
   await executeBuildings()

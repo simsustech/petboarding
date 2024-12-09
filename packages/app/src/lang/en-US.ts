@@ -170,6 +170,9 @@ const lang: Language = {
         'Pet does not have all mandatory vaccinations. Contact your veterinarian and do not forget to bring the passport of your pet.',
       delete:
         'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.'
+    },
+    labels: {
+      goTo: 'Go to pet'
     }
   },
   booking: {

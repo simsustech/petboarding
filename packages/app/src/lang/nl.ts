@@ -171,6 +171,9 @@ const lang: Language = {
         'Huisdier heeft niet alle verplichte vaccinaties. Neem contact op met uw dierenarts en vergeet niet het paspoort van uw huisdier mee te nemen.',
       delete:
         'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.'
+    },
+    labels: {
+      goTo: 'Ga naar huisdier'
     }
   },
   booking: {

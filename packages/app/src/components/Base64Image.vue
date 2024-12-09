@@ -4,7 +4,6 @@
     :src="modelValue"
     fit="contain"
     style="max-height: 60vh"
-    place
   >
     <q-icon v-if="!modelValue" name="photo_camera" />
   </q-img>
