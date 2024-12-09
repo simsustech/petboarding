@@ -13,6 +13,8 @@ const $q = useQuasar()
 const content = ref<Record<string, string>>({
   'en-US': `## Welcome to Petboarding
 
+  Go to the page of your facility (e.g. https://demo.petboarding.app).
+
   ### Registration
   On first use you will have to register an account. Click "Login" and then "Create account" and register your account.
 
@@ -38,6 +40,8 @@ const content = ref<Record<string, string>>({
   You can then add daycare dates by using the add button at the top. You will -not- receive a confirmation but you can check the status on this page.
   `,
   nl: `## Welkom bij Petboarding
+
+  Ga naar de pagina van uw pension (bijv. https://demo.petboarding.app).
 
   ### Registratie
   Bij eerste gebruik dienst u eerst een account te registreren. Klik op "Inloggen" en dan op "Account aanmaken" en registreer uw account.
