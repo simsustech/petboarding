@@ -11,18 +11,15 @@
           style="height: 50px; width: 50px"
           :class="{
             'q-mt-xs': true,
-            'q-mb-xs': true,
-            'q-ml-sm': $q.screen.lt.lg,
-            'q-ml-md': $q.screen.gt.md
+            'q-mb-xs': true
           }"
         >
           <img alt="Logo" :src="logo" />
         </q-avatar>
 
-        <q-toolbar-title :shrink="$q.screen.lt.md">
-          Petboarding
-        </q-toolbar-title>
+        <q-toolbar-title shrink> Petboarding </q-toolbar-title>
 
+        <q-space horizontal />
         <q-tabs v-model="tab" class="gt-sm">
           <q-route-tab
             v-for="page in pages[$q.lang.isoName]"
