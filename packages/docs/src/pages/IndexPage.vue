@@ -12,13 +12,99 @@
         />
       </div>
     </div> -->
+    <div class="column justify-center" style="min-height: inherit">
+      <div class="col bg-primary"></div>
+      <div class="col bg-primary">
+        <div class="row items-center">
+          <div class="col-12 col-md-5 justify-center q-pa-md">
+            <div class="row justify-center">
+              <div v-if="lang === 'nl'" style="max-width: 350px">
+                <a class="text-h4">
+                  Vergemakkelijk de administratie van uw dierenpension.
+                </a>
+                <br />
+                <a class="text-h6">
+                  In Petboarding regelt u uw administratie online en zo bespaart
+                  u tijd voor u en uw klanten.
+                </a>
+                <br />
+                <q-btn
+                  class="q-mt-md"
+                  color="accent"
+                  href="https://www.petboarding.app"
+                >
+                  Open de demo
+                </q-btn>
+                <br />
+                <router-link class="q-ml-md text-caption" to="/pricing"
+                  >Of bekijk de opties.</router-link
+                >
+              </div>
+              <div v-if="lang === 'en-US'" style="max-width: 350px">
+                <a class="text-h4">
+                  Ease the administration of your pet boarding business.
+                </a>
+                <br />
+                <a class="text-h6">
+                  In Petboarding you do the paperwork online and this way you
+                  save time for you and your customers.
+                </a>
+                <br />
+                <q-btn
+                  class="q-mt-md"
+                  color="accent"
+                  href="https://www.petboarding.app"
+                >
+                  Open th demo
+                </q-btn>
+                <br />
+                <router-link class="text-caption" to="/pricing"
+                  >Or look at the options.</router-link
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-7">
+            <q-carousel
+              v-model="slide"
+              class="bg-primary"
+              animated
+              arrows
+              infinite
+              control-color="secondary"
+              style="height: 100%"
+            >
+              <q-carousel-slide
+                v-for="(slide, index) in slides[lang]"
+                :key="index"
+                :name="index"
+              >
+                <q-img
+                  :src="slide.imgSrc"
+                  style="height: 400px"
+                  fit="contain"
+                />
+                <div class="text-subtitle1 text-center">
+                  {{ slide.title }}
+                </div>
+              </q-carousel-slide>
+            </q-carousel>
+          </div>
+        </div>
+        <div class="col bg-primary"></div>
+      </div>
+    </div>
+    <!-- 
     <div class="row q-mt-xl justify-center q-ma-md">
       <div v-if="lang === 'nl'">
         <a class="text-h5">
           Vergemakkelijk de administratie van uw dierenpension.
         </a>
         <br />
-        <p>Laat uw klanten online reserveren en bespaar tijd en geld.</p>
+        <p>
+          In Petboarding regelt u uw administratie online en zo bespaart u tijd
+          voor u en uw klanten.
+        </p>
       </div>
       <div v-if="lang === 'en-US'">
         <a class="text-h5">
@@ -26,13 +112,13 @@
         </a>
         <br />
         <p>
-          Let your customers place their bookings online and save time and
-          money.
+          In Petboarding you do the paperwork online and this way you save time
+          for you and your customers.
         </p>
       </div>
-    </div>
+    </div> -->
 
-    <div class="row full-width justify-center q-pb-lg q-ma-md">
+    <!-- <div class="row full-width justify-center q-pb-lg q-ma-md">
       <q-carousel
         v-model="slide"
         class="full-width"
@@ -53,14 +139,14 @@
           </div>
         </q-carousel-slide>
       </q-carousel>
-    </div>
-    <div
+    </div> -->
+    <!-- <div
       class="row full-width justify-center bg-primary q-pb-lg q-pt-lg q-mt-lg q-ma-md"
     >
       <div v-if="lang === 'nl'" class="q-pa-none q-ma-none">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5">Probeer de demo</a>
+            <a class="text-h5">Open de demo</a>
           </div>
           <div class="row justify-center">
             <q-btn
@@ -74,7 +160,7 @@
       <div v-if="lang === 'en-US'" class="q-pa-none q-ma-none">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5">Try the demo</a>
+            <a class="text-h5">Open the demo</a>
           </div>
           <div class="row justify-center">
             <q-btn
@@ -85,8 +171,32 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="row justify-center q-gutter-sm q-ma-md">
+      <div class="col text-center q-pl-lg q-pr-lg" style="max-width: 1000px">
+        <div v-if="lang === 'nl'">
+          <a class="text-h3"> Regel uw administratie waar dan ook.</a>
+          <br />
+          <a>
+            Uw beveiligde omgeving is op alle plaatsen met een internet
+            verbinding te bereiken. Petboarding neemt zoveel mogelijk werk uit
+            uw handen, maar het noodzakelijke regelt u eenvoudig op ieder
+            apparaat.
+          </a>
+        </div>
+        <div v-if="lang === 'en-US'">
+          <a class="text-h3"> Do your paperwork anywhere.</a>
+          <br />
+          <a>
+            Your secure environment is accessible on all places with an internet
+            connection. Petboarding will take most of the work out of your
+            hands, but the necessities can easily be performed on any device.
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-center q-gutter-sm q-ma-md q-ml-lg q-mr-lg">
       <feature-card
         v-for="(feature, index) in features[lang]"
         class="col-12 col-md-4"
@@ -222,13 +332,25 @@ const features = ref({
     },
     {
       title: 'Dag overzicht',
-      content: 'Handig overzicht van de aankomsten en vertrekken van de dag.',
+      content:
+        'Handig overzicht van de dieren die arriveren of vertrekken op die dag.',
       imgSrc: '/features/nl/overview.png'
     },
     {
       title: 'Kennel indeling',
       content: 'Beheer uw kennel indeling online.',
       imgSrc: '/features/nl/kennellayout.png'
+    },
+    {
+      title: 'SlimFact integratie.',
+      content: 'Integratie met SlimFact voor online betalingen.',
+      imgSrc: './features/nl/slimfact.png'
+    },
+    {
+      title: 'Dagopvang abonnementen',
+      content:
+        'Als u dagopvang abonnementen activeert moeten klanten eerst een abonnement voor X dagen aanschaffen voordat zij nieuwe dagopvang datums aan kunnen vragen.',
+      imgSrc: './features/nl/daycaresubscriptions.png'
     }
   ],
   'en-US': [
@@ -245,13 +367,24 @@ const features = ref({
     },
     {
       title: 'Overview',
-      content: 'Useful overview of the arrivals and departures of the day.',
+      content: 'Useful overview of the pets which arrive or depart that day.',
       imgSrc: '/features/en-US/overview.png'
     },
     {
       title: 'Kennel layout',
       content: 'Manage your kennel layout online.',
       imgSrc: '/features/en-US/kennellayout.png'
+    },
+    {
+      title: 'SlimFact integration',
+      content: 'Integration with SlimFact for online payments.',
+      imgSrc: './features/en-US/slimfact.png'
+    },
+    {
+      title: 'Daycare subscriptions',
+      content:
+        'If enabled, customers need to purchase a daycare subscription for X days before they can request new daycare dates.',
+      imgSrc: './features/en-US/daycaresubscriptions.png'
     }
   ]
 })
