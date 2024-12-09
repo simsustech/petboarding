@@ -38,7 +38,7 @@
             :label="lang.documentation.title"
           >
             <q-list>
-              <q-item clickable to="/documentation/users">
+              <q-item clickable @click="goToSubRoute('documentation', 'users')">
                 <q-item-section>{{ lang.documentation.users }}</q-item-section>
               </q-item>
             </q-list>
@@ -148,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { matMenu } from '@quasar/extras/material-icons'
 import { fabGithub } from '@quasar/extras/fontawesome-v6'
@@ -156,10 +156,11 @@ import logo from '../assets/logo.svg?url'
 import { QLanguageSelect } from '@simsustech/quasar-components'
 import { loadLang, useLang } from '../lang/index.js'
 import type { QuasarLanguage } from 'quasar'
-import { useRoute } from 'vue-router'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 const $q = useQuasar()
 
 const route = useRoute()
+const router = useRouter()
 
 const quasarLang = import.meta.glob<{ default: QuasarLanguage }>(
   '../../node_modules/quasar/lang/*.js'
@@ -168,15 +169,6 @@ const quasarLang = import.meta.glob<{ default: QuasarLanguage }>(
 watch($q.lang, () => {
   loadLang($q.lang.isoName)
 })
-
-if (typeof route.query.lang === 'string')
-  $q.lang.set(
-    (
-      await quasarLang[
-        `../../node_modules/quasar/lang/${route.query.lang}.js`
-      ]()
-    ).default
-  )
 
 const language = ref($q.lang.isoName)
 const lang = useLang()
@@ -234,5 +226,26 @@ const pages = ref({
       icon: 'person'
     }
   ]
+})
+
+const goToSubRoute = (...routePaths: string[]) => {
+  tab.value = routePaths[0]
+  router.push({
+    path: routePaths.join('/')
+  })
+}
+
+onBeforeRouteUpdate((to, from) => {
+  if (from.query.lang && !('lang' in to.query))
+    return {
+      ...to,
+      query: {
+        ...from.query
+      }
+    }
+})
+
+onMounted(async () => {
+  if (typeof route.query.lang === 'string') language.value = route.query.lang
 })
 </script>
