@@ -156,16 +156,30 @@ import logo from '../assets/logo.svg?url'
 import { QLanguageSelect } from '@simsustech/quasar-components'
 import { loadLang, useLang } from '../lang/index.js'
 import type { QuasarLanguage } from 'quasar'
+import { useRoute } from 'vue-router'
 const $q = useQuasar()
 
-const lang = useLang()
-const language = ref($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
+const route = useRoute()
+
 const quasarLang = import.meta.glob<{ default: QuasarLanguage }>(
   '../../node_modules/quasar/lang/*.js'
 )
+
+watch($q.lang, () => {
+  loadLang($q.lang.isoName)
+})
+
+if (typeof route.query.lang === 'string')
+  $q.lang.set(
+    (
+      await quasarLang[
+        `../../node_modules/quasar/lang/${route.query.lang}.js`
+      ]()
+    ).default
+  )
+
+const language = ref($q.lang.isoName)
+const lang = useLang()
 
 const languageImports = ref(
   Object.entries(quasarLang).reduce(
