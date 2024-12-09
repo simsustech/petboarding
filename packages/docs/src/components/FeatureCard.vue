@@ -1,5 +1,11 @@
 <template>
-  <q-card class="feature-card" flat bordered>
+  <q-card
+    :style="{
+      'max-width': '300px'
+    }"
+    flat
+    bordered
+  >
     <q-img style="height: 150px" fit="scale-down" :src="imgSrc" />
 
     <q-card-section>
@@ -20,8 +26,3 @@ export interface Props {
 
 defineProps<Props>()
 </script>
-
-<style lang="sass" scoped>
-.feature-card
-  max-width: 300px
-</style>
