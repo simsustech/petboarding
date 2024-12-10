@@ -62,8 +62,9 @@
                 'bg-yellow-2': pet.daycareDateId
               }"
               :draggable="true"
+              show-image
               @dragstart="onDragStart"
-              @go-to-pet="openPet"
+              @open-pet="openPet"
             >
             </pet-chip>
           </q-card-section>
@@ -104,7 +105,9 @@
                     'bg-yellow-2': pet.daycareDateId
                   }"
                   :draggable="true"
+                  show-image
                   @dragstart="onDragStart"
+                  @open-pet="openPet"
                 >
                 </pet-chip>
               </q-card-section>

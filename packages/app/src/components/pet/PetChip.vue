@@ -4,7 +4,7 @@
       `${modelValue.name} ${truncateLastName(modelValue.customer?.lastName || '')}`
     }}
     <q-icon
-      v-if="modelValue.image"
+      v-if="showImage && modelValue.image"
       name="photo_camera"
       flat
       round
@@ -22,10 +22,10 @@
         </div>
       </q-tooltip>
     </q-icon>
-    <q-menu v-if="onGoToPet && modelValue.id" context-menu>
+    <q-menu v-if="onOpenPet && modelValue.id" context-menu>
       <q-item clickable>
-        <q-item-section @click="emit('goToPet', modelValue.id)">
-          {{ lang.pet.labels.goTo }}
+        <q-item-section @click="emit('openPet', modelValue.id)">
+          {{ lang.pet.labels.open }}
         </q-item-section>
       </q-item>
     </q-menu>
@@ -43,7 +43,8 @@ type Pet = Pick<PetType, 'id' | 'name' | 'image'> & {
 
 interface Props {
   modelValue: Pick<Pet, 'id' | 'name' | 'customer' | 'image'>
-  onGoToPet?: unknown
+  showImage?: boolean
+  onOpenPet?: unknown
 }
 
 defineProps<Props>()
@@ -51,7 +52,7 @@ defineProps<Props>()
 const lang = useLang()
 
 const emit = defineEmits<{
-  (e: 'goToPet', id: number): void
+  (e: 'openPet', id: number): void
 }>()
 
 const truncate = (str: string, n: number) =>

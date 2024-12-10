@@ -173,7 +173,7 @@ const lang: Language = {
         'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.'
     },
     labels: {
-      goTo: 'Ga naar huisdier'
+      open: 'Open huisdier.'
     }
   },
   booking: {

@@ -172,7 +172,7 @@ const lang: Language = {
         'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.'
     },
     labels: {
-      goTo: 'Go to pet'
+      open: 'Open pet.'
     }
   },
   booking: {

@@ -166,7 +166,7 @@ export interface Language {
       delete: string
     }
     labels: {
-      goTo: string
+      open: string
     }
   }
   booking: {
