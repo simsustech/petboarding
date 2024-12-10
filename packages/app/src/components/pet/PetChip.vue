@@ -9,7 +9,13 @@
       flat
       round
       size="sm"
-      @contextmenu.stop="(e) => e.preventDefault()"
+      @contextmenu.stop="
+        (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          return false
+        }
+      "
     >
       <q-tooltip>
         <div class="column">
