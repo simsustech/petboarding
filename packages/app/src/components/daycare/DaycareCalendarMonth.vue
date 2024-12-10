@@ -37,7 +37,7 @@
         >
           <template #head-day-button="{ scope }">
             <q-btn
-              :disabled="!selectedDates"
+              :disabled="!selectedDates || scope.timestamp.disabled"
               class="q-mb-sm q-mt-sm"
               size="md"
               :outline="!getButtonColor(scope.timestamp.date)"
