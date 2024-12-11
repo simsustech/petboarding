@@ -73,33 +73,17 @@
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
-        <q-item to="/home">
+        <q-item
+          v-for="page in pages[$q.lang.isoName]"
+          :key="page.id"
+          :to="`/${page.id}`"
+        >
           <q-item-section avatar>
-            <q-icon name="home" />
+            <q-icon :name="page.icon" />
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              {{ lang.home.title }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/pricing">
-          <q-item-section avatar>
-            <q-icon name="euro" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ lang.pricing.title }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item to="/contact">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ lang.contact.title }}
+              {{ page.label }}
             </q-item-label>
           </q-item-section>
         </q-item>

@@ -14,15 +14,12 @@
       <q-item-section>
         <q-item-label>{{ company }}</q-item-label>
         <q-item-label caption>{{ owner }}</q-item-label>
+        <q-item-label caption>{{ url }}</q-item-label>
       </q-item-section>
     </q-item>
 
     <q-card-section>
       <a>{{ content }}</a>
-    </q-card-section>
-
-    <q-card-section>
-      <a :href="url">{{ url }}</a>
     </q-card-section>
   </q-card>
 </template>
