@@ -201,6 +201,11 @@ const pages = ref({
       icon: 'euro'
     },
     {
+      id: 'testimonials',
+      label: 'Testimonials',
+      icon: 'reviews'
+    },
+    {
       id: 'contact',
       label: 'Contact',
       icon: 'person'
@@ -216,6 +221,11 @@ const pages = ref({
       id: 'pricing',
       label: 'Pricing',
       icon: 'euro'
+    },
+    {
+      id: 'testimonials',
+      label: 'Testimonials',
+      icon: 'reviews'
     },
     {
       id: 'contact',
