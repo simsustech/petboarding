@@ -208,8 +208,8 @@ importers:
         specifier: 4.0.0-beta.16
         version: 4.0.0-beta.16
       '@simsustech/quasar-components':
-        specifier: ^0.11.3
-        version: 0.11.3(quasar@2.17.4)
+        specifier: ^0.11.5
+        version: 0.11.5(quasar@2.17.4)
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
@@ -341,8 +341,8 @@ importers:
         specifier: 1.16.15
         version: 1.16.15
       '@simsustech/quasar-components':
-        specifier: ^0.11.4
-        version: 0.11.4(quasar@2.17.4)
+        specifier: ^0.11.5
+        version: 0.11.5(quasar@2.17.4)
       '@typescript-eslint/eslint-plugin':
         specifier: 8.17.0
         version: 8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0(jiti@1.21.6))(typescript@5.7.2))(eslint@9.16.0(jiti@1.21.6))(typescript@5.7.2)
@@ -1973,13 +1973,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@simsustech/quasar-components@0.11.3':
-    resolution: {integrity: sha512-BWY/TBNu4LYJLWRiiOmukbxC1adBOdOiPL3oY7WzfUpPMFuW3qxAWp8Vb3oRQLn5T/cYIQ86bXTD5ZqFuxP+Dw==}
-    peerDependencies:
-      quasar: ^2.17.4
-
-  '@simsustech/quasar-components@0.11.4':
-    resolution: {integrity: sha512-KDxM9S3GLNo40l42/OLQbJr7Mwy5YcPwowxe1LfLDmyn/sf9qIsbK72hP2G1kjZHKnKKHQE5vdCcL8uh5n5sCg==}
+  '@simsustech/quasar-components@0.11.5':
+    resolution: {integrity: sha512-qvDj/8dY0ChyGsilCL2AfVamdWTDdgp8KKd2QUdy1RzhqhOsc6n09KWWC1SgGagC2gOzwyVJoAuESogEkeMVLg==}
     peerDependencies:
       quasar: ^2.17.4
 
@@ -7768,12 +7763,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.20.0':
     optional: true
 
-  '@simsustech/quasar-components@0.11.3(quasar@2.17.4)':
-    dependencies:
-      quasar: 2.17.4
-      validator: 13.12.0
-
-  '@simsustech/quasar-components@0.11.4(quasar@2.17.4)':
+  '@simsustech/quasar-components@0.11.5(quasar@2.17.4)':
     dependencies:
       quasar: 2.17.4
       validator: 13.12.0
