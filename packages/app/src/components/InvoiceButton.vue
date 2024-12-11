@@ -27,6 +27,17 @@
         color="green"
         size="xs"
       />
+      <q-icon
+        v-if="
+          modelValue.amountDue !== void 0 &&
+          modelValue.amountDue !== null &&
+          modelValue.amountDue < 0
+        "
+        style="position: relative; width: 0; height: 0; bottom: 3px"
+        name="priority_high"
+        color="red"
+        size="xs"
+      />
     </div>
     <div class="col-12 text-caption">
       <price
