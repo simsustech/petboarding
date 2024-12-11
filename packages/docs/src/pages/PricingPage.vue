@@ -3,10 +3,10 @@
     <div class="row q-mt-lg justify-evenly q-col-gutter-x-md">
       <comparison-card
         v-for="(option, index) in options[lang]"
+        :key="index"
         class="col-12 col-md-4"
         :title="option.title"
         :price="option.price"
-        :key="index"
         :pros="option.pros"
         :cons="option.cons"
       ></comparison-card>
@@ -58,7 +58,6 @@ export default {
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import ComparisonCard from '../components/ComparisonCard.vue'
-import FeatureCard from '../components/FeatureCard.vue'
 import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
