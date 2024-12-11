@@ -34,7 +34,8 @@ const routes: RouteRecordRaw[] = [
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
+    path: '/404',
+    alias: '/:catchAll(.*)*',
     component: () => import('../pages/Error404Page.vue')
   }
 ]
