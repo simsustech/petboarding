@@ -145,6 +145,7 @@ export interface Props {
   onOpenPets?: unknown
   maxNumberOfSelectedDates?: number
   currentDaycareDates?: DaycareDate[]
+  allowPastDates?: boolean
 }
 const props = defineProps<Props>()
 const emit = defineEmits<{
@@ -180,7 +181,8 @@ const {
   selectedDates,
   disabledWeekdays,
   maxNumberOfSelectedDates,
-  currentDaycareDates
+  currentDaycareDates,
+  allowPastDates
 } = toRefs(props)
 const weekdays = ref(
   [1, 2, 3, 4, 5, 6, 0].filter((day) => !disabledWeekdays?.value?.includes(day))
@@ -256,7 +258,7 @@ const onClickHeadWorkweek = (data) => {
 
 const disabledBefore = computed(() => {
   let ts = parseTimestamp(today())
-  ts = addToDate(ts!, { day: -1 })
+  ts = addToDate(ts!, { day: allowPastDates.value ? -30 : -1 })
   return ts.date
 })
 
@@ -289,6 +291,8 @@ const getButtonColor = (date: string) => {
   )
   if (existingDaycareDate?.status) {
     return DAYCARE_DATE_COLORS[existingDaycareDate.status]
+  } else if (date === new Date().toISOString().slice(0, 10)) {
+    return 'blue-3'
   }
 }
 </script>

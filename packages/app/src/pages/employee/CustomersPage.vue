@@ -169,8 +169,9 @@
     <daycare-form
       ref="createDaycareFormRef"
       :pets="pets"
-      @submit="createDaycare"
       ignore-terms-and-conditions
+      allow-past-dates
+      @submit="createDaycare"
     ></daycare-form>
   </responsive-dialog>
 </template>
