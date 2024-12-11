@@ -31,7 +31,7 @@
                 <q-btn
                   class="q-mt-md"
                   color="accent"
-                  href="https://www.petboarding.app"
+                  href="https://demo.petboarding.app"
                 >
                   Open de demo
                 </q-btn>
@@ -53,9 +53,9 @@
                 <q-btn
                   class="q-mt-md"
                   color="accent"
-                  href="https://www.petboarding.app"
+                  href="https://demo.petboarding.app"
                 >
-                  Open th demo
+                  Open the demo
                 </q-btn>
                 <br />
                 <router-link class="text-caption" to="/pricing"
