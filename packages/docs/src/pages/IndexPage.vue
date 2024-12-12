@@ -19,17 +19,17 @@
           <div class="col-12 col-md-5 justify-center q-pa-md">
             <div class="row justify-center">
               <div v-if="lang === 'nl'" style="max-width: 350px">
-                <a class="text-h4">
+                <div class="text-h4">
                   Vergemakkelijk de administratie van uw dierenpension.
-                </a>
+                </div>
                 <br />
-                <a class="text-h6">
+                <div class="text-h6">
                   In Petboarding regelt u uw administratie online en zo bespaart
                   u tijd voor u en uw klanten.
-                </a>
+                </div>
                 <br />
                 <q-btn
-                  class="q-mt-md"
+                  class="q-mt-md q-mb-md"
                   color="accent"
                   href="https://demo.petboarding.app"
                 >
@@ -41,17 +41,17 @@
                 >
               </div>
               <div v-if="lang === 'en-US'" style="max-width: 350px">
-                <a class="text-h4">
+                <div class="text-h4">
                   Ease the administration of your pet boarding business.
-                </a>
+                </div>
                 <br />
-                <a class="text-h6">
+                <div class="text-h6">
                   In Petboarding you do the paperwork online and this way you
                   save time for you and your customers.
-                </a>
+                </div>
                 <br />
                 <q-btn
-                  class="q-mt-md"
+                  class="q-mt-md q-mb-md"
                   color="accent"
                   href="https://demo.petboarding.app"
                 >
@@ -175,23 +175,23 @@
     <div class="row justify-center q-gutter-sm q-ma-md">
       <div class="col text-center q-pl-lg q-pr-lg" style="max-width: 1000px">
         <div v-if="lang === 'nl'">
-          <a class="text-h3"> Regel uw administratie waar dan ook.</a>
+          <div class="text-h3">Regel uw administratie waar dan ook.</div>
           <br />
-          <a>
+          <div>
             Uw beveiligde omgeving is op alle plaatsen met een internet
             verbinding te bereiken. Petboarding neemt zoveel mogelijk werk uit
             uw handen, maar het noodzakelijke regelt u eenvoudig op ieder
             apparaat.
-          </a>
+          </div>
         </div>
         <div v-if="lang === 'en-US'">
-          <a class="text-h3"> Do your paperwork anywhere.</a>
+          <div class="text-h3">Do your paperwork anywhere.</div>
           <br />
-          <a>
+          <div>
             Your secure environment is accessible on all places with an internet
             connection. Petboarding will take most of the work out of your
             hands, but the necessities can easily be performed on any device.
-          </a>
+          </div>
         </div>
       </div>
     </div>

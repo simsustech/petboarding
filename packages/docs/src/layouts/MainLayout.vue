@@ -116,7 +116,7 @@
         <q-space horizontal />
         <div class="column">
           <div class="row">
-            <a class="text-subtitle1"> Copyright © 2024 simsustech </a>
+            <div class="text-subtitle1">Copyright © 2024 simsustech</div>
           </div>
           <div class="row">
             <a href="https://www.simsus.tech"> https://www.simsus.tech </a>
