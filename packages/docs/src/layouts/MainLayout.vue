@@ -14,7 +14,7 @@
             'q-mb-xs': true
           }"
         >
-          <img alt="Logo" :src="logo" />
+          <img alt="Logo" width="50px" height="50px" :src="logo" />
         </q-avatar>
 
         <q-toolbar-title shrink> Petboarding </q-toolbar-title>
