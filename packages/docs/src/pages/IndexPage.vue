@@ -255,40 +255,40 @@ const slides = ref({
   nl: [
     {
       title: 'Klanten plaatsen hun reserveringen online.',
-      imgSrc: '/landing/nl/bookingpending.png'
+      imgSrc: '/landing/nl/bookingpending.webp'
     },
     {
       title: 'Beheerders behandelen de nieuwe reserveringen.',
-      imgSrc: '/landing/nl/approvebooking.png'
+      imgSrc: '/landing/nl/approvebooking.webp'
     },
     {
       title:
         'Klanten krijgen een bevestiging per email en zien de status online.',
-      imgSrc: '/landing/nl/bookingapproved.png'
+      imgSrc: '/landing/nl/bookingapproved.webp'
     },
     {
       title:
         'Medewerkers zien de reserveringen terug in het dag- en weekoverzicht.',
-      imgSrc: '/landing/nl/dayoverview.png'
+      imgSrc: '/landing/nl/dayoverview.webp'
     }
   ],
   'en-US': [
     {
       title: 'Customers place their bookings online.',
-      imgSrc: '/landing/en-US/bookingpending.png'
+      imgSrc: '/landing/en-US/bookingpending.webp'
     },
     {
       title: 'Administrators handle the new bookings.',
-      imgSrc: '/landing/en-US/approvebooking.png'
+      imgSrc: '/landing/en-US/approvebooking.webp'
     },
     {
       title:
         'Customers receive a confirmation email and can see the status online.',
-      imgSrc: '/landing/en-US/bookingapproved.png'
+      imgSrc: '/landing/en-US/bookingapproved.webp'
     },
     {
       title: 'Employees will see the bookings in the day- and week overviews.',
-      imgSrc: '/landing/en-US/dayoverview.png'
+      imgSrc: '/landing/en-US/dayoverview.webp'
     }
   ]
 })
@@ -298,21 +298,21 @@ const responsiveSlides = ref({
   nl: [
     {
       title: 'Petboarding werkt op de browser van uw PC.',
-      imgSrc: '/landing/nl/browser.png'
+      imgSrc: '/landing/nl/browser.webp'
     },
     {
       title: 'En natuurlijk ook up uw tablet.',
-      imgSrc: '/landing/nl/tablet.png'
+      imgSrc: '/landing/nl/tablet.webp'
     }
   ],
   'en-US': [
     {
       title: 'Petboarding works on the browser of your PC.',
-      imgSrc: '/landing/en-US/browser.png'
+      imgSrc: '/landing/en-US/browser.webp'
     },
     {
       title: 'And of course also on your tablet.',
-      imgSrc: '/landing/en-US/tablet.png'
+      imgSrc: '/landing/en-US/tablet.webp'
     }
   ]
 })
@@ -323,40 +323,40 @@ const features = ref({
       title: 'Online reserveren',
       content:
         'Laat uw klanten online reserveren en stuur automatisch gegenereerde antwoorden.',
-      imgSrc: '/features/nl/bookings.png'
+      imgSrc: '/features/nl/bookings.webp'
     },
     {
       title: 'Agenda',
       content: 'Dag- en weekoverzichten van de bezetting.',
-      imgSrc: '/features/nl/agenda.png'
+      imgSrc: '/features/nl/agenda.webp'
     },
     {
       title: 'Dag overzicht',
       content:
         'Handig overzicht van de dieren die arriveren of vertrekken op die dag.',
-      imgSrc: '/features/nl/overview.png'
+      imgSrc: '/features/nl/overview.webp'
     },
     {
       title: 'Kennel indeling',
       content: 'Beheer uw kennel indeling online.',
-      imgSrc: '/features/nl/kennellayout.png'
+      imgSrc: '/features/nl/kennellayout.webp'
     },
     {
       title: 'Vaccinatiie beheer',
       content:
         'Registreer de vaccinaties en krijg een melding wanneer deze verlopen zijn.',
-      imgSrc: '/features/nl/vaccinations.png'
+      imgSrc: '/features/nl/vaccinations.webp'
     },
     {
       title: 'SlimFact integratie.',
       content: 'Integratie met SlimFact voor online betalingen.',
-      imgSrc: './features/nl/slimfact.png'
+      imgSrc: './features/nl/slimfact.webp'
     },
     {
       title: 'Dagopvang abonnementen',
       content:
         'Als u dagopvang abonnementen activeert moeten klanten eerst een abonnement voor X dagen aanschaffen voordat zij nieuwe dagopvang datums aan kunnen vragen.',
-      imgSrc: './features/nl/daycaresubscriptions.png'
+      imgSrc: './features/nl/daycaresubscriptions.webp'
     }
   ],
   'en-US': [
@@ -364,39 +364,39 @@ const features = ref({
       title: 'Online bookings',
       content:
         'Let your customers place their bookings online and send automatically generated replies.',
-      imgSrc: '/features/en-US/bookings.png'
+      imgSrc: '/features/en-US/bookings.webp'
     },
     {
       title: 'Agenda',
       content: 'Day- and week overviews of the occupancy.',
-      imgSrc: '/features/en-US/agenda.png'
+      imgSrc: '/features/en-US/agenda.webp'
     },
     {
       title: 'Overview',
       content: 'Useful overview of the pets which arrive or depart that day.',
-      imgSrc: '/features/en-US/overview.png'
+      imgSrc: '/features/en-US/overview.webp'
     },
     {
       title: 'Kennel layout',
       content: 'Manage your kennel layout online.',
-      imgSrc: '/features/en-US/kennellayout.png'
+      imgSrc: '/features/en-US/kennellayout.webp'
     },
     {
       title: 'Vaccination management',
       content:
         'Register the vaccinations and receive a notification when they have expired.',
-      imgSrc: '/features/en-US/vaccinations.png'
+      imgSrc: '/features/en-US/vaccinations.webp'
     },
     {
       title: 'SlimFact integration',
       content: 'Integration with SlimFact for online payments.',
-      imgSrc: './features/en-US/slimfact.png'
+      imgSrc: './features/en-US/slimfact.webp'
     },
     {
       title: 'Daycare subscriptions',
       content:
         'If enabled, customers need to purchase a daycare subscription for X days before they can request new daycare dates.',
-      imgSrc: './features/en-US/daycaresubscriptions.png'
+      imgSrc: './features/en-US/daycaresubscriptions.webp'
     }
   ]
 })
