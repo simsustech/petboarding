@@ -7,7 +7,7 @@
     <q-item>
       <q-item-section avatar>
         <q-avatar>
-          <img :src="`/testimonials/${id}.jpg`" />
+          <img :src="`/testimonials/${id}.webp`" />
         </q-avatar>
       </q-item-section>
 

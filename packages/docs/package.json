@@ -29,6 +29,7 @@
     "build:ssr": "vitrify build -m ssr",
     "build:ssg": "vitrify build -m ssg",
     "gzip": "gzip -k -r ./dist/static/*.mjs",
+    "convert:images": "sh mogrify -format webp -quality 80 ./public/**/*.(jpg|png)",
     "test": "vitrify test",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
