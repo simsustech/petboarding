@@ -1,4 +1,6 @@
 www.petboarding.app {
+  @webp path *.webp
+  header @webp Cache-Control "public, max-age=31536000, immutable"
   encode zstd gzip
   handle_path /* {
     root * /srv/www.petboarding.app
