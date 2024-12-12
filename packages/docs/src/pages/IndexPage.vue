@@ -342,6 +342,12 @@ const features = ref({
       imgSrc: '/features/nl/kennellayout.png'
     },
     {
+      title: 'Vaccinatiie beheer',
+      content:
+        'Registreer de vaccinaties en krijg een melding wanneer deze verlopen zijn.',
+      imgSrc: '/features/nl/vaccinations.png'
+    },
+    {
       title: 'SlimFact integratie.',
       content: 'Integratie met SlimFact voor online betalingen.',
       imgSrc: './features/nl/slimfact.png'
@@ -374,6 +380,12 @@ const features = ref({
       title: 'Kennel layout',
       content: 'Manage your kennel layout online.',
       imgSrc: '/features/en-US/kennellayout.png'
+    },
+    {
+      title: 'Vaccination management',
+      content:
+        'Register the vaccinations and receive a notification when they have expired.',
+      imgSrc: '/features/en-US/vaccinations.png'
     },
     {
       title: 'SlimFact integration',
