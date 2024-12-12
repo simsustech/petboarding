@@ -1,4 +1,5 @@
 www.petboarding.app {
+  encode zstd gzip
   handle_path /* {
     root * /srv/www.petboarding.app
     try_files {path}.html {path} /404.html
