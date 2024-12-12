@@ -8,10 +8,21 @@
           </q-btn>
 
           <q-toolbar-title> {{ title }} </q-toolbar-title>
-          <q-btn v-if="configuration.SUPPORT_EMAIL" icon="help" flat>
+          <q-btn icon="help" flat>
             <q-menu>
               <q-list>
-                <q-item>
+                <q-item
+                  :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
+                  target="_blank"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="link" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ lang.documentation }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="configuration.SUPPORT_EMAIL">
                   <q-item-section avatar>
                     <q-icon name="email" />
                   </q-item-section>

@@ -29,6 +29,7 @@ const lang: Language = {
   next: 'Volgende',
   previous: 'Vorige',
   delete: 'Verwijderen',
+  documentation: 'Documentatie',
   account: {
     title: 'Account',
     fields: {

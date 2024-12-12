@@ -27,6 +27,7 @@ export interface Language {
   next: string
   previous: string
   delete: string
+  documentation: string
   account: {
     title: string
     fields: {
