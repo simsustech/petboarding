@@ -45,7 +45,11 @@
               :label="scope.dayLabel"
               :color="getButtonColor(scope.timestamp.date)"
               @click="onClickDate({ scope })"
-            />
+            >
+              <q-tooltip v-if="$slots['head-day-button-tooltip']">
+                <slot name="head-day-button-tooltip"></slot>
+              </q-tooltip>
+            </q-btn>
           </template>
           <template #day="{ scope: { timestamp } }">
             <div v-if="Object.keys(eventsMap).length" style="min-height: 30px">

@@ -58,7 +58,6 @@
           </a>
         </q-banner>
         <daycare-legend />
-        {{ lang.daycare.messages.addDaycareDates }}
         <daycare-calendar-month
           :events="events"
           :selected-events="selectedEvents"
@@ -67,7 +66,11 @@
           :hoverable="false"
           @click:event="onClickEvent"
           @change-date="onChangeDate"
-        />
+        >
+          <template #head-day-button-tooltip>
+            {{ lang.daycare.messages.addDaycareDates }}
+          </template>
+        </daycare-calendar-month>
         <div class="row justify-center">
           <q-btn
             v-if="selectedEvents.length"
