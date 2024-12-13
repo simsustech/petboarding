@@ -241,7 +241,7 @@ const lang: Language = {
       skipDownPayment: 'Skip down payment',
       unpaidBookings: (days) => `Unpaid bookings of last ${days} days.`,
       approvedAfterDownPayment:
-        'My booking will only be approved after the down payment has been received.'
+        'My booking will only be approved after the down payment has been received according to the instructions in the confirmation email.'
     },
     helpers: {
       status: {
