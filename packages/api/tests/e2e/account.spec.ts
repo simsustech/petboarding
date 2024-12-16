@@ -147,7 +147,7 @@ test.describe('Account', async () => {
   test('Add customer details', async () => {
     await page.goto('/account/customer')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
 
     await page.getByLabel('Gender').click()
     await page.getByRole('option', { name: 'Male', exact: true }).click()
@@ -163,7 +163,7 @@ test.describe('Account', async () => {
 
     expect(page.locator(`text=${customer.firstName}`)).toBeVisible()
 
-    await page.locator('button >> text=edit').click()
+    await page.getByRole('button', { name: 'Edit' }).click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('First name*').fill('NewFirstName')
@@ -175,7 +175,7 @@ test.describe('Account', async () => {
   test('Add contact person', async () => {
     await page.goto('/account/contactpeople')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('First name').fill(contactPerson.firstName)
     await page.getByLabel('Last name').fill(contactPerson.lastName)
     await page
@@ -186,7 +186,7 @@ test.describe('Account', async () => {
 
     await expect(page.locator(`text=${contactPerson.firstName}`)).toBeVisible()
 
-    await page.locator('button >> text=edit').click()
+    await page.locator('button').filter({ hasText: 'edit' }).click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('First name*').fill('NewContactPersonFirstName')
@@ -198,7 +198,7 @@ test.describe('Account', async () => {
   test('Add pet', async () => {
     await page.goto('/account/pets')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('Name').fill(pet.name)
     await page.getByLabel('Breed').fill(pet.breed)
     // await page.getByLabel('Birth date').fill(pet.birthDate)
@@ -215,7 +215,7 @@ test.describe('Account', async () => {
 
     await expect(page.locator(`text=${pet.name}`)).toBeVisible()
 
-    await page.locator('button >> text=edit').click()
+    await page.locator('button').filter({ hasText: 'edit' }).click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name*').fill(newPetName)
@@ -227,7 +227,7 @@ test.describe('Account', async () => {
   test('Add booking', async () => {
     await page.goto('/account/bookings')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
 
     await page.locator('.q-date__calendar-item--in').first().click()
     await page

@@ -45,7 +45,7 @@ test.describe('Services', async () => {
     await page.goto('/admin/configuration/services')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('Name').fill(service.name)
     await page.getByLabel('Description').fill(`${service.description}`)
 

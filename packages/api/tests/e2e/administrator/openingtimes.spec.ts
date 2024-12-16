@@ -45,7 +45,7 @@ test.describe('Opening times', async () => {
     await page.goto('/admin/configuration/openingtimes')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('Name').fill(openingTime.name)
     await page.getByLabel('Start time').fill(openingTime.startTime)
     await page.getByLabel('End time').fill(openingTime.endTime)

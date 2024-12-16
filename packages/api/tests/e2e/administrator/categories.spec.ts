@@ -45,7 +45,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.describe('Categories', async () => {
   test('Create category', async () => {
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('Name').fill(category.name)
     // await page.getByLabel('Price').fill(`${category.price}`)
 

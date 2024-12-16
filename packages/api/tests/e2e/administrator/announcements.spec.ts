@@ -42,7 +42,7 @@ test.describe('Announcements', async () => {
     await page.goto('/admin/announcements')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     await page.getByLabel('Title').fill(announcement.title)
     await page.getByLabel('Message').fill(announcement.message)
     // await page.getByLabel('Expiration date').fill('2040/01/01')

@@ -45,7 +45,7 @@ test.describe('Periods', async () => {
     await page.goto('/admin/periods')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button >> text=Add').click()
+    await page.getByRole('button', { name: 'Add' }).click()
     // await page.getByLabel('Start date').fill(period.startDate)
     // await page.getByLabel('End date').fill(`${period.endDate}`)
     await page.locator('.q-date__calendar-item--in').first().click()

@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.2.0",
-    "@playwright/test": "1.49.0",
+    "@playwright/test": "1.49.1",
     "@types/bcrypt": "^5.0.2",
     "@types/pg": "^8.11.10",
     "@vitejs/plugin-vue": "5.2.1",
