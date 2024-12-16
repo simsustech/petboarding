@@ -8,7 +8,7 @@
     @change-date="onChangeDate"
   >
     <template #navigation>
-      <booking-status-select v-model="status" />
+      <booking-status-select v-model="status" :options="statusOptions" />
     </template>
   </agenda-component>
 </template>
@@ -26,9 +26,11 @@ import { onMounted, reactive, ref } from 'vue'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
 import { createUseTrpc } from '../../trpc.js'
 import { onBeforeRouteUpdate } from 'vue-router'
+import { useLang } from '../../lang/index.js'
 import { useRouter } from 'vue-router'
 const { useQuery } = await createUseTrpc()
 
+const lang = useLang()
 const selectedPets = ref<number[]>([])
 const status = ref<BOOKING_STATUS>(BOOKING_STATUS.APPROVED)
 
@@ -80,6 +82,29 @@ const onChangeDate: InstanceType<
   startDate.value = data.start
   endDate.value = data.end
 }
+
+const statusOptions = ref([
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.PENDING],
+    value: BOOKING_STATUS.PENDING
+  },
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.APPROVED],
+    value: BOOKING_STATUS.APPROVED
+  },
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.REJECTED],
+    value: BOOKING_STATUS.REJECTED
+  },
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.STANDBY],
+    value: BOOKING_STATUS.STANDBY
+  },
+  {
+    label: lang.value.booking.status[BOOKING_STATUS.CANCELED],
+    value: BOOKING_STATUS.CANCELED
+  }
+])
 
 onMounted(async () => {
   await executeOpeningTimes()
