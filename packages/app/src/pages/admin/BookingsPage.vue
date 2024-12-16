@@ -1,11 +1,13 @@
 <template>
   <resource-page>
     <template #header>
-      <booking-status-select v-model="status" />
+      {{ lang.booking.title }}
     </template>
     <template #header-side>
       <q-btn icon="search">
         <q-menu class="q-pa-sm">
+          <booking-status-select v-model="status" />
+
           <customer-select
             v-model="customerId"
             :label="lang.customer.customer"

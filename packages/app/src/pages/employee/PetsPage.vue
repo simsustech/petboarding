@@ -1,14 +1,21 @@
 <template>
-  <resource-page>
+  <resource-page :top-bar-shrink="false">
     <template #header>
-      <pet-select
-        :model-value="ids"
-        multiple
-        clearable
-        @update:model-value="setParam"
-      >
-        <template #before> <q-icon name="search" /> </template>
-      </pet-select>
+      {{ lang.pet.title }}
+    </template>
+    <template #header-side>
+      <q-btn icon="search">
+        <q-menu class="q-pa-sm">
+          <pet-select
+            :model-value="ids"
+            multiple
+            clearable
+            @update:model-value="setParam"
+          >
+            <template #before> <q-icon name="search" /> </template>
+          </pet-select>
+        </q-menu>
+      </q-btn>
     </template>
     <div class="row">
       <pet-card

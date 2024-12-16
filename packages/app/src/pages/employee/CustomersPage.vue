@@ -1,26 +1,28 @@
 <template>
   <resource-page>
     <template #header>
-      <customer-select
-        :model-value="id"
-        @update:model-value="setParam"
-        :label="lang.search"
-        :filtered-options="filteredCustomers"
-        @filter="onFilterCustomers"
-      >
-        <template #before> <q-icon name="search" /> </template>
-      </customer-select>
+      {{ lang.customers }}
     </template>
-    <template #fab>
+    <template #header-side>
+      <q-btn icon="search">
+        <q-menu class="q-pa-sm">
+          <customer-select
+            :model-value="id"
+            @update:model-value="setParam"
+            :label="lang.search"
+            :filtered-options="filteredCustomers"
+            @filter="onFilterCustomers"
+          >
+            <template #before> <q-icon name="search" /> </template>
+          </customer-select>
+        </q-menu>
+      </q-btn>
+    </template>
+    <template #top-bar-buttons>
       <q-btn
         :style="{ visibility: id ? 'visible' : 'hidden' }"
-        flat
-        style="margin-bottom: -50px; z-index: 5"
-        round
-        size="lg"
-        dense
+        outline
         icon="add"
-        class="q-mr-sm bg-primary text-white"
       >
         <q-menu>
           <q-list>
