@@ -1,7 +1,7 @@
 <template>
   <q-chip>
     {{
-      `${modelValue.name} ${truncateLastName(modelValue.customer?.lastName || '')}`
+      `${modelValue.name} ${showLastName ? truncateLastName(modelValue.customer?.lastName || '') : ''}`
     }}
     <q-icon
       v-if="showImage && modelValue.image"
@@ -23,13 +23,26 @@
         </div>
       </q-tooltip>
     </q-icon>
-    <q-menu v-if="onOpenPet && modelValue.id" context-menu>
+    <q-menu
+      v-if="(onOpenPet && modelValue.id) || $slots['menu-items']"
+      context-menu
+    >
       <q-item clickable>
         <q-item-section @click="emit('openPet', modelValue.id)">
           {{ lang.pet.labels.open }}
         </q-item-section>
       </q-item>
+      <slot name="menu-items"></slot>
     </q-menu>
+
+    <q-badge style="top: -8px" floating color="transparent">
+      <q-badge
+        v-if="!modelValue.hasMandatoryVaccinations"
+        color="red"
+        rounded
+      />
+      <slot name="badge"></slot>
+    </q-badge>
   </q-chip>
 </template>
 
@@ -38,13 +51,20 @@ import { Pet as PetType, Customer as CustomerType } from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
 import Base64Image from '../Base64Image.vue'
 
-type Pet = Pick<PetType, 'id' | 'name' | 'image'> & {
-  customer: Pick<CustomerType, 'lastName'>
+type Pet = Pick<
+  PetType,
+  'id' | 'name' | 'image' | 'hasMandatoryVaccinations'
+> & {
+  customer?: Pick<CustomerType, 'lastName'>
 }
 
 interface Props {
-  modelValue: Pick<Pet, 'id' | 'name' | 'customer' | 'image'>
+  modelValue: Pick<
+    Pet,
+    'id' | 'name' | 'customer' | 'image' | 'hasMandatoryVaccinations'
+  >
   showImage?: boolean
+  showLastName?: boolean
   onOpenPet?: unknown
 }
 

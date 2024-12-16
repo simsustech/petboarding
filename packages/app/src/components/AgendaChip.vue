@@ -1,27 +1,24 @@
 <template>
   <div class="q-mb-md">
-    <q-chip
+    <pet-chip
       v-for="(pet, index) in modelValue.pets"
-      v-bind="attrs"
       :key="pet.id"
+      :model-value="pet"
+      :show-last-name="showLastName"
+      :selected="selectedPets?.includes(pet.id!)"
       class="q-mt-none q-mb-xs q-pr-sm"
       :class="{
         'text-strike':
-          (modelValue.status?.status || modelValue.status) === 'canceled'
+          modelValue.status?.status === 'canceled' ||
+          modelValue.status === 'canceled'
       }"
       dense
       :icon="icons[type]"
-      :color="
-        (modelValue.status?.status || modelValue.status) === 'standby'
-          ? 'yellow'
-          : colors[type]
-      "
-      :selected="selectedPets?.includes(pet.id)"
-      style="height: 100%"
-      @click="emit('click', { data: pet.id })"
+      :color="colors[type]"
+      @click="emit('click', { data: pet.id!, done: () => {} })"
+      @open-pet="emit('openPets', petIds)"
     >
-      <slot name="default" />
-      <q-badge style="top: -8px" floating color="transparent">
+      <template #badge>
         <q-badge
           v-if="
             modelValue.services?.some(
@@ -34,42 +31,21 @@
         >
         </q-badge>
         <q-badge v-if="modelValue.isDoubleBooked" color="orange" rounded />
-        <q-badge v-if="!pet.hasMandatoryVaccinations" color="red" rounded />
-      </q-badge>
-
-      <q-menu context-menu>
-        <q-list>
-          <q-item
-            v-if="onOpenBooking && modelValue.id"
-            clickable
-            @click="emit('openBooking', modelValue.id)"
-          >
-            <q-item-section>
-              <q-item-label>
-                {{ lang.booking.messages.openBooking }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-if="onOpenPets && petIds"
-            clickable
-            @click="emit('openPets', petIds)"
-          >
-            <q-item-section>
-              <q-item-label>
-                {{ lang.booking.messages.openPets }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-menu>
-      <div>
-        <div>
-          {{ pet.name }}
-        </div>
-        <i v-if="showLastName">{{ getLastName(pet) }}</i>
-      </div>
-    </q-chip>
+      </template>
+      <template #menu-items>
+        <q-item
+          v-if="onOpenBooking && modelValue.id"
+          clickable
+          @click="emit('openBooking', modelValue.id)"
+        >
+          <q-item-section>
+            <q-item-label>
+              {{ lang.booking.messages.openBooking }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+    </pet-chip>
   </div>
 </template>
 
@@ -81,11 +57,12 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Booking, DaycareDate, Pet } from '@petboarding/api/zod'
-import { QChip } from 'quasar'
-import { computed, ref, toRefs, useAttrs } from 'vue'
+import { Booking, DaycareDate } from '@petboarding/api/zod'
+import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
 import { BOOKING_SERVICE_COLORS } from '../configuration.js'
+import PetChip from './pet/PetChip.vue'
+
 export interface Props {
   modelValue: Booking | DaycareDate
   type: 'arrival' | 'departure' | 'stay' | 'daycare'
@@ -96,7 +73,6 @@ export interface Props {
 }
 
 const props = defineProps<Props>()
-const attrs = useAttrs()
 const emit = defineEmits<{
   (
     e: 'click',
@@ -114,15 +90,9 @@ const emit = defineEmits<{
 const lang = useLang()
 
 const { modelValue } = toRefs(props)
-const petIds = computed(() => modelValue.value.pets?.map((pet) => pet.id))
-
-const getLastName = (pet: Pet) => {
-  if (pet.customer?.lastName) {
-    const lastName = pet.customer.lastName.substring(0, 8)
-    if (pet.customer.lastName.length > 8) return lastName + '...'
-    return lastName
-  }
-}
+const petIds = computed(
+  () => modelValue.value.pets?.map((pet) => pet.id!) || []
+)
 
 const icons = ref({
   arrival: 'add',
@@ -134,6 +104,7 @@ const icons = ref({
 const colors = ref({
   arrival: 'green',
   departure: 'red',
+  standby: 'yellow',
   stay: undefined,
   daycare: undefined
 })

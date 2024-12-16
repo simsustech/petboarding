@@ -40,5 +40,5 @@ export const petValidation = {
 export const pet = z.object(petValidation)
 
 export type Pet = Omit<z.infer<typeof pet>, 'image'> & {
-  image?: string | Buffer
+  image?: string | Buffer | null
 }
