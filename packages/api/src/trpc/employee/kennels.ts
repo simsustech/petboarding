@@ -8,9 +8,10 @@ import {
   getDaycareDatePetKennels,
   setBookingPetKennel,
   setDaycareDatePetKennel
-} from 'src/repositories/kennel.js'
-import { getBookingPetKennels } from 'src/repositories/kennel.js'
-import { findBuildings } from 'src/repositories/building.js'
+} from '../../repositories/kennel.js'
+import { getBookingPetKennels } from '../../repositories/kennel.js'
+import { findBuildings } from '../../repositories/building.js'
+import { checkVaccinations } from '../../repositories/pet.js'
 
 export const employeeKennelRoutes = ({
   // fastify,
@@ -45,7 +46,13 @@ export const employeeKennelRoutes = ({
       const { date } = input
       const bookingPetKennels = await getBookingPetKennels(date)
       const daycareDatePetKennels = await getDaycareDatePetKennels(date)
-      return [...bookingPetKennels, ...daycareDatePetKennels]
+      return [...bookingPetKennels, ...daycareDatePetKennels].map((pet) => ({
+        ...pet,
+        hasMandatoryVaccinations: checkVaccinations({
+          species: pet.species,
+          validVaccinations: pet.validVaccinations
+        })
+      }))
     }),
   setBookingPetKennel: procedure
     .input(

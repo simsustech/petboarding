@@ -9,6 +9,7 @@ import {
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
+import { withValidVaccinations } from './pet.js'
 type Kennel = Selectable<Kennels>
 type NewKennel = Insertable<Kennels>
 type KennelUpdate = Updateable<Kennels>
@@ -152,6 +153,7 @@ export async function getBookingPetKennels(date: string) {
     )
     .select((seb) => [
       'pets.id as id',
+      'pets.species as species',
       'pets.name as name',
       'pets.medicines as medicines',
       'pets.food as food',
@@ -163,7 +165,8 @@ export async function getBookingPetKennels(date: string) {
           .selectFrom('customers')
           .select('customers.lastName')
           .whereRef('customers.id', '=', 'pets.customerId')
-      ).as('customer')
+      ).as('customer'),
+      withValidVaccinations
     ])
     .execute()
 }
@@ -181,6 +184,7 @@ export async function getDaycareDatePetKennels(date: string) {
     .where('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED)
     .select((seb) => [
       'pets.id as id',
+      'pets.species as species',
       'pets.name as name',
       'pets.medicines as medicines',
       'pets.food as food',
@@ -192,7 +196,8 @@ export async function getDaycareDatePetKennels(date: string) {
           .selectFrom('customers')
           .select('customers.lastName')
           .whereRef('customers.id', '=', 'pets.customerId')
-      ).as('customer')
+      ).as('customer'),
+      withValidVaccinations
     ])
     .execute()
 }
