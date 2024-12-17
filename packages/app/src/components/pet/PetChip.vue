@@ -1,5 +1,9 @@
 <template>
-  <q-chip>
+  <q-chip
+    :class="{
+      'q-mb-md': $slots['bottom-badge']
+    }"
+  >
     {{
       `${modelValue.name} ${showLastName ? truncateLastName(modelValue.customer?.lastName || '') : ''}`
     }}
@@ -37,16 +41,60 @@
 
     <q-badge
       v-if="showBadge || $slots['badge']"
-      style="top: -8px"
+      style="top: -10px"
       floating
       color="transparent"
     >
       <q-badge
+        v-if="modelValue.food?.timesADay > 2"
+        :style="{
+          padding: '0px',
+          'padding-left': '3px',
+          'padding-right': '3px'
+        }"
+        color="yellow"
+        rounded
+      >
+        <q-icon class="q-ma-none q-pa-none" name="restaurant" size="0.8em" />
+      </q-badge>
+      <q-badge
+        v-if="modelValue.medicines"
+        :style="{
+          padding: '0px',
+          'padding-left': '3px',
+          'padding-right': '3px'
+        }"
+        color="yellow"
+        rounded
+      >
+        <q-icon
+          class="q-ma-none q-pa-none"
+          name="medical_services"
+          size="0.8em"
+        />
+      </q-badge>
+      <q-badge
         v-if="!modelValue.hasMandatoryVaccinations"
+        :style="{
+          padding: '0px',
+          'padding-left': '3px',
+          'padding-right': '3px'
+        }"
         color="red"
         rounded
-      />
+      >
+        <q-icon class="q-ma-none q-pa-none" name="vaccines" size="0.8em" />
+      </q-badge>
       <slot name="badge"></slot>
+    </q-badge>
+
+    <q-badge
+      v-if="$slots['bottom-badge']"
+      style="top: 14px"
+      floating
+      color="transparent"
+    >
+      <slot name="bottom-badge"></slot>
     </q-badge>
   </q-chip>
 </template>
@@ -58,7 +106,7 @@ import Base64Image from '../Base64Image.vue'
 
 type Pet = Pick<
   PetType,
-  'id' | 'name' | 'image' | 'hasMandatoryVaccinations'
+  'id' | 'name' | 'image' | 'hasMandatoryVaccinations' | 'medicines' | 'food'
 > & {
   customer?: Pick<CustomerType, 'lastName'>
 }
@@ -66,7 +114,13 @@ type Pet = Pick<
 interface Props {
   modelValue: Pick<
     Pet,
-    'id' | 'name' | 'customer' | 'image' | 'hasMandatoryVaccinations'
+    | 'id'
+    | 'name'
+    | 'customer'
+    | 'image'
+    | 'hasMandatoryVaccinations'
+    | 'medicines'
+    | 'food'
   >
   showImage?: boolean
   showLastName?: boolean

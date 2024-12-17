@@ -372,6 +372,8 @@ function withPets(eb: ExpressionBuilder<Database, 'bookings'>) {
         'pets.breed',
         'pets.sterilized',
         'pets.gender',
+        'pets.medicines',
+        'pets.food',
         withValidVaccinations,
         jsonObjectFrom(
           ceb

@@ -38,11 +38,12 @@
   </div>
   <div class="row">
     <div class="col-12 col-sm">
-      <q-badge
-        rounded
-        text-color="black"
-        :color="BOOKING_SERVICE_COLORS.appointment"
-      ></q-badge
+      <q-badge rounded :color="BOOKING_SERVICE_COLORS.appointment">
+        <q-icon
+          class="q-ma-none q-pa-none"
+          name="event"
+          size="0.8em"
+        /> </q-badge
       ><a>{{ lang.service.type.appointment }}</a>
 
       <q-badge
@@ -53,7 +54,12 @@
       ></q-badge
       ><a>{{ lang.booking.messages.isDoubleBooked }}</a>
 
-      <q-badge class="q-ml-lg" rounded text-color="black" color="red"></q-badge
+      <q-badge class="q-ml-lg" rounded color="red">
+        <q-icon
+          class="q-ma-none q-pa-none"
+          name="vaccines"
+          size="0.8em"
+        /> </q-badge
       ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
     </div>
   </div>

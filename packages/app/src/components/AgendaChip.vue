@@ -13,12 +13,22 @@
           modelValue.status === 'canceled'
       }"
       dense
+      show-badge
       :icon="icons[type]"
       :color="colors[type]"
       @click="emit('click', { data: pet.id!, done: () => {} })"
       @open-pet="emit('openPets', petIds)"
     >
-      <template #badge>
+      <template
+        v-if="
+          modelValue.isDoubleBooked ||
+          (modelValue.services?.some(
+            (service) => service.service.type === 'appointment'
+          ) &&
+            index === 0)
+        "
+        #bottom-badge
+      >
         <q-badge
           v-if="
             modelValue.services?.some(
@@ -26,9 +36,9 @@
             ) && index === 0
           "
           :color="BOOKING_SERVICE_COLORS.appointment"
-          text-color="black"
           rounded
         >
+          <q-icon class="q-ma-none q-pa-none" name="event" size="0.8em" />
         </q-badge>
         <q-badge v-if="modelValue.isDoubleBooked" color="orange" rounded />
       </template>

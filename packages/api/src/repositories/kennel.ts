@@ -153,6 +153,8 @@ export async function getBookingPetKennels(date: string) {
     .select((seb) => [
       'pets.id as id',
       'pets.name as name',
+      'pets.medicines as medicines',
+      'pets.food as food',
       convertImageSql.as('image'),
       'bookingPetKennel.kennelId as kennelId',
       'bookingPetKennel.bookingId as bookingId',
@@ -180,6 +182,8 @@ export async function getDaycareDatePetKennels(date: string) {
     .select((seb) => [
       'pets.id as id',
       'pets.name as name',
+      'pets.medicines as medicines',
+      'pets.food as food',
       convertImageSql.as('image'),
       'daycareDatePetKennel.kennelId as kennelId',
       'daycareDatePetKennel.daycareDateId as daycareDateId',

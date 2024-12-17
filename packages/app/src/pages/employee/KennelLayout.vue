@@ -105,6 +105,7 @@
                     'bg-yellow-2': pet.daycareDateId
                   }"
                   :draggable="true"
+                  show-badge
                   show-image
                   @dragstart="onDragStart"
                   @open-pet="openPet"
