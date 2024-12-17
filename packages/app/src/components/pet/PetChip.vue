@@ -35,7 +35,12 @@
       <slot name="menu-items"></slot>
     </q-menu>
 
-    <q-badge style="top: -8px" floating color="transparent">
+    <q-badge
+      v-if="showBadge || $slots['badge']"
+      style="top: -8px"
+      floating
+      color="transparent"
+    >
       <q-badge
         v-if="!modelValue.hasMandatoryVaccinations"
         color="red"
@@ -66,6 +71,7 @@ interface Props {
   showImage?: boolean
   showLastName?: boolean
   onOpenPet?: unknown
+  showBadge?: boolean
 }
 
 defineProps<Props>()
