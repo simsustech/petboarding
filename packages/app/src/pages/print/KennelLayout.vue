@@ -1,7 +1,7 @@
 <template>
   <q-page class="page" :style="{ padding: '2cm' }">
     <div class="row justify-center text-h6">
-      {{ selectedDate }}
+      {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
     <div class="row" style="height: 150px">
       <pet-chip
@@ -76,6 +76,7 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { createUseTrpc } from '../../trpc.js'
 import { extend, useMeta } from 'quasar'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { formatDate } from '../../tools.js'
 
 const { useQuery } = await createUseTrpc()
 
