@@ -18,6 +18,12 @@ export interface Language {
     employees: string
     administrators: string
   }
+  testimonial: {
+    labels: {
+      clients: string
+      endUsers: string
+    }
+  }
 }
 
 import type { Ref } from 'vue'

@@ -5,15 +5,15 @@
     }"
   >
     <q-item>
-      <q-item-section avatar>
+      <q-item-section v-if="image" avatar>
         <q-avatar>
-          <img :src="`/testimonials/${id}.webp`" />
+          <img :src="image" />
         </q-avatar>
       </q-item-section>
 
       <q-item-section>
         <q-item-label>{{ company }}</q-item-label>
-        <q-item-label caption>{{ owner }}</q-item-label>
+        <q-item-label caption>{{ name }}</q-item-label>
         <q-item-label caption>{{ url }}</q-item-label>
       </q-item-section>
     </q-item>
@@ -27,9 +27,10 @@
 <script setup lang="ts">
 interface Props {
   id: string
-  company: string
-  owner: string
-  url: string
+  image?: string
+  company?: string
+  name: string
+  url?: string
   content: string
 }
 

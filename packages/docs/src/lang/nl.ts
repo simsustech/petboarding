@@ -19,6 +19,12 @@ const lang: Language = {
     users: 'Gebruikers',
     employees: 'Medewerkers',
     administrators: 'Administrators'
+  },
+  testimonial: {
+    labels: {
+      clients: 'Klanten',
+      endUsers: 'Eindgebruikers'
+    }
   }
 }
 
