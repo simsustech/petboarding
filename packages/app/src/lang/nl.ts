@@ -175,6 +175,18 @@ const lang: Language = {
     },
     labels: {
       open: 'Open huisdier.'
+    },
+    food: {
+      fields: {
+        timesADay: 'Aantal keer per dag',
+        amount: 'Hoeveelheid',
+        amountUnit: 'Eenheid',
+        kind: 'Soort'
+      },
+      unit: {
+        gram: 'gr',
+        pieces: 'st.'
+      }
     }
   },
   booking: {

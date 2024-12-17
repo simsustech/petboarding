@@ -104,14 +104,10 @@
         lazy-rules
         name="medicines"
       />
-      <form-input
+      <pet-food-input
         v-if="useFood"
-        v-bind="input"
         v-model="modelValue.food"
         class="col-md-4 col-12"
-        :label="lang.pet.fields.food"
-        bottom-slots
-        lazy-rules
         name="food"
       />
     </div>
@@ -234,6 +230,7 @@ import PetCategorySelect from './PetCategorySelect.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import PetWeight from './PetWeight.vue'
 import { useConfiguration } from '../../configuration.js'
+import PetFoodInput from './PetFoodInput.vue'
 
 export interface Pet extends PetType {
   image?: string
@@ -284,7 +281,12 @@ const initialValue: Pet = {
   birthDate: '',
   color: '',
   medicines: '',
-  food: '',
+  food: {
+    timesADay: 0,
+    amount: 0,
+    amountUnit: 'gram',
+    kind: ''
+  },
   weight: '',
   particularities: '',
   insured: null
@@ -302,7 +304,7 @@ watch($q.lang, (val) => {
 const formRef = ref<QForm>()
 
 const setValue = (newValue: Pet) => {
-  modelValue.value = extend({}, initialValue, newValue)
+  modelValue.value = extend(true, {}, initialValue, newValue)
 }
 
 const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({

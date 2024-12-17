@@ -48,7 +48,12 @@ const createPet = (customerId: number) => {
     breed: faker.animal.dog(),
     birthDate: faker.date.past({ years: 10 }).toISOString().split('T')[0],
     color: faker.color.human(),
-    food: `${getRandomInt(200)} gr`,
+    food: {
+      timesADay: 2,
+      amount: getRandomInt(300),
+      amountUnit: 'gram',
+      kind: 'Generic'
+    },
     gender: getRandomInt(2) > 1 ? 'male' : 'female',
     sterilized,
     chemicalSterilizationDate:

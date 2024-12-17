@@ -174,6 +174,18 @@ const lang: Language = {
     },
     labels: {
       open: 'Open pet.'
+    },
+    food: {
+      fields: {
+        timesADay: 'Times a day',
+        amount: 'Amount',
+        amountUnit: 'Unit',
+        kind: 'Kind'
+      },
+      unit: {
+        gram: 'gr.',
+        pieces: 'pcs'
+      }
     }
   },
   booking: {

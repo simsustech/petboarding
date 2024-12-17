@@ -75,7 +75,12 @@
         />
         <form-item
           :label="lang.pet.fields.food"
-          :model-value="modelValue.food"
+          :model-value="
+            modelValue.food
+              ? `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''} 
+                    ${lang.pet.food.unit[modelValue.food?.amountUnit] ?? ''} ${modelValue.food?.kind}`
+              : undefined
+          "
         />
         <form-item
           :label="lang.pet.fields.weight"

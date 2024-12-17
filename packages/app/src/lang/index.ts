@@ -169,6 +169,18 @@ export interface Language {
     labels: {
       open: string
     }
+    food: {
+      fields: {
+        timesADay: string
+        amount: string
+        amountUnit: string
+        kind: string
+      }
+      unit: {
+        gram: string
+        pieces: string
+      }
+    }
   }
   booking: {
     title: string

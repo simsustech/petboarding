@@ -276,7 +276,12 @@ export interface Pets {
   chemicalSterilizationDate: string | null
   color: string | null
   medicines: string | null
-  food: string | null
+  food: {
+    timesADay: number
+    amount: number
+    amountUnit: 'gram' | 'pieces'
+    kind: string
+  } | null
   weight: string | null
   deceased: Generated<boolean | null>
   insured: boolean | null

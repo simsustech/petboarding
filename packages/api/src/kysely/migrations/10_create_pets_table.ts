@@ -17,7 +17,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn('chemical_sterilization_date', 'date')
     .addColumn('color', 'varchar')
     .addColumn('medicines', 'varchar')
-    .addColumn('food', 'varchar')
+    .addColumn('food', 'jsonb')
     .addColumn('weight', 'varchar')
     .addColumn('deceased', 'boolean', (col) => col.defaultTo(false))
     .addColumn('particularities', 'text')

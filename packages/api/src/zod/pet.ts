@@ -23,7 +23,12 @@ export const petValidation = {
   birthDate: z.string(),
   color: z.string().nullable().optional(),
   medicines: z.string().nullable().optional(),
-  food: z.string().nullable().optional(),
+  food: z.object({
+    timesADay: z.number(),
+    amount: z.number(),
+    amountUnit: z.union([z.literal('gram'), z.literal('pieces')]),
+    kind: z.string()
+  }),
   weight: z.string().nullable().optional(),
   deceased: z.boolean().optional(),
   particularities: z.string().nullable().optional(),

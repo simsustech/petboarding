@@ -92,7 +92,10 @@
                   class="self-center text-subtitle2 text-truncate full-width no-outline q-ma-none"
                   tabindex="0"
                 >
-                  {{ modelValue.food }}
+                  {{
+                    `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''} 
+                    ${lang.pet.food.unit[modelValue.food?.amountUnit] ?? ''} ${modelValue.food?.kind}`
+                  }}
                 </div>
               </template>
             </q-field>
