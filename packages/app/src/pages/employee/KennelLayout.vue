@@ -63,6 +63,7 @@
               }"
               :draggable="true"
               show-image
+              show-last-name
               @dragstart="onDragStart"
               @open-pet="openPet"
             >
@@ -106,6 +107,7 @@
                   }"
                   :draggable="true"
                   show-badge
+                  show-last-name
                   show-image
                   @dragstart="onDragStart"
                   @open-pet="openPet"

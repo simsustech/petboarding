@@ -14,6 +14,7 @@
           'bg-yellow-2': pet.daycareDateId
         }"
         :model-value="pet"
+        show-last-name
         draggable="true"
         @dragstart="onDragStart"
       >
@@ -59,6 +60,7 @@
                   }"
                   :model-value="pet"
                   show-badge
+                  show-last-name
                   draggable="true"
                   @dragstart="onDragStart"
                 >
