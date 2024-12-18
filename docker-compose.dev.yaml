@@ -37,6 +37,7 @@ services:
     volumes:
       - ./packages/app/dist:/packages/app/dist
       - ./packages/api/dist:/app/dist
+      - ./jwks:/app/dist/server/jwks
     environment:
       POSTGRES_HOST: database
       POSTGRES_PASSWORD: ufgouifdgjdfg
