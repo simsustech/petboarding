@@ -94,25 +94,30 @@
                 @dragover="onDragOver"
                 @drop="onDrop"
               >
-                <pet-chip
+                <div
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
                   :id="`pet${pet.id}`"
                   :key="pet.id"
-                  :model-value="pet"
-                  :class="{
-                    'bg-blue-2': pet.bookingId,
-                    'bg-yellow-2': pet.daycareDateId
-                  }"
-                  :draggable="true"
-                  show-badge
-                  show-last-name
-                  show-image
-                  @dragstart="onDragStart"
-                  @open-pet="openPet"
+                  class="row justify-center"
                 >
-                </pet-chip>
+                  <pet-chip
+                    :id="`pet${pet.id}`"
+                    :model-value="pet"
+                    :class="{
+                      'bg-blue-2': pet.bookingId,
+                      'bg-yellow-2': pet.daycareDateId
+                    }"
+                    :draggable="true"
+                    show-badge
+                    show-last-name
+                    show-image
+                    @dragstart="onDragStart"
+                    @open-pet="openPet"
+                  >
+                  </pet-chip>
+                </div>
               </q-card-section>
             </q-card>
           </div>
@@ -130,6 +135,7 @@ import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
 import PetChip from '../../components/pet/PetChip.vue'
+import type { Pet } from '@petboarding/api/zod'
 
 const { useQuery, useMutation } = await createUseTrpc()
 const lang = useLang()
@@ -147,40 +153,16 @@ onBeforeRouteUpdate((to) => {
     selectedDate.value = to.params.date
   }
 })
-// const pets = ref([
-//   {
-//     id: 1,
-//     name: 'Max',
-//     kennelId: null
-//   },
-//   {
-//     id: 2,
-//     name: 'Diesel',
-//     kennelId: 2
-//   }
-// ])
 
-// const kennels = ref([
-//   {
-//     id: 1,
-//     name: 'Hok 1'
-//   },
-//   {
-//     id: 2,
-//     name: 'Hok 2'
-//   }
-// ])
 const internalPetKennels = ref<
-  {
-    id: number
-    name: string
+  (Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
     customer: {
       lastName: string
     }
     kennelId: number | null
     bookingId?: number
     daycareDateId?: number
-  }[]
+  })[]
 >([])
 
 const { data: buildings, execute: executeBuildings } = useQuery(

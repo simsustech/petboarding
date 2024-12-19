@@ -48,23 +48,28 @@
                 :id="`kennel${kennel.id}`"
                 class="text-center q-pl-none q-pr-none q-pt-none q-pb-xs"
               >
-                <pet-chip
+                <div
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
                   :id="`pet${pet.id}`"
                   :key="pet.id"
-                  :class="{
-                    'bg-blue-2': pet.bookingId,
-                    'bg-yellow-2': pet.daycareDateId
-                  }"
-                  :model-value="pet"
-                  show-badge
-                  show-last-name
-                  draggable="true"
-                  @dragstart="onDragStart"
+                  class="row justify-center"
                 >
-                </pet-chip>
+                  <pet-chip
+                    :id="`pet${pet.id}`"
+                    :class="{
+                      'bg-blue-2': pet.bookingId,
+                      'bg-yellow-2': pet.daycareDateId
+                    }"
+                    :model-value="pet"
+                    show-badge
+                    show-last-name
+                    draggable="true"
+                    @dragstart="onDragStart"
+                  >
+                  </pet-chip>
+                </div>
               </q-card-section>
             </q-card>
           </div>
@@ -80,6 +85,8 @@ import { createUseTrpc } from '../../trpc.js'
 import { extend, useMeta } from 'quasar'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { formatDate } from '../../tools.js'
+import PetChip from '../../components/pet/PetChip.vue'
+import type { Pet } from '@petboarding/api/zod'
 
 const { useQuery } = await createUseTrpc()
 
@@ -101,17 +108,16 @@ useMeta({
 })
 
 const internalPetKennels = ref<
-  {
-    id: number
-    name: string
+  (Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
     customer: {
       lastName: string
     }
     kennelId: number | null
     bookingId?: number
     daycareDateId?: number
-  }[]
+  })[]
 >([])
+
 const { data: buildings, execute: executeBuildings } = useQuery(
   'employee.getBuildings'
 )
