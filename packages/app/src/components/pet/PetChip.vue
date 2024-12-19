@@ -3,10 +3,18 @@
     :class="{
       'q-mb-md': $slots['bottom-badge']
     }"
+    :style="{
+      'max-width': '12em',
+      height: '100%'
+    }"
   >
-    {{
-      `${modelValue.name} ${showLastName ? truncateLastName(modelValue.customer?.lastName || '') : ''}`
-    }}
+    <div
+      :style="{
+        'white-space': 'normal !important'
+      }"
+    >
+      {{ label }}
+    </div>
     <q-icon
       v-if="showImage && modelValue.image"
       name="photo_camera"
@@ -103,6 +111,7 @@
 import { Pet as PetType, Customer as CustomerType } from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
 import Base64Image from '../Base64Image.vue'
+import { computed, toRefs } from 'vue'
 
 type Pet = Pick<
   PetType,
@@ -128,7 +137,7 @@ interface Props {
   showBadge?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const lang = useLang()
 
@@ -136,6 +145,7 @@ const emit = defineEmits<{
   (e: 'openPet', id: number): void
 }>()
 
+const { modelValue, showLastName } = toRefs(props)
 const truncate = (str: string, n: number) =>
   str.length > n ? str.slice(0, n) + '...' : str
 
@@ -144,4 +154,9 @@ const truncateLastName = (lastName: string) => {
   parts.splice(-1, 1, truncate(parts.at(-1) || '', 3))
   return parts.join(' ')
 }
+
+const label = computed(
+  () =>
+    `${modelValue.value.name} ${showLastName.value ? truncateLastName(modelValue.value.customer?.lastName || '') : ''}`
+)
 </script>
