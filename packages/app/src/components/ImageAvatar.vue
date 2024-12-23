@@ -19,7 +19,7 @@
       ref="fileSelector"
       v-model="image"
       :label="lang.image"
-      accept="capture=camera,image/png,image/jpeg"
+      accept="capture=camera,image/png,image/jpeg,.dummy"
       style="display: none"
       @update:model-value="setImage"
     />
