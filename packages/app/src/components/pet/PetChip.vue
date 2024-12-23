@@ -60,10 +60,14 @@
           'padding-left': '3px',
           'padding-right': '3px'
         }"
-        color="yellow"
+        :color="PET_CHIP_BADGE_COLORS.food"
         rounded
       >
-        <q-icon class="q-ma-none q-pa-none" name="restaurant" size="0.8em" />
+        <q-icon
+          class="q-ma-none q-pa-none"
+          :name="PET_CHIP_BADGE_ICONS.food"
+          size="0.8em"
+        />
       </q-badge>
       <q-badge
         v-if="modelValue.medicines"
@@ -72,12 +76,12 @@
           'padding-left': '3px',
           'padding-right': '3px'
         }"
-        color="yellow"
+        :color="PET_CHIP_BADGE_COLORS.medicines"
         rounded
       >
         <q-icon
           class="q-ma-none q-pa-none"
-          name="medical_services"
+          :name="PET_CHIP_BADGE_ICONS.medicines"
           size="0.8em"
         />
       </q-badge>
@@ -88,17 +92,21 @@
           'padding-left': '3px',
           'padding-right': '3px'
         }"
-        color="red"
+        :color="PET_CHIP_BADGE_COLORS.vaccinations"
         rounded
       >
-        <q-icon class="q-ma-none q-pa-none" name="vaccines" size="0.8em" />
+        <q-icon
+          class="q-ma-none q-pa-none"
+          :name="PET_CHIP_BADGE_ICONS.vaccinations"
+          size="0.8em"
+        />
       </q-badge>
       <slot name="badge"></slot>
     </q-badge>
 
     <q-badge
       v-if="$slots['bottom-badge']"
-      style="top: 14px"
+      style="bottom: -115%"
       floating
       color="transparent"
     >
@@ -112,6 +120,10 @@ import { Pet as PetType, Customer as CustomerType } from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
 import Base64Image from '../Base64Image.vue'
 import { computed, toRefs } from 'vue'
+import {
+  PET_CHIP_BADGE_COLORS,
+  PET_CHIP_BADGE_ICONS
+} from 'src/configuration.js'
 
 type Pet = Pick<
   PetType,

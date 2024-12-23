@@ -35,12 +35,26 @@
               (service) => service.service.type === 'appointment'
             ) && index === 0
           "
-          :color="BOOKING_SERVICE_COLORS.appointment"
+          :color="AGENDA_CHIP_BADGE_COLORS.appointment"
           rounded
         >
-          <q-icon class="q-ma-none q-pa-none" name="event" size="0.8em" />
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="AGENDA_CHIP_BADGE_ICONS.appointment"
+            size="0.8em"
+          />
         </q-badge>
-        <q-badge v-if="modelValue.isDoubleBooked" color="orange" rounded />
+        <q-badge
+          v-if="modelValue.isDoubleBooked"
+          :color="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
+          rounded
+        >
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
+            size="0.8em"
+          />
+        </q-badge>
       </template>
       <template #menu-items>
         <q-item
@@ -70,7 +84,10 @@ export default {
 import { Booking, DaycareDate } from '@petboarding/api/zod'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
-import { BOOKING_SERVICE_COLORS } from '../configuration.js'
+import {
+  AGENDA_CHIP_BADGE_COLORS,
+  AGENDA_CHIP_BADGE_ICONS
+} from '../configuration.js'
 import PetChip from './pet/PetChip.vue'
 
 export interface Props {

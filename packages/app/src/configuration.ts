@@ -71,8 +71,26 @@ export const DAYCARE_DATE_ICONS = {
   standby: 'hourglass_full'
 }
 
-export const BOOKING_SERVICE_COLORS = {
-  appointment: 'yellow'
+export const AGENDA_CHIP_BADGE_COLORS = {
+  appointment: 'light-blue',
+  isDoubleBooked: 'deep-orange'
+}
+
+export const AGENDA_CHIP_BADGE_ICONS = {
+  appointment: 'event',
+  isDoubleBooked: 'event_busy'
+}
+
+export const PET_CHIP_BADGE_COLORS = {
+  food: 'yellow',
+  medicines: 'orange',
+  vaccinations: 'red'
+}
+
+export const PET_CHIP_BADGE_ICONS = {
+  food: 'restaurant',
+  medicines: 'medical_services',
+  vaccinations: 'vaccines'
 }
 
 export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({

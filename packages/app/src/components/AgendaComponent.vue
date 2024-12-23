@@ -38,10 +38,10 @@
   </div>
   <div class="row">
     <div class="col-12 col-sm">
-      <q-badge rounded :color="BOOKING_SERVICE_COLORS.appointment">
+      <q-badge rounded :color="AGENDA_CHIP_BADGE_COLORS.appointment">
         <q-icon
           class="q-ma-none q-pa-none"
-          name="event"
+          :name="AGENDA_CHIP_BADGE_ICONS.appointment"
           size="0.8em"
         /> </q-badge
       ><a>{{ lang.service.type.appointment }}</a>
@@ -49,15 +49,23 @@
       <q-badge
         class="q-ml-lg"
         rounded
-        text-color="black"
-        color="orange"
-      ></q-badge
-      ><a>{{ lang.booking.messages.isDoubleBooked }}</a>
-
-      <q-badge class="q-ml-lg" rounded color="red">
+        :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
+      >
         <q-icon
           class="q-ma-none q-pa-none"
-          name="vaccines"
+          :name="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
+          size="0.8em"
+        /> </q-badge
+      ><a>{{ lang.booking.messages.isDoubleBooked }}</a>
+
+      <q-badge
+        class="q-ml-lg"
+        rounded
+        :color="PET_CHIP_BADGE_COLORS.vaccinations"
+      >
+        <q-icon
+          class="q-ma-none q-pa-none"
+          :name="PET_CHIP_BADGE_ICONS.vaccinations"
           size="0.8em"
         /> </q-badge
       ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
@@ -217,7 +225,12 @@ import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
 import { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
-import { BOOKING_SERVICE_COLORS } from '../configuration.js'
+import {
+  AGENDA_CHIP_BADGE_COLORS,
+  AGENDA_CHIP_BADGE_ICONS,
+  PET_CHIP_BADGE_COLORS,
+  PET_CHIP_BADGE_ICONS
+} from '../configuration.js'
 import { formatBookingDates } from './booking/BookingItemContent.vue'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 export interface Props {
