@@ -41,8 +41,8 @@
     "uqr": "^0.1.2"
   },
   "devDependencies": {
-    "@modular-api/fastify-checkout": "^0.4.10",
-    "@modular-api/quasar-components": "^0.3.6",
+    "@modular-api/fastify-checkout": "^0.4.12",
+    "@modular-api/quasar-components": "^0.3.7",
     "@petboarding/api": "^0.1.0",
     "@quasar/extras": "1.16.13",
     "@quasar/quasar-ui-qcalendar": "4.0.0-beta.16",
