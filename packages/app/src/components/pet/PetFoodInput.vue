@@ -4,8 +4,9 @@
       <div class="row">
         <q-input
           :model-value="modelValue.timesADay"
+          type="number"
+          step="1"
           inputmode="numeric"
-          borderless
           class="col-1 q-mr-sm"
           :placeholder="lang.pet.food.fields.timesADay"
           :style="{
@@ -14,11 +15,15 @@
           }"
           input-class="text-right"
           suffix="x"
-          @update:model-value="updateKey('timesADay', Number($event))"
+          @update:model-value="
+            updateKey('timesADay', Math.round(Number($event)))
+          "
         >
         </q-input>
         <q-input
           :model-value="modelValue.amount"
+          type="number"
+          step="0.1"
           inputmode="numeric"
           class="col-2 q-mr-sm"
           :placeholder="lang.pet.food.fields.amount"
@@ -27,7 +32,9 @@
             'margin-bottom': '-0.5em'
           }"
           input-class="text-right"
-          @update:model-value="updateKey('amount', Number($event))"
+          @update:model-value="
+            updateKey('amount', Math.round(Number($event) * 100) / 100)
+          "
         />
         <q-select
           :model-value="modelValue.amountUnit"
@@ -101,3 +108,15 @@ const updateKey = (key: string, value: unknown) =>
     extend(true, {}, modelValue.value, { [key]: value })
   )
 </script>
+
+<style scoped>
+:deep(input[type='number']) {
+  -moz-appearance: textfield;
+}
+:deep(input::-webkit-outer-spin-button),
+:deep(input::-webkit-inner-spin-button) {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+</style>
