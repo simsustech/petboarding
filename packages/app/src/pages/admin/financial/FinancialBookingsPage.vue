@@ -96,7 +96,7 @@ import { ResourcePage } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
 import CustomerSelect from '../../../components/employee/CustomerSelect.vue'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
-import { QTableColumn, useQuasar } from 'quasar'
+import { type QTableColumn, useQuasar, date as dateUtil } from 'quasar'
 import { computed } from 'vue'
 
 const $q = useQuasar()
@@ -105,8 +105,13 @@ const lang = useLang()
 const { useQuery } = await createUseTrpc()
 
 const customerId = ref<number>()
-const from = ref<string | null>(null)
-const until = ref<string | null>(null)
+const from = ref<string | null>(
+  dateUtil.subtractFromDate(new Date(), { years: 2 }).toISOString().slice(0, 10)
+)
+
+const until = ref<string | null>(
+  dateUtil.addToDate(new Date(), { years: 1 }).toISOString().slice(0, 10)
+)
 
 const { data, execute: executeBookings } = useQuery('admin.getBookings', {
   args: reactive({
