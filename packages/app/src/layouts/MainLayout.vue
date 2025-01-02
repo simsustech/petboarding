@@ -191,6 +191,22 @@
                     />
                   </q-item-section>
                 </template>
+                <q-expansion-item
+                  :header-inset-level="1"
+                  :content-inset-level="2"
+                  :label="lang.financial.title"
+                >
+                  <q-item to="/admin/financial/overview">
+                    <q-item-section>
+                      <q-item-label> {{ lang.overview }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/financial/bookings">
+                    <q-item-section>
+                      <q-item-label> {{ lang.booking.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-expansion-item>
                 <q-item :inset-level="1" to="/admin/overview">
                   <q-item-section>
                     <q-item-label> {{ lang.overview }} </q-item-label>

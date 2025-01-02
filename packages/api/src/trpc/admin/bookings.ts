@@ -334,22 +334,60 @@ export const adminBookingRoutes = ({
       z.object({
         from: z.string().optional().nullable(),
         until: z.string().optional().nullable(),
-        status: z.nativeEnum(BOOKING_STATUS),
-        customerId: z.number().optional()
+        status: z.nativeEnum(BOOKING_STATUS).optional(),
+        customerId: z.number().optional().nullable(),
+        invoice: z
+          .object({
+            status: z.nativeEnum(InvoiceStatus).optional(),
+            statuses: z.nativeEnum(InvoiceStatus).array().optional(),
+            paid: z.boolean().optional()
+          })
+          .optional()
       })
     )
     .query(async ({ input }) => {
-      const { from, until, status, customerId } = input
+      const { from, until, status, customerId, invoice } = input
       const bookings = await findBookings({
         criteria: {
-          from,
-          until,
+          from: from ? from : undefined,
+          until: until ? until : undefined,
           status,
-          customerId
+          customerId: customerId ? customerId : undefined
         },
         limit: 25,
         fastify
       })
+
+      if (invoice && fastify.slimfact && bookings?.length) {
+        const bookingBillUuids = bookings
+          .map((booking) => booking.invoiceUuid)
+          .filter((uuid): uuid is string => !!uuid)
+        const bills = await fastify.slimfact.admin.getInvoices.query({
+          uuids: bookingBillUuids,
+          status: invoice.status ? invoice.status : null,
+          statuses: invoice.statuses,
+          paid: invoice.paid
+        })
+
+        const billUuids = bills?.map((bill) => bill.uuid)
+
+        return bookings.filter(
+          (booking) =>
+            !!booking.invoiceUuid && billUuids?.includes(booking.invoiceUuid)
+        )
+        // return findBookings({
+        //   criteria: {
+        //     ids: bookings
+        //       .filter(
+        //         (booking) =>
+        //           booking.invoiceUuid &&
+        //           unpaidBillUuids?.includes(booking.invoiceUuid)
+        //       )
+        //       .map((booking) => booking.id)
+        //   },
+        //   fastify
+        // })
+      }
       return bookings
     }),
   getBookingEmail: procedure
@@ -713,6 +751,47 @@ export const adminBookingRoutes = ({
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
   getUnpaidBookings: procedure
+    .input(
+      z.object({
+        days: z.number()
+      })
+    )
+    .query(async ({ input }) => {
+      const { days } = input
+      const bookings = await findBookings({
+        criteria: {
+          until: new Date().toISOString().slice(0, 10),
+          from: subDays(new Date(), days).toISOString().slice(0, 10),
+          status: BOOKING_STATUS.APPROVED
+        }
+      })
+      const unpaidBookingUuids = bookings
+        .map((booking) => booking.invoiceUuid)
+        .filter((uuid): uuid is string => !!uuid)
+      if (fastify.slimfact && unpaidBookingUuids?.length) {
+        const unpaidBills = await fastify.slimfact.admin.getInvoices.query({
+          uuids: unpaidBookingUuids,
+          status: InvoiceStatus.BILL,
+          paid: false
+        })
+
+        const unpaidBillUuids = unpaidBills?.map((bill) => bill.uuid)
+
+        return findBookings({
+          criteria: {
+            ids: bookings
+              .filter(
+                (booking) =>
+                  booking.invoiceUuid &&
+                  unpaidBillUuids?.includes(booking.invoiceUuid)
+              )
+              .map((booking) => booking.id)
+          },
+          fastify
+        })
+      }
+    }),
+  getBookingInvoices: procedure
     .input(
       z.object({
         days: z.number()

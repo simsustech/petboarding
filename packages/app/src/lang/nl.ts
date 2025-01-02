@@ -558,6 +558,15 @@ const lang: Language = {
     messages: {
       dragAndDrop: 'Sleep de huisdieren naar de kennels.'
     }
+  },
+  financial: {
+    title: 'Financieel',
+    total: 'Totaal',
+    payment: {
+      amountDue: 'Te betalen',
+      amountPaid: 'Betaald',
+      amountRefunded: 'Terugbetaald'
+    }
   }
 }
 

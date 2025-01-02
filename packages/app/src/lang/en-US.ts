@@ -546,6 +546,15 @@ const lang: Language = {
     messages: {
       dragAndDrop: 'Drag and drop the pets into the kennels.'
     }
+  },
+  financial: {
+    title: 'Financial',
+    total: 'Total',
+    payment: {
+      amountDue: 'Amount due',
+      amountPaid: 'Amount paid',
+      amountRefunded: 'Amount refunded'
+    }
   }
 }
 

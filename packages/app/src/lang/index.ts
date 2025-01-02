@@ -514,6 +514,15 @@ export interface Language {
       dragAndDrop: string
     }
   }
+  financial: {
+    title: string
+    total: string
+    payment: {
+      amountDue: string
+      amountPaid: string
+      amountRefunded: string
+    }
+  }
 }
 
 import type { Ref } from 'vue'
