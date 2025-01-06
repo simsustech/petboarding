@@ -172,6 +172,15 @@ const formatDate = (date: string | null) => {
 }
 
 const futureDateOptionsFn = (date: string) => {
-  return date >= dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+  return (
+    date >= dateUtil.formatDate(new Date(), 'YYYY/MM/DD') &&
+    date <
+      dateUtil.formatDate(
+        dateUtil.addToDate(new Date(), {
+          months: 3
+        }),
+        'YYYY/MM/DD'
+      )
+  )
 }
 </script>
