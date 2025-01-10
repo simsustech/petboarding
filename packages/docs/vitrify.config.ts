@@ -10,7 +10,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
         closeBundle: () => {
           render({
             inputPath: new URL('./build/Caddyfile', import.meta.url),
-            outputPath: new URL(`./dist/static/Caddyfile`, import.meta.url)
+            outputPath: new URL(`./dist/static/Caddyfile`, import.meta.url),
+            templateVariables: {}
           })
         }
       }
