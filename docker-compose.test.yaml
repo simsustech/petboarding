@@ -63,7 +63,10 @@ services:
       # API env variables
       VITE_API_HOSTNAME: localhost:3000
       VITE_LICENSE_KEY: undefined
-      VITE_TITLE: Petboarding staging
+      VITE_TITLE: Petboarding
+      VITE_SASS_VARIABLE_PRIMARY: "#4EBDC2"
+      VITE_SASS_VARIABLE_SECONDARY: "#237175"
+      VITE_SASS_VARIABLE_ACCENT: "#C2AF3A"
       POSTGRES_HOST: database
       POSTGRES_DB: petboarding
       POSTGRES_PASSWORD: ufgouifdgjdfg
@@ -75,7 +78,7 @@ services:
       OIDC_COOKIES_KEYS: 7JOoAPoC5232uJiUdDd+7EUuyFFcZqQJwsAQDnoldZI=
       OTP_SECRET_FILE: nonsecure
       OTP_VALIDITY_SECONDS: 3600
-      EMAIL_FOOTER: "Petboarding staging"
+      EMAIL_FOOTER: "Petboarding <info@petboarding.app>"
     command:
       [
         "sh",
