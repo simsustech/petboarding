@@ -258,32 +258,9 @@ const bookingCostsHandler: BookingCostsHandler = ({
       }
     }
   }
-  for (const vacationDays of vacations.map((vacation) =>
-    getOverlappingDaysInIntervals(
-      {
-        start: parse(startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(endDate, 'yyyy-MM-dd', new Date())
-      },
-      {
-        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
-      }
-    )
-  )) {
-    if (vacationDays > 0) {
-      lines.push({
-        description: 'Vacation surcharge',
-        listPrice: 100,
-        listPriceIncludesTax: true,
-        quantity: pets.length * (vacationDays + 1),
-        quantityPerMille: false,
-        discount: 0,
-        taxRate: 21
-      })
-    }
-  }
+
+  let holidayDays = 0
   if (dateHolidays && eachDayOfInterval) {
-    let holidayDays = 0
     const holidays = new dateHolidays()
     const surchargeHolidays: string[] = []
     surchargeHolidays.forEach((holiday) => holidays.setHoliday(holiday, 'en'))
@@ -306,6 +283,36 @@ const bookingCostsHandler: BookingCostsHandler = ({
         taxRate: 21
       })
     }
+  }
+
+  const vacationDays = vacations
+    .map((vacation) =>
+      getOverlappingDaysInIntervals(
+        {
+          start: parse(startDate, 'yyyy-MM-dd', new Date()),
+          end: parse(endDate, 'yyyy-MM-dd', new Date())
+        },
+        {
+          start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+          end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+        }
+      )
+    )
+    .reduce((acc, cur) => {
+      if (cur > 0) acc += cur + 1
+      return acc
+    }, 0)
+
+  if (vacationDays - holidayDays > 0) {
+    lines.push({
+      description: 'Vacation surcharge',
+      listPrice: 100,
+      listPriceIncludesTax: true,
+      quantity: pets.length * (vacationDays - holidayDays),
+      quantityPerMille: false,
+      discount: 0,
+      taxRate: 21
+    })
   }
 
   let computedInvoiceCosts
