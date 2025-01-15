@@ -216,15 +216,21 @@ function onDrop(e) {
   if (e.target.draggable === true) {
     return
   }
+  let kennel = e.target
 
+  for (let i = 0; i < 4; i++) {
+    if (!kennel.id?.match(/(kennel|waitlist)(.*)/)) {
+      kennel = kennel.parentNode
+    }
+  }
   const draggedId = e.dataTransfer.getData('text')
   const draggedEl = document.getElementById(draggedId)
   let petId: number | undefined
   if (draggedId) petId = Number(draggedId.match(/pet(.*)/).at(1))
   let kennelId: number | undefined | null
-  if (e.target.id) {
-    if (e.target.id === 'waitlist') kennelId = null
-    else kennelId = Number(e.target.id?.match(/kennel(.*)/).at(1))
+  if (kennel.id) {
+    if (kennel.id === 'waitlist') kennelId = null
+    else kennelId = Number(kennel.id?.match(/kennel(.*)/).at(1))
   }
 
   // check if original parent node
@@ -239,12 +245,12 @@ function onDrop(e) {
     ]
   petKennel.kennelId = kennelId
 
-  if (petKennel.bookingId) {
+  if (petKennel.bookingId && petKennel.kennelId) {
     useMutation('employee.setBookingPetKennel', {
       args: petKennel,
       immediate: true
     })
-  } else if (petKennel.daycareDateId) {
+  } else if (petKennel.daycareDateId && petKennel.kennelId) {
     useMutation('employee.setDaycareDatePetKennel', {
       args: petKennel,
       immediate: true
