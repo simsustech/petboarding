@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from 'vue-router'
 
+const blogPages = import.meta.glob('../pages/blog/*.vue')
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -31,6 +33,26 @@ const routes: RouteRecordRaw[] = [
             component: () => import('../pages/documentation/Users.vue')
           }
         ]
+      },
+      {
+        path: 'blog',
+        component: () => import('../pages/BlogPage.vue')
+      },
+      {
+        path: 'blog',
+        component: () => import('../pages/BlogWrapper.vue'),
+        children: Object.entries(blogPages).map(([key, value]) => {
+          const path = key
+            .split('/')
+            .at(-1)
+            ?.replace('.vue', '')
+            .replaceAll(' ', '-')
+
+          return {
+            path: path!,
+            component: value
+          }
+        })
       }
     ]
   },

@@ -116,7 +116,7 @@
         <q-space horizontal />
         <div class="column">
           <div class="row">
-            <div class="text-subtitle1">Copyright © 2024 simsustech</div>
+            <div class="text-subtitle1">Copyright © 2025 simsustech</div>
           </div>
           <div class="row">
             <a href="https://www.simsus.tech"> https://www.simsus.tech </a>
@@ -190,6 +190,11 @@ const pages = ref({
       icon: 'reviews'
     },
     {
+      id: 'blog',
+      label: 'Blog',
+      icon: 'rss_feed'
+    },
+    {
       id: 'contact',
       label: 'Contact',
       icon: 'person'
@@ -210,6 +215,11 @@ const pages = ref({
       id: 'testimonials',
       label: 'Testimonials',
       icon: 'reviews'
+    },
+    {
+      id: 'blog',
+      label: 'Blog',
+      icon: 'rss_feed'
     },
     {
       id: 'contact',
