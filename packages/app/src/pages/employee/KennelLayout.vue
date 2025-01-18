@@ -245,12 +245,12 @@ function onDrop(e) {
     ]
   petKennel.kennelId = kennelId
 
-  if (petKennel.bookingId && petKennel.kennelId) {
+  if (petKennel.bookingId) {
     useMutation('employee.setBookingPetKennel', {
       args: petKennel,
       immediate: true
     })
-  } else if (petKennel.daycareDateId && petKennel.kennelId) {
+  } else if (petKennel.daycareDateId) {
     useMutation('employee.setDaycareDatePetKennel', {
       args: petKennel,
       immediate: true
