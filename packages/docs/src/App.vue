@@ -35,7 +35,7 @@ useMeta(() => ({
     keywords: {
       name: 'keywords',
       content:
-        'petboarding, saas, pets, dogs, cats, software, booking, bookings, reservation, reservations, daycare, appointment'
+        'petboarding, saas, pets, dogs, cats, software, booking, bookings, reservation, reservations, daycare, appointment, hondenpension, reserveringen, boekingen, dierenpension, pension'
     },
     equiv: {
       'http-equiv': 'Content-Type',
