@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt'
-import * as compressTag from 'compress-tag'
 import { db } from '../index.js'
 import env from '@vitrify/tools/env'
 import { OPENING_TIME_TYPE } from '../types.js'
-const { c } = compressTag
 
 const ADMIN_PASSWORD = env.read('PETBOARDING_ADMIN_PASSWORD')
 if (!ADMIN_PASSWORD)
@@ -84,96 +82,96 @@ const seed = async () => {
     }
   ]
 
-  const emailTemplates = [
-    {
-      name: 'cancelBooking',
-      subject: 'Your booking has been canceled.',
-      body: c`<h4>Your booking has been canceled.</h4>
-      <p>
-          Dear {{customer.firstName}} {{customer.lastName}},
-      </p>
-      <p>
-          This email is to inform you that the booking from
-          <b>{{startDate}} {{startTime}}</b> until
-          <b>{{endDate}} {{endTime}}</b> for your pets
-          <b>{{pets}}</b>
-          has been canceled with the following reason:
-          {{reason}}.
-          Please note that a cancelation fee may apply.
-      </p>
-      <p>
-          Kind regards
-      </p>`
-    },
-    {
-      name: 'approveBooking',
-      subject: c`Your booking has been approved\\{{#if requiredDownPaymentAmount}} (down payment required!)\\{{/if}}.`,
-      body: c`<h4>Thanks for your booking.</h4>
-      <p>
-          Dear {{customer.firstName}} {{customer.lastName}},
-      </p>
-      \\{{#if requiredDownPaymentAmount}}
-        <p style="color:red;">
-          This booking requires a down payment. Open the bill with the link below to pay the down payment.
-          <br />
-          <b>If you do not pay the down payment within 5 days your booking will automatically be canceled.</b>
-        </p>
-      \\{{/if}}
-      \\{{#if invoiceUrl}}
-        <p>
-        <a href="\\{{invoiceUrl}}">Click here to view and pay the bill for this booking.</a>
-        </p>
-      \\{{/if}}
-      <p>
-          This email is to inform you that the booking from
-          <b>{{startDate}} {{startTime}}</b> until
-          <b>{{endDate}} {{endTime}}</b> for your pets
-          <b>{{pets}}</b>
-          has been approved.
-      </p>
-      <p>
-          Kind regards
-      </p>`
-    },
-    {
-      name: 'rejectBooking',
-      subject: 'Your booking has been rejected.',
-      body: c`<p>
-        Dear {{customer.firstName}} {{customer.lastName}},
-      </p>
-      <p>
-          Unfortunately we have to reject your booking from
-          <b>{{startDate}} {{startTime}}</b> until
-          <b>{{endDate}} {{endTime}}</b> for your pets
-          <b>{{pets}}</b>.
-      </p>
-      <p>
-          Kind regards
-      </p>`
-    },
-    {
-      name: 'standbyBooking',
-      subject: 'Your booking has been placed on the reserve list.',
-      body: c`<p>
-        Dear {{customer.firstName}} {{customer.lastName}},
-      </p>
-      <p>
-          Your booking from
-          <b>{{startDate}} {{startTime}}</b> until
-          <b>{{endDate}} {{endTime}}</b> for your pets
-          <b>{{pets}}</b> has been placed on the reserve list.
-          We advise you to find an alternative.
-      </p>
-      <p>
-          Kind regards
-      </p>`
-    },
-    {
-      name: 'replyBooking',
-      subject: 'With regard to your booking.',
-      body: ''
-    }
-  ]
+  // const emailTemplates = [
+  //   {
+  //     name: 'cancelBooking',
+  //     subject: 'Your booking has been canceled.',
+  //     body: c`<h4>Your booking has been canceled.</h4>
+  //     <p>
+  //         Dear {{customer.firstName}} {{customer.lastName}},
+  //     </p>
+  //     <p>
+  //         This email is to inform you that the booking from
+  //         <b>{{startDate}} {{startTime}}</b> until
+  //         <b>{{endDate}} {{endTime}}</b> for your pets
+  //         <b>{{pets}}</b>
+  //         has been canceled with the following reason:
+  //         {{reason}}.
+  //         Please note that a cancelation fee may apply.
+  //     </p>
+  //     <p>
+  //         Kind regards
+  //     </p>`
+  //   },
+  //   {
+  //     name: 'approveBooking',
+  //     subject: c`Your booking has been approved\\{{#if requiredDownPaymentAmount}} (down payment required!)\\{{/if}}.`,
+  //     body: c`<h4>Thanks for your booking.</h4>
+  //     <p>
+  //         Dear {{customer.firstName}} {{customer.lastName}},
+  //     </p>
+  //     \\{{#if requiredDownPaymentAmount}}
+  //       <p style="color:red;">
+  //         This booking requires a down payment. Open the bill with the link below to pay the down payment.
+  //         <br />
+  //         <b>If you do not pay the down payment within 5 days your booking will automatically be canceled.</b>
+  //       </p>
+  //     \\{{/if}}
+  //     \\{{#if invoiceUrl}}
+  //       <p>
+  //       <a href="\\{{invoiceUrl}}">Click here to view and pay the bill for this booking.</a>
+  //       </p>
+  //     \\{{/if}}
+  //     <p>
+  //         This email is to inform you that the booking from
+  //         <b>{{startDate}} {{startTime}}</b> until
+  //         <b>{{endDate}} {{endTime}}</b> for your pets
+  //         <b>{{pets}}</b>
+  //         has been approved.
+  //     </p>
+  //     <p>
+  //         Kind regards
+  //     </p>`
+  //   },
+  //   {
+  //     name: 'rejectBooking',
+  //     subject: 'Your booking has been rejected.',
+  //     body: c`<p>
+  //       Dear {{customer.firstName}} {{customer.lastName}},
+  //     </p>
+  //     <p>
+  //         Unfortunately we have to reject your booking from
+  //         <b>{{startDate}} {{startTime}}</b> until
+  //         <b>{{endDate}} {{endTime}}</b> for your pets
+  //         <b>{{pets}}</b>.
+  //     </p>
+  //     <p>
+  //         Kind regards
+  //     </p>`
+  //   },
+  //   {
+  //     name: 'standbyBooking',
+  //     subject: 'Your booking has been placed on the reserve list.',
+  //     body: c`<p>
+  //       Dear {{customer.firstName}} {{customer.lastName}},
+  //     </p>
+  //     <p>
+  //         Your booking from
+  //         <b>{{startDate}} {{startTime}}</b> until
+  //         <b>{{endDate}} {{endTime}}</b> for your pets
+  //         <b>{{pets}}</b> has been placed on the reserve list.
+  //         We advise you to find an alternative.
+  //     </p>
+  //     <p>
+  //         Kind regards
+  //     </p>`
+  //   },
+  //   {
+  //     name: 'replyBooking',
+  //     subject: 'With regard to your booking.',
+  //     body: ''
+  //   }
+  // ]
 
   // const announcements = []
 
@@ -182,7 +180,7 @@ const seed = async () => {
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
-  await db.insertInto('emailTemplates').values(emailTemplates).execute()
+  // await db.insertInto('emailTemplates').values(emailTemplates).execute()
 
   const adminAccounts = await db
     .insertInto('accounts')

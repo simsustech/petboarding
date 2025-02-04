@@ -237,9 +237,9 @@ const bookingCostsHandler: BookingCostsHandler = ({
   //     ...item,
   //     discount:
   //       index > 0
-  //         ? 0.15 *
+  //         ? Math.round(0.15 *
   //           ((item.listPrice * item.quantity) /
-  //             (item.quantityPerMille ? 1000 : 1))
+  //             (item.quantityPerMille ? 1000 : 1)))
   //         : 0
   //   }))
 
