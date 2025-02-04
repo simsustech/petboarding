@@ -258,7 +258,7 @@ const lang: Language = {
       unpaidBookings: (days) =>
         `Niet betaalde reserveringen van afgelopen ${days} dagen.`,
       approvedAfterDownPayment:
-        'Mijn reservering wordt pas goedgekeurd nadat de aanbetaling volgens de instructies in de bevestigingsemail is ontvangen.'
+        'Wanneer een aanbetaling is vereist zal ik deze uitsluitend voldoen volgens de instructies in de bevestigingsemail.'
     },
     helpers: {
       status: {
