@@ -249,7 +249,7 @@ const lang: Language = {
       openInvoice: 'Open bill or invoice.',
       invoiceSynchronized: 'Costs of bill or invoice have been synchronized.',
       submitted:
-        'Your booking has been submitted. You will receive an confirmation by email. Please take into account that a down payment may be required.',
+        'Your booking has been submitted. You will receive an confirmation by email. If a down payment is required, please follow the instructions in the email.',
       skipDownPayment: 'Skip down payment',
       unpaidBookings: (days) => `Unpaid bookings of last ${days} days.`,
       approvedAfterDownPayment:

@@ -253,7 +253,7 @@ const lang: Language = {
       invoiceSynchronized:
         'Kosten van rekening of factuur zijn gesynchroniseerd.',
       submitted:
-        'Uw reservering is verstuurd. U krijgt een bevestiging per email. Houd rekening met een eventuele aanbetaling.',
+        'Uw reservering is verstuurd. U krijgt een bevestiging per email. Als een aanbetaling is vereist, volg dan a.u.b. de instructies in de email.',
       skipDownPayment: 'Aanbetaling overslaan',
       unpaidBookings: (days) =>
         `Niet betaalde reserveringen van afgelopen ${days} dagen.`,
