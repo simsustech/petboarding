@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import { hashPassword } from '@vitrify/tools/scrypt'
 import * as compressTag from 'compress-tag'
 import { db } from '../index.js'
 import { sql } from 'kysely'
@@ -308,7 +308,7 @@ const seed = async () => {
       {
         accountId: admin.id,
         provider: 'native',
-        password: await bcrypt.hash('qjiNWdT8L', 10)
+        password: await hashPassword('qjiNWdT8L')
       }
     ])
     .execute()

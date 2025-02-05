@@ -43,8 +43,6 @@
   },
   "pnpm": {
     "overrides": {
-      "@petboarding/app": "workspace:*",
-      "@petboarding/api": "workspace:*",
       "vite": "6.0.11"
     }
   }

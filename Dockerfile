@@ -36,7 +36,7 @@ RUN rm /build/app/dist/ssr/client/termsandconditions.pdf.gz
 RUN rm /build/app/dist/ssr/client/privacypolicy.pdf.gz
 RUN rm /build/app/dist/ssr/client/logo.svg.gz
 
-FROM node:20-slim as api
+FROM node:lts-slim as api
 LABEL "io.petboarding.vendor"="simsustech"
 RUN apt-get update && apt-get install -y curl
 WORKDIR /app

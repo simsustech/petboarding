@@ -1,5 +1,5 @@
 // import generateData from './fake/generateData.js'
-import bcrypt from 'bcrypt'
+import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import { sql } from 'kysely'
 import { readFileSync } from 'fs'
@@ -230,7 +230,7 @@ const seed = async () => {
       {
         accountId: admin.id,
         provider: 'native',
-        password: await bcrypt.hash('qjiNWdT8L', 10)
+        password: await hashPassword('qjiNWdT8L')
       }
     ])
     .execute()
