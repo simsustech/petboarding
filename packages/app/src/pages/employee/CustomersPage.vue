@@ -92,7 +92,12 @@
               }}</q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-btn flat icon="open_in_new" @click="openBookings" />
+              <q-btn
+                :label="lang.open"
+                flat
+                icon="open_in_new"
+                @click="openBookings"
+              />
             </q-item-section>
           </q-item>
           <booking-item
