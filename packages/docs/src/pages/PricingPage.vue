@@ -18,7 +18,10 @@
       <div v-if="lang === 'nl'">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5">Geïnteresserd?</a>
+            <a class="text-h5"
+              >Geïnteresserd? Abonneer nu en krijg de eerste drie maanden
+              gratis!</a
+            >
           </div>
           <div class="row justify-center">
             <q-btn
@@ -32,7 +35,10 @@
       <div v-if="lang === 'en-US'">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5">Interested?</a>
+            <a class="text-h5"
+              >Interested? Subscribe now and get the first three months for
+              free.</a
+            >
           </div>
           <div class="row justify-center">
             <q-no-ssr>
@@ -70,7 +76,7 @@ const options = ref({
   nl: [
     {
       title: 'Standaard',
-      price: '€40 per maand',
+      price: '€35 per maand',
       pros: [
         {
           message: 'Online klantomgeving.'
@@ -122,7 +128,7 @@ const options = ref({
   'en-US': [
     {
       title: 'Standard',
-      price: '€40 per month',
+      price: '€35 per month',
       pros: [
         {
           message: 'Online customer portal.'

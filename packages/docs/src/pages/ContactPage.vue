@@ -8,10 +8,13 @@
       </a>
     </div>
     <div v-if="$q.lang.isoName === 'en-US'">
-      <a>Heeft u vragen of suggesties? Neem gerust contact op.</a><br />
       <a
-        >Bent u een software ontwikkelaar? Bekijk dan ook eens de
-        <a href="https://github.com/simsustech/petboarding">Github pagina</a>.
+        >Do you have a question or suggestion? Please feel free to contact
+        us.</a
+      ><br />
+      <a
+        >Are you a software developer? Then take a look at the
+        <a href="https://github.com/simsustech/petboarding">Github page</a>.
       </a>
     </div>
     <q-list>
@@ -24,6 +27,15 @@
             <q-no-ssr>
               {{ email }}
             </q-no-ssr>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item>
+        <q-item-section>
+          <q-item-label>
+            <a href="https://chat.whatsapp.com/Jh3kDph5NQS2whQbTghaT1"
+              >WhatsApp</a
+            >
           </q-item-label>
         </q-item-section>
       </q-item>
