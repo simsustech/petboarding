@@ -6,7 +6,7 @@
   <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   <daycare-calendar-month
     :events="events"
-    :selected-events="selectedEvents"
+    :selected-events="selectedEventIds"
     @click:event="onClickEvent"
     @change-date="onChangeDate"
     @open-pets="openPets"
@@ -20,7 +20,7 @@
       </div>
     </template>
   </daycare-calendar-month>
-  <div v-if="selectedEvents.length" class="row justify-center q-ma-lg">
+  <div v-if="selectedEventIds.length" class="row justify-center q-ma-lg">
     <q-btn
       :label="lang.daycare.replies.approve"
       color="green"
@@ -62,7 +62,7 @@ import { Customer, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 const { useQuery, useMutation } = await createUseTrpc()
 const router = useRouter()
 
-const status = ref('pending')
+const status = ref(DAYCARE_DATE_STATUS.PENDING)
 const startDate = ref('')
 const endDate = ref('')
 const onChangeDate: InstanceType<
@@ -71,6 +71,7 @@ const onChangeDate: InstanceType<
   startDate.value = data.start
   endDate.value = data.end
 }
+const selectedEventIds = ref<number[]>([])
 
 const { data, execute } = useQuery('admin.getDaycareDates', {
   args: reactive({
@@ -80,11 +81,17 @@ const { data, execute } = useQuery('admin.getDaycareDates', {
   })
 })
 
+const { data: selectedEventsData } = useQuery('admin.getDaycareDates', {
+  args: reactive({
+    ids: selectedEventIds.value
+  })
+})
+
 const $q = useQuasar()
 const lang = useLang()
 
 const showLastNames = ref(false)
-const getLastName = (customer: Customer) => {
+const getLastName = (customer: Customer | null) => {
   if (customer?.lastName) {
     const lastName = customer.lastName.substring(0, 8)
     if (customer.lastName.length > 8) return lastName + '...'
@@ -101,32 +108,45 @@ const events = computed(() =>
     lastName: showLastNames.value ? getLastName(daycareDate.customer) : null,
     petIds: daycareDate.pets.map((pet) => pet.id),
     date: daycareDate.date,
-    details: daycareDate.customer.lastName,
+    details: daycareDate.customer?.lastName,
     // details: lang.value.daycare.status[daycareDate.status],
     icon: DAYCARE_DATE_ICONS[daycareDate.status]
   }))
 )
-const selectedEvents = ref<number[]>([])
+
+const selectedEvents = computed(() =>
+  selectedEventsData.value?.map((daycareDate) => ({
+    id: daycareDate.id,
+    bgcolor: DAYCARE_DATE_COLORS[daycareDate.status],
+    title: daycareDate.pets.map((pet) => pet.name).join('<br />'),
+    petNames: daycareDate.pets.map((pet) => pet.name),
+    lastName: showLastNames.value ? getLastName(daycareDate.customer) : null,
+    petIds: daycareDate.pets.map((pet) => pet.id),
+    date: daycareDate.date,
+    details: daycareDate.customer?.lastName,
+    // details: lang.value.daycare.status[daycareDate.status],
+    icon: DAYCARE_DATE_ICONS[daycareDate.status]
+  }))
+)
+
 const onClickEvent = (event: QCalendarEvent) => {
-  if (selectedEvents.value.includes(event.id)) {
-    const index = selectedEvents.value.findIndex((id) => id === event.id)
-    if (index !== -1) selectedEvents.value.splice(index, 1)
+  if (selectedEventIds.value.includes(event.id)) {
+    const index = selectedEventIds.value.findIndex((id) => id === event.id)
+    if (index !== -1) selectedEventIds.value.splice(index, 1)
   } else {
-    selectedEvents.value.push(event.id)
+    selectedEventIds.value.push(event.id)
   }
 }
 
+// prettier-ignore
 const numberOfPets = computed(() => {
   return (
-    data.value?.reduce(
-      (acc, cur) => {
-        acc[cur.date] = acc[cur.date]
-          ? acc[cur.date] + cur.pets.length
-          : cur.pets.length
-        return acc
-      },
-      {} as Record<string, number>
-    ) || {}
+    data.value?.reduce((acc, cur) => {
+      acc[cur.date] = acc[cur.date]
+        ? acc[cur.date] + cur.pets.length
+        : cur.pets.length
+      return acc
+    }, {} as Record<string, number>) || {}
   )
 })
 
@@ -141,9 +161,8 @@ const approveDaycareDates = async () => {
     html: true,
     message: `${
       lang.value.daycare.messages.verifyApproval
-    } <br /> <b>${events.value
-      ?.filter((ev) => selectedEvents.value.includes(ev.id))
-      .map((event) => {
+    } <br /> <b>${selectedEvents.value
+      ?.map((event) => {
         return `${event.title} ${dateFormatter(
           new Date(event.date),
           $q.lang.isoName
@@ -152,12 +171,12 @@ const approveDaycareDates = async () => {
       .join('<br />')}</b>`
   }).onOk(async () => {
     const { immediatePromise } = useMutation('admin.approveDaycareDateIds', {
-      args: selectedEvents.value,
+      args: selectedEventIds.value,
       immediate: true
     })
     await immediatePromise
     await execute()
-    selectedEvents.value = []
+    selectedEventIds.value = []
   })
 }
 
@@ -166,9 +185,8 @@ const rejectDaycareDates = async () => {
     html: true,
     message: `${
       lang.value.daycare.messages.verifyRejection
-    } <br /> <b>${events.value
-      ?.filter((ev) => selectedEvents.value.includes(ev.id))
-      .map((event) => {
+    } <br /> <b>${selectedEvents.value
+      ?.map((event) => {
         return `${event.title} ${dateFormatter(
           new Date(event.date),
           $q.lang.isoName
@@ -177,12 +195,12 @@ const rejectDaycareDates = async () => {
       .join('<br />')}</b>`
   }).onOk(async () => {
     const { immediatePromise } = useMutation('admin.rejectDaycareDateIds', {
-      args: selectedEvents.value,
+      args: selectedEventIds.value,
       immediate: true
     })
     await immediatePromise
     await execute()
-    selectedEvents.value = []
+    selectedEventIds.value = []
   })
 }
 
@@ -191,9 +209,8 @@ const standbyDaycareDates = async () => {
     html: true,
     message: `${
       lang.value.daycare.messages.verifyStandby
-    } <br /> <b>${events.value
-      ?.filter((ev) => selectedEvents.value.includes(ev.id))
-      .map((event) => {
+    } <br /> <b>${selectedEvents.value
+      ?.map((event) => {
         return `${event.title} ${dateFormatter(
           new Date(event.date),
           $q.lang.isoName
@@ -202,12 +219,12 @@ const standbyDaycareDates = async () => {
       .join('<br />')}</b>`
   }).onOk(async () => {
     const { immediatePromise } = useMutation('admin.standbyDaycareDateIds', {
-      args: selectedEvents.value,
+      args: selectedEventIds.value,
       immediate: true
     })
     await immediatePromise
     await execute()
-    selectedEvents.value = []
+    selectedEventIds.value = []
   })
 }
 

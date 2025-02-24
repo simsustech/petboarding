@@ -20,17 +20,31 @@ export const adminDaycareRoutes = ({
 }) => ({
   getDaycareDates: procedure
     .input(
-      z.object({
-        from: z.string(),
-        until: z.string(),
-        status: z.nativeEnum(DAYCARE_DATE_STATUS)
-      })
+      z
+        .object({
+          ids: z.number().array()
+        })
+        .or(
+          z.object({
+            from: z.string(),
+            until: z.string(),
+            status: z.nativeEnum(DAYCARE_DATE_STATUS)
+          })
+        )
     )
     .query(async ({ input }) => {
-      const { from, until, status } = input
+      let ids, from, until, status
+      if ('ids' in input) {
+        ids = input.ids
+      } else {
+        from = input.from
+        until = input.until
+        status = input.status
+      }
 
       const daycareDates = await findDaycareDates({
         criteria: {
+          ids,
           from,
           until,
           status
