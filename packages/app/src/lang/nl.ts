@@ -496,7 +496,7 @@ const lang: Language = {
         'U dient een dagopvang abonnement af te nemen voordat u dagopvang datums kunt invullen.',
       remainingDays: 'Resterende dagen',
       noRemainingDays:
-        'U heeft alle dagen gebruikt. Verzend de geselecteerde datums en koop een nieuw dagopvang abonnement.'
+        'U heeft alle dagen gebruikt. Verzend de geselecteerde datums en koop vervolgens een nieuw dagopvang abonnement om de resterende datums in te vullen.'
     }
   },
   errors: {

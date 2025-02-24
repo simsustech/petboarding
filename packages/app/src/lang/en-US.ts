@@ -484,7 +484,7 @@ const lang: Language = {
         'You need to purchase a daycare subscription before you can add daycare dates.',
       remainingDays: 'Remaining days',
       noRemainingDays:
-        'You have used all days. Submit the selected dates and purchase a new daycare subscription.'
+        'You have used all days. Submit the selected dates and then purchase a new daycare subscription to fill in the remaining days.'
     }
   },
   errors: {
