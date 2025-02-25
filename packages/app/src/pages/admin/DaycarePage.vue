@@ -83,7 +83,7 @@ const { data, execute } = useQuery('admin.getDaycareDates', {
 
 const { data: selectedEventsData } = useQuery('admin.getDaycareDates', {
   args: reactive({
-    ids: selectedEventIds.value
+    ids: selectedEventIds
   })
 })
 
