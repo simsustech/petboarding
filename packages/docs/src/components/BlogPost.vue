@@ -7,7 +7,12 @@
       <div class="text-subtitle2"><slot name="date" /></div>
     </q-card-section>
 
-    <q-card-section class="q-pt-none blog-post__content">
+    <q-card-section
+      class="q-pt-none blog-post__content"
+      :style="{
+        'max-height': url ? '300px' : undefined
+      }"
+    >
       <slot name="default" />
     </q-card-section>
 
@@ -30,7 +35,7 @@ defineProps<Props>()
 .blog-post {
   max-width: 750px;
 }
-.blog-post__content > p {
+.blog-post__content {
   white-space: nowrap;
   overflow: hidden;
   text-wrap: auto;
