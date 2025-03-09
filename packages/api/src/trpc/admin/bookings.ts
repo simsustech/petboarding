@@ -109,7 +109,9 @@ export const createOrUpdateSlimfactInvoice = async ({
   customer: Pick<
     Customer,
     'firstName' | 'lastName' | 'address' | 'postalCode' | 'city'
-  > & { account: { email: string } | null }
+  > & {
+    account: { email: string } | null
+  }
   locale?: 'en-US' | 'nl'
 }): Promise<
   | {
@@ -513,6 +515,9 @@ export const adminBookingRoutes = ({
                 requiredDownPaymentAmount
               })
               await fastify.mailer.sendMail({
+                from: `Petboarding <noreply@petboarding.app>`,
+                replyTo:
+                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -554,6 +559,9 @@ export const adminBookingRoutes = ({
           if (customer?.account?.email) {
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
+                from: `Petboarding <noreply@petboarding.app>`,
+                replyTo:
+                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -597,6 +605,9 @@ export const adminBookingRoutes = ({
           if (customer?.account?.email) {
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
+                from: `Petboarding <noreply@petboarding.app>`,
+                replyTo:
+                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -635,6 +646,9 @@ export const adminBookingRoutes = ({
           if (customer?.account?.email) {
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
+                from: `Petboarding <noreply@petboarding.app>`,
+                replyTo:
+                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText

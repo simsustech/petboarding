@@ -224,6 +224,10 @@ export const userBookingRoutes = ({
                   })
 
                   await fastify.mailer.sendMail({
+                    from: `Petboarding <noreply@petboarding.app>`,
+                    replyTo:
+                      env.read('MAIL_REPLY_TO') ||
+                      env.read('VITE_MAIL_REPLY_TO'),
                     to: customer.account?.email,
                     bcc: MAIL_BCC,
                     subject,

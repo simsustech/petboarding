@@ -1291,6 +1291,9 @@ export async function checkDownPayments({
             })
 
             await fastify.mailer.sendMail({
+              from: `Petboarding <noreply@petboarding.app>`,
+              replyTo:
+                env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
               to: customer.account?.email,
               bcc: env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC'),
               subject,
