@@ -26,6 +26,7 @@
     :max-number-of-selected-dates="maxNumberOfSelectedDates"
     :current-daycare-dates="currentDaycareDates"
     :allow-past-dates="allowPastDates"
+    :disabled-dates="disabledDates"
     @update:selected-dates="($event) => (selectedDates = $event)"
     @change-date="onChangeDate"
   ></daycare-calendar-month>
@@ -71,6 +72,7 @@ import { QForm, QSelect } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
 import { Timestamp } from '@quasar/quasar-ui-qcalendar'
+
 export interface Props {
   pets: Pet[]
   termsAndConditionsUrl?: string
@@ -79,6 +81,7 @@ export interface Props {
   customerDaycareSubscriptions?: CustomerDaycareSubscription[]
   currentDaycareDates?: DaycareDate[]
   allowPastDates?: boolean
+  disabledDates?: string[]
 }
 
 const props = defineProps<Props>()

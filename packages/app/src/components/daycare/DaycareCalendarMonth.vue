@@ -22,6 +22,7 @@
           :weekdays="weekdays"
           :selected-dates="selectedDates"
           :locale="$q.lang.isoName"
+          :disabled-days="disabledDates"
           :disabled-before="disabledBefore"
           :disabled-after="disabledAfter"
           :style="{
@@ -37,7 +38,11 @@
         >
           <template #head-day-button="{ scope }">
             <q-btn
-              :disabled="!selectedDates || scope.timestamp.disabled"
+              :disabled="
+                !selectedDates ||
+                scope.timestamp.disabled ||
+                disabledDates?.includes(scope.timestamp.date)
+              "
               class="q-mb-sm q-mt-sm"
               size="md"
               :outline="!getButtonColor(scope.timestamp.date)"
@@ -144,6 +149,7 @@ export interface Props {
   selectedEvents?: number[]
   selectedDates?: string[]
   disabledWeekdays?: number[]
+  disabledDates?: string[]
   focusable?: boolean
   hoverable?: boolean
   onOpenPets?: unknown

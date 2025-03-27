@@ -105,6 +105,7 @@
         "
         :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
         :current-daycare-dates="data"
+        :disabled-dates="disabledDates"
         @submit="createDaycare"
         @change-date="onChangeDate"
       ></daycare-form>
@@ -185,6 +186,11 @@ const {
   }
   // immediate: true
 })
+
+const { data: disabledDates, execute: executeDisabledDates } = useQuery(
+  'public.getUnavailableDaycareDates',
+  {}
+)
 
 const updateDaycareFormRef = ref<typeof DaycareForm>()
 const createDaycareFormRef = ref<typeof DaycareForm>()
@@ -370,6 +376,7 @@ onMounted(async () => {
   await executeCustomer()
   await executeDaycareSubscriptions()
   await executeCustomerDaycareSubscriptions()
+  await executeDisabledDates()
   // await execute()
   ready.value = true
 })

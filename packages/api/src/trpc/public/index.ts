@@ -7,8 +7,11 @@ import { findCategories } from '../../repositories/category.js'
 import { findAnnouncements } from '../../repositories/announcement.js'
 import type { Category } from '../../repositories/category.js'
 import type { FastifyInstance } from 'fastify'
-import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
-import { ANNOUNCEMENT_TYPE } from 'src/zod/announcement.js'
+import { findDaycareSubscriptions } from '../../repositories/daycareSubscription.js'
+import { ANNOUNCEMENT_TYPE } from '../../zod/announcement.js'
+import Holidays from 'date-holidays'
+import { PERIOD_TYPE } from '../../kysely/types.js'
+import { eachDayOfInterval } from '../../tools.js'
 
 export const publicRoutes = ({
   // fastify,
@@ -87,5 +90,50 @@ export const publicRoutes = ({
     })
 
     return daycareSubscriptions
+  }),
+  getUnavailableDaycareDates: procedure.query(async () => {
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+
+    const holidays = new Holidays()
+    const periods = await findPeriods({
+      criteria: {
+        types: [
+          PERIOD_TYPE.UNAVAILABLE_FOR_ALL,
+          PERIOD_TYPE.UNAVAILABLE_FOR_DAYCARE
+        ]
+      }
+    })
+
+    const openingTimes = await findOpeningTimes({
+      criteria: {
+        disabled: false
+      }
+    })
+    for (const openingTime of openingTimes) {
+      if (openingTime.unavailableHolidays) {
+        openingTime.unavailableHolidays.forEach((holiday) => {
+          holidays.setHoliday(holiday, 'en')
+        })
+      }
+    }
+    return [
+      ...holidays
+        .getHolidays(currentYear)
+        .map((holidayDate) => holidayDate.date.slice(0, 10)),
+      ...holidays
+        .getHolidays(currentYear + 1)
+        .map((holidayDate) => holidayDate.date.slice(0, 10)),
+      ...periods.reduce((acc, cur) => {
+        acc = [
+          ...acc,
+          ...eachDayOfInterval({
+            start: new Date(cur.startDate),
+            end: new Date(cur.endDate)
+          }).map((date) => date.toISOString().slice(0, 10))
+        ]
+        return acc
+      }, [] as string[])
+    ]
   })
 })
