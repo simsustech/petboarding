@@ -98,7 +98,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
-import { BOOKING_STATUS } from '@petboarding/api/zod'
+import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { useRoute } from 'vue-router'
 import { date as dateUtil } from 'quasar'
 
@@ -137,7 +137,7 @@ const { data: daycareOccupancy, execute: executeDaycareOccupancy } = useQuery(
   {
     args: reactive({
       date: selectedDate,
-      status: BOOKING_STATUS.APPROVED
+      status: DAYCARE_DATE_STATUS.APPROVED
     })
   }
 )

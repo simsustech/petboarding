@@ -6,6 +6,7 @@ import { parseISO, startOfMonth, endOfMonth } from 'date-fns'
 import { findBookings } from '../../repositories/booking.js'
 import { findDaycareDates } from '../../repositories/daycare.js'
 import type { FastifyInstance } from 'fastify'
+import { DAYCARE_DATE_STATUS } from '../../kysely/types.js'
 import { eachDayOfInterval } from '../../tools.js'
 
 export const adminOccupancyRoutes = ({
@@ -59,7 +60,7 @@ export const adminOccupancyRoutes = ({
     .input(
       z.object({
         date: z.string(),
-        status: z.nativeEnum(BOOKING_STATUS)
+        status: z.nativeEnum(DAYCARE_DATE_STATUS)
       })
     )
     .query(async ({ input }) => {
