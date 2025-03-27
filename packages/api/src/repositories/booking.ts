@@ -2,7 +2,6 @@ import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import env from '@vitrify/tools/env'
 import {
-  eachDayOfInterval,
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
@@ -54,6 +53,7 @@ import { bookingEmailTemplates } from '../templates/email/bookings/index.js'
 import { compileEmail } from '../trpc/admin/bookings.js'
 import { findCustomer } from './customer.js'
 import { bookingTemplates } from '../templates/booking/index.js'
+import { eachDayOfInterval } from '../tools.js'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>

@@ -1,11 +1,12 @@
 import { t } from '../index.js'
 import * as z from 'zod'
 import { BOOKING_STATUS } from '../../zod/booking.js'
-import { parseISO, eachDayOfInterval, startOfMonth, endOfMonth } from 'date-fns'
+import { parseISO, startOfMonth, endOfMonth } from 'date-fns'
 
 import { findBookings } from '../../repositories/booking.js'
 import { findDaycareDates } from '../../repositories/daycare.js'
 import type { FastifyInstance } from 'fastify'
+import { eachDayOfInterval } from '../../tools.js'
 
 export const adminOccupancyRoutes = ({
   // fastify,
@@ -39,8 +40,8 @@ export const adminOccupancyRoutes = ({
         bookings?.reduce(
           (acc, cur) => {
             const dates = eachDayOfInterval({
-              start: parseISO(cur.startDate),
-              end: parseISO(cur.endDate)
+              start: new Date(cur.startDate),
+              end: new Date(cur.endDate)
             })
             for (const date of dates) {
               const dateString = date.toISOString().slice(0, 10)

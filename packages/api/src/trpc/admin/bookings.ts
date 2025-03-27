@@ -6,9 +6,6 @@ import handlebars from 'handlebars'
 import {
   format,
   parseISO,
-  eachDayOfInterval,
-  startOfMonth,
-  endOfMonth,
   parse,
   isBefore,
   isAfter,
@@ -661,44 +658,44 @@ export const adminBookingRoutes = ({
 
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
-  getOccupancy: procedure
-    .input(
-      z.object({
-        date: z.string(),
-        status: z.nativeEnum(BOOKING_STATUS)
-      })
-    )
-    .query(async ({ input }) => {
-      const { date, status } = input
-      const parsedDate = parseISO(date)
-      const from = startOfMonth(parsedDate).toISOString().slice(0, 10)
-      const until = endOfMonth(parsedDate).toISOString().slice(0, 10)
+  // getOccupancy: procedure
+  //   .input(
+  //     z.object({
+  //       date: z.string(),
+  //       status: z.nativeEnum(BOOKING_STATUS)
+  //     })
+  //   )
+  //   .query(async ({ input }) => {
+  //     const { date, status } = input
+  //     const parsedDate = parseISO(date)
+  //     const from = startOfMonth(parsedDate).toISOString().slice(0, 10)
+  //     const until = endOfMonth(parsedDate).toISOString().slice(0, 10)
 
-      const bookings = await findBookings({
-        criteria: {
-          from,
-          until,
-          status
-        }
-      })
+  //     const bookings = await findBookings({
+  //       criteria: {
+  //         from,
+  //         until,
+  //         status
+  //       }
+  //     })
 
-      const occupancy: Record<string, number> =
-        bookings?.reduce(
-          (acc, cur) => {
-            const dates = eachDayOfInterval({
-              start: parseISO(cur.startDate),
-              end: parseISO(cur.endDate)
-            })
-            for (const date of dates) {
-              const dateString = date.toISOString().slice(0, 10)
-              acc[dateString] = acc[dateString] ? acc[dateString] + 1 : 1
-            }
-            return acc
-          },
-          {} as Record<string, number>
-        ) || {}
-      return occupancy
-    }),
+  //     const occupancy: Record<string, number> =
+  //       bookings?.reduce(
+  //         (acc, cur) => {
+  //           const dates = eachDayOfInterval({
+  //             start: new Date(cur.startDate),
+  //             end: new Date(cur.endDate)
+  //           })
+  //           for (const date of dates) {
+  //             const dateString = date.toISOString().slice(0, 10)
+  //             acc[dateString] = acc[dateString] ? acc[dateString] + 1 : 1
+  //           }
+  //           return acc
+  //         },
+  //         {} as Record<string, number>
+  //       ) || {}
+  //     return occupancy
+  //   }),
   updateBookingService: procedure
     .input(bookingService)
     .mutation(async ({ input }) => {

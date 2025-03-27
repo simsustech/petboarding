@@ -2,7 +2,6 @@ import type { ParsedCategory } from './zod/category.js'
 import type { BookingPets, BookingService } from './repositories/booking.js'
 import type { BOOKING_STATUS } from './zod/booking.js'
 import type {
-  eachDayOfInterval,
   getOverlappingDaysInIntervals,
   parse,
   isBefore,
@@ -20,6 +19,7 @@ import {
   type RawInvoiceSurcharge,
   computeInvoiceCosts
 } from '@modular-api/fastify-checkout'
+import { eachDayOfInterval } from './tools.js'
 
 export type BookingCostsHandler = (params: {
   period: {
