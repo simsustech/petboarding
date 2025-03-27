@@ -1,10 +1,6 @@
 import * as z from 'zod'
-
-export enum PERIOD_TYPE {
-  UNAVAILABLE_FOR_BOOKINGS = 'unavailableforbookings',
-  UNAVAILABLE_FOR_DAYCARE = 'unavailablefordaycare',
-  UNAVAILABLE_FOR_ALL = 'unavailableforall'
-}
+import { PERIOD_TYPE } from '../kysely/types'
+export { PERIOD_TYPE }
 
 export const periodValidation = {
   id: z.number().optional(),

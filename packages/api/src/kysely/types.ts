@@ -29,6 +29,12 @@ export enum DAYCARE_DATE_STATUS {
   STANDBY = 'standby'
 }
 
+export enum PERIOD_TYPE {
+  UNAVAILABLE_FOR_ALL = 'unavailableforall',
+  UNAVAILABLE_FOR_BOOKINGS = 'unavailableforbookings',
+  UNAVAILABLE_FOR_DAYCARE = 'unavailablefordaycare'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -256,7 +262,7 @@ export interface Periods {
   id: Generated<number>
   startDate: string
   endDate: string
-  type: string
+  type: PERIOD_TYPE
   comments: string | null
   minimumRatingForException: Generated<number | null>
   createdAt: Generated<string>

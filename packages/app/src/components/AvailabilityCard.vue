@@ -42,6 +42,8 @@ import { DatePicker } from '@simsustech/quasar-components/form'
 import { useLang } from '../lang/index.js'
 import { useConfiguration } from '../configuration.js'
 import { date as dateUtil } from 'quasar'
+import { PERIOD_TYPE } from '@petboarding/api/zod'
+
 const props = defineProps<{
   periods: Period[]
   allowPastDates?: boolean
@@ -76,9 +78,10 @@ watch(toggle, (val) => {
   if (val) dateRange.value = { from: '', to: '' }
 })
 const unavailablePeriods = computed(() => {
-  const periodTypes = ['unavailableforall']
-  if (toggle.value === 'boarding') periodTypes.push('unavailableforbookings')
-  else periodTypes.push('unavailablefordaycare')
+  const periodTypes = [PERIOD_TYPE.UNAVAILABLE_FOR_ALL]
+  if (toggle.value === 'boarding')
+    periodTypes.push(PERIOD_TYPE.UNAVAILABLE_FOR_BOOKINGS)
+  else periodTypes.push(PERIOD_TYPE.UNAVAILABLE_FOR_DAYCARE)
   return periods.value
     ?.filter((period) => periodTypes.includes(period.type))
     .map((period) => ({

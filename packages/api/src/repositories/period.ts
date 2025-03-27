@@ -1,5 +1,5 @@
 import { db } from '../kysely/index.js'
-import type { Periods } from '../kysely/types.d.ts'
+import type { PERIOD_TYPE, Periods } from '../kysely/types.d.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 type Period = Selectable<Periods>
@@ -19,7 +19,7 @@ function find({
   criteria,
   select
 }: {
-  criteria: Partial<Period> & { from?: string }
+  criteria: Partial<Period> & { from?: string; types?: PERIOD_TYPE[] }
   select?: (keyof Period)[]
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -39,6 +39,10 @@ function find({
     query = query.where('endDate', '>', criteria.endDate)
   }
 
+  if (criteria.types?.length) {
+    query = query.where('type', 'in', criteria.types)
+  }
+
   return query.select(select)
 }
 
@@ -46,7 +50,7 @@ export async function findPeriod({
   criteria,
   select
 }: {
-  criteria: Partial<Period> & { from?: string }
+  criteria: Partial<Period> & { from?: string; types?: PERIOD_TYPE[] }
   select?: (keyof Period)[]
 }) {
   const query = find({ criteria, select })
@@ -58,7 +62,7 @@ export async function findPeriods({
   criteria,
   select
 }: {
-  criteria: Partial<Period> & { from?: string }
+  criteria: Partial<Period> & { from?: string; types?: PERIOD_TYPE[] }
   select?: (keyof Period)[]
 }) {
   const query = find({
