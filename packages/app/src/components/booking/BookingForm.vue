@@ -197,8 +197,8 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
         done
       })
     }
+    done(false)
   })
-  done(false)
 }
 
 const { pets, allowPastDates } = toRefs(props)
