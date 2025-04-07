@@ -71,7 +71,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-6 q-pr-xs">
+      <div class="col-5 q-pr-xs">
         <q-field :label="lang.pet.fields.breed" stack-label dense>
           <template #control>
             <div
@@ -83,7 +83,7 @@
           </template>
         </q-field>
       </div>
-      <div class="col-6">
+      <div class="col-7">
         <div class="row">
           <div class="col-12">
             <q-field :label="lang.pet.fields.food" stack-label dense>
