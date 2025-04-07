@@ -1,65 +1,68 @@
 <template>
   <q-list>
-    <q-expansion-item>
+    <q-item-label header>
+      <div class="row items-center justify-between">
+        <div>
+          {{ lang.customerDaycareSubscription.title }}
+        </div>
+        <q-toggle
+          v-model="showAll"
+          :label="lang.customerDaycareSubscription.labels.showAll"
+        />
+      </div>
+    </q-item-label>
+    <q-expansion-item
+      v-for="(
+        customerDaycareSubscription, index
+      ) in filteredCustomerDaycareSubscriptions"
+      :key="index"
+      :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
+      :content-inset-level="1"
+    >
       <template #header>
+        <q-item-section avatar>
+          <q-icon
+            v-if="
+              customerDaycareSubscription.status ===
+              CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+            "
+            name="paid"
+            color="green"
+          />
+        </q-item-section>
         <q-item-section>
+          <q-item-label overline>
+            {{
+              `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
+            }}
+          </q-item-label>
           <q-item-label>
-            {{ lang.customerDaycareSubscription.title }}
+            {{ customerDaycareSubscription.daycareSubscription?.description }}
+          </q-item-label>
+          <q-item-label caption>
+            {{
+              `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
+            }}
           </q-item-label>
         </q-item-section>
+        <q-item-section side>
+          <invoice-button
+            v-if="customerDaycareSubscription.invoice"
+            :model-value="customerDaycareSubscription.invoice"
+          />
+        </q-item-section>
       </template>
-
-      <q-expansion-item
-        v-for="(customerDaycareSubscription, index) in modelValue"
-        :key="index"
-        :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
-        :content-inset-level="1"
-      >
-        <template #header>
-          <q-item-section avatar>
-            <q-icon
-              v-if="
-                customerDaycareSubscription.status ===
-                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-              "
-              name="paid"
-              color="green"
-            />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label overline>
-              {{
-                `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
-              }}
-            </q-item-label>
-            <q-item-label>
-              {{ customerDaycareSubscription.daycareSubscription?.description }}
-            </q-item-label>
-            <q-item-label caption>
-              {{
-                `${customerDaycareSubscription.numberOfDaysUsed} / ${customerDaycareSubscription.daycareSubscription?.numberOfDays}`
-              }}
-            </q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <invoice-button
-              v-if="customerDaycareSubscription.invoice"
-              :model-value="customerDaycareSubscription.invoice"
-            />
-          </q-item-section>
-        </template>
-        <q-item>
-          <q-item-section>
-            <q-item-label>
-              {{
-                customerDaycareSubscription.daycareDates
-                  ?.map((daycareDate) => formatDate(daycareDate.date))
-                  .join(', ')
-              }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-expansion-item>
+      <q-item>
+        <q-item-section>
+          <q-item-label>
+            {{
+              customerDaycareSubscription.daycareDates
+                ?.map((daycareDate) => formatDate(daycareDate.date))
+                .join(', ')
+            }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-expansion-item>
   </q-list>
 </template>
@@ -79,11 +82,14 @@ import {
 // import { useConfiguration } from '../../configuration.js'
 import { useQuasar } from 'quasar'
 import InvoiceButton from '../InvoiceButton.vue'
+import { computed, ref, toRefs } from 'vue'
 
 export interface Props {
   modelValue: CustomerDaycareSubscription[]
 }
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const { modelValue } = toRefs(props)
 
 const lang = useLang()
 // const configuration = useConfiguration()
@@ -98,4 +104,19 @@ const dateFormatter = (date: Date, locale: string) =>
 const formatDate = (date: string) => {
   return `${dateFormatter(new Date(date), $q.lang.isoName)}`
 }
+
+const showAll = ref(false)
+const filteredCustomerDaycareSubscriptions = computed(() =>
+  modelValue.value.filter((customerDaycareSubscription) => {
+    if (showAll.value === false) {
+      return (
+        customerDaycareSubscription.expirationDate &&
+        customerDaycareSubscription.expirationDate >
+          new Date().toISOString().slice(0, 10) &&
+        customerDaycareSubscription.numberOfDaysRemaining
+      )
+    }
+    return true
+  })
+)
 </script>

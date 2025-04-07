@@ -30,6 +30,7 @@ const lang: Language = {
   previous: 'Previous',
   delete: 'Delete',
   documentation: 'Documentation',
+  add: 'Add',
   account: {
     title: 'Account',
     fields: {
@@ -477,7 +478,8 @@ const lang: Language = {
       overview: 'Overview',
       purchase: 'Purchase',
       purchaseSubscription: 'Purchase subscription',
-      checkout: 'Checkout'
+      checkout: 'Checkout',
+      showAll: 'Show all'
     },
     messages: {
       daycareSubscriptionRequired:

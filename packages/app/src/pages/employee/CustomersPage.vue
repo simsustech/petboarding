@@ -18,34 +18,8 @@
         </q-menu>
       </q-btn>
     </template>
-    <template #top-bar-buttons>
-      <q-btn
-        :style="{ visibility: id ? 'visible' : 'hidden' }"
-        outline
-        icon="add"
-      >
-        <q-menu>
-          <q-list>
-            <q-item clickable @click="openCreateBookingDialog">
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.booking }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable @click="openCreateDaycareDialog">
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.daycare.daycare }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
-    </template>
 
-    <div style="margin-top: 80px">
+    <div style="margin-top: 80px" class="">
       <div class="row q-gutter-md">
         <customer-card
           v-if="data"
@@ -56,86 +30,117 @@
           @update="openUpdateDialog"
         />
 
-        <q-list v-if="contactPeople">
-          <q-item>
-            <q-item-section>
-              <q-item-label header>
-                {{ lang.contactPerson.title }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <contact-person-item
-            v-for="contactPerson in contactPeople"
-            :key="contactPerson.id"
-            :model-value="contactPerson"
-          />
-        </q-list>
+        <q-card>
+          <q-list v-if="contactPeople">
+            <q-item>
+              <q-item-section>
+                <q-item-label header>
+                  {{ lang.contactPerson.title }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <contact-person-item
+              v-for="contactPerson in contactPeople"
+              :key="contactPerson.id"
+              :model-value="contactPerson"
+            />
+          </q-list>
+        </q-card>
 
-        <q-list v-if="pets">
-          <q-item>
-            <q-item-section>
-              <q-item-label header>{{ lang.pet.title }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn flat icon="open_in_new" @click="openPets" />
-            </q-item-section>
-          </q-item>
-          <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
-        </q-list>
+        <q-card>
+          <q-list v-if="pets">
+            <q-item>
+              <q-item-section>
+                <q-item-label header>{{ lang.pet.title }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn flat icon="open_in_new" @click="openPets" />
+              </q-item-section>
+            </q-item>
+            <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
+          </q-list>
+        </q-card>
       </div>
-      <div class="row">
-        <q-list v-if="upcomingBookings" class="col-12 col-md-6">
-          <q-item>
-            <q-item-section>
-              <q-item-label header>{{
-                `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
-              }}</q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-btn
-                :label="lang.open"
-                flat
-                icon="open_in_new"
-                @click="openBookings"
-              />
-            </q-item-section>
-          </q-item>
-          <booking-item
-            v-for="booking in upcomingBookings"
-            :key="booking.id"
-            show-icon
-            :model-value="booking"
-          />
-        </q-list>
-        <q-expansion-item v-if="otherBookings" class="col-12 col-md-6">
-          <template #header>
-            <q-item-label header>
-              {{
-                `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
-              }}
-            </q-item-label>
-          </template>
-          <q-list v-if="otherBookings">
+
+      <q-card v-show="id" class="q-my-md q-pa-md">
+        <div class="row">
+          <q-list v-if="upcomingBookings" class="col-12 col-md-6">
+            <q-item>
+              <q-item-section>
+                <q-item-label header>{{
+                  `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
+                }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  :label="lang.open"
+                  flat
+                  icon="open_in_new"
+                  @click="openBookings"
+                />
+              </q-item-section>
+            </q-item>
             <booking-item
-              v-for="booking in otherBookings"
+              v-for="booking in upcomingBookings"
               :key="booking.id"
               show-icon
               :model-value="booking"
             />
           </q-list>
-        </q-expansion-item>
-      </div>
-      <div class="row">
-        <customer-daycare-subscriptions-list
-          v-if="customerDaycareSubscriptions"
-          :model-value="customerDaycareSubscriptions"
-        />
-      </div>
-      <div v-show="id">
-        <daycare-calendar-month :events="events" @change-date="onChangeDate">
-        </daycare-calendar-month>
-        <daycare-status-select v-model="daycareDatesStatus" />
-      </div>
+          <q-expansion-item v-if="otherBookings" class="col-12 col-md-6">
+            <template #header>
+              <q-item-label header>
+                {{
+                  `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
+                }}
+              </q-item-label>
+            </template>
+            <q-list v-if="otherBookings">
+              <booking-item
+                v-for="booking in otherBookings"
+                :key="booking.id"
+                show-icon
+                :model-value="booking"
+              />
+            </q-list>
+          </q-expansion-item>
+        </div>
+
+        <q-card-actions align="right" class="q-my-md q-px-md">
+          <q-btn
+            :label="lang.add"
+            icon="add"
+            color="primary"
+            @click="openCreateBookingDialog"
+          />
+        </q-card-actions>
+      </q-card>
+
+      <q-card v-show="id" class="q-pa-md">
+        <div class="row">
+          <customer-daycare-subscriptions-list
+            v-if="customerDaycareSubscriptions"
+            :model-value="customerDaycareSubscriptions"
+            :opened="true"
+          />
+        </div>
+        <div class="row justify-center">
+          <daycare-status-select v-model="daycareDatesStatus" />
+        </div>
+        <div class="row">
+          <daycare-calendar-month :events="events" @change-date="onChangeDate">
+          </daycare-calendar-month>
+        </div>
+
+        <q-card-actions align="right" class="q-px-md">
+          <q-btn
+            :label="lang.add"
+            icon="add"
+            color="primary"
+            @click="openCreateDaycareDialog"
+          />
+        </q-card-actions>
+      </q-card>
     </div>
   </resource-page>
 

@@ -28,6 +28,7 @@ export interface Language {
   previous: string
   delete: string
   documentation: string
+  add: string
   account: {
     title: string
     fields: {
@@ -452,6 +453,7 @@ export interface Language {
       purchase: string
       purchaseSubscription: string
       checkout: string
+      showAll: string
     }
     messages: {
       daycareSubscriptionRequired: string

@@ -30,6 +30,7 @@ const lang: Language = {
   previous: 'Vorige',
   delete: 'Verwijderen',
   documentation: 'Documentatie',
+  add: 'Toevoegen',
   account: {
     title: 'Account',
     fields: {
@@ -489,7 +490,8 @@ const lang: Language = {
       overview: 'Overzicht',
       purchase: 'Kopen',
       purchaseSubscription: 'Abonnement kopen',
-      checkout: 'Afrekenen'
+      checkout: 'Afrekenen',
+      showAll: 'Toon alle'
     },
     messages: {
       daycareSubscriptionRequired:
