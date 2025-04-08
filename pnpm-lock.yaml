@@ -46,8 +46,8 @@ importers:
         specifier: 8.1.1
         version: 8.1.1
       '@modular-api/api':
-        specifier: ^0.5.27
-        version: 0.5.27(bcryptjs@3.0.2)(fastify@5.2.2)(handlebars@4.7.8)(kysely@0.27.6)(openid-client@6.4.1)(otplib@12.0.1)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        specifier: ^0.5.28
+        version: 0.5.28(bcryptjs@3.0.2)(fastify@5.2.2)(handlebars@4.7.8)(kysely@0.27.6)(openid-client@6.4.1)(otplib@12.0.1)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
       '@modular-api/fastify-checkout':
         specifier: ^0.4.16
         version: 0.4.16(kysely@0.27.6)
@@ -1598,8 +1598,8 @@ packages:
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
 
-  '@modular-api/api@0.5.27':
-    resolution: {integrity: sha512-O7509jY4PU+g/nDQO6IgRmcCRF5KJRT5fDDgEoi2gC1oGcJBWhbmcVpSMKEiRqQhei7OSZIDJcBh2bb9rvy8UA==}
+  '@modular-api/api@0.5.28':
+    resolution: {integrity: sha512-pdmPO35aDhBYirR55s5fqtCCPYmJqOKK3cQiWNq1C3VphuR27DmoBfREzD6oC7irdRfg+T4b77U7dZRmuMwiiw==}
     peerDependencies:
       kysely: ^0.27.6
       openid-client: ^6.4.1
@@ -7239,7 +7239,7 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@modular-api/api@0.5.27(bcryptjs@3.0.2)(fastify@5.2.2)(handlebars@4.7.8)(kysely@0.27.6)(openid-client@6.4.1)(otplib@12.0.1)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
+  '@modular-api/api@0.5.28(bcryptjs@3.0.2)(fastify@5.2.2)(handlebars@4.7.8)(kysely@0.27.6)(openid-client@6.4.1)(otplib@12.0.1)(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@fastify/cookie': 11.0.2
       '@fastify/cors': 11.0.1
