@@ -3,7 +3,7 @@ import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify'
 import type { FastifyInstance } from 'fastify'
 import { SLIMFACT_ACCOUNT_ROLES } from '../zod/account.js'
 export declare const t: {
-  _config: import('@trpc/server').RootConfig<{
+  _config: import('@trpc/server/unstable-core-do-not-import').RootConfig<{
     ctx: {
       account: {
         id: string
@@ -11,94 +11,55 @@ export declare const t: {
       } | null
     }
     meta: object
-    errorShape: import('@trpc/server').DefaultErrorShape
-    transformer: import('@trpc/server').DefaultDataTransformer
+    errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+    transformer: false
   }>
-  procedure: import('@trpc/server').ProcedureBuilder<{
-    _config: import('@trpc/server').RootConfig<{
-      ctx: {
-        account: {
-          id: string
-          roles?: string[]
-        } | null
-      }
-      meta: object
-      errorShape: import('@trpc/server').DefaultErrorShape
-      transformer: import('@trpc/server').DefaultDataTransformer
-    }>
-    _ctx_out: {
+  procedure: import('@trpc/server/unstable-core-do-not-import').ProcedureBuilder<
+    {
       account: {
         id: string
         roles?: string[]
       } | null
-    }
-    _input_in: typeof import('@trpc/server').unsetMarker
-    _input_out: typeof import('@trpc/server').unsetMarker
-    _output_in: typeof import('@trpc/server').unsetMarker
-    _output_out: typeof import('@trpc/server').unsetMarker
-    _meta: object
-  }>
-  middleware: <
-    TNewParams extends import('@trpc/server').ProcedureParams<
-      import('@trpc/server').AnyRootConfig,
-      unknown,
-      unknown,
-      unknown,
-      unknown,
-      unknown,
+    },
+    object,
+    object,
+    typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+    typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+    typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+    typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+    false
+  >
+  middleware: <$ContextOverrides>(
+    fn: import('@trpc/server/unstable-core-do-not-import').MiddlewareFunction<
+      {
+        account: {
+          id: string
+          roles?: string[]
+        } | null
+      },
+      object,
+      object,
+      $ContextOverrides,
       unknown
     >
-  >(
-    fn: import('@trpc/server').MiddlewareFunction<
-      {
-        _config: import('@trpc/server').RootConfig<{
-          ctx: {
-            account: {
-              id: string
-              roles?: string[]
-            } | null
-          }
-          meta: object
-          errorShape: import('@trpc/server').DefaultErrorShape
-          transformer: import('@trpc/server').DefaultDataTransformer
-        }>
-        _ctx_out: {}
-        _input_out: typeof import('@trpc/server').unsetMarker
-        _input_in: unknown
-        _output_in: unknown
-        _output_out: unknown
-        _meta: object
-      },
-      TNewParams
-    >
-  ) => import('@trpc/server').MiddlewareBuilder<
+  ) => import('@trpc/server/unstable-core-do-not-import').MiddlewareBuilder<
     {
-      _config: import('@trpc/server').RootConfig<{
-        ctx: {
-          account: {
-            id: string
-            roles?: string[]
-          } | null
-        }
-        meta: object
-        errorShape: import('@trpc/server').DefaultErrorShape
-        transformer: import('@trpc/server').DefaultDataTransformer
-      }>
-      _ctx_out: {}
-      _input_out: typeof import('@trpc/server').unsetMarker
-      _input_in: unknown
-      _output_in: unknown
-      _output_out: unknown
-      _meta: object
+      account: {
+        id: string
+        roles?: string[]
+      } | null
     },
-    TNewParams
+    object,
+    $ContextOverrides,
+    unknown
   >
   router: <
-    TProcRouterRecord extends import('@trpc/server').ProcedureRouterRecord
+    TInput extends
+      import('@trpc/server/unstable-core-do-not-import').CreateRouterOptions
   >(
-    procedures: TProcRouterRecord
-  ) => import('@trpc/server').CreateRouterInner<
-    import('@trpc/server').RootConfig<{
+    input: TInput
+  ) => import('@trpc/server/unstable-core-do-not-import').BuiltRouter<
+    {
       ctx: {
         account: {
           id: string
@@ -106,16 +67,16 @@ export declare const t: {
         } | null
       }
       meta: object
-      errorShape: import('@trpc/server').DefaultErrorShape
-      transformer: import('@trpc/server').DefaultDataTransformer
-    }>,
-    TProcRouterRecord
+      errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+      transformer: false
+    },
+    import('@trpc/server/unstable-core-do-not-import').DecorateCreateRouterOptions<TInput>
   >
-  mergeRouters: typeof import('@trpc/server').mergeRouters
-  createCallerFactory: <
-    TRouter extends import('@trpc/server').Router<
-      import('@trpc/server').AnyRouterDef<
-        import('@trpc/server').RootConfig<{
+  mergeRouters: typeof import('@trpc/server/unstable-core-do-not-import').mergeRouters
+  createCallerFactory: <TRecord extends import('@trpc/server').RouterRecord>(
+    router: Pick<
+      import('@trpc/server/unstable-core-do-not-import').Router<
+        {
           ctx: {
             account: {
               id: string
@@ -123,100 +84,100 @@ export declare const t: {
             } | null
           }
           meta: object
-          errorShape: import('@trpc/server').DefaultErrorShape
-          transformer: import('@trpc/server').DefaultDataTransformer
-        }>,
-        any
-      >
+          errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+          transformer: false
+        },
+        TRecord
+      >,
+      '_def'
     >
-  >(
-    router: TRouter
-  ) => import('@trpc/server').RouterCaller<TRouter['_def']>
+  ) => import('@trpc/server/unstable-core-do-not-import').RouterCaller<
+    {
+      ctx: {
+        account: {
+          id: string
+          roles?: string[]
+        } | null
+      }
+      meta: object
+      errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+      transformer: false
+    },
+    TRecord
+  >
 }
-export declare const userProcedure: import('@trpc/server').ProcedureBuilder<{
-  _config: import('@trpc/server').RootConfig<{
-    ctx: {
-      account: {
-        id: string
-        roles?: string[]
-      } | null
-    }
-    meta: object
-    errorShape: import('@trpc/server').DefaultErrorShape
-    transformer: import('@trpc/server').DefaultDataTransformer
-  }>
-  _meta: object
-  _ctx_out: {
+export declare const userProcedure: import('@trpc/server/unstable-core-do-not-import').ProcedureBuilder<
+  {
     account: {
       id: string
       roles?: string[]
     } | null
-  }
-  _input_in: typeof import('@trpc/server').unsetMarker
-  _input_out: typeof import('@trpc/server').unsetMarker
-  _output_in: typeof import('@trpc/server').unsetMarker
-  _output_out: typeof import('@trpc/server').unsetMarker
-}>
-export declare const adminProcedure: import('@trpc/server').ProcedureBuilder<{
-  _config: import('@trpc/server').RootConfig<{
-    ctx: {
-      account: {
-        id: string
-        roles?: string[]
-      } | null
-    }
-    meta: object
-    errorShape: import('@trpc/server').DefaultErrorShape
-    transformer: import('@trpc/server').DefaultDataTransformer
-  }>
-  _meta: object
-  _ctx_out: {
+  },
+  object,
+  {
     account: {
       id: string
       roles?: string[]
     } | null
-  }
-  _input_in: typeof import('@trpc/server').unsetMarker
-  _input_out: typeof import('@trpc/server').unsetMarker
-  _output_in: typeof import('@trpc/server').unsetMarker
-  _output_out: typeof import('@trpc/server').unsetMarker
-}>
-export declare const employeeProcedure: import('@trpc/server').ProcedureBuilder<{
-  _config: import('@trpc/server').RootConfig<{
-    ctx: {
-      account: {
-        id: string
-        roles?: string[]
-      } | null
-    }
-    meta: object
-    errorShape: import('@trpc/server').DefaultErrorShape
-    transformer: import('@trpc/server').DefaultDataTransformer
-  }>
-  _meta: object
-  _ctx_out: {
+  },
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  false
+>
+export declare const adminProcedure: import('@trpc/server/unstable-core-do-not-import').ProcedureBuilder<
+  {
     account: {
       id: string
       roles?: string[]
     } | null
-  }
-  _input_in: typeof import('@trpc/server').unsetMarker
-  _input_out: typeof import('@trpc/server').unsetMarker
-  _output_in: typeof import('@trpc/server').unsetMarker
-  _output_out: typeof import('@trpc/server').unsetMarker
-}>
+  },
+  object,
+  {
+    account: {
+      id: string
+      roles?: string[]
+    } | null
+  },
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  false
+>
+export declare const employeeProcedure: import('@trpc/server/unstable-core-do-not-import').ProcedureBuilder<
+  {
+    account: {
+      id: string
+      roles?: string[]
+    } | null
+  },
+  object,
+  {
+    account: {
+      id: string
+      roles?: string[]
+    } | null
+  },
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  typeof import('@trpc/server/unstable-core-do-not-import').unsetMarker,
+  false
+>
 export declare const createRouter: (
   fastify: FastifyInstance
-) => import('@trpc/server').CreateRouterInner<
-  import('@trpc/server').RootConfig<{
+) => import('@trpc/server/unstable-core-do-not-import').BuiltRouter<
+  {
     ctx: object
     meta: object
-    errorShape: import('@trpc/server').DefaultErrorShape
-    transformer: import('@trpc/server').DefaultDataTransformer
-  }>,
-  {
-    user: import('@trpc/server').CreateRouterInner<
-      import('@trpc/server').RootConfig<{
+    errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+    transformer: false
+  },
+  import('@trpc/server/unstable-core-do-not-import').DecorateCreateRouterOptions<{
+    user: import('@trpc/server/unstable-core-do-not-import').BuiltRouter<
+      {
         ctx: {
           account: {
             id: string
@@ -224,98 +185,26 @@ export declare const createRouter: (
           } | null
         }
         meta: object
-        errorShape: import('@trpc/server').DefaultErrorShape
-        transformer: import('@trpc/server').DefaultDataTransformer
-      }>,
-      {
-        getInvoices: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          import('@modular-api/fastify-checkout').Invoice[]
-        >
-        getReceipts: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          import('@modular-api/fastify-checkout').Invoice[]
-        >
-        getBills: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          import('@modular-api/fastify-checkout').Invoice[]
-        >
-      }
+        errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+        transformer: false
+      },
+      import('@trpc/server/unstable-core-do-not-import').DecorateCreateRouterOptions<{
+        getInvoices: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: import('@modular-api/fastify-checkout').Invoice[]
+        }>
+        getReceipts: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: import('@modular-api/fastify-checkout').Invoice[]
+        }>
+        getBills: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: import('@modular-api/fastify-checkout').Invoice[]
+        }>
+      }>
     >
-    admin: import('@trpc/server').CreateRouterInner<
-      import('@trpc/server').RootConfig<{
+    admin: import('@trpc/server/unstable-core-do-not-import').BuiltRouter<
+      {
         ctx: {
           account: {
             id: string
@@ -323,229 +212,102 @@ export declare const createRouter: (
           } | null
         }
         meta: object
-        errorShape: import('@trpc/server').DefaultErrorShape
-        transformer: import('@trpc/server').DefaultDataTransformer
-      }>,
-      {
-        healthcheck: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          boolean
-        >
-        createSubscription: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string | null
-              companyId: number
-              clientId: number
-              numberPrefixTemplate: string
-              locale: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              startDate: string
-              endDate: string | null
-              cronSchedule: string
-              type: 'invoice' | 'bill'
-              id?: number | undefined
-              uuid?: string | undefined
-              active?: boolean | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              createdAt?: string | undefined
-              company?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              client?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-            }
-            _input_out: {
-              name: string | null
-              companyId: number
-              clientId: number
-              numberPrefixTemplate: string
-              locale: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              startDate: string
-              endDate: string | null
-              cronSchedule: string
-              type: 'invoice' | 'bill'
-              id?: number | undefined
-              uuid?: string | undefined
-              active?: boolean | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              createdAt?: string | undefined
-              company?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              client?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+        transformer: false
+      },
+      import('@trpc/server/unstable-core-do-not-import').DecorateCreateRouterOptions<{
+        healthcheck: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: boolean
+        }>
+        createSubscription: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            name: string | null
+            companyId: number
+            clientId: number
+            numberPrefixTemplate: string
+            locale: string
+            currency: 'EUR' | 'USD'
+            lines: {
+              listPrice: number
+              listPriceIncludesTax: boolean
+              taxRate: number
+              description: string
+              quantity: number
+              quantityPerMille: boolean
+              discount: number
+            }[]
+            paymentTermDays: number
+            startDate: string
+            endDate: string | null
+            cronSchedule: string
+            type: 'invoice' | 'bill'
+            id?: number | undefined
+            uuid?: string | undefined
+            active?: boolean | undefined
+            discounts?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description: string
+                }[]
+              | undefined
+            surcharges?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description: string
+                }[]
+              | undefined
+            createdAt?: string | undefined
+            company?:
+              | {
+                  name: string
+                  address: string
+                  bic: string
+                  city: string
+                  cocNumber: string
+                  country: string
+                  email: string
+                  emailBcc: string
+                  iban: string
+                  postalCode: string
+                  prefix: string
+                  vatIdNumber: string
+                  id?: number | undefined
+                  contactPersonName?: string | null | undefined
+                  logoSvg?: string | null | undefined
+                  telephoneNumber?: string | null | undefined
+                  website?: string | null | undefined
+                  defaultNumberPrefixTemplate?: string | null | undefined
+                  defaultLocale?: string | null | undefined
+                  defaultCurrency?: 'EUR' | 'USD' | null | undefined
+                }
+              | undefined
+            client?:
+              | {
+                  address: string
+                  city: string
+                  email: string
+                  postalCode: string
+                  number?: string | null | undefined
+                  id?: number | undefined
+                  cocNumber?: string | null | undefined
+                  contactPersonName?: string | undefined
+                  country?: string | undefined
+                  vatIdNumber?: string | null | undefined
+                  companyName?: string | undefined
+                  accountId?: number | null | undefined
+                }
+              | undefined
+          }
+          output: {
             id: number
             uuid: string
             name: string | null
-            active: boolean | undefined
+            active: boolean | null
             companyId: number
             clientId: number
             numberPrefixTemplate: string
@@ -555,11 +317,9 @@ export declare const createRouter: (
             discounts:
               | import('@modular-api/fastify-checkout').RawInvoiceDiscount[]
               | null
-              | undefined
             surcharges:
               | import('@modular-api/fastify-checkout').RawInvoiceSurcharge[]
               | null
-              | undefined
             paymentTermDays: number
             startDate: string
             endDate: string | null
@@ -567,319 +327,125 @@ export declare const createRouter: (
             type: 'invoice' | 'bill'
             createdAt: string
           }
-        >
-        updateSubscription: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string | null
-              companyId: number
-              clientId: number
-              numberPrefixTemplate: string
-              locale: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              startDate: string
-              endDate: string | null
-              cronSchedule: string
-              type: 'invoice' | 'bill'
-              id?: number | undefined
-              uuid?: string | undefined
-              active?: boolean | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              createdAt?: string | undefined
-              company?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              client?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-            }
-            _input_out: {
-              name: string | null
-              companyId: number
-              clientId: number
-              numberPrefixTemplate: string
-              locale: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              startDate: string
-              endDate: string | null
-              cronSchedule: string
-              type: 'invoice' | 'bill'
-              id?: number | undefined
-              uuid?: string | undefined
-              active?: boolean | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description: string
-                  }[]
-                | undefined
-              createdAt?: string | undefined
-              company?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              client?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        startSubscription: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          void
-        >
-        stopSubscription: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        getSubscriptions: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in:
+        }>
+        updateSubscription: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            name: string | null
+            companyId: number
+            clientId: number
+            numberPrefixTemplate: string
+            locale: string
+            currency: 'EUR' | 'USD'
+            lines: {
+              listPrice: number
+              listPriceIncludesTax: boolean
+              taxRate: number
+              description: string
+              quantity: number
+              quantityPerMille: boolean
+              discount: number
+            }[]
+            paymentTermDays: number
+            startDate: string
+            endDate: string | null
+            cronSchedule: string
+            type: 'invoice' | 'bill'
+            id?: number | undefined
+            uuid?: string | undefined
+            active?: boolean | undefined
+            discounts?:
               | {
-                  active?: boolean | undefined
-                  companyId?: number | null | undefined
-                  clientId?: number | null | undefined
-                  pagination?:
-                    | {
-                        sortBy: 'id'
-                        limit: number
-                        offset: number
-                        descending: boolean
-                      }
-                    | undefined
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description: string
+                }[]
+              | undefined
+            surcharges?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description: string
+                }[]
+              | undefined
+            createdAt?: string | undefined
+            company?:
+              | {
+                  name: string
+                  address: string
+                  bic: string
+                  city: string
+                  cocNumber: string
+                  country: string
+                  email: string
+                  emailBcc: string
+                  iban: string
+                  postalCode: string
+                  prefix: string
+                  vatIdNumber: string
+                  id?: number | undefined
+                  contactPersonName?: string | null | undefined
+                  logoSvg?: string | null | undefined
+                  telephoneNumber?: string | null | undefined
+                  website?: string | null | undefined
+                  defaultNumberPrefixTemplate?: string | null | undefined
+                  defaultLocale?: string | null | undefined
+                  defaultCurrency?: 'EUR' | 'USD' | null | undefined
                 }
               | undefined
-            _input_out:
+            client?:
               | {
-                  active?: boolean | undefined
-                  companyId?: number | null | undefined
-                  clientId?: number | null | undefined
-                  pagination?:
-                    | {
-                        sortBy: 'id'
-                        limit: number
-                        offset: number
-                        descending: boolean
-                      }
-                    | undefined
+                  address: string
+                  city: string
+                  email: string
+                  postalCode: string
+                  number?: string | null | undefined
+                  id?: number | undefined
+                  cocNumber?: string | null | undefined
+                  contactPersonName?: string | undefined
+                  country?: string | undefined
+                  vatIdNumber?: string | null | undefined
+                  companyName?: string | undefined
+                  accountId?: number | null | undefined
                 }
               | undefined
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
-            [x: string]: any
+          }
+          output: import('kysely').UpdateResult
+        }>
+        startSubscription: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+          }
+          output: void
+        }>
+        stopSubscription: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+          }
+          output: import('kysely').UpdateResult
+        }>
+        getSubscriptions: import('@trpc/server').TRPCQueryProcedure<{
+          input:
+            | {
+                active?: boolean | undefined
+                companyId?: number | null | undefined
+                clientId?: number | null | undefined
+                pagination?:
+                  | {
+                      sortBy: 'id'
+                      limit: number
+                      offset: number
+                      descending: boolean
+                    }
+                  | undefined
+              }
+            | undefined
+          output: {
             id: number
             uuid: string
             name: string | null
-            active: boolean | undefined
+            active: boolean | null
             companyId: number
             clientId: number
             numberPrefixTemplate: string
@@ -889,11 +455,9 @@ export declare const createRouter: (
             discounts:
               | import('@modular-api/fastify-checkout').RawInvoiceDiscount[]
               | null
-              | undefined
             surcharges:
               | import('@modular-api/fastify-checkout').RawInvoiceSurcharge[]
               | null
-              | undefined
             paymentTermDays: number
             startDate: string
             endDate: string | null
@@ -919,78 +483,26 @@ export declare const createRouter: (
                 'name'
               >
             } | null
+            total?: number | undefined
           }[]
-        >
-        createInitialNumberForPrefix: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              companyId: number
-              numberPrefix: string
-              initialNumber: number
-              id?: number | undefined
-            }
-            _input_out: {
-              companyId: number
-              numberPrefix: string
-              initialNumber: number
-              id?: number | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        createInitialNumberForPrefix: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            companyId: number
+            numberPrefix: string
+            initialNumber: number
+            id?: number | undefined
+          }
+          output: {
             id: number
             companyId: number
             numberPrefix: string
             initialNumber: number
           }
-        >
-        getInitialNumberForPrefixes: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          {
+        }>
+        getInitialNumberForPrefixes: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: {
             id: number
             companyId: number
             numberPrefix: string
@@ -999,512 +511,173 @@ export declare const createRouter: (
               name: string
             } | null
           }[]
-        >
-        updateInitialNumberForPrefix: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              companyId: number
-              numberPrefix: string
-              initialNumber: number
-              id?: number | undefined
-            }
-            _input_out: {
-              companyId: number
-              numberPrefix: string
-              initialNumber: number
-              id?: number | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        createNumberPrefix: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string
-              template: string
-              id?: number | undefined
-            }
-            _input_out: {
-              name: string
-              template: string
-              id?: number | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        updateInitialNumberForPrefix: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            companyId: number
+            numberPrefix: string
+            initialNumber: number
+            id?: number | undefined
+          }
+          output: import('kysely').UpdateResult
+        }>
+        createNumberPrefix: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            name: string
+            template: string
+            id?: number | undefined
+          }
+          output: {
             id: number
             name: string
             template: string
           }
-        >
-        getNumberPrefixes: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          {
+        }>
+        getNumberPrefixes: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: {
             id: number
             name: string
             template: string
           }[]
-        >
-        updateNumberPrefix: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string
-              template: string
-              id?: number | undefined
-            }
-            _input_out: {
-              name: string
-              template: string
-              id?: number | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        createClient: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              address: string
-              city: string
-              email: string
-              postalCode: string
-              number?: string | null | undefined
-              id?: number | undefined
-              contactPersonName?: string | undefined
-              country?: string | undefined
-              vatIdNumber?: string | null | undefined
-              companyName?: string | undefined
-              accountId?: number | null | undefined
-            }
-            _input_out: {
-              address: string
-              city: string
-              email: string
-              postalCode: string
-              number?: string | null | undefined
-              id?: number | undefined
-              contactPersonName?: string | undefined
-              country?: string | undefined
-              vatIdNumber?: string | null | undefined
-              companyName?: string | undefined
-              accountId?: number | null | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        updateNumberPrefix: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            name: string
+            template: string
+            id?: number | undefined
+          }
+          output: import('kysely').UpdateResult
+        }>
+        createClient: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            address: string
+            city: string
+            email: string
+            postalCode: string
+            number?: string | null | undefined
+            id?: number | undefined
+            cocNumber?: string | null | undefined
+            contactPersonName?: string | undefined
+            country?: string | undefined
+            vatIdNumber?: string | null | undefined
+            companyName?: string | undefined
+            accountId?: number | null | undefined
+          }
+          output: {
             number: string | null
             id: number
             createdAt: string
             address: string
             city: string
+            cocNumber: string | null
             contactPersonName: string | null
-            country: string
+            country: string | null
             email: string
             postalCode: string
             vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }
-        >
-        getClients: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              pagination?:
-                | {
-                    sortBy: 'id'
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _input_out: {
-              pagination?:
-                | {
-                    sortBy: 'id'
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        getClients: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            pagination?:
+              | {
+                  sortBy: 'id'
+                  limit: number
+                  offset: number
+                  descending: boolean
+                }
+              | undefined
+          }
+          output: {
             total?: number | undefined
             number: string | null
             id: number
             createdAt: string
             address: string
             city: string
+            cocNumber: string | null
             contactPersonName: string | null
-            country: string
+            country: string | null
             email: string
             postalCode: string
             vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }[]
-        >
-        updateClient: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              address: string
-              city: string
-              email: string
-              postalCode: string
-              number?: string | null | undefined
-              id?: number | undefined
-              contactPersonName?: string | undefined
-              country?: string | undefined
-              vatIdNumber?: string | null | undefined
-              companyName?: string | undefined
-              accountId?: number | null | undefined
-            }
-            _input_out: {
-              address: string
-              city: string
-              email: string
-              postalCode: string
-              number?: string | null | undefined
-              id?: number | undefined
-              contactPersonName?: string | undefined
-              country?: string | undefined
-              vatIdNumber?: string | null | undefined
-              companyName?: string | undefined
-              accountId?: number | null | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        searchClients: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string
-              pagination?:
-                | {
-                    sortBy: 'id'
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _input_out: {
-              name: string
-              pagination?:
-                | {
-                    sortBy: 'id'
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        updateClient: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            address: string
+            city: string
+            email: string
+            postalCode: string
+            number?: string | null | undefined
+            id?: number | undefined
+            cocNumber?: string | null | undefined
+            contactPersonName?: string | undefined
+            country?: string | undefined
+            vatIdNumber?: string | null | undefined
+            companyName?: string | undefined
+            accountId?: number | null | undefined
+          }
+          output: import('kysely').UpdateResult
+        }>
+        searchClients: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            name: string
+            pagination?:
+              | {
+                  sortBy: 'id'
+                  limit: number
+                  offset: number
+                  descending: boolean
+                }
+              | undefined
+          }
+          output: {
             total?: number | undefined
             number: string | null
             id: number
             createdAt: string
             address: string
             city: string
+            cocNumber: string | null
             contactPersonName: string | null
-            country: string
+            country: string | null
             email: string
             postalCode: string
             vatIdNumber: string | null
             companyName: string | null
             accountId: number | null
           }[]
-        >
-        createCompany: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string
-              address: string
-              bic: string
-              city: string
-              cocNumber: string
-              country: string
-              email: string
-              iban: string
-              postalCode: string
-              prefix: string
-              vatIdNumber: string
-              id?: number | undefined
-              contactPersonName?: string | null | undefined
-              emailBcc?: string | null | undefined
-              logoSvg?: string | null | undefined
-              telephoneNumber?: string | null | undefined
-              website?: string | null | undefined
-              defaultNumberPrefixTemplate?: string | null | undefined
-              defaultLocale?: string | null | undefined
-              defaultCurrency?: 'EUR' | 'USD' | null | undefined
-            }
-            _input_out: {
-              name: string
-              address: string
-              bic: string
-              city: string
-              cocNumber: string
-              country: string
-              email: string
-              iban: string
-              postalCode: string
-              prefix: string
-              vatIdNumber: string
-              id?: number | undefined
-              contactPersonName?: string | null | undefined
-              emailBcc?: string | null | undefined
-              logoSvg?: string | null | undefined
-              telephoneNumber?: string | null | undefined
-              website?: string | null | undefined
-              defaultNumberPrefixTemplate?: string | null | undefined
-              defaultLocale?: string | null | undefined
-              defaultCurrency?: 'EUR' | 'USD' | null | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
-            id: number
+        }>
+        createCompany: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
             name: string
-            createdAt: string
             address: string
             bic: string
             city: string
             cocNumber: string
-            contactPersonName: string | null | undefined
             country: string
             email: string
-            emailBcc: string | null | undefined
+            emailBcc: string
             iban: string
-            logoSvg: string | null | undefined
             postalCode: string
             prefix: string
-            telephoneNumber: string | null | undefined
             vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
+            id?: number | undefined
+            contactPersonName?: string | null | undefined
+            logoSvg?: string | null | undefined
+            telephoneNumber?: string | null | undefined
+            website?: string | null | undefined
+            defaultNumberPrefixTemplate?: string | null | undefined
+            defaultLocale?: string | null | undefined
+            defaultCurrency?: 'EUR' | 'USD' | null | undefined
           }
-        >
-        getCompanies: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: typeof import('@trpc/server').unsetMarker
-            _input_out: typeof import('@trpc/server').unsetMarker
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-            _meta: object
-          },
-          {
-            [x: string]: any
+          output: {
             id: number
             name: string
             createdAt: string
@@ -1512,175 +685,25 @@ export declare const createRouter: (
             bic: string
             city: string
             cocNumber: string
-            contactPersonName: string | null | undefined
+            contactPersonName: string | null
             country: string
             email: string
-            emailBcc: string | null | undefined
+            emailBcc: string | null
             iban: string
-            logoSvg: string | null | undefined
+            logoSvg: string | null
             postalCode: string
             prefix: string
-            telephoneNumber: string | null | undefined
+            telephoneNumber: string | null
             vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
-          }[]
-        >
-        getCompany: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
-            [x: string]: any
-            id: number
-            name: string
-            createdAt: string
-            address: string
-            bic: string
-            city: string
-            cocNumber: string
-            contactPersonName: string | null | undefined
-            country: string
-            email: string
-            emailBcc: string | null | undefined
-            iban: string
-            logoSvg: string | null | undefined
-            postalCode: string
-            prefix: string
-            telephoneNumber: string | null | undefined
-            vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
+            website: string | null
+            defaultNumberPrefixTemplate: string | null
+            defaultLocale: string | null
+            defaultCurrency: 'EUR' | 'USD' | null
           }
-        >
-        updateCompany: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              name: string
-              address: string
-              bic: string
-              city: string
-              cocNumber: string
-              country: string
-              email: string
-              iban: string
-              postalCode: string
-              prefix: string
-              vatIdNumber: string
-              id?: number | undefined
-              contactPersonName?: string | null | undefined
-              emailBcc?: string | null | undefined
-              logoSvg?: string | null | undefined
-              telephoneNumber?: string | null | undefined
-              website?: string | null | undefined
-              defaultNumberPrefixTemplate?: string | null | undefined
-              defaultLocale?: string | null | undefined
-              defaultCurrency?: 'EUR' | 'USD' | null | undefined
-            }
-            _input_out: {
-              name: string
-              address: string
-              bic: string
-              city: string
-              cocNumber: string
-              country: string
-              email: string
-              iban: string
-              postalCode: string
-              prefix: string
-              vatIdNumber: string
-              id?: number | undefined
-              contactPersonName?: string | null | undefined
-              emailBcc?: string | null | undefined
-              logoSvg?: string | null | undefined
-              telephoneNumber?: string | null | undefined
-              website?: string | null | undefined
-              defaultNumberPrefixTemplate?: string | null | undefined
-              defaultLocale?: string | null | undefined
-              defaultCurrency?: 'EUR' | 'USD' | null | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('kysely').UpdateResult
-        >
-        searchCompanies: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: string
-            _input_out: string
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
-            [x: string]: any
+        }>
+        getCompanies: import('@trpc/server').TRPCQueryProcedure<{
+          input: void
+          output: {
             id: number
             name: string
             createdAt: string
@@ -1688,838 +711,394 @@ export declare const createRouter: (
             bic: string
             city: string
             cocNumber: string
-            contactPersonName: string | null | undefined
+            contactPersonName: string | null
             country: string
             email: string
-            emailBcc: string | null | undefined
+            emailBcc: string | null
             iban: string
-            logoSvg: string | null | undefined
+            logoSvg: string | null
             postalCode: string
             prefix: string
-            telephoneNumber: string | null | undefined
+            telephoneNumber: string | null
             vatIdNumber: string
-            website: string | null | undefined
-            defaultNumberPrefixTemplate: string | null | undefined
-            defaultLocale: string | null | undefined
-            defaultCurrency: 'EUR' | 'USD' | null | undefined
+            website: string | null
+            defaultNumberPrefixTemplate: string | null
+            defaultLocale: string | null
+            defaultCurrency: 'EUR' | 'USD' | null
           }[]
-        >
-        createInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              numberPrefixTemplate: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              metadata?: Record<string, unknown> | null | undefined
-              id?: number | undefined
-              uuid?: string | undefined
-              companyId?: number | undefined
-              clientId?: number | null | undefined
-              locale?: string | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
-              companyPrefix?: string | undefined
-              numberPrefix?: string | null | undefined
-              companyDetails?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              clientDetails?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-              requiredDownPaymentAmount?: number | undefined
-              projectId?: string | null | undefined
-              notes?: string | null | undefined
-              reminderSentDates?: string[] | undefined
-            }
-            _input_out: {
-              numberPrefixTemplate: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              metadata?: Record<string, unknown> | null | undefined
-              id?: number | undefined
-              uuid?: string | undefined
-              companyId?: number | undefined
-              clientId?: number | null | undefined
-              locale?: string | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
-              companyPrefix?: string | undefined
-              numberPrefix?: string | null | undefined
-              companyDetails?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              clientDetails?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-              requiredDownPaymentAmount?: number | undefined
-              projectId?: string | null | undefined
-              notes?: string | null | undefined
-              reminderSentDates?: string[] | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('@modular-api/fastify-checkout').Invoice
-        >
-        updateInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              numberPrefixTemplate: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              metadata?: Record<string, unknown> | null | undefined
-              id?: number | undefined
-              uuid?: string | undefined
-              companyId?: number | undefined
-              clientId?: number | null | undefined
-              locale?: string | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
-              companyPrefix?: string | undefined
-              numberPrefix?: string | null | undefined
-              companyDetails?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              clientDetails?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-              requiredDownPaymentAmount?: number | undefined
-              projectId?: string | null | undefined
-              notes?: string | null | undefined
-              reminderSentDates?: string[] | undefined
-            }
-            _input_out: {
-              numberPrefixTemplate: string
-              currency: 'EUR' | 'USD'
-              lines: {
-                listPrice: number
-                listPriceIncludesTax: boolean
-                taxRate: number
-                description: string
-                quantity: number
-                quantityPerMille: boolean
-                discount: number
-              }[]
-              paymentTermDays: number
-              metadata?: Record<string, unknown> | null | undefined
-              id?: number | undefined
-              uuid?: string | undefined
-              companyId?: number | undefined
-              clientId?: number | null | undefined
-              locale?: string | undefined
-              discounts?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              surcharges?:
-                | {
-                    listPrice: number
-                    listPriceIncludesTax: boolean
-                    taxRate: number
-                    description?: string | null | undefined
-                  }[]
-                | null
-                | undefined
-              status?:
-                | import('@modular-api/fastify-checkout').InvoiceStatus
-                | undefined
-              paymentId?: number | null | undefined
-              companyPrefix?: string | undefined
-              numberPrefix?: string | null | undefined
-              companyDetails?:
-                | {
-                    name: string
-                    address: string
-                    bic: string
-                    city: string
-                    cocNumber: string
-                    country: string
-                    email: string
-                    iban: string
-                    postalCode: string
-                    prefix: string
-                    vatIdNumber: string
-                    id?: number | undefined
-                    contactPersonName?: string | null | undefined
-                    emailBcc?: string | null | undefined
-                    logoSvg?: string | null | undefined
-                    telephoneNumber?: string | null | undefined
-                    website?: string | null | undefined
-                    defaultNumberPrefixTemplate?: string | null | undefined
-                    defaultLocale?: string | null | undefined
-                    defaultCurrency?: 'EUR' | 'USD' | null | undefined
-                  }
-                | undefined
-              clientDetails?:
-                | {
-                    address: string
-                    city: string
-                    email: string
-                    postalCode: string
-                    number?: string | null | undefined
-                    id?: number | undefined
-                    contactPersonName?: string | undefined
-                    country?: string | undefined
-                    vatIdNumber?: string | null | undefined
-                    companyName?: string | undefined
-                    accountId?: number | null | undefined
-                  }
-                | undefined
-              requiredDownPaymentAmount?: number | undefined
-              projectId?: string | null | undefined
-              notes?: string | null | undefined
-              reminderSentDates?: string[] | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('@modular-api/fastify-checkout').Invoice
-        >
-        getInvoices: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in:
+        }>
+        getCompany: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            id: number
+          }
+          output: {
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null
+            country: string
+            email: string
+            emailBcc: string | null
+            iban: string
+            logoSvg: string | null
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null
+            vatIdNumber: string
+            website: string | null
+            defaultNumberPrefixTemplate: string | null
+            defaultLocale: string | null
+            defaultCurrency: 'EUR' | 'USD' | null
+          }
+        }>
+        updateCompany: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            name: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            country: string
+            email: string
+            emailBcc: string
+            iban: string
+            postalCode: string
+            prefix: string
+            vatIdNumber: string
+            id?: number | undefined
+            contactPersonName?: string | null | undefined
+            logoSvg?: string | null | undefined
+            telephoneNumber?: string | null | undefined
+            website?: string | null | undefined
+            defaultNumberPrefixTemplate?: string | null | undefined
+            defaultLocale?: string | null | undefined
+            defaultCurrency?: 'EUR' | 'USD' | null | undefined
+          }
+          output: import('kysely').UpdateResult
+        }>
+        searchCompanies: import('@trpc/server').TRPCQueryProcedure<{
+          input: string
+          output: {
+            id: number
+            name: string
+            createdAt: string
+            address: string
+            bic: string
+            city: string
+            cocNumber: string
+            contactPersonName: string | null
+            country: string
+            email: string
+            emailBcc: string | null
+            iban: string
+            logoSvg: string | null
+            postalCode: string
+            prefix: string
+            telephoneNumber: string | null
+            vatIdNumber: string
+            website: string | null
+            defaultNumberPrefixTemplate: string | null
+            defaultLocale: string | null
+            defaultCurrency: 'EUR' | 'USD' | null
+          }[]
+        }>
+        createInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            numberPrefixTemplate: string
+            currency: 'EUR' | 'USD'
+            lines: {
+              listPrice: number
+              listPriceIncludesTax: boolean
+              taxRate: number
+              description: string
+              quantity: number
+              quantityPerMille: boolean
+              discount: number
+              quantityUnit?: 'kg' | 'm' | 'h' | null | undefined
+            }[]
+            paymentTermDays: number
+            metadata?: Record<string, unknown> | null | undefined
+            id?: number | undefined
+            uuid?: string | undefined
+            companyId?: number | undefined
+            clientId?: number | null | undefined
+            locale?: string | undefined
+            discounts?:
               | {
-                  status:
-                    | import('@modular-api/fastify-checkout').InvoiceStatus
-                    | null
-                  companyId?: number | null | undefined
-                  clientId?: number | null | undefined
-                  clientDetails?:
-                    | {
-                        name: string | null
-                      }
-                    | null
-                    | undefined
-                  pagination?:
-                    | {
-                        sortBy:
-                          | 'id'
-                          | 'companyId'
-                          | 'clientId'
-                          | 'totalIncludingTax'
-                        limit: number
-                        offset: number
-                        descending: boolean
-                      }
-                    | undefined
-                  uuids?: string[] | undefined
-                  paid?: boolean | undefined
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description?: string | null | undefined
+                }[]
+              | null
+              | undefined
+            surcharges?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description?: string | null | undefined
+                }[]
+              | null
+              | undefined
+            status?:
+              | import('@modular-api/fastify-checkout').InvoiceStatus
+              | undefined
+            paymentId?: number | null | undefined
+            companyPrefix?: string | undefined
+            numberPrefix?: string | null | undefined
+            companyDetails?:
+              | {
+                  name: string
+                  address: string
+                  bic: string
+                  city: string
+                  cocNumber: string
+                  country: string
+                  email: string
+                  emailBcc: string
+                  iban: string
+                  postalCode: string
+                  prefix: string
+                  vatIdNumber: string
+                  id?: number | undefined
+                  contactPersonName?: string | null | undefined
+                  logoSvg?: string | null | undefined
+                  telephoneNumber?: string | null | undefined
+                  website?: string | null | undefined
+                  defaultNumberPrefixTemplate?: string | null | undefined
+                  defaultLocale?: string | null | undefined
+                  defaultCurrency?: 'EUR' | 'USD' | null | undefined
                 }
               | undefined
-            _input_out:
+            clientDetails?:
               | {
-                  status:
-                    | import('@modular-api/fastify-checkout').InvoiceStatus
-                    | null
-                  companyId?: number | null | undefined
-                  clientId?: number | null | undefined
-                  clientDetails?:
-                    | {
-                        name: string | null
-                      }
-                    | null
-                    | undefined
-                  pagination?:
-                    | {
-                        sortBy:
-                          | 'id'
-                          | 'companyId'
-                          | 'clientId'
-                          | 'totalIncludingTax'
-                        limit: number
-                        offset: number
-                        descending: boolean
-                      }
-                    | undefined
-                  uuids?: string[] | undefined
-                  paid?: boolean | undefined
+                  address: string
+                  city: string
+                  email: string
+                  postalCode: string
+                  number?: string | null | undefined
+                  id?: number | undefined
+                  cocNumber?: string | null | undefined
+                  contactPersonName?: string | undefined
+                  country?: string | undefined
+                  vatIdNumber?: string | null | undefined
+                  companyName?: string | undefined
+                  accountId?: number | null | undefined
                 }
               | undefined
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('@modular-api/fastify-checkout').Invoice[] | undefined
-        >
-        getInvoice: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
+            requiredDownPaymentAmount?: number | undefined
+            projectId?: string | null | undefined
+            notes?: string | null | undefined
+            reminderSentDates?: string[] | undefined
+          }
+          output: import('@modular-api/fastify-checkout').Invoice
+        }>
+        updateInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            numberPrefixTemplate: string
+            currency: 'EUR' | 'USD'
+            lines: {
+              listPrice: number
+              listPriceIncludesTax: boolean
+              taxRate: number
+              description: string
+              quantity: number
+              quantityPerMille: boolean
+              discount: number
+              quantityUnit?: 'kg' | 'm' | 'h' | null | undefined
+            }[]
+            paymentTermDays: number
+            metadata?: Record<string, unknown> | null | undefined
+            id?: number | undefined
+            uuid?: string | undefined
+            companyId?: number | undefined
+            clientId?: number | null | undefined
+            locale?: string | undefined
+            discounts?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description?: string | null | undefined
+                }[]
+              | null
+              | undefined
+            surcharges?:
+              | {
+                  listPrice: number
+                  listPriceIncludesTax: boolean
+                  taxRate: number
+                  description?: string | null | undefined
+                }[]
+              | null
+              | undefined
+            status?:
+              | import('@modular-api/fastify-checkout').InvoiceStatus
+              | undefined
+            paymentId?: number | null | undefined
+            companyPrefix?: string | undefined
+            numberPrefix?: string | null | undefined
+            companyDetails?:
+              | {
+                  name: string
+                  address: string
+                  bic: string
+                  city: string
+                  cocNumber: string
+                  country: string
+                  email: string
+                  emailBcc: string
+                  iban: string
+                  postalCode: string
+                  prefix: string
+                  vatIdNumber: string
+                  id?: number | undefined
+                  contactPersonName?: string | null | undefined
+                  logoSvg?: string | null | undefined
+                  telephoneNumber?: string | null | undefined
+                  website?: string | null | undefined
+                  defaultNumberPrefixTemplate?: string | null | undefined
+                  defaultLocale?: string | null | undefined
+                  defaultCurrency?: 'EUR' | 'USD' | null | undefined
+                }
+              | undefined
+            clientDetails?:
+              | {
+                  address: string
+                  city: string
+                  email: string
+                  postalCode: string
+                  number?: string | null | undefined
+                  id?: number | undefined
+                  cocNumber?: string | null | undefined
+                  contactPersonName?: string | undefined
+                  country?: string | undefined
+                  vatIdNumber?: string | null | undefined
+                  companyName?: string | undefined
+                  accountId?: number | null | undefined
+                }
+              | undefined
+            requiredDownPaymentAmount?: number | undefined
+            projectId?: string | null | undefined
+            notes?: string | null | undefined
+            reminderSentDates?: string[] | undefined
+          }
+          output: import('@modular-api/fastify-checkout').Invoice
+        }>
+        getInvoices: import('@trpc/server').TRPCQueryProcedure<{
+          input:
+            | {
+                status:
+                  | import('@modular-api/fastify-checkout').InvoiceStatus
+                  | null
+                companyId?: number | null | undefined
+                clientId?: number | null | undefined
+                clientDetails?:
+                  | {
+                      name: string | null
+                    }
+                  | null
+                  | undefined
+                pagination?:
+                  | {
+                      sortBy:
+                        | 'id'
+                        | 'companyId'
+                        | 'clientId'
+                        | 'totalIncludingTax'
+                      limit: number
+                      offset: number
+                      descending: boolean
+                    }
+                  | undefined
+                uuids?: string[] | undefined
+                paid?: boolean | undefined
               }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id?: number | undefined
-              uuid?: string | undefined
-            }
-            _input_out: {
-              id?: number | undefined
-              uuid?: string | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('@modular-api/fastify-checkout').Invoice | null
-        >
-        sendInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _input_out: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          boolean | undefined
-        >
-        remindInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _input_out: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          boolean | undefined
-        >
-        exhortInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _input_out: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          boolean | undefined
-        >
-        sendBill: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _input_out: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          true | undefined
-        >
-        sendReceipt: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _input_out: {
-              id: number
-              emailSubject: string
-              emailBody: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          true | undefined
-        >
-        getInvoiceEmail: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              type: 'invoice' | 'bill' | 'receipt'
-              action: 'send' | 'remind' | 'exhort'
-            }
-            _input_out: {
-              id: number
-              type: 'invoice' | 'bill' | 'receipt'
-              action: 'send' | 'remind' | 'exhort'
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+            | undefined
+          output: import('@modular-api/fastify-checkout').Invoice[] | undefined
+        }>
+        getInvoice: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            id?: number | undefined
+            uuid?: string | undefined
+          }
+          output: import('@modular-api/fastify-checkout').Invoice | null
+        }>
+        sendInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            emailSubject: string
+            emailBody: string
+          }
+          output: boolean | undefined
+        }>
+        remindInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            emailSubject: string
+            emailBody: string
+          }
+          output: boolean | undefined
+        }>
+        exhortInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            emailSubject: string
+            emailBody: string
+          }
+          output: boolean | undefined
+        }>
+        sendBill: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            emailSubject: string
+            emailBody: string
+          }
+          output: true | undefined
+        }>
+        sendReceipt: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            emailSubject: string
+            emailBody: string
+          }
+          output: true | undefined
+        }>
+        getInvoiceEmail: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            id: number
+            type: 'invoice' | 'bill' | 'receipt'
+            action: 'send' | 'remind' | 'exhort'
+          }
+          output: {
             subject: string
             body: string
           }
-        >
-        cancelInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
+        }>
+        cancelInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+          }
+          output: true | undefined
+        }>
+        addPaymentToInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            payment: {
+              currency: 'EUR' | 'USD'
+              method: import('@modular-api/fastify-checkout').PaymentMethod
+              amount: number
+              description?: string | undefined
+              transactionReference?: string | undefined
+              redirectUrl?: string | undefined
             }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          true | undefined
-        >
-        addPaymentToInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              payment: {
-                currency: 'EUR' | 'USD'
-                method: import('@modular-api/fastify-checkout').PaymentMethod
-                amount: number
-                description?: string | undefined
-                transactionReference?: string | undefined
-                redirectUrl?: string | undefined
-              }
-            }
-            _input_out: {
-              id: number
-              payment: {
-                currency: 'EUR' | 'USD'
-                method: import('@modular-api/fastify-checkout').PaymentMethod
-                amount: number
-                description?: string | undefined
-                transactionReference?: string | undefined
-                redirectUrl?: string | undefined
-              }
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+          }
+          output: {
             checkoutUrl: string | null | undefined
             payment: {
               description: string
@@ -2542,72 +1121,19 @@ export declare const createRouter: (
                 | null
             }
           }
-        >
-        setInvoiceStatus: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              status: import('@modular-api/fastify-checkout').InvoiceStatus
-            }
-            _input_out: {
-              id: number
-              status: import('@modular-api/fastify-checkout').InvoiceStatus
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          void
-        >
-        refundInvoice: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+        }>
+        setInvoiceStatus: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            status: import('@modular-api/fastify-checkout').InvoiceStatus
+          }
+          output: void
+        }>
+        refundInvoice: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+          }
+          output: {
             description: string
             metadata: Record<string, unknown> | null
             id: number
@@ -2620,108 +1146,43 @@ export declare const createRouter: (
             status: import('@modular-api/fastify-checkout').RefundStatus
             paymentId: number
           }
-        >
-        getAccount: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
+        }>
+        getAccount: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            id: number
+          }
+          output:
+            | {
+                id: number
+                uuid: string | null
+                name: string | null
+                createdAt: string
+                email: string
+                verified: boolean
+                customFields: Record<string, unknown> | null
+                roles: string[] | null
               }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-            }
-            _input_out: {
-              id: number
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          | {
-              id: number
-              uuid: string | null
-              name: string | null
-              createdAt: string
-              email: string
-              verified: boolean
-              customFields: Record<string, unknown> | null
-              roles: string[] | null
-            }
-          | undefined
-        >
-        getAccounts: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              criteria?:
-                | {
-                    name?: string | undefined
-                    email?: string | undefined
-                    roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
-                  }
-                | undefined
-              pagination?:
-                | {
-                    sortBy: 'id' | 'name' | 'email' | null
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _input_out: {
-              criteria?:
-                | {
-                    name?: string | undefined
-                    email?: string | undefined
-                    roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
-                  }
-                | undefined
-              pagination?:
-                | {
-                    sortBy: 'id' | 'name' | 'email' | null
-                    limit: number
-                    offset: number
-                    descending: boolean
-                  }
-                | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+            | undefined
+        }>
+        getAccounts: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            criteria?:
+              | {
+                  name?: string | undefined
+                  email?: string | undefined
+                  roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
+                }
+              | undefined
+            pagination?:
+              | {
+                  sortBy: 'id' | 'name' | 'email' | null
+                  limit: number
+                  offset: number
+                  descending: boolean
+                }
+              | undefined
+          }
+          output: {
             id: number
             uuid: string | null
             name: string | null
@@ -2731,90 +1192,28 @@ export declare const createRouter: (
             customFields: Record<string, unknown> | null
             roles: string[] | null
           }[]
-        >
-        getAccountsCount: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
+        }>
+        getAccountsCount: import('@trpc/server').TRPCQueryProcedure<{
+          input:
+            | {
+                criteria?:
+                  | {
+                      name?: string | undefined
+                      email?: string | undefined
+                      roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
+                    }
+                  | undefined
               }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in:
-              | {
-                  criteria?:
-                    | {
-                        name?: string | undefined
-                        email?: string | undefined
-                        roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
-                      }
-                    | undefined
-                }
-              | undefined
-            _input_out:
-              | {
-                  criteria?:
-                    | {
-                        name?: string | undefined
-                        email?: string | undefined
-                        roles?: SLIMFACT_ACCOUNT_ROLES[] | undefined
-                      }
-                    | undefined
-                }
-              | undefined
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          number
-        >
-        findAccounts: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              email?: string | undefined
-              ids?: number[] | undefined
-              searchPhrase?: string | undefined
-            }
-            _input_out: {
-              email?: string | undefined
-              ids?: number[] | undefined
-              searchPhrase?: string | undefined
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          {
+            | undefined
+          output: number
+        }>
+        findAccounts: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            email?: string | undefined
+            ids?: number[] | undefined
+            searchPhrase?: string | undefined
+          }
+          output: {
             id: number
             uuid: string | null
             name: string | null
@@ -2824,79 +1223,25 @@ export declare const createRouter: (
             customFields: Record<string, unknown> | null
             roles: string[] | null
           }[]
-        >
-        addRole: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              role: SLIMFACT_ACCOUNT_ROLES
-            }
-            _input_out: {
-              id: number
-              role: SLIMFACT_ACCOUNT_ROLES
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          boolean
-        >
-        removeRole: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              id: number
-              role: SLIMFACT_ACCOUNT_ROLES
-            }
-            _input_out: {
-              id: number
-              role: SLIMFACT_ACCOUNT_ROLES
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          boolean
-        >
-      }
+        }>
+        addRole: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            role: SLIMFACT_ACCOUNT_ROLES
+          }
+          output: boolean
+        }>
+        removeRole: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            id: number
+            role: SLIMFACT_ACCOUNT_ROLES
+          }
+          output: boolean
+        }>
+      }>
     >
-    public: import('@trpc/server').CreateRouterInner<
-      import('@trpc/server').RootConfig<{
+    public: import('@trpc/server/unstable-core-do-not-import').BuiltRouter<
+      {
         ctx: {
           account: {
             id: string
@@ -2904,141 +1249,37 @@ export declare const createRouter: (
           } | null
         }
         meta: object
-        errorShape: import('@trpc/server').DefaultErrorShape
-        transformer: import('@trpc/server').DefaultDataTransformer
-      }>,
-      {
-        getInvoice: import('@trpc/server').BuildProcedure<
-          'query',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              uuid: string
-            }
-            _input_out: {
-              uuid: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          import('@modular-api/fastify-checkout').Invoice
-        >
-        payWithIdeal: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              uuid: string
-            }
-            _input_out: {
-              uuid: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          string | null | undefined
-        >
-        payDownPaymentWithIdeal: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              uuid: string
-            }
-            _input_out: {
-              uuid: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          string | null | undefined
-        >
-        payWithSmartpin: import('@trpc/server').BuildProcedure<
-          'mutation',
-          {
-            _config: import('@trpc/server').RootConfig<{
-              ctx: {
-                account: {
-                  id: string
-                  roles?: string[]
-                } | null
-              }
-              meta: object
-              errorShape: import('@trpc/server').DefaultErrorShape
-              transformer: import('@trpc/server').DefaultDataTransformer
-            }>
-            _meta: object
-            _ctx_out: {
-              account: {
-                id: string
-                roles?: string[]
-              } | null
-            }
-            _input_in: {
-              uuid: string
-            }
-            _input_out: {
-              uuid: string
-            }
-            _output_in: typeof import('@trpc/server').unsetMarker
-            _output_out: typeof import('@trpc/server').unsetMarker
-          },
-          string | null | undefined
-        >
-      }
+        errorShape: import('@trpc/server/unstable-core-do-not-import').DefaultErrorShape
+        transformer: false
+      },
+      import('@trpc/server/unstable-core-do-not-import').DecorateCreateRouterOptions<{
+        getInvoice: import('@trpc/server').TRPCQueryProcedure<{
+          input: {
+            uuid: string
+          }
+          output: import('@modular-api/fastify-checkout').Invoice
+        }>
+        payWithIdeal: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            uuid: string
+          }
+          output: string | null | undefined
+        }>
+        payDownPaymentWithIdeal: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            uuid: string
+          }
+          output: string | null | undefined
+        }>
+        payWithSmartpin: import('@trpc/server').TRPCMutationProcedure<{
+          input: {
+            uuid: string
+          }
+          output: string | null | undefined
+        }>
+      }>
     >
-  }
+  }>
 >
 export declare const createContext: (
   fastify?: FastifyInstance
