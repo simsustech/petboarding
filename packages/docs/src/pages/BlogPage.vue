@@ -17,5 +17,4 @@ const blogPosts = Object.entries(
     eager: true
   })
 ).sort((a, b) => (b[0] > a[0] ? 1 : 0))
-console.log(blogPosts)
 </script>

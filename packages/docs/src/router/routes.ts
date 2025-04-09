@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
             .at(-1)
             ?.replace('.vue', '')
             .replaceAll(' ', '-')
-          console.log(path)
+
           return {
             path: path!,
             component: value
