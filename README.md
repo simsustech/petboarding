@@ -26,6 +26,7 @@ https://demo.petboarding.app
 
 📅 Daycare:
   - Day and month overviews of the daycare appointments.
+  - Prepaid daycare subscriptions for a specified number of days
 
 🔒 Role based authorization
   - Customers can only see and edit their own information.
