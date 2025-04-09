@@ -40,5 +40,15 @@
   "simple-git-hooks": {
     "pre-commit": "pnpm run lint && pnpm run format:check",
     "commit-msg": "pnpm exec commitlint --edit $1"
+  },
+  "pnpm": {
+    "overrides": {
+      "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
+      "vitrify": "link:../vitrify/packages/vitrify"
+    }
+  },
+  "dependencies": {
+    "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
+    "vitrify": "link:../vitrify/packages/vitrify"
   }
 }
