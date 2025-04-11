@@ -108,7 +108,7 @@
 
         <q-card-actions align="right" class="q-my-md q-px-md">
           <q-btn
-            :label="lang.add"
+            :label="lang.booking.labels.addBooking"
             icon="add"
             color="primary"
             @click="openCreateBookingDialog"
@@ -134,7 +134,7 @@
 
         <q-card-actions align="right" class="q-px-md">
           <q-btn
-            :label="lang.add"
+            :label="lang.daycare.labels.addDaycare"
             icon="add"
             color="primary"
             @click="openCreateDaycareDialog"
