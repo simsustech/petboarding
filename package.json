@@ -44,10 +44,12 @@
   "pnpm": {
     "overrides": {
       "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
-      "vitrify": "link:../vitrify/packages/vitrify"
+      "vitrify": "link:../vitrify/packages/vitrify",
+      "@simsustech/quasar-components": "link:../quasar-components/packages/components"
     }
   },
   "dependencies": {
+    "@simsustech/quasar-components": "link:../quasar-components/packages/components",
     "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
     "vitrify": "link:../vitrify/packages/vitrify"
   }

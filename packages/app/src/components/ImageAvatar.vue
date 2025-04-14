@@ -24,7 +24,12 @@
       @update:model-value="setImage"
     />
   </div>
-  <responsive-dialog ref="imageDialog" persistent display>
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="imageDialog"
+    persistent
+    display
+  >
     <base64-image class="text-center" :model-value="modelValue" />
   </responsive-dialog>
 </template>

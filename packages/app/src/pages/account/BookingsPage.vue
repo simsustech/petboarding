@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="disabled"
     @create="openCreateDialog"
@@ -58,7 +59,12 @@
         }}</router-link>
       </div>
     </div>
-    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="updateDialogRef"
+      persistent
+      @submit="update"
+    >
       <booking-form
         ref="updateBookingFormRef"
         :pets="petsData"
@@ -70,7 +76,12 @@
         @submit="updateBooking"
       ></booking-form>
     </responsive-dialog>
-    <responsive-dialog ref="createDialogRef" persistent @submit="create">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="createDialogRef"
+      persistent
+      @submit="create"
+    >
       <booking-form
         ref="createBookingFormRef"
         :pets="petsData"

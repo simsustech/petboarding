@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.category.title }}
     </template>
@@ -14,13 +18,24 @@
       @delete-price="openDeleteCategoryPriceDialog"
     />
   </resource-page>
-  <responsive-dialog ref="createCategoryDialogRef" persistent @submit="create">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="createCategoryDialogRef"
+    persistent
+    @submit="create"
+  >
     <category-form ref="createCategoryFormRef" @submit="createCategory" />
   </responsive-dialog>
-  <responsive-dialog ref="updateCategoryDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updateCategoryDialogRef"
+    persistent
+    @submit="update"
+  >
     <category-form ref="updateCategoryFormRef" @submit="updateCategory" />
   </responsive-dialog>
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createCategoryPriceDialogRef"
     persistent
     @submit="submitCategoryPrice"

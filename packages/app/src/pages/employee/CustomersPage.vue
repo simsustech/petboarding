@@ -1,5 +1,5 @@
 <template>
-  <resource-page>
+  <resource-page :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
     <template #header>
       {{ lang.customers }}
     </template>
@@ -144,7 +144,12 @@
     </div>
   </resource-page>
 
-  <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updateDialogRef"
+    persistent
+    @submit="update"
+  >
     <customer-form
       ref="updateCustomerFormRef"
       :categories="categories"
@@ -157,6 +162,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createBookingDialogRef"
     persistent
     @submit="submitBooking"
@@ -174,6 +180,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createDaycareDialogRef"
     persistent
     @submit="submitDaycare"

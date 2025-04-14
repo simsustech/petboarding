@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     :type="customerData ? 'update' : 'create'"
     @create="openCreateDialog"
     @update="openUpdateDialog"
@@ -9,13 +10,23 @@
     </template>
     <customer-card v-if="customerData" :model-value="customerData" />
 
-    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="updateDialogRef"
+      persistent
+      @submit="update"
+    >
       <customer-form
         ref="updateCustomerFormRef"
         @submit="updateCustomer"
       ></customer-form>
     </responsive-dialog>
-    <responsive-dialog ref="createDialogRef" persistent @submit="create">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="createDialogRef"
+      persistent
+      @submit="create"
+    >
       <customer-form
         ref="createCustomerFormRef"
         @submit="createCustomer"

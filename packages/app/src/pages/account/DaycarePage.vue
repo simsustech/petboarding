@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="
       !petsData?.length ||
@@ -87,7 +88,7 @@
       </div>
     </div>
     <!-- <q-btn @click="createCustomer" /> -->
-    <!-- <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <!-- <responsive-dialog :icons="{ close: 'i-mdi-close'}" ref="updateDialogRef" persistent @submit="update">
       <daycare-form
         ref="updateDaycareFormRef"
         :pets="petsData"
@@ -95,7 +96,12 @@
         @submit="updateDaycare"
       ></daycare-form>
     </responsive-dialog> -->
-    <responsive-dialog ref="createDialogRef" persistent @submit="create">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="createDialogRef"
+      persistent
+      @submit="create"
+    >
       <daycare-form
         ref="createDaycareFormRef"
         :pets="petsData"
@@ -111,6 +117,7 @@
       ></daycare-form>
     </responsive-dialog>
     <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
       ref="purchaseCustomerDaycareSubscriptionDialogRef"
       persistent
       display

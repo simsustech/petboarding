@@ -42,6 +42,10 @@
           noUnset: true,
           firstDayOfWeek: '1'
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </div>
   </q-form>

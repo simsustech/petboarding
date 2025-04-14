@@ -51,7 +51,12 @@
       /> -->
     </div>
 
-    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="updateDialogRef"
+      persistent
+      @submit="update"
+    >
       <booking-form
         ref="updateBookingFormRef"
         :pets="petsData"
@@ -64,6 +69,7 @@
       ></booking-form>
     </responsive-dialog>
     <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
       ref="updateBookingServiceDialogRef"
       @submit="submitBookingService"
     >

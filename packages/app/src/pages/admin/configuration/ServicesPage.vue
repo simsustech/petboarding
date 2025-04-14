@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.service.title }}
     </template>
@@ -12,10 +16,20 @@
       @delete="openDeleteServiceDialog"
     />
   </resource-page>
-  <responsive-dialog ref="createServiceDialogRef" persistent @submit="create">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="createServiceDialogRef"
+    persistent
+    @submit="create"
+  >
     <service-form ref="createServiceFormRef" @submit="createService" />
   </responsive-dialog>
-  <responsive-dialog ref="updateServiceDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updateServiceDialogRef"
+    persistent
+    @submit="update"
+  >
     <service-form ref="updateServiceFormRef" @submit="updateService" />
   </responsive-dialog>
 </template>

@@ -16,6 +16,7 @@
   </q-list>
 
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="updateBookingEmailDialogRef"
     persistent
     @submit="update"

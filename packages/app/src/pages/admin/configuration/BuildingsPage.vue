@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.building.title }}
     </template>
@@ -12,10 +16,20 @@
       @delete="openDeleteBuildingDialog"
     />
   </resource-page>
-  <responsive-dialog ref="createBuildingDialogRef" persistent @submit="create">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="createBuildingDialogRef"
+    persistent
+    @submit="create"
+  >
     <building-form ref="createBuildingFormRef" @submit="createBuilding" />
   </responsive-dialog>
-  <responsive-dialog ref="updateBuildingDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updateBuildingDialogRef"
+    persistent
+    @submit="update"
+  >
     <building-form ref="updateBuildingFormRef" @submit="updateBuilding" />
   </responsive-dialog>
 </template>

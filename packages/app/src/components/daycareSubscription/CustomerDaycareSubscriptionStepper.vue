@@ -26,6 +26,10 @@
           firstDayOfWeek: '1',
           options: futureDateOptionsFn
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </q-step>
 

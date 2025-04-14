@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.kennel.title }}
     </template>
@@ -12,14 +16,24 @@
       @delete="openDeleteKennelDialog"
     />
   </resource-page>
-  <responsive-dialog ref="createKennelDialogRef" persistent @submit="create">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="createKennelDialogRef"
+    persistent
+    @submit="create"
+  >
     <kennel-form
       ref="createKennelFormRef"
       :buildings="buildings"
       @submit="createKennel"
     />
   </responsive-dialog>
-  <responsive-dialog ref="updateKennelDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updateKennelDialogRef"
+    persistent
+    @submit="update"
+  >
     <kennel-form
       ref="updateKennelFormRef"
       :buildings="buildings"

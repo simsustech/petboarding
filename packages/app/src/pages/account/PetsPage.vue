@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="!contactPeopleData?.length"
     @create="openCreateDialog"
@@ -27,7 +28,12 @@
       </div>
     </div>
 
-    <responsive-dialog ref="updateDialogRef" persistent @submit="update">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="updateDialogRef"
+      persistent
+      @submit="update"
+    >
       <pet-form
         ref="updatePetFormRef"
         use-food
@@ -35,7 +41,12 @@
         @submit="updatePet"
       ></pet-form>
     </responsive-dialog>
-    <responsive-dialog ref="createDialogRef" persistent @submit="create">
+    <responsive-dialog
+      :icons="{ close: 'i-mdi-close' }"
+      ref="createDialogRef"
+      persistent
+      @submit="create"
+    >
       <pet-form
         ref="createPetFormRef"
         use-food

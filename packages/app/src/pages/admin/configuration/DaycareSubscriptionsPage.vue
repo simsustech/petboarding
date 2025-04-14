@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.daycareSubscription.title }}
     </template>
@@ -19,6 +23,7 @@
     />
   </resource-page>
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createDaycareSubscriptionDialogRef"
     persistent
     @submit="create"
@@ -29,6 +34,7 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="updateDaycareSubscriptionDialogRef"
     persistent
     @submit="update"

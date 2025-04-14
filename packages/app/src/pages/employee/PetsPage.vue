@@ -1,5 +1,8 @@
 <template>
-  <resource-page :top-bar-shrink="false">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    :top-bar-shrink="false"
+  >
     <template #header>
       {{ lang.pet.title }}
     </template>
@@ -36,7 +39,12 @@
     </div>
   </resource-page>
 
-  <responsive-dialog ref="updatePetDialogRef" persistent @submit="update">
+  <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
+    ref="updatePetDialogRef"
+    persistent
+    @submit="update"
+  >
     <pet-form
       ref="updatePetFormRef"
       :categories="categories"
@@ -50,6 +58,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createVaccinationDialogRef"
     persistent
     @submit="submitVaccination"
@@ -61,6 +70,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="updateVaccinationDialogRef"
     persistent
     @submit="submitUpdateVaccination"

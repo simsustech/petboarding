@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
+    "@iconify-json/mdi": "^1.2.3",
     "@playwright/test": "1.51.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/pg": "^8.11.11",

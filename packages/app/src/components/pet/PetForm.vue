@@ -47,6 +47,10 @@
           options: pastDateOptionsFn,
           firstDayOfWeek: '1'
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </div>
     <div class="row justify-center">
@@ -81,6 +85,10 @@
           noUnset: true,
           options: pastDateOptionsFn,
           firstDayOfWeek: '1'
+        }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
         }"
       />
     </div>

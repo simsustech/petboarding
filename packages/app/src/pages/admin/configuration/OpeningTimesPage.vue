@@ -1,5 +1,9 @@
 <template>
-  <resource-page type="create" @create="openCreateDialog">
+  <resource-page
+    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
+    type="create"
+    @create="openCreateDialog"
+  >
     <template #header>
       {{ lang.configuration.openingTimes }}
     </template>
@@ -14,6 +18,7 @@
     />
   </resource-page>
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="createOpeningTimeDialogRef"
     persistent
     @submit="create"
@@ -25,6 +30,7 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    :icons="{ close: 'i-mdi-close' }"
     ref="updateOpeningTimeDialogRef"
     persistent
     @submit="update"

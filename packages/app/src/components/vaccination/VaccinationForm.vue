@@ -23,6 +23,10 @@
           firstDayOfWeek: '1',
           options: limitDateOptionsFn
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </div>
   </q-form>
