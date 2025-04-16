@@ -198,6 +198,9 @@ const lang: Language = {
     history: 'History',
     arrivals: 'Arrivals',
     departures: 'Departures',
+    labels: {
+      addBooking: 'Add booking'
+    },
     costs: {
       title: 'Costs',
       name: 'Name',
@@ -312,6 +315,9 @@ const lang: Language = {
     daycare: 'Daycare',
     fields: {
       status: 'Status'
+    },
+    labels: {
+      addDaycare: 'Add daycare'
     },
     messages: {
       addPets: 'Please add one or more pets first.',

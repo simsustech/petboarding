@@ -192,6 +192,9 @@ export interface Language {
     history: string
     arrivals: string
     departures: string
+    labels: {
+      addBooking: string
+    }
     costs: {
       title: string
       name: string
@@ -297,6 +300,9 @@ export interface Language {
     daycare: string
     fields: {
       status: string
+    }
+    labels: {
+      addDaycare: string
     }
     messages: {
       addPets: string

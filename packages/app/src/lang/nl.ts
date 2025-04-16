@@ -199,6 +199,9 @@ const lang: Language = {
     history: 'Geschiedenis',
     arrivals: 'Aankomst',
     departures: 'Vertrek',
+    labels: {
+      addBooking: 'Reservering toevoegen'
+    },
     costs: {
       title: 'Kosten',
       name: 'Naam',
@@ -318,6 +321,9 @@ const lang: Language = {
     daycare: 'Dagopvang',
     fields: {
       status: 'Status'
+    },
+    labels: {
+      addDaycare: 'Dagopvang toevoegen'
     },
     messages: {
       addPets: 'Voeg a.u.b. eerst één of meerdere huisdieren toe.',
