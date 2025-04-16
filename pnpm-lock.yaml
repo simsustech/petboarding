@@ -210,8 +210,8 @@ importers:
         specifier: 4.1.2
         version: 4.1.2
       '@simsustech/quasar-components':
-        specifier: ^0.11.8
-        version: 0.11.8(quasar@2.18.1)
+        specifier: ^0.11.9
+        version: 0.11.9(quasar@2.18.1)
       '@trpc/client':
         specifier: ^11.0.4
         version: 11.0.4(@trpc/server@11.0.4(typescript@5.8.3))(typescript@5.8.3)
@@ -1938,6 +1938,11 @@ packages:
 
   '@simsustech/quasar-components@0.11.8':
     resolution: {integrity: sha512-DsXmxH3VDUDEdCzN4ZVYkZ1aQqMG1xf+BKaGm9+OMd681VdgY51NOIH/VLDR7v1LbcscOSAUisOjBK6oExx7/g==}
+    peerDependencies:
+      quasar: ^2.18.1
+
+  '@simsustech/quasar-components@0.11.9':
+    resolution: {integrity: sha512-agd74xn3s/FDrJau1bMts3FhhaTgs3q3eFCG75KCWvGrST3eb+o8pWDLQ7P2f517d8fNWj2Q5CMQsa47RBRoaA==}
     peerDependencies:
       quasar: ^2.18.1
 
@@ -7642,6 +7647,11 @@ snapshots:
     optional: true
 
   '@simsustech/quasar-components@0.11.8(quasar@2.18.1)':
+    dependencies:
+      quasar: 2.18.1
+      validator: 13.15.0
+
+  '@simsustech/quasar-components@0.11.9(quasar@2.18.1)':
     dependencies:
       quasar: 2.18.1
       validator: 13.15.0

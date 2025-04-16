@@ -1,21 +1,13 @@
 <template>
   <q-page padding>
     <div class="row q-mb-md">
-      <q-list bordered>
-        <q-item clickable to="/account/customer">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ `${lang.goTo} ${lang.customer.title.toLowerCase()}` }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <q-styled-card class="col-12 col-md-4">
+        <template #title>{{ lang.dashboard.user.menu.title }}</template>
+        <dashboard-user-menu-list />
+      </q-styled-card>
     </div>
     <div class="row">
-      <q-styled-card v-if="user">
+      <q-styled-card v-if="user" class="col-12 col-md-4">
         <q-item>
           <q-item-section avatar>
             <q-icon name="person"></q-icon>
@@ -47,6 +39,8 @@
 import { QStyledCard } from '@simsustech/quasar-components'
 import { user } from '../oauth.js'
 import { useLang } from '../lang/index.js'
+import DashboardUserMenuList from '../components/dashboard/DashboardUserMenuList.vue'
+
 const lang = useLang()
 const emailChangeUri =
   import.meta.env.VITE_OIDC_EMAIL_CHANGE_URI || `./interaction/email/change`
