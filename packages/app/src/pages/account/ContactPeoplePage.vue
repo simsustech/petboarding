@@ -11,12 +11,15 @@
     </template>
     <div v-if="ready">
       <div v-if="customerData">
-        <contact-person-card
-          v-for="contactPerson in data"
-          :key="contactPerson.id"
-          :model-value="contactPerson"
-          @update="openUpdateDialog"
-        />
+        <div class="row">
+          <contact-person-card
+            v-for="contactPerson in data"
+            class="col-12 col-md-4"
+            :key="contactPerson.id"
+            :model-value="contactPerson"
+            @update="openUpdateDialog"
+          />
+        </div>
       </div>
       <div v-else>
         <router-link to="/account/customer">{{

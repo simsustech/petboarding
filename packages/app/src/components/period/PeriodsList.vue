@@ -5,7 +5,7 @@
     </q-item-label>
     <q-item v-for="period in modelValue" :key="period.id">
       <q-item-section avatar>
-        <q-icon name="block" color="red"></q-icon
+        <q-icon name="i-mdi-block" color="red"></q-icon
       ></q-item-section>
       <q-item-section>
         <q-item-label overline>
@@ -23,12 +23,12 @@
       <q-item-section side>
         <q-btn
           v-if="showEditButton"
-          icon="edit"
+          icon="i-mdi-edit"
           @click="emit('update', { data: period })"
         />
         <q-btn
           v-if="showDeleteButton"
-          icon="delete"
+          icon="i-mdi-delete"
           color="red"
           @click="emit('delete', { data: period })"
         />

@@ -9,7 +9,7 @@
       :rules="['date']"
     >
       <template #append>
-        <q-icon name="event" class="cursor-pointer">
+        <q-icon name="i-mdi-event" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-date v-model="selectedDate" first-day-of-week="1">
               <div class="row items-center justify-end">

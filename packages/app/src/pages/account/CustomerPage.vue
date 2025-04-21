@@ -8,7 +8,21 @@
     <template #header>
       {{ lang.customer.title }}
     </template>
-    <customer-card v-if="customerData" :model-value="customerData" />
+    <div class="row">
+      <customer-card
+        v-if="customerData"
+        class="col-12 col-md-4"
+        :model-value="customerData"
+      />
+    </div>
+
+    <q-page-sticky position="top-left" :offset="[-46, 0]">
+      <q-btn
+        :fab="$q.screen.gt.sm"
+        :fab-mini="$q.screen.lt.md"
+        icon="i-mdi-add"
+      />
+    </q-page-sticky>
 
     <responsive-dialog
       :icons="{ close: 'i-mdi-close' }"

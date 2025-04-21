@@ -5,7 +5,12 @@
         <div class="row justify-between">
           <image-avatar :model-value="modelValue.image" />
           <div class="col text-right">
-            <q-btn outline rounded icon="edit" @click="update(modelValue)">
+            <q-btn
+              outline
+              rounded
+              icon="i-mdi-edit"
+              @click="update(modelValue)"
+            >
               <q-tooltip>
                 {{ lang.update }}
               </q-tooltip>
@@ -14,7 +19,7 @@
               v-if="onOpenCustomer"
               outline
               rounded
-              icon="person"
+              icon="i-mdi-person"
               @click="$emit('openCustomer', { id: modelValue.customerId })"
             >
               <q-tooltip>{{ lang.customer.title }}</q-tooltip>
@@ -24,7 +29,7 @@
               outline
               rounded
               color="red"
-              icon="delete"
+              icon="i-mdi-delete"
               @click="deletePet(modelValue)"
             />
           </div>
@@ -35,9 +40,9 @@
             :model-value="modelValue.rating || 0"
             readonly
             size="sm"
-            icon="star_border"
-            icon-selected="star"
-            icon-half="star_half"
+            icon="i-mdi-star-border"
+            icon-selected="i-mdi-star"
+            icon-half="i-mdi-star-half"
           />
         </div>
       </template>
@@ -118,7 +123,7 @@
           <q-item-section avatar>
             <q-icon
               v-if="!modelValue.hasMandatoryVaccinations"
-              name="warning"
+              name="i-mdi-warning"
               color="red"
             >
               <q-tooltip>
@@ -135,7 +140,7 @@
             <q-btn
               v-if="showAddVaccination"
               rounded
-              icon="add"
+              icon="i-mdi-add"
               @click="addVaccination(modelValue)"
             />
           </q-item-section>

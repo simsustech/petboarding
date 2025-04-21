@@ -25,18 +25,18 @@
       <q-item-section side>
         <q-btn
           v-if="showEditButton"
-          icon="edit"
+          icon="i-mdi-edit"
           @click="emit('update', { data: daycareSubscription })"
         />
         <q-btn
           v-if="showDeleteButton"
-          icon="delete"
+          icon="i-mdi-delete"
           color="red"
           @click="emit('delete', { data: daycareSubscription })"
         />
         <q-btn
           v-if="showPurchaseButton"
-          icon="add_shopping_cart"
+          icon="i-mdi-add-shopping-cart"
           :label="lang.customerDaycareSubscription.labels.purchase"
           @click="emit('purchase', { data: daycareSubscription })"
         />

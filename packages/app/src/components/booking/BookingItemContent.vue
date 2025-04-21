@@ -45,17 +45,17 @@
       "
       caption
     >
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{ lang.booking.messages.bookingModified }}
     </q-item-label>
     <q-item-label v-if="modelValue.isDoubleBooked" caption>
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{
         `${lang.booking.messages.isDoubleBooked} ${lang.booking.messages.cancelDoubleBookings}`
       }}
     </q-item-label>
     <q-item-label v-if="modelValue.overlapsWithUnavailablePeriod" caption>
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{ `${lang.booking.messages.overlapsWithUnavailablePeriod}` }}
     </q-item-label>
     <q-item-label

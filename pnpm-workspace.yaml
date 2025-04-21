@@ -1,2 +1,7 @@
 packages:
-  - "packages/*"
+  - packages/*
+
+overrides:
+  unocss-preset-quasar: link:../unocss-preset-quasar/packages/preset
+  '@modular-api/fastify-checkout': link:../modular-api/packages/fastify-checkout
+  '@modular-api/api': link:../modular-api/packages/api

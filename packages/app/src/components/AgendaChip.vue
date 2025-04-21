@@ -122,8 +122,8 @@ const petIds = computed(
 )
 
 const icons = ref({
-  arrival: 'add',
-  departure: 'cancel',
+  arrival: 'i-mdi-add',
+  departure: 'i-mdi-cancel',
   stay: undefined,
   daycare: undefined
 })

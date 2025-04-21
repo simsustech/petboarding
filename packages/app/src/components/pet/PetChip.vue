@@ -17,7 +17,7 @@
     </div>
     <q-icon
       v-if="showImage && modelValue.image"
-      name="photo_camera"
+      name="i-mdi-photo-camera"
       flat
       round
       size="sm"

@@ -8,7 +8,7 @@
       </q-item-section>
       <q-item-section side>
         <q-btn
-          icon="edit"
+          icon="i-mdi-edit"
           @click="openUpdateBookingEmailReplyDialog({ data: reply })"
         />
       </q-item-section>

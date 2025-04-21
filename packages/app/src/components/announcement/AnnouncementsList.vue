@@ -83,10 +83,10 @@ const emit = defineEmits<{
 const lang = useLang()
 
 const icon = {
-  general: 'info',
-  important: 'warning',
-  priority: 'priority_high',
-  urgent: 'crisis_alert'
+  general: 'i-mdi-info',
+  important: 'i-mdi-warning',
+  priority: 'i-mdi-priorityhigh',
+  urgent: 'i-mdi-crisis-alert'
 }
 const iconColor = {
   general: 'blue',

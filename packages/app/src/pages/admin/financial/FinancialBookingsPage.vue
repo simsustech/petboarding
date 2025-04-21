@@ -4,7 +4,7 @@
       {{ lang.booking.title }}
     </template>
     <template #header-side>
-      <q-btn icon="search">
+      <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <customer-select
             v-model="customerId"

@@ -149,10 +149,7 @@ const iconifyJsonIconSet = {
 const quasarConf: NonNullable<VitrifyConfig['quasar']> = {
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta'],
-    iconSet: iconifyJsonIconSet,
-    iconMapFn: (name) => ({
-      cls: `i-mdi-${name}`
-    })
+    iconSet: iconifyJsonIconSet
   },
   /*
    * Disable SASS if you use UnoCSS

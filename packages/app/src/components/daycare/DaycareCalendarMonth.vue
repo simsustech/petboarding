@@ -4,8 +4,8 @@
       <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
     </div>
     <div class="row justify-center">
-      <q-btn icon="arrow_left" @click="onPrev" />
-      <q-btn icon="arrow_right" @click="onNext" />
+      <q-btn icon="i-mdi-arrow-left" @click="onPrev" />
+      <q-btn icon="i-mdi-arrow-right" @click="onNext" />
     </div>
     <div class="row">
       <q-scroll-area :style="contentSize">

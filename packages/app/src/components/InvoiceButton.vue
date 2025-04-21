@@ -8,7 +8,7 @@
   >
     <div class="column">
       <q-avatar class="col-12">
-        <q-icon name="receipt" size="md" />
+        <q-icon name="i-mdi-receipt" size="md" />
       </q-avatar>
       <q-icon
         v-if="
@@ -23,7 +23,7 @@
           right: -30px;
           bottom: 3px;
         "
-        name="check"
+        name="i-mdi-check"
         color="green"
         size="xs"
       />
@@ -34,7 +34,7 @@
           modelValue.amountDue < 0
         "
         style="position: relative; width: 0; height: 0; bottom: 3px"
-        name="priority_high"
+        name="i-mdi-exclamation"
         color="red"
         size="xs"
       />

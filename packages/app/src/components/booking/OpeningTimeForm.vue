@@ -24,7 +24,7 @@
         :rules="['time']"
       >
         <template #append>
-          <q-icon name="access_time" class="cursor-pointer">
+          <q-icon name="i-mdi-access-time" class="cursor-pointer">
             <q-popup-proxy
               cover
               transition-show="scale"
@@ -49,7 +49,7 @@
         :rules="['time']"
       >
         <template #append>
-          <q-icon name="access_time" class="cursor-pointer">
+          <q-icon name="i-mdi-access-time" class="cursor-pointer">
             <q-popup-proxy
               cover
               transition-show="scale"

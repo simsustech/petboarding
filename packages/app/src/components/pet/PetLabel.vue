@@ -9,7 +9,7 @@
     <div class="row justify-between items-center" style="margin-bottom: -10px">
       <span style="font-size: 12px">#{{ modelValue.id }}</span>
       <span style="font-size: 12px">
-        <q-icon name="calendar_today" />
+        <q-icon name="i-mdi-calendar-today" />
         {{ modelValue.birthDate }}</span
       >
     </div>
@@ -52,13 +52,15 @@
                     "
                     size="xs"
                     color="orange"
-                    name="warning"
+                    name="i-mdi-warning"
                   />
                   <q-icon
                     v-else
                     size="sm"
                     :color="modelValue.sterilized ? 'green' : 'red'"
-                    :name="modelValue.sterilized ? 'check' : 'close'"
+                    :name="
+                      modelValue.sterilized ? 'i-mdi-check' : 'i-mdi-close'
+                    "
                   />
                 </div>
               </template>

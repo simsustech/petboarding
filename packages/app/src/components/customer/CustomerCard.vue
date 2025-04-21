@@ -7,7 +7,7 @@
         class="float-right"
         rounded
         outline
-        icon="edit"
+        icon="i-mdi-edit"
         @click="update(modelValue)"
       >
         <q-tooltip>

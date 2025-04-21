@@ -89,7 +89,7 @@
             >
               <q-icon name="receipt" />
               <q-icon
-                name="sync"
+                name="i-mdi-sync"
                 class="text-black q-ma-none q-pa-none"
                 size="xs"
                 rounded

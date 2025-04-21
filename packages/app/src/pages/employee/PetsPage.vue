@@ -7,7 +7,7 @@
       {{ lang.pet.title }}
     </template>
     <template #header-side>
-      <q-btn icon="search">
+      <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <pet-select
             :model-value="ids"
@@ -15,7 +15,7 @@
             clearable
             @update:model-value="setParam"
           >
-            <template #before> <q-icon name="search" /> </template>
+            <template #before> <q-icon name="i-mdi-search" /> </template>
           </pet-select>
         </q-menu>
       </q-btn>

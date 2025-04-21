@@ -4,7 +4,7 @@
       {{ lang.customers }}
     </template>
     <template #header-side>
-      <q-btn icon="search">
+      <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <customer-select
             :model-value="id"
@@ -13,7 +13,7 @@
             :filtered-options="filteredCustomers"
             @filter="onFilterCustomers"
           >
-            <template #before> <q-icon name="search" /> </template>
+            <template #before> <q-icon name="i-mdi-search" /> </template>
           </customer-select>
         </q-menu>
       </q-btn>
@@ -54,7 +54,7 @@
                 <q-item-label header>{{ lang.pet.title }}</q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-btn flat icon="open_in_new" @click="openPets" />
+                <q-btn flat icon="i-mdi-open-in-new" @click="openPets" />
               </q-item-section>
             </q-item>
             <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
@@ -75,7 +75,7 @@
                 <q-btn
                   :label="lang.open"
                   flat
-                  icon="open_in_new"
+                  icon="i-mdi-open-in-new"
                   @click="openBookings"
                 />
               </q-item-section>
@@ -109,7 +109,7 @@
         <q-card-actions align="right" class="q-my-md q-px-md">
           <q-btn
             :label="lang.booking.labels.addBooking"
-            icon="add"
+            icon="i-mdi-add"
             color="primary"
             @click="openCreateBookingDialog"
           />
@@ -135,7 +135,7 @@
         <q-card-actions align="right" class="q-px-md">
           <q-btn
             :label="lang.daycare.labels.addDaycare"
-            icon="add"
+            icon="i-mdi-add"
             color="primary"
             @click="openCreateDaycareDialog"
           />

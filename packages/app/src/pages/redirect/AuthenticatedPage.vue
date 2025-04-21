@@ -1,5 +1,7 @@
 <template>
-  <q-page padding> {{ service }} <q-icon name="check" color="green" /> </q-page>
+  <q-page padding>
+    {{ service }} <q-icon name="i-mdi-check" color="green" />
+  </q-page>
 </template>
 
 <script lang="ts">

@@ -80,7 +80,7 @@
       <div class="col-md-4">
         <q-banner rounded>
           <template v-slot:avatar>
-            <q-icon name="info" color="info" />
+            <q-icon name="i-mdi-info" color="info" />
           </template>
           <router-link to="/availability">{{
             lang.availability.title

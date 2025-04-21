@@ -7,7 +7,7 @@
       <q-item-section side>
         <q-icon
           v-if="slimfactError?.message === 'BAD_REQUEST'"
-          name="cancel"
+          name="i-mdi-cancel"
           color="red"
         />
         <q-form
@@ -25,7 +25,7 @@
             <template #icon> </template>
           </login-button>
         </q-form>
-        <q-icon v-else name="check" color="green" />
+        <q-icon v-else name="i-mdi-check" color="green" />
       </q-item-section>
     </q-item>
   </q-list>

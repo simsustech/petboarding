@@ -13,7 +13,6 @@ const lang: Language = {
   overview: 'Overzicht',
   dayOverview: 'Dag overzicht',
   customers: 'Klanten',
-  bookings: 'Reserveringen pension',
   labels: 'Labels',
   tbd: 'n.o.t.k.',
   pricesSubjectToChange: 'Prijzen onder voorbehoud.',
@@ -290,6 +289,9 @@ const lang: Language = {
         'U dient akkoord te gaan met de algemene voorwaarden.',
       approvedAfterDownPayment: 'U dient akkoord te gaan.'
     }
+  },
+  bookings: {
+    title: 'Reserveringen pension'
   },
   service: {
     title: 'Diensten',

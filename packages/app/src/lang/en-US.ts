@@ -13,7 +13,6 @@ const lang: Language = {
   overview: 'Overview',
   dayOverview: 'Day overview',
   customers: 'Customers',
-  bookings: 'Bookings boarding',
   labels: 'Labels',
   tbd: 'TBD',
   pricesSubjectToChange: 'Prices subject to change.',
@@ -284,6 +283,9 @@ const lang: Language = {
       termsAndConditions: 'You need to acccept the terms and conditions.',
       approvedAfterDownPayment: 'You need to accept.'
     }
+  },
+  bookings: {
+    title: 'Bookings boarding'
   },
   service: {
     title: 'Services',

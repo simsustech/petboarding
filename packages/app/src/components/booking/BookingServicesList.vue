@@ -16,7 +16,7 @@
         />
         <q-btn
           v-if="showEditButton"
-          icon="edit"
+          icon="i-mdi-edit"
           @click="emit('edit', { data: service })"
         />
       </q-item-section>

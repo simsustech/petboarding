@@ -11,7 +11,7 @@
         @update:model-value="setDate"
       >
         <template #append>
-          <q-icon name="event" class="cursor-pointer">
+          <q-icon name="i-mdi-event" class="cursor-pointer">
             <q-popup-proxy
               cover
               transition-show="scale"
@@ -145,7 +145,7 @@
                       daycareDate.customerDaycareSubscription?.status ===
                       CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
                     "
-                    name="paid"
+                    name="i-mdi-paid"
                     color="green"
                   />
                 </q-item-section>

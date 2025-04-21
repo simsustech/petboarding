@@ -18,7 +18,7 @@
           <q-rating
             v-if="opt.extraFields.rating"
             :model-value="opt.extraFields.rating"
-            icon="star_border"
+            icon="i-mdi-star-border"
             icon-selected="star"
             icon-half="star_half"
           />

@@ -11,7 +11,6 @@ export interface Language {
   overview: string
   dayOverview: string
   customers: string
-  bookings: string
   labels: string
   tbd: string
   pricesSubjectToChange: string
@@ -270,6 +269,9 @@ export interface Language {
       termsAndConditions: string
       approvedAfterDownPayment: string
     }
+  }
+  bookings: {
+    title: string
   }
   service: {
     title: string

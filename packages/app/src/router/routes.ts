@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from 'vue-router'
 import { userRouteKey, redirectRouteKey } from '../oauth.js'
 import { today } from '@quasar/quasar-ui-qcalendar'
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -10,12 +11,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'availability',
         alias: ['beschikbaarheid'],
-        component: () => import('../pages/AvailabilityPage.vue')
+        component: () => import('../pages/AvailabilityPage.vue'),
+        meta: {
+          lang: 'availability'
+        }
       },
       {
         path: 'information',
         alias: ['informatie'],
-        component: () => import('../pages/InformationPage.vue')
+        component: () => import('../pages/InformationPage.vue'),
+        meta: {
+          lang: 'information'
+        }
       },
       {
         path: 'redirect',
@@ -221,23 +228,38 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             path: 'customer',
-            component: () => import('../pages/account/CustomerPage.vue')
+            component: () => import('../pages/account/CustomerPage.vue'),
+            meta: {
+              lang: 'customer'
+            }
           },
           {
             path: 'contactpeople',
-            component: () => import('../pages/account/ContactPeoplePage.vue')
+            component: () => import('../pages/account/ContactPeoplePage.vue'),
+            meta: {
+              lang: 'contactperson'
+            }
           },
           {
             path: 'pets',
-            component: () => import('../pages/account/PetsPage.vue')
+            component: () => import('../pages/account/PetsPage.vue'),
+            meta: {
+              lang: 'pet'
+            }
           },
           {
             path: 'bookings',
-            component: () => import('../pages/account/BookingsPage.vue')
+            component: () => import('../pages/account/BookingsPage.vue'),
+            meta: {
+              lang: 'booking'
+            }
           },
           {
             path: 'daycare',
-            component: () => import('../pages/account/DaycarePage.vue')
+            component: () => import('../pages/account/DaycarePage.vue'),
+            meta: {
+              lang: 'daycare'
+            }
           }
         ]
       },

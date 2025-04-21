@@ -29,7 +29,7 @@
           <template #avatar>
             <q-icon
               v-if="!customerDaycareSubscriptions?.length"
-              name="warning"
+              name="i-mdi-warning"
               color="red"
             />
           </template>
@@ -39,7 +39,7 @@
               :label="
                 lang.customerDaycareSubscription.labels.purchaseSubscription
               "
-              icon="shopping_cart"
+              icon="i-mdi-shopping-cart"
               flat
               @click="
                 purchaseCustomerDaycareSubscriptionDialogRef?.functions.open()

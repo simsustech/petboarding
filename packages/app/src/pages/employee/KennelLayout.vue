@@ -25,7 +25,7 @@
         :label="lang.kennellayout.labels.tomorrow"
         @click="setToTomorrow"
       />
-      <q-btn icon="print" :to="`/print/kennellayout/${selectedDate}`" />
+      <q-btn icon="i-mdi-print" :to="`/print/kennellayout/${selectedDate}`" />
     </div>
     <div class="row q-col-gutter-md">
       <div class="col-auto">

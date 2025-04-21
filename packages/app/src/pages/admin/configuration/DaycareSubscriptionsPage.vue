@@ -9,7 +9,7 @@
     </template>
     <q-banner>
       <template #avatar>
-        <q-icon name="info" color="info" />
+        <q-icon name="i-mdi-info" color="info" />
       </template>
       {{ lang.daycareSubscription.messages.addDaycareSubscriptionNotification }}
     </q-banner>

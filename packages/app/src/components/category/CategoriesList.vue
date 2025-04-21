@@ -14,7 +14,7 @@
         </q-item-label> -->
         </q-item-section>
         <q-item-section side>
-          <q-btn flat icon="more_vert">
+          <q-btn flat icon="i-mdi-more-vert">
             <q-menu>
               <q-list>
                 <q-item
@@ -74,7 +74,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            icon="delete"
+            icon="i-mdi-delete"
             color="red"
             @click="emit('deletePrice', { data: price })"
           />

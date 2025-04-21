@@ -7,11 +7,11 @@
       <q-item-label overline>
         <div v-if="showWarnings">
           <div v-if="!modelValue.categoryId" class="row">
-            <q-icon name="warning" color="red" />
+            <q-icon name="i-mdi-warning" color="red" />
             {{ lang.pet.messages.noCategoryAssigned }}
           </div>
           <div v-if="modelValue.chemicalSterilizationDate" class="row">
-            <q-icon name="info" color="yellow" />
+            <q-icon name="i-mdi-info" color="yellow" />
             {{ lang.pet.messages.isChemicallySterilized }}
           </div>
         </div>
@@ -55,11 +55,11 @@
           class="q-mr-md"
           :model-value="modelValue.rating"
           size="sm"
-          icon="star_border"
-          icon-selected="star"
-          icon-half="star_half"
+          icon="i-mdi-star-border"
+          icon-selected="i-mdi-star"
+          icon-half="i-mdi-star-half"
         />
-        <q-btn v-if="showEditButton" icon="edit" @click="edit" />
+        <q-btn v-if="showEditButton" icon="i-mdi-edit" @click="edit" />
       </q-item-label>
     </q-item-section>
     <slot name="default"> </slot>
