@@ -9,7 +9,9 @@ const lang = useLang()
 watch(needRefresh, (val) => {
   if (val) {
     Notify.create({
-      type: 'warning',
+      icon: 'i-mdi-warning',
+      color: 'warning',
+      textColor: 'dark',
       message: lang.value.updateAvailable,
       closeBtn: lang.value.refresh,
       onDismiss: updateServiceWorker,

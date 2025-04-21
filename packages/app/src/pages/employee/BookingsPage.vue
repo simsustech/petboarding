@@ -231,7 +231,8 @@ const updateBookingInvoice: InstanceType<
     execute()
     if (!result.error.value) {
       $q.notify({
-        type: 'positive',
+        icon: 'i-mdi-check-circle',
+        color: 'positive',
         message: lang.value.booking.messages.invoiceSynchronized
       })
     }

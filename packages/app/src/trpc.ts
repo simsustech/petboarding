@@ -39,7 +39,8 @@ export const createUseTrpc = async () => {
             Notify.create({
               message: lang.value.serverError,
               caption,
-              type: 'negative'
+              icon: 'i-mdi-alert',
+              color: 'negative'
             })
           }
         }
