@@ -20,7 +20,12 @@
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
     </a>
   </q-styled-card>
-  <responsive-dialog :icons="{ close: 'i-mdi-close' }" ref="dialogRef" display>
+  <responsive-dialog
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    ref="dialogRef"
+    display
+  >
     <a>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
     </a>

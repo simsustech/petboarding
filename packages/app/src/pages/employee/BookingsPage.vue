@@ -52,6 +52,7 @@
     </div>
 
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateDialogRef"
       persistent
@@ -69,6 +70,7 @@
       ></booking-form>
     </responsive-dialog>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateBookingServiceDialogRef"
       @submit="submitBookingService"

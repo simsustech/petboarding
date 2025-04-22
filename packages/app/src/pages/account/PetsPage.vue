@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="!contactPeopleData?.length"
@@ -10,11 +11,11 @@
       {{ lang.pet.title }}
     </template>
     <div v-if="ready">
-      <div v-if="contactPeopleData?.length" class="row">
+      <div v-if="contactPeopleData?.length" class="row q-col-gutter-md">
         <pet-card
           v-for="pet in data"
           :key="pet.id"
-          class="col-12"
+          class="col-12 col-md-4"
           :model-value="pet"
           :categories="categories"
           @update="openUpdateDialog"
@@ -29,6 +30,7 @@
     </div>
 
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateDialogRef"
       persistent
@@ -42,6 +44,7 @@
       ></pet-form>
     </responsive-dialog>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="createDialogRef"
       persistent

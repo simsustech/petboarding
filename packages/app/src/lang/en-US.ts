@@ -565,6 +565,18 @@ const lang: Language = {
       amountPaid: 'Amount paid',
       amountRefunded: 'Amount refunded'
     }
+  },
+  dashboard: {
+    account: {
+      menu: {
+        title: 'Quick menu',
+        editCustomer: 'I want to edit my personal details.',
+        editContactPeople: 'I want to change my contact people.',
+        editPets: 'I want to edit my pet(s) information.',
+        addOrViewBooking: 'I want to add or review a booking.',
+        addOrViewDaycareDates: 'I want to add or review daycare dates.'
+      }
+    }
   }
 }
 

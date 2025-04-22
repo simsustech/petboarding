@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="!customerData"
@@ -28,6 +29,7 @@
       </div>
     </div>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateDialogRef"
       persistent
@@ -39,6 +41,7 @@
       ></contact-person-form>
     </responsive-dialog>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="createDialogRef"
       persistent

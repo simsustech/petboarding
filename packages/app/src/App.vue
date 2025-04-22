@@ -20,7 +20,15 @@ export default {
 <script setup lang="ts">
 import '@simsustech/quasar-components/css'
 import { useConfiguration } from './configuration.js'
-import { useMeta, QBtn, QBtnDropdown, QBtnToggle, QInput } from 'quasar'
+import {
+  useMeta,
+  QBtn,
+  QBtnDropdown,
+  QBtnToggle,
+  QInput,
+  QSelect,
+  QField
+} from 'quasar'
 import { setDefaultPropsMd3 } from 'unocss-preset-quasar/styles'
 
 const configuration = useConfiguration()
@@ -34,7 +42,9 @@ setDefaultPropsMd3({
   QBtn,
   QBtnDropdown,
   QBtnToggle,
-  QInput
+  QInput,
+  QSelect,
+  QField
 })
 </script>
 

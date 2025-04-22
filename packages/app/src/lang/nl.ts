@@ -577,6 +577,18 @@ const lang: Language = {
       amountPaid: 'Betaald',
       amountRefunded: 'Terugbetaald'
     }
+  },
+  dashboard: {
+    account: {
+      menu: {
+        title: 'Snelmenu',
+        editCustomer: 'Ik wil mijn persoonlijke gegevens wijzigen.',
+        editContactPeople: 'Ik wil mijn contactpersonen wijzigen.',
+        editPets: 'Ik wil de informatie van mijn huisdier(en) wijzigen.',
+        addOrViewBooking: 'Ik wil een reservering toevoegen of bekijken.',
+        addOrViewDaycareDates: 'Ik wil dagopvang datums toevoegen of bekijken.'
+      }
+    }
   }
 }
 

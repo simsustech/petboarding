@@ -216,7 +216,6 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'account',
-        component: () => import('../pages/AccountPage.vue'),
         beforeEnter: async () => {
           // oAuth doesn't work in SSR
           // return { path: '' }
@@ -226,6 +225,10 @@ const routes: RouteRecordRaw[] = [
           // }
         },
         children: [
+          {
+            path: '',
+            component: () => import('../pages/AccountPage.vue')
+          },
           {
             path: 'customer',
             component: () => import('../pages/account/CustomerPage.vue'),

@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     @create="openCreateDialog"
@@ -19,6 +20,7 @@
     />
   </resource-page>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createCategoryDialogRef"
     persistent
@@ -27,6 +29,7 @@
     <category-form ref="createCategoryFormRef" @submit="createCategory" />
   </responsive-dialog>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updateCategoryDialogRef"
     persistent
@@ -35,6 +38,7 @@
     <category-form ref="updateCategoryFormRef" @submit="updateCategory" />
   </responsive-dialog>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createCategoryPriceDialogRef"
     persistent

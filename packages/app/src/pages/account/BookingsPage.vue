@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     :disabled="disabled"
@@ -60,6 +61,7 @@
       </div>
     </div>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateDialogRef"
       persistent
@@ -77,6 +79,7 @@
       ></booking-form>
     </responsive-dialog>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="createDialogRef"
       persistent

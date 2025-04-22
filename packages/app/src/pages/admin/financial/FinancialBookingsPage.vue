@@ -1,5 +1,5 @@
 <template>
-  <resource-page :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
+  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
     <template #header>
       {{ lang.booking.title }}
     </template>

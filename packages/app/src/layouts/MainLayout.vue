@@ -65,6 +65,14 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item clickable @click="$q.dark.toggle()">
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-theme-light-dark" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label> </q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>
@@ -128,6 +136,11 @@
                       </q-item-section>
                     </q-item-section>
                   </template>
+                  <q-item :inset-level="1" to="/account" exact>
+                    <q-item-section>
+                      <q-item-label> {{ lang.overview }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item :inset-level="1" to="/account/customer">
                     <q-item-section>
                       <q-item-label> {{ lang.customer.title }} </q-item-label>

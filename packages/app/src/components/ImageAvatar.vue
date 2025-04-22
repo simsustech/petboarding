@@ -12,7 +12,7 @@
       size="xs"
       padding="xs"
       style="position: relative; right: 18px; bottom: -15px"
-      :icon="modelValue ? 'edit' : 'add'"
+      :icon="modelValue ? 'i-mdi-edit' : 'i-mdi-add'"
       @click="pickFiles"
     ></q-btn>
     <q-file
@@ -25,6 +25,7 @@
     />
   </div>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="imageDialog"
     persistent

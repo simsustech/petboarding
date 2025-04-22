@@ -1,5 +1,5 @@
 <template>
-  <resource-page :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
+  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
     <template #header>
       {{ lang.customers }}
     </template>
@@ -145,6 +145,7 @@
   </resource-page>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updateDialogRef"
     persistent
@@ -162,6 +163,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createBookingDialogRef"
     persistent
@@ -180,6 +182,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createDaycareDialogRef"
     persistent

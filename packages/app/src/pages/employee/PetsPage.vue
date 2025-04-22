@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     :top-bar-shrink="false"
   >
@@ -40,6 +41,7 @@
   </resource-page>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updatePetDialogRef"
     persistent
@@ -58,6 +60,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createVaccinationDialogRef"
     persistent
@@ -70,6 +73,7 @@
   </responsive-dialog>
 
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updateVaccinationDialogRef"
     persistent

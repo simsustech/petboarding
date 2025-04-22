@@ -1,5 +1,5 @@
 <template>
-  <resource-page :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
+  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
     <template #header>
       {{ lang.booking.title }}
     </template>
@@ -63,6 +63,7 @@
     </q-list>
   </resource-page>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updatePetDialogRef"
     @submit="submitPet"
@@ -78,6 +79,7 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="editorDialogRef"
     button-type="send"
@@ -104,6 +106,7 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updateBookingServiceDialogRef"
     @submit="submitBookingService"

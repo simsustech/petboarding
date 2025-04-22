@@ -4,14 +4,22 @@
       <div class="row">
         <q-input
           :model-value="modelValue.timesADay"
+          borderless
+          :filled="false"
+          :outlined="false"
+          :standout="false"
+          :rounded="false"
           type="number"
           step="1"
           inputmode="numeric"
           class="col-1 q-mr-sm"
           :placeholder="lang.pet.food.fields.timesADay"
           :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
+            'margin-top': '-1.75em',
+            'margin-bottom': '-0.5em',
+            background: 'transparent',
+            border: 0,
+            'max-width': '12ch'
           }"
           input-class="text-right"
           suffix="x"
@@ -28,8 +36,11 @@
           class="col-2 q-mr-sm"
           :placeholder="lang.pet.food.fields.amount"
           :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
+            'margin-top': '-1.75em',
+            'margin-bottom': '-0.5em',
+            background: 'transparent',
+            border: 0,
+            'max-width': '12ch'
           }"
           input-class="text-right"
           @update:model-value="
@@ -44,8 +55,11 @@
           emit-value
           :options="amountUnitOptions"
           :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
+            'margin-top': '-1.75em',
+            'margin-bottom': '-0.5em',
+            background: 'transparent',
+            border: 0,
+            'max-width': '12ch'
           }"
           @update:model-value="updateKey('amountUnit', $event)"
         />
@@ -54,7 +68,7 @@
           class="col-6"
           :placeholder="lang.pet.food.fields.kind"
           :style="{
-            'margin-top': '-2em',
+            'margin-top': '-1.75em',
             'margin-bottom': '-0.5em'
           }"
           @update:model-value="updateKey('kind', $event)"

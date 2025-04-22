@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     type="create"
     @create="openCreateDialog"
@@ -17,6 +18,7 @@
     />
   </resource-page>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="createBuildingDialogRef"
     persistent
@@ -25,6 +27,7 @@
     <building-form ref="createBuildingFormRef" @submit="createBuilding" />
   </responsive-dialog>
   <responsive-dialog
+    padding
     :icons="{ close: 'i-mdi-close' }"
     ref="updateBuildingDialogRef"
     persistent

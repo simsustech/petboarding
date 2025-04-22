@@ -1,5 +1,6 @@
 <template>
   <resource-page
+    padding
     :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
     :type="customerData ? 'update' : 'create'"
     @create="openCreateDialog"
@@ -25,6 +26,7 @@
     </q-page-sticky>
 
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="updateDialogRef"
       persistent
@@ -36,6 +38,7 @@
       ></customer-form>
     </responsive-dialog>
     <responsive-dialog
+      padding
       :icons="{ close: 'i-mdi-close' }"
       ref="createDialogRef"
       persistent

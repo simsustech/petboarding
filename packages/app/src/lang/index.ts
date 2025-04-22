@@ -533,6 +533,18 @@ export interface Language {
       amountRefunded: string
     }
   }
+  dashboard: {
+    account: {
+      menu: {
+        title: string
+        editCustomer: string
+        editContactPeople: string
+        editPets: string
+        addOrViewBooking: string
+        addOrViewDaycareDates: string
+      }
+    }
+  }
 }
 
 import type { Ref } from 'vue'
