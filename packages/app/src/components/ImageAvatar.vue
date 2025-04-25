@@ -25,9 +25,9 @@
     />
   </div>
   <responsive-dialog
+    ref="imageDialog"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="imageDialog"
     persistent
     display
   >

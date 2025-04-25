@@ -30,6 +30,8 @@ const lang: Language = {
   delete: 'Delete',
   documentation: 'Documentation',
   add: 'Add',
+  darkMode: 'Dark mode',
+  language: 'Language',
   account: {
     title: 'Account',
     fields: {
@@ -473,7 +475,9 @@ const lang: Language = {
       verifyDeletion:
         'Are you sure you want to delete the following daycare subscription?',
       addDaycareSubscriptionNotification:
-        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.'
+        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.',
+      noActiveSubscriptions:
+        'You do not have any active daycare subscriptions at the moment.'
     }
   },
   customerDaycareSubscription: {

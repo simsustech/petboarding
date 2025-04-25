@@ -148,8 +148,11 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'employee',
-        component: () => import('../pages/EmployeePage.vue'),
         children: [
+          {
+            path: '',
+            component: () => import('../pages/EmployeePage.vue')
+          },
           {
             path: 'overview/:date?',
             component: () => import('../pages/employee/OverviewPage.vue'),
@@ -159,6 +162,9 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'overview'
             }
           },
           {
@@ -170,19 +176,31 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'agenda'
             }
           },
           {
             path: 'customers/:id?',
-            component: () => import('../pages/employee/CustomersPage.vue')
+            component: () => import('../pages/employee/CustomersPage.vue'),
+            meta: {
+              lang: 'customer'
+            }
           },
           {
             path: 'pets/:ids*',
-            component: () => import('../pages/employee/PetsPage.vue')
+            component: () => import('../pages/employee/PetsPage.vue'),
+            meta: {
+              lang: 'pet'
+            }
           },
           {
             path: 'bookings/:ids*',
-            component: () => import('../pages/employee/BookingsPage.vue')
+            component: () => import('../pages/employee/BookingsPage.vue'),
+            meta: {
+              lang: 'booking'
+            }
           },
           {
             path: 'labels',
@@ -210,6 +228,9 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'kennellayout'
             }
           }
         ]
@@ -231,35 +252,62 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'customer',
-            component: () => import('../pages/account/CustomerPage.vue'),
+            components: {
+              default: () =>
+                import('../pages/account/CustomerPage/CustomerPage.vue'),
+              fabs: () =>
+                import('../pages/account/CustomerPage/CustomerPageFabs.vue')
+            },
             meta: {
               lang: 'customer'
             }
           },
           {
             path: 'contactpeople',
-            component: () => import('../pages/account/ContactPeoplePage.vue'),
+            components: {
+              default: () =>
+                import(
+                  '../pages/account/ContactPeoplePage/ContactPeoplePage.vue'
+                ),
+              fabs: () =>
+                import(
+                  '../pages/account/ContactPeoplePage/ContactPeoplePageFabs.vue'
+                )
+            },
             meta: {
               lang: 'contactperson'
             }
           },
           {
             path: 'pets',
-            component: () => import('../pages/account/PetsPage.vue'),
+            components: {
+              default: () => import('../pages/account/PetsPage/PetsPage.vue'),
+              fabs: () => import('../pages/account/PetsPage/PetsPageFabs.vue')
+            },
             meta: {
               lang: 'pet'
             }
           },
           {
             path: 'bookings',
-            component: () => import('../pages/account/BookingsPage.vue'),
+            components: {
+              default: () =>
+                import('../pages/account/BookingsPage/BookingsPage.vue'),
+              fabs: () =>
+                import('../pages/account/BookingsPage/BookingsPageFabs.vue')
+            },
             meta: {
               lang: 'booking'
             }
           },
           {
             path: 'daycare',
-            component: () => import('../pages/account/DaycarePage.vue'),
+            components: {
+              default: () =>
+                import('../pages/account/DaycarePage/DaycarePage.vue'),
+              fabs: () =>
+                import('../pages/account/DaycarePage/DaycarePageFabs.vue')
+            },
             meta: {
               lang: 'daycare'
             }

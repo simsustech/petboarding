@@ -1,412 +1,371 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <div v-show="ready">
-      <q-header>
-        <q-toolbar>
-          <q-btn
-            v-if="!miniState"
-            flat
-            dense
-            round
-            aria-label="Menu"
-            icon="i-mdi-menu"
-            @click="toggleLeftDrawer()"
-          >
-          </q-btn>
+  <md3-layout :ready="ready">
+    <template #header-toolbar>
+      <q-toolbar-title> {{ title }} </q-toolbar-title>
 
-          <q-toolbar-title> {{ title }} </q-toolbar-title>
-          <q-btn icon="i-mdi-help" flat>
-            <q-menu>
-              <q-list>
-                <q-item
-                  :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
-                  target="_blank"
-                >
-                  <q-item-section avatar>
-                    <q-icon name="i-mdi-link" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ lang.documentation }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="configuration.SUPPORT_EMAIL">
-                  <q-item-section avatar>
-                    <q-icon name="i-mdi-email" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      {{ configuration.SUPPORT_EMAIL }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-          <q-language-select-btn
-            v-model="language"
-            :language-imports="languageImports"
-          />
+      <user-menu-button
+        v-if="user"
+        color="accent"
+        :user-route="userRoute"
+        :icons="{ person: 'i-mdi-person' }"
+        @sign-out="logout"
+      />
+      <login-button v-else color="accent" @click="login" />
+      <q-btn icon="i-mdi-more-vert" flat>
+        <q-menu>
+          <q-list>
+            <q-item clickable href="/privacypolicy.pdf" target="_blank">
+              <q-item-section avatar>
+                <q-icon name="i-mdi-document" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.privacyPolicy }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
 
-          <user-menu-button
-            v-if="user"
-            color="accent"
-            :user-route="userRoute"
-            :icons="{ person: 'i-mdi-person' }"
-            @sign-out="logout"
-          />
-          <login-button v-else color="accent" @click="login" />
-          <q-btn icon="i-mdi-more-vert" flat>
-            <q-menu>
-              <q-list>
-                <q-item clickable href="/privacypolicy.pdf" target="_blank">
-                  <q-item-section>
-                    <q-item-label>
-                      {{ lang.privacyPolicy }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item clickable @click="$q.dark.toggle()">
-                  <q-item-section avatar>
-                    <q-icon name="i-mdi-theme-light-dark" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label> </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-        </q-toolbar>
-      </q-header>
-
-      <q-drawer
-        :model-value="leftDrawerOpen"
-        :width="360"
-        :mini-width="80"
-        :mini="miniState"
-        show-if-above
-        bordered
-        @update:model-value="toggleLeftDrawer"
-      >
-        <template #mini>
-          <div
-            :class="{
-              column: true,
-              'items-center': miniState,
-              'pr-0': true
-            }"
-          >
-            <q-btn
-              flat
-              dense
-              round
-              aria-label="Menu"
-              icon="i-mdi-menu"
-              @click="toggleLeftDrawer()"
+            <q-item
+              :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
+              target="_blank"
             >
-            </q-btn>
-            <div class="col" id="fabs" />
+              <q-item-section avatar>
+                <q-icon name="i-mdi-link" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ lang.documentation }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="configuration.SUPPORT_EMAIL">
+              <q-item-section avatar>
+                <q-icon name="i-mdi-email" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ configuration.SUPPORT_EMAIL }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
 
-            <div class="col">
-              <navigation-tabs vertical dense />
-            </div>
-          </div>
-        </template>
+            <q-language-select
+              v-model="language"
+              :language-imports="languageImports"
+            />
+            <q-item>
+              <q-item-section label>
+                {{ lang.darkMode }}
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle
+                  :model-value="$q.dark.isActive"
+                  checked-icon="i-mdi-moon-and-stars"
+                  unchecked-icon="i-mdi-brightness-7"
+                  size="2em"
+                  @update:model-value="$q.dark.set"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </template>
 
-        <q-scroll-area class="fit">
-          <div class="q-px-md">
-            <div class="text-overline">{{ title }}</div>
-            <div v-if="user">
-              <q-list>
-                <q-expansion-item
-                  ref="accountExpansionItemRef"
-                  :header-class="
-                    route.path.includes('/account/')
-                      ? 'text-primary'
-                      : undefined
-                  "
+    <template #drawer-mini-navigation>
+      <div class="col">
+        <navigation-tabs vertical dense />
+      </div>
+    </template>
+
+    <template #drawer>
+      <q-scroll-area class="fit">
+        <div class="q-px-md">
+          <div class="text-overline">{{ title }}</div>
+          <div v-if="user">
+            <q-list>
+              <q-expansion-item
+                ref="accountExpansionItemRef"
+                :header-class="
+                  route.path.includes('/account/') ? 'text-primary' : undefined
+                "
+              >
+                <template #header>
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-person" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-section>
+                      <q-item-label> Account </q-item-label>
+                    </q-item-section>
+                  </q-item-section>
+                </template>
+                <q-item :inset-level="1" to="/account" exact>
+                  <q-item-section>
+                    <q-item-label> {{ lang.overview }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/account/customer">
+                  <q-item-section>
+                    <q-item-label> {{ lang.customer.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/account/contactpeople">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.contactPerson.title }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/account/pets">
+                  <q-item-section>
+                    <q-item-label> {{ lang.pet.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/account/bookings">
+                  <q-item-section>
+                    <q-item-label> {{ lang.bookings.title }} </q-item-label>
+                  </q-item-section></q-item
                 >
-                  <template #header>
-                    <q-item-section avatar>
-                      <q-icon name="i-mdi-person" />
-                    </q-item-section>
+                <q-item :inset-level="1" to="/account/daycare">
+                  <q-item-section>
+                    <q-item-label> {{ lang.daycare.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-expansion-item>
+            </q-list>
+            <q-separator />
+          </div>
+          <div v-if="user?.roles?.includes('employee')">
+            <q-list>
+              <q-expansion-item
+                ref="employeeExpansionItemRef"
+                :label="lang.employee"
+                :header-class="
+                  route.path.includes('/employee/') ? 'text-primary' : undefined
+                "
+              >
+                <q-item :inset-level="1" to="/employee/overview">
+                  <q-item-section>
+                    <q-item-label> {{ lang.dayOverview }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/employee/agenda">
+                  <q-item-section>
+                    <q-item-label> {{ lang.agenda.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/employee/kennellayout">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.kennellayout.title }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/employee/customers">
+                  <q-item-section>
+                    <q-item-label> {{ lang.customers }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-expansion-item
+                  :header-inset-level="1"
+                  :content-inset-level="2"
+                  to="/employee/pets"
+                  :label="lang.pet.title"
+                >
+                  <q-item to="/employee/labels/pets">
                     <q-item-section>
-                      <q-item-section>
-                        <q-item-label> Account </q-item-label>
-                      </q-item-section>
-                    </q-item-section>
-                  </template>
-                  <q-item :inset-level="1" to="/account" exact>
-                    <q-item-section>
-                      <q-item-label> {{ lang.overview }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/account/customer">
-                    <q-item-section>
-                      <q-item-label> {{ lang.customer.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/account/contactpeople">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.contactPerson.title }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/account/pets">
-                    <q-item-section>
-                      <q-item-label> {{ lang.pet.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/account/bookings">
-                    <q-item-section>
-                      <q-item-label> {{ lang.bookings }} </q-item-label>
-                    </q-item-section></q-item
-                  >
-                  <q-item :inset-level="1" to="/account/daycare">
-                    <q-item-section>
-                      <q-item-label> {{ lang.daycare.title }} </q-item-label>
+                      <q-item-label> Labels </q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-              </q-list>
-              <q-separator />
-            </div>
-            <div v-if="user?.roles?.includes('employee')">
-              <q-list>
-                <q-expansion-item
-                  ref="employeeExpansionItemRef"
-                  :label="lang.employee"
-                  :header-class="
-                    route.path.includes('/employee/')
-                      ? 'text-primary'
-                      : undefined
-                  "
-                >
-                  <q-item :inset-level="1" to="/employee/overview">
-                    <q-item-section>
-                      <q-item-label> {{ lang.dayOverview }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/employee/agenda">
-                    <q-item-section>
-                      <q-item-label> {{ lang.agenda.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/employee/kennellayout">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.kennellayout.title }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/employee/customers">
-                    <q-item-section>
-                      <q-item-label> {{ lang.customers }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-expansion-item
-                    :header-inset-level="1"
-                    :content-inset-level="2"
-                    to="/employee/pets"
-                    :label="lang.pet.title"
-                  >
-                    <q-item to="/employee/labels/pets">
-                      <q-item-section>
-                        <q-item-label> Labels </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-expansion-item>
-                  <!-- <q-item :inset-level="1" to="/employee/bookings">
+                <!-- <q-item :inset-level="1" to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>
                   </q-item-section>
                 </q-item> -->
-                </q-expansion-item>
-              </q-list>
-            </div>
-            <div v-if="user?.roles?.includes('administrator')">
-              <q-list>
+              </q-expansion-item>
+            </q-list>
+          </div>
+          <div v-if="user?.roles?.includes('administrator')">
+            <q-list>
+              <q-expansion-item
+                ref="adminExpansionItemRef"
+                :label="lang.administrator"
+                :header-class="
+                  route.path.includes('/admin/') ? 'text-primary' : undefined
+                "
+              >
+                <template #header>
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.administrator }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-icon
+                      v-if="
+                        numberOfPendingBookings > 0 ||
+                        numberOfPendingDaycareDates > 0
+                      "
+                      color="red"
+                      name="i-mdi-exclamation"
+                    />
+                  </q-item-section>
+                </template>
                 <q-expansion-item
-                  ref="adminExpansionItemRef"
-                  :label="lang.administrator"
-                  :header-class="
-                    route.path.includes('/admin/') ? 'text-primary' : undefined
-                  "
+                  :header-inset-level="1"
+                  :content-inset-level="2"
+                  :label="lang.financial.title"
                 >
-                  <template #header>
+                  <q-item to="/admin/financial/overview">
+                    <q-item-section>
+                      <q-item-label> {{ lang.overview }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/financial/bookings">
+                    <q-item-section>
+                      <q-item-label> {{ lang.booking.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-expansion-item>
+                <q-item :inset-level="1" to="/admin/accounts">
+                  <q-item-section>
+                    <q-item-label> Accounts </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/admin/bookings">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.booking.title }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge v-if="numberOfPendingBookings > 0">
+                      {{ numberOfPendingBookings }}</q-badge
+                    >
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/admin/daycare">
+                  <q-item-section>
+                    <q-item-label> {{ lang.daycare.title }} </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-badge v-if="numberOfPendingDaycareDates > 0">
+                      {{ numberOfPendingDaycareDates }}</q-badge
+                    >
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/admin/occupancy">
+                  <q-item-section>
+                    <q-item-label> {{ lang.occupancy.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/admin/announcements">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.announcement.title }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item :inset-level="1" to="/admin/periods">
+                  <q-item-section>
+                    <q-item-label> {{ lang.period.title }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-expansion-item
+                  :header-inset-level="1"
+                  :content-inset-level="2"
+                  :label="lang.configuration.title"
+                >
+                  <q-item to="/admin/configuration/buildings">
+                    <q-item-section>
+                      <q-item-label> {{ lang.building.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/kennels">
+                    <q-item-section>
+                      <q-item-label> {{ lang.kennel.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/categories">
+                    <q-item-section>
+                      <q-item-label> {{ lang.category.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item to="/admin/configuration/openingtimes">
                     <q-item-section>
                       <q-item-label>
-                        {{ lang.administrator }}
+                        {{ lang.configuration.openingTimes }}
                       </q-item-label>
                     </q-item-section>
-                    <q-item-section side>
-                      <q-icon
-                        v-if="
-                          numberOfPendingBookings > 0 ||
-                          numberOfPendingDaycareDates > 0
-                        "
-                        color="red"
-                        name="i-mdi-exclamation"
-                      />
-                    </q-item-section>
-                  </template>
-                  <q-expansion-item
-                    :header-inset-level="1"
-                    :content-inset-level="2"
-                    :label="lang.financial.title"
-                  >
-                    <q-item to="/admin/financial/overview">
-                      <q-item-section>
-                        <q-item-label> {{ lang.overview }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/financial/bookings">
-                      <q-item-section>
-                        <q-item-label> {{ lang.booking.title }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-expansion-item>
-                  <q-item :inset-level="1" to="/admin/accounts">
+                  </q-item>
+                  <q-item to="/admin/configuration/services">
                     <q-item-section>
-                      <q-item-label> Accounts </q-item-label>
+                      <q-item-label> {{ lang.service.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item :inset-level="1" to="/admin/bookings">
+                  <q-item to="/admin/configuration/daycaresubscriptions">
                     <q-item-section>
                       <q-item-label>
-                        {{ lang.booking.title }}
-                      </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-badge v-if="numberOfPendingBookings > 0">
-                        {{ numberOfPendingBookings }}</q-badge
-                      >
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/admin/daycare">
-                    <q-item-section>
-                      <q-item-label> {{ lang.daycare.title }} </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-badge v-if="numberOfPendingDaycareDates > 0">
-                        {{ numberOfPendingDaycareDates }}</q-badge
-                      >
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/admin/occupancy">
-                    <q-item-section>
-                      <q-item-label> {{ lang.occupancy.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item :inset-level="1" to="/admin/announcements">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.announcement.title }}
+                        {{ lang.daycareSubscription.title }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item :inset-level="1" to="/admin/periods">
-                    <q-item-section>
-                      <q-item-label> {{ lang.period.title }} </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-expansion-item
-                    :header-inset-level="1"
-                    :content-inset-level="2"
-                    :label="lang.configuration.title"
-                  >
-                    <q-item to="/admin/configuration/buildings">
-                      <q-item-section>
-                        <q-item-label> {{ lang.building.title }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/configuration/kennels">
-                      <q-item-section>
-                        <q-item-label> {{ lang.kennel.title }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/configuration/categories">
-                      <q-item-section>
-                        <q-item-label> {{ lang.category.title }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/configuration/openingtimes">
-                      <q-item-section>
-                        <q-item-label>
-                          {{ lang.configuration.openingTimes }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/configuration/services">
-                      <q-item-section>
-                        <q-item-label> {{ lang.service.title }} </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item to="/admin/configuration/daycaresubscriptions">
-                      <q-item-section>
-                        <q-item-label>
-                          {{ lang.daycareSubscription.title }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <!-- <q-item to="/admin/configuration/email">
+                  <!-- <q-item to="/admin/configuration/email">
                     <q-item-section>
                       <q-item-label>
                         {{ lang.configuration.emailTemplates }}
                       </q-item-label>
                     </q-item-section>
                   </q-item> -->
-                    <q-item to="/admin/configuration/integrations">
-                      <q-item-section>
-                        <q-item-label>
-                          {{ lang.configuration.integrations }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-expansion-item>
+                  <q-item to="/admin/configuration/integrations">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.integrations }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-expansion-item>
-              </q-list>
-              <q-separator />
-            </div>
-            <q-list>
-              <q-item to="/" exact>
-                <q-item-section avatar>
-                  <q-icon color="primary" name="i-mdi-home" />
-                </q-item-section>
-
-                <q-item-section>Home</q-item-section>
-              </q-item>
+              </q-expansion-item>
             </q-list>
+            <q-separator />
           </div>
-        </q-scroll-area>
-        <q-list
-          v-if="!configuration.HIDE_BRANDING"
-          class="items-end justify-end self-end"
-        >
-          <q-item>
-            <q-item-section avatar>
-              <petboarding-icon size="lg" />
-            </q-item-section>
-            <q-item-section v-if="leftDrawerOpen">
-              <q-item-label> Petboarding </q-item-label>
-              <q-item-label caption> © simsustech </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-drawer>
+          <q-list>
+            <q-item to="/" exact>
+              <q-item-section avatar>
+                <q-icon color="primary" name="i-mdi-home" />
+              </q-item-section>
 
-      <q-footer class="h-80px lt-md">
-        <div class="column fit items-center justify-center">
-          <navigation-tabs dense class="col-12 lt-md" />
+              <q-item-section>Home</q-item-section>
+            </q-item>
+          </q-list>
         </div>
-      </q-footer>
+      </q-scroll-area>
+      <q-list
+        v-if="!configuration.HIDE_BRANDING"
+        class="items-end justify-end self-end"
+      >
+        <q-item>
+          <q-item-section avatar>
+            <petboarding-icon size="lg" />
+          </q-item-section>
+          <q-item-section v-if="leftDrawerOpen">
+            <q-item-label> Petboarding </q-item-label>
+            <q-item-label caption> © simsustech </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </template>
 
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </div>
-  </q-layout>
+    <template #footer>
+      <div class="column fit items-center justify-center">
+        <navigation-tabs dense class="col-12 lt-md" />
+      </div>
+    </template>
+
+    <template #fabs="{ showSticky }">
+      <router-view name="fabs" :show-sticky="showSticky" />
+    </template>
+  </md3-layout>
 </template>
 
 <script setup lang="ts">
@@ -416,7 +375,7 @@ import {
   LoginButton,
   UserMenuButton
 } from '@simsustech/quasar-components/authentication'
-import { QLanguageSelectBtn } from '@simsustech/quasar-components'
+import { QLanguageSelect, Md3Layout } from '@simsustech/quasar-components'
 import { useOAuthClient, userRouteKey, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'
@@ -437,31 +396,6 @@ const route = useRoute()
 const lang = useLang()
 
 const $q = useQuasar()
-const leftDrawerOpen = ref(false)
-const miniState = ref(false)
-
-// Small screen: toggle leftDrawerOpen, large screen: toggle miniState
-// Prevent unresponsiveness with screen changes and drawer opened
-watch(
-  () => $q.screen.height,
-  () => {
-    if (!import.meta.env.SSR && $q.screen.gt.sm) {
-      miniState.value = true
-    }
-    // toggleLeftDrawer()
-  }
-)
-
-const toggleLeftDrawer = (val?: boolean) => {
-  leftDrawerOpen.value = val ?? $q.screen.gt.sm
-  if (!import.meta.env.SSR && $q.screen.gt.sm) {
-    leftDrawerOpen.value = val ?? $q.screen.gt.sm
-    miniState.value = !miniState.value
-  } else {
-    leftDrawerOpen.value = val ?? !leftDrawerOpen.value
-    miniState.value = false
-  }
-}
 
 const login = () => {
   if (oAuthClient.value) oAuthClient.value.signIn({})

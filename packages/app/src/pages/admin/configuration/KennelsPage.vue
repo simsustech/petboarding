@@ -18,9 +18,9 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createKennelDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createKennelDialogRef"
     persistent
     @submit="create"
   >
@@ -31,9 +31,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateKennelDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateKennelDialogRef"
     persistent
     @submit="update"
   >

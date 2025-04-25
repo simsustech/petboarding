@@ -1,18 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    :disabled="
-      !petsData?.length ||
-      !!(daycareSubscriptions?.length && !customerDaycareSubscriptions?.length)
-    "
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
-    <template #header>
-      {{ lang.daycare.title }}
-    </template>
+  <q-page padding>
     <div v-if="ready">
       <div v-if="petsData?.length">
         <customer-daycare-subscriptions-list
@@ -59,7 +46,9 @@
             }}
           </a>
         </q-banner>
-        <daycare-legend />
+        <div class="row">
+          <daycare-legend />
+        </div>
         <daycare-calendar-month
           :events="events"
           :selected-events="selectedEvents"
@@ -73,66 +62,58 @@
             {{ lang.daycare.messages.addDaycareDates }}
           </template>
         </daycare-calendar-month>
-        <div class="row justify-center">
-          <q-btn
-            v-if="selectedEvents.length"
-            :label="lang.daycare.messages.cancelSelected"
-            color="red"
-            @click="cancelDaycareDates"
-          />
-        </div>
       </div>
-      <div v-else>
-        <router-link to="/account/pets">{{
-          lang.daycare.messages.addPets
-        }}</router-link>
+      <div class="row justify-center">
+        <q-btn
+          v-if="selectedEvents.length"
+          :label="lang.daycare.messages.cancelSelected"
+          color="red"
+          @click="cancelDaycareDates"
+        />
       </div>
     </div>
-    <!-- <q-btn @click="createCustomer" /> -->
-    <!-- <responsive-dialog padding :icons="{ close: 'i-mdi-close'}" ref="updateDialogRef" persistent @submit="update">
-      <daycare-form
-        ref="updateDaycareFormRef"
-        :pets="petsData"
-        :terms-and-conditions-url="termsAndConditionsUrl"
-        @submit="updateDaycare"
-      ></daycare-form>
-    </responsive-dialog> -->
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="createDialogRef"
-      persistent
-      @submit="create"
-    >
-      <daycare-form
-        ref="createDaycareFormRef"
-        :pets="petsData"
-        :terms-and-conditions-url="termsAndConditionsUrl"
-        :customer-daycare-subscriptions="
-          paidAndActiveCustomerDaycareSubscriptions
-        "
-        :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
-        :current-daycare-dates="data"
-        :disabled-dates="disabledDates"
-        @submit="createDaycare"
-        @change-date="onChangeDate"
-      ></daycare-form>
-    </responsive-dialog>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="purchaseCustomerDaycareSubscriptionDialogRef"
-      persistent
-      display
-    >
-      <customer-daycare-subscription-stepper
-        :daycare-subscriptions="daycareSubscriptions"
-        @purchase-customer-daycare-subscription="
-          onPurchaseCustomerDaycareSubscription
-        "
-      />
-    </responsive-dialog>
-  </resource-page>
+    <div v-else>
+      <router-link to="/account/pets">{{
+        lang.daycare.messages.addPets
+      }}</router-link>
+    </div>
+  </q-page>
+
+  <responsive-dialog
+    ref="createDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="create"
+  >
+    <daycare-form
+      ref="createDaycareFormRef"
+      :pets="petsData"
+      :terms-and-conditions-url="termsAndConditionsUrl"
+      :customer-daycare-subscriptions="
+        paidAndActiveCustomerDaycareSubscriptions
+      "
+      :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
+      :current-daycare-dates="data"
+      :disabled-dates="disabledDates"
+      @submit="createDaycare"
+      @change-date="onChangeDate"
+    ></daycare-form>
+  </responsive-dialog>
+  <responsive-dialog
+    ref="purchaseCustomerDaycareSubscriptionDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    display
+  >
+    <customer-daycare-subscription-stepper
+      :daycare-subscriptions="daycareSubscriptions"
+      @purchase-customer-daycare-subscription="
+        onPurchaseCustomerDaycareSubscription
+      "
+    />
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -142,27 +123,38 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, reactive } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { ref, onMounted, computed, reactive, inject } from 'vue'
+import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
-import DaycareForm from '../../components/daycare/DaycareForm.vue'
+import DaycareForm from '../../../components/daycare/DaycareForm.vue'
 import DaycareCalendarMonth, {
   QCalendarEvent
-} from '../../components/daycare/DaycareCalendarMonth.vue'
-import { useLang } from '../../lang/index.js'
+} from '../../../components/daycare/DaycareCalendarMonth.vue'
+import { useLang } from '../../../lang/index.js'
 import { useQuasar } from 'quasar'
-import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
+import DaycareLegend from '../../../components/daycare/DaycareLegend.vue'
 import {
   DAYCARE_DATE_COLORS,
   DAYCARE_DATE_ICONS,
   useConfiguration
-} from '../../configuration.js'
+} from '../../../configuration.js'
 import {
   type CustomerDaycareSubscription,
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 } from '@petboarding/api/zod'
-import customerDaycareSubscriptionStepper from '../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
-import customerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
+import customerDaycareSubscriptionStepper from '../../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
+import customerDaycareSubscriptionsList from '../../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
+
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('account-open-daycare-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const $q = useQuasar()
 const { useQuery, useMutation } = await createUseTrpc()
 
@@ -202,18 +194,8 @@ const { data: disabledDates, execute: executeDisabledDates } = useQuery(
   {}
 )
 
-const updateDaycareFormRef = ref<typeof DaycareForm>()
 const createDaycareFormRef = ref<typeof DaycareForm>()
-const updateDialogRef = ref<typeof ResponsiveDialog>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
-const openUpdateDialog: InstanceType<
-  typeof ResourcePage
->['$props']['onUpdate'] = ({ data }) => {
-  updateDialogRef.value?.functions.open()
-  nextTick(() => {
-    updateDaycareFormRef.value?.functions.setValue(data)
-  })
-}
 
 const openCreateDialog: InstanceType<
   typeof ResourcePage

@@ -21,9 +21,9 @@
     </a>
   </q-styled-card>
   <responsive-dialog
+    ref="dialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="dialogRef"
     display
   >
     <a>

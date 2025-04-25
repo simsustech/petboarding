@@ -20,27 +20,27 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createCategoryDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createCategoryDialogRef"
     persistent
     @submit="create"
   >
     <category-form ref="createCategoryFormRef" @submit="createCategory" />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateCategoryDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateCategoryDialogRef"
     persistent
     @submit="update"
   >
     <category-form ref="updateCategoryFormRef" @submit="updateCategory" />
   </responsive-dialog>
   <responsive-dialog
+    ref="createCategoryPriceDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createCategoryPriceDialogRef"
     persistent
     @submit="submitCategoryPrice"
   >

@@ -52,13 +52,12 @@
           clear: 'i-mdi-clear'
         }"
       />
-    </div>
-    <div class="row q-col-gutter-md justify-center">
+
       <gender-select
         v-bind="input"
         id="gender"
         v-model="modelValue.gender"
-        class="col-md-3 col-12"
+        class="col-span-12 md:col-span-2"
         name="gender"
         disable-other
         required
@@ -69,9 +68,19 @@
       <boolean-select
         v-model="modelValue.sterilized"
         :label="lang.pet.fields.sterilized"
-        class="col-md-3 col-12"
+        class="col-span-12 md:col-span-3"
         required
         name="sterilized"
+      />
+
+      <form-input
+        v-bind="input"
+        v-model="modelValue.color"
+        class="col-span-12 md:col-span-3"
+        :label="lang.pet.fields.color"
+        bottom-slots
+        lazy-rules
+        name="color"
       />
 
       <date-input
@@ -80,7 +89,7 @@
         :hint="lang.pet.messages.chemicalSterilizationDate"
         format="DD-MM-YYYY"
         clearable
-        class="col-md-3 col-12"
+        class="col-span-12 md:col-span-4"
         :date="{
           noUnset: true,
           options: pastDateOptionsFn,
@@ -90,16 +99,6 @@
           event: 'i-mdi-event',
           clear: 'i-mdi-clear'
         }"
-      />
-
-      <form-input
-        v-bind="input"
-        v-model="modelValue.color"
-        class="col-span-12 md:col-span-4"
-        :label="lang.pet.fields.color"
-        bottom-slots
-        lazy-rules
-        name="color"
       />
 
       <form-input
@@ -114,7 +113,7 @@
       <pet-food-input
         v-if="useFood"
         v-model="modelValue.food"
-        class="col-span-12 md:col-span-4"
+        class="col-span-12 md:col-span-6"
         name="food"
       />
 
@@ -152,54 +151,54 @@
         :species="modelValue.species"
         name="category"
       />
-    </div>
 
-    <form-input
-      v-bind="input"
-      id="particularities"
-      v-model="modelValue.particularities"
-      class="col-span-12"
-      name="particularities"
-      :label="lang.pet.fields.particularities"
-      bottom-slots
-      lazy-rules
-      type="textarea"
-      row
-      q-col-gutter-mds="3"
-    />
-
-    <form-input
-      v-if="useComments"
-      v-bind="input"
-      id="comments"
-      v-model="modelValue.comments"
-      class="col-span-12"
-      name="comments"
-      :label="lang.pet.fields.comments"
-      bottom-slots
-      lazy-rules
-      type="textarea"
-      row
-      q-col-gutter-mds="3"
-    />
-
-    <boolean-select
-      v-if="useDeceased && modelValue.deceased !== void 0"
-      v-model="modelValue.deceased"
-      :label="lang.pet.fields.deceased"
-      class="col-span-12 md:col-span-4"
-      name="deceased"
-    />
-    <div class="col-span-12 text-center">
-      <q-rating
-        v-if="useRating && modelValue.rating !== void 0"
-        :model-value="modelValue.rating || 0"
-        size="3em"
-        icon="i-mdi-star-border"
-        icon-selected="i-mdi-star"
-        icon-half="i-mdi-star-half"
-        @update:model-value="($event) => (modelValue.rating = $event)"
+      <form-input
+        v-bind="input"
+        id="particularities"
+        v-model="modelValue.particularities"
+        class="col-span-12"
+        name="particularities"
+        :label="lang.pet.fields.particularities"
+        bottom-slots
+        lazy-rules
+        type="textarea"
+        row
+        q-col-gutter-mds="3"
       />
+
+      <form-input
+        v-if="useComments"
+        v-bind="input"
+        id="comments"
+        v-model="modelValue.comments"
+        class="col-span-12"
+        name="comments"
+        :label="lang.pet.fields.comments"
+        bottom-slots
+        lazy-rules
+        type="textarea"
+        row
+        q-col-gutter-mds="3"
+      />
+
+      <boolean-select
+        v-if="useDeceased && modelValue.deceased !== void 0"
+        v-model="modelValue.deceased"
+        :label="lang.pet.fields.deceased"
+        class="col-span-12 md:col-span-4"
+        name="deceased"
+      />
+      <div class="col-span-12 text-center">
+        <q-rating
+          v-if="useRating && modelValue.rating !== void 0"
+          :model-value="modelValue.rating || 0"
+          size="3em"
+          icon="i-mdi-star-border"
+          icon-selected="i-mdi-star"
+          icon-half="i-mdi-star-half"
+          @update:model-value="($event) => (modelValue.rating = $event)"
+        />
+      </div>
     </div>
   </q-form>
 </template>

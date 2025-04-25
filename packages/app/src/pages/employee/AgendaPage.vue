@@ -1,16 +1,18 @@
 <template>
-  <agenda-component
-    ref="agendaComponentRef"
-    :bookings="bookingsData"
-    :daycare-dates="daycareDatesData"
-    :opening-times="openingTimesData"
-    @click-pet="onClickPet"
-    @change-date="onChangeDate"
-  >
-    <template #navigation>
-      <booking-status-select v-model="status" :options="statusOptions" />
-    </template>
-  </agenda-component>
+  <q-page padding>
+    <agenda-component
+      ref="agendaComponentRef"
+      :bookings="bookingsData"
+      :daycare-dates="daycareDatesData"
+      :opening-times="openingTimesData"
+      @click-pet="onClickPet"
+      @change-date="onChangeDate"
+    >
+      <template #navigation>
+        <booking-status-select v-model="status" :options="statusOptions" />
+      </template>
+    </agenda-component>
+  </q-page>
 </template>
 
 <script lang="ts">

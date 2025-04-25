@@ -30,6 +30,8 @@ const lang: Language = {
   delete: 'Verwijderen',
   documentation: 'Documentatie',
   add: 'Toevoegen',
+  darkMode: 'Donkere modus',
+  language: 'Taal',
   account: {
     title: 'Account',
     fields: {
@@ -485,7 +487,9 @@ const lang: Language = {
       verifyDeletion:
         'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?',
       addDaycareSubscriptionNotification:
-        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.'
+        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.',
+      noActiveSubscriptions:
+        'U heeft momenteel geen actieve dagopvang abonnementen.'
     }
   },
   customerDaycareSubscription: {

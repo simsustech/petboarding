@@ -1,15 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    :disabled="!contactPeopleData?.length"
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
-    <template #header>
-      {{ lang.pet.title }}
-    </template>
+  <q-page padding>
     <div v-if="ready">
       <div v-if="contactPeopleData?.length" class="row q-col-gutter-md">
         <pet-card
@@ -28,36 +18,35 @@
         }}</router-link>
       </div>
     </div>
-
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="updateDialogRef"
-      persistent
-      @submit="update"
-    >
-      <pet-form
-        ref="updatePetFormRef"
-        use-food
-        :categories="categories"
-        @submit="updatePet"
-      ></pet-form>
-    </responsive-dialog>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="createDialogRef"
-      persistent
-      @submit="create"
-    >
-      <pet-form
-        ref="createPetFormRef"
-        use-food
-        :categories="categories"
-        @submit="createPet"
-      ></pet-form>
-    </responsive-dialog>
-  </resource-page>
+  </q-page>
+  <responsive-dialog
+    ref="updateDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="update"
+  >
+    <pet-form
+      ref="updatePetFormRef"
+      use-food
+      :categories="categories"
+      @submit="updatePet"
+    ></pet-form>
+  </responsive-dialog>
+  <responsive-dialog
+    ref="createDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="create"
+  >
+    <pet-form
+      ref="createPetFormRef"
+      use-food
+      :categories="categories"
+      @submit="createPet"
+    ></pet-form>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -67,13 +56,24 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { ref, nextTick, onMounted, inject } from 'vue'
+import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
-import PetForm from '../../components/pet/PetForm.vue'
-import PetCard from '../../components/pet/PetCard.vue'
-import { useLang } from '../../lang/index.js'
+import PetForm from '../../../components/pet/PetForm.vue'
+import PetCard from '../../../components/pet/PetCard.vue'
+import { useLang } from '../../../lang/index.js'
 import { extend } from 'quasar'
+
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('account-open-pets-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 

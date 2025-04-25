@@ -18,9 +18,9 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createAnnouncementDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createAnnouncementDialogRef"
     persistent
     @submit="create"
   >
@@ -30,9 +30,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateAnnouncementDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateAnnouncementDialogRef"
     persistent
     @submit="update"
   >

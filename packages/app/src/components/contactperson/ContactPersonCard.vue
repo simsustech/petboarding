@@ -1,9 +1,16 @@
 <template>
-  <q-styled-card
-    :actions="{
-      align: 'right'
-    }"
-  >
+  <q-styled-card>
+    <template #title>
+      <div class="row justify-between">
+        <div class="col text-right">
+          <q-btn outline rounded icon="i-mdi-edit" @click="update">
+            <q-tooltip>
+              {{ lang.update }}
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+    </template>
     <q-list>
       <form-item field="firstName" :model-value="modelValue.firstName" />
       <form-item field="lastName" :model-value="modelValue.lastName" />
@@ -12,10 +19,6 @@
         :model-value="modelValue.telephoneNumber"
       />
     </q-list>
-
-    <template #actions>
-      <q-btn icon="i-mdi-edit" :label="lang.update" @click="update"> </q-btn>
-    </template>
   </q-styled-card>
 </template>
 

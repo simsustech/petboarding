@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-gutter-md">
+  <q-page padding class="q-gutter-md">
     <div class="row justify-center">
       <q-input
         ref="dateInputRef"

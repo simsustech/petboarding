@@ -10,7 +10,7 @@
     lazy-rules
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template v-slot:no-option>
+    <template #no-option>
       <q-item>
         <q-item-section class="text-italic text-grey">
           {{ lang.openingTime.messages.noOpeningTimesOnSelectedDate }}

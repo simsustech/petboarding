@@ -18,18 +18,18 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createPeriodDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createPeriodDialogRef"
     persistent
     @submit="create"
   >
     <period-form ref="createPeriodFormRef" @submit="createPeriod" />
   </responsive-dialog>
   <responsive-dialog
+    ref="updatePeriodDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updatePeriodDialogRef"
     persistent
     @submit="update"
   >

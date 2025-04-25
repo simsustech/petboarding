@@ -211,7 +211,12 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
             iconSet: quasarConf['framework']['iconSet']
           })
         ],
-        theme: {}
+        theme: {},
+        content: {
+          pipeline: {
+            include: ['src/**/configuration.ts']
+          }
+        }
       }
       // pwa: true
     },

@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="col-4 text-center">
-        <div v-html="qrSvg" id="qrcode" style="width: 2cm; height: 2cm"></div>
+        <div id="qrcode" style="width: 2cm; height: 2cm" v-html="qrSvg"></div>
       </div>
     </div>
     <div class="row">

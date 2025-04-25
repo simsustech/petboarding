@@ -12,6 +12,10 @@
           noUnset: true,
           firstDayOfWeek: '1'
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </div>
     <div class="row justify-center q-ma-sm">
@@ -25,62 +29,60 @@
         :label="lang.kennellayout.labels.tomorrow"
         @click="setToTomorrow"
       />
-      <q-btn icon="i-mdi-print" :to="`/print/kennellayout/${selectedDate}`" />
+      <q-btn icon="i-mdi-printer" :to="`/print/kennellayout/${selectedDate}`" />
     </div>
     <div class="row q-col-gutter-md">
-      <div class="col-auto">
+      <div class="">
         <q-badge rounded text-color="black" color="blue-2"></q-badge
         ><a>{{ lang.booking.title }}</a>
       </div>
-      <div class="col-auto">
+      <div class="">
         <q-badge rounded text-color="black" color="yellow-2"></q-badge
         ><a>{{ lang.daycare.title }}</a>
       </div>
-      <div class="col-auto">
+      <div class="">
         <a>{{ lang.kennellayout.messages.dragAndDrop }}</a>
       </div>
     </div>
-    <div class="row q-col-gutter-sm" style="height: 150px">
-      <div class="col-12 col-md-3">
-        <q-card>
-          <q-card-section
-            id="waitlist"
-            @dragenter="onDragEnter"
-            @dragleave="onDragLeave"
-            @dragover="onDragOver"
-            @drop="onDrop"
+    <div class="grid grid-cols-12 gap-3">
+      <q-card class="col-span-12 md:col-span-3">
+        <q-card-section
+          id="waitlist"
+          @dragenter="onDragEnter"
+          @dragleave="onDragLeave"
+          @dragover="onDragOver"
+          @drop="onDrop"
+        >
+          <pet-chip
+            v-for="pet in internalPetKennels.filter(
+              (pet) => pet.kennelId === null
+            )"
+            :id="`pet${pet.id}`"
+            :key="pet.id"
+            :model-value="pet"
+            :class="{
+              'bg-blue-2': pet.bookingId,
+              'bg-yellow-2': pet.daycareDateId
+            }"
+            :draggable="true"
+            show-image
+            show-last-name
+            @dragstart="onDragStart"
+            @open-pet="openPet"
           >
-            <pet-chip
-              v-for="pet in internalPetKennels.filter(
-                (pet) => pet.kennelId === null
-              )"
-              :id="`pet${pet.id}`"
-              :key="pet.id"
-              :model-value="pet"
-              :class="{
-                'bg-blue-2': pet.bookingId,
-                'bg-yellow-2': pet.daycareDateId
-              }"
-              :draggable="true"
-              show-image
-              show-last-name
-              @dragstart="onDragStart"
-              @open-pet="openPet"
-            >
-            </pet-chip>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-md-9 q-col-gutter-md">
+          </pet-chip>
+        </q-card-section>
+      </q-card>
+      <div class="col-span-12 md:col-span-9">
         <div v-for="building in buildings" :key="building.id" class="row">
-          <div class="col-12 row">
+          <div class="col-12">
             {{ building.name }}
           </div>
-          <div class="col-12 row">
+          <div class="col-12 grid grid-cols-12 gap-4">
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-6 col-md-3 column"
+              class="col-span-12 md:col-span-3"
               :style="{ 'min-height': '120px' }"
             >
               <q-card-section header>
@@ -88,7 +90,7 @@
               </q-card-section>
               <q-card-section
                 :id="`kennel${kennel.id}`"
-                class="col drop-target rounded-borders overflow-hidden"
+                class="min-h-80px !border-rd-8px drop-target rounded-borders overflow-hidden"
                 @dragenter="onDragEnter"
                 @dragleave="onDragLeave"
                 @dragover="onDragOver"

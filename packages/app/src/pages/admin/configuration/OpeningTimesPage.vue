@@ -19,9 +19,9 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createOpeningTimeDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createOpeningTimeDialogRef"
     persistent
     @submit="create"
   >
@@ -32,9 +32,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateOpeningTimeDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateOpeningTimeDialogRef"
     persistent
     @submit="update"
   >

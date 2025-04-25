@@ -18,18 +18,18 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createServiceDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createServiceDialogRef"
     persistent
     @submit="create"
   >
     <service-form ref="createServiceFormRef" @submit="createService" />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateServiceDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateServiceDialogRef"
     persistent
     @submit="update"
   >

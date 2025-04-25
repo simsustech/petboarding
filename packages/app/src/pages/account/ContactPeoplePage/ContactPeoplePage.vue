@@ -1,22 +1,12 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    :disabled="!customerData"
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
-    <template #header>
-      {{ lang.contactPerson.title }}
-    </template>
+  <q-page padding>
     <div v-if="ready">
       <div v-if="customerData">
         <div class="row">
           <contact-person-card
             v-for="contactPerson in data"
-            class="col-12 col-md-4"
             :key="contactPerson.id"
+            class="col-12 col-md-4"
             :model-value="contactPerson"
             @update="openUpdateDialog"
           />
@@ -28,31 +18,32 @@
         }}</router-link>
       </div>
     </div>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="updateDialogRef"
-      persistent
-      @submit="update"
-    >
-      <contact-person-form
-        ref="updateContactPersonFormRef"
-        @submit="updateContactPerson"
-      ></contact-person-form>
-    </responsive-dialog>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="createDialogRef"
-      persistent
-      @submit="create"
-    >
-      <contact-person-form
-        ref="createContactPersonFormRef"
-        @submit="createContactPerson"
-      ></contact-person-form>
-    </responsive-dialog>
-  </resource-page>
+  </q-page>
+
+  <responsive-dialog
+    ref="updateDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="update"
+  >
+    <contact-person-form
+      ref="updateContactPersonFormRef"
+      @submit="updateContactPerson"
+    ></contact-person-form>
+  </responsive-dialog>
+  <responsive-dialog
+    ref="createDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="create"
+  >
+    <contact-person-form
+      ref="createContactPersonFormRef"
+      @submit="createContactPerson"
+    ></contact-person-form>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -62,13 +53,23 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { ref, nextTick, onMounted, inject } from 'vue'
+import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
-import ContactPersonForm from '../../components/contactperson/ContactPersonForm.vue'
-import ContactPersonCard from '../../components/contactperson/ContactPersonCard.vue'
-import { useLang } from '../../lang/index.js'
+import ContactPersonForm from '../../../components/contactperson/ContactPersonForm.vue'
+import ContactPersonCard from '../../../components/contactperson/ContactPersonCard.vue'
+import { useLang } from '../../../lang/index.js'
 import { extend } from 'quasar'
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('account-open-contact-people-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 

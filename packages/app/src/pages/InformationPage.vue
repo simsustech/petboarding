@@ -1,6 +1,6 @@
 <template>
   <q-banner rounded>
-    <template v-slot:avatar>
+    <template #avatar>
       <q-icon name="i-mdi-warning" color="warning" />
     </template>
     <a href="/termsandconditions.pdf" target="_blank">{{
@@ -8,19 +8,19 @@
     }}</a>
   </q-banner>
   <q-banner rounded>
-    <template v-slot:avatar>
+    <template #avatar>
       <q-icon name="i-mdi-warning" color="warning" />
     </template>
     <a>{{ lang.information.messages.petHealth }}</a>
   </q-banner>
   <q-banner rounded>
-    <template v-slot:avatar>
+    <template #avatar>
       <q-icon name="i-mdi-info" color="info" />
     </template>
     <a>{{ lang.information.messages.openingTimes }}</a>
   </q-banner>
   <q-banner rounded class="bg-red-2">
-    <template v-slot:avatar>
+    <template #avatar>
       <q-icon name="i-mdi-exclamation" color="red" />
     </template>
     <a>{{ lang.information.messages.vaccinations }}</a>

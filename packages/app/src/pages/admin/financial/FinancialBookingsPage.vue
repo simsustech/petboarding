@@ -43,7 +43,7 @@
       :columns="columns"
       row-key="name"
     >
-      <template v-slot:bottom-row>
+      <template #bottom-row>
         <q-tr>
           <q-td colspan="3" class="text-right">
             {{ lang.financial.total }}:

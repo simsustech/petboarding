@@ -1,5 +1,5 @@
 <template>
-  <q-stepper v-model="step" ref="stepper" color="primary" animated>
+  <q-stepper ref="stepper" v-model="step" color="primary" animated>
     <q-step :name="1" :title="lang.daycareSubscription.title" :done="step > 1">
       <daycare-subscriptions-list
         :model-value="daycareSubscriptions"

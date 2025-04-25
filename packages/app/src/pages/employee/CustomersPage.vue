@@ -1,153 +1,147 @@
 <template>
-  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
-    <template #header>
-      {{ lang.customers }}
-    </template>
-    <template #header-side>
-      <q-btn icon="i-mdi-search">
-        <q-menu class="q-pa-sm">
-          <customer-select
-            :model-value="id"
-            @update:model-value="setParam"
-            :label="lang.search"
-            :filtered-options="filteredCustomers"
-            @filter="onFilterCustomers"
-          >
-            <template #before> <q-icon name="i-mdi-search" /> </template>
-          </customer-select>
-        </q-menu>
-      </q-btn>
-    </template>
+  <q-page padding>
+    <q-toolbar class="q-mb-lg">
+      <customer-select
+        :model-value="id"
+        standout
+        rounded
+        :filled="false"
+        :label="lang.search"
+        :filtered-options="filteredCustomers"
+        @update:model-value="setParam"
+        @filter="onFilterCustomers"
+      >
+        <template #prepend> <q-icon name="i-mdi-search" /> </template>
+      </customer-select>
+    </q-toolbar>
 
-    <div style="margin-top: 80px" class="">
-      <div class="row q-gutter-md">
-        <customer-card
-          v-if="data"
-          :model-value="data"
-          :categories="categories"
-          show-edit-button
-          use-rating
-          @update="openUpdateDialog"
-        />
+    <div class="row q-gutter-md">
+      <customer-card
+        v-if="data"
+        :model-value="data"
+        :categories="categories"
+        show-edit-button
+        use-rating
+        @update="openUpdateDialog"
+      />
 
-        <q-card>
-          <q-list v-if="contactPeople">
-            <q-item>
-              <q-item-section>
-                <q-item-label header>
-                  {{ lang.contactPerson.title }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <contact-person-item
-              v-for="contactPerson in contactPeople"
-              :key="contactPerson.id"
-              :model-value="contactPerson"
-            />
-          </q-list>
-        </q-card>
+      <q-card v-if="contactPeople">
+        <q-list>
+          <q-item>
+            <q-item-section>
+              <q-item-label header>
+                {{ lang.contactPerson.title }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <contact-person-item
+            v-for="contactPerson in contactPeople"
+            :key="contactPerson.id"
+            :model-value="contactPerson"
+          />
+        </q-list>
+      </q-card>
 
-        <q-card>
-          <q-list v-if="pets">
-            <q-item>
-              <q-item-section>
-                <q-item-label header>{{ lang.pet.title }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn flat icon="i-mdi-open-in-new" @click="openPets" />
-              </q-item-section>
-            </q-item>
-            <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
-          </q-list>
-        </q-card>
-      </div>
+      <q-card v-if="pets">
+        <q-list>
+          <q-item>
+            <q-item-section>
+              <q-item-label header>{{ lang.pet.title }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn flat icon="i-mdi-open-in-new" @click="openPets" />
+            </q-item-section>
+          </q-item>
+          <pet-item v-for="pet in pets" :key="pet.id" :model-value="pet" />
+        </q-list>
+      </q-card>
+    </div>
 
-      <q-card v-show="id" class="q-my-md q-pa-md">
-        <div class="row">
-          <q-list v-if="upcomingBookings" class="col-12 col-md-6">
-            <q-item>
-              <q-item-section>
-                <q-item-label header>{{
-                  `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
-                }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  :label="lang.open"
-                  flat
-                  icon="i-mdi-open-in-new"
-                  @click="openBookings"
-                />
-              </q-item-section>
-            </q-item>
+    <q-card v-show="id" class="q-my-md q-pa-md">
+      <div class="row">
+        <q-list v-if="upcomingBookings" class="col-12 col-md-6">
+          <q-item>
+            <q-item-section>
+              <q-item-label header>{{
+                `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
+              }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn
+                :label="lang.open"
+                flat
+                icon="i-mdi-open-in-new"
+                @click="openBookings"
+              />
+            </q-item-section>
+          </q-item>
+          <booking-item
+            v-for="booking in upcomingBookings"
+            :key="booking.id"
+            show-icon
+            :model-value="booking"
+          />
+        </q-list>
+        <q-expansion-item v-if="otherBookings" class="col-12 col-md-6">
+          <template #header>
+            <q-item-label header>
+              {{
+                `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
+              }}
+            </q-item-label>
+          </template>
+          <q-list v-if="otherBookings">
             <booking-item
-              v-for="booking in upcomingBookings"
+              v-for="booking in otherBookings"
               :key="booking.id"
               show-icon
               :model-value="booking"
             />
           </q-list>
-          <q-expansion-item v-if="otherBookings" class="col-12 col-md-6">
-            <template #header>
-              <q-item-label header>
-                {{
-                  `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
-                }}
-              </q-item-label>
-            </template>
-            <q-list v-if="otherBookings">
-              <booking-item
-                v-for="booking in otherBookings"
-                :key="booking.id"
-                show-icon
-                :model-value="booking"
-              />
-            </q-list>
-          </q-expansion-item>
-        </div>
+        </q-expansion-item>
+      </div>
 
-        <q-card-actions align="right" class="q-my-md q-px-md">
-          <q-btn
-            :label="lang.booking.labels.addBooking"
-            icon="i-mdi-add"
-            color="primary"
-            @click="openCreateBookingDialog"
-          />
-        </q-card-actions>
-      </q-card>
+      <q-card-actions align="right" class="q-my-md q-px-md">
+        <q-btn
+          :label="lang.booking.labels.addBooking"
+          icon="i-mdi-add"
+          color="primary"
+          @click="openCreateBookingDialog"
+        />
+      </q-card-actions>
+    </q-card>
 
-      <q-card v-show="id" class="q-pa-md">
-        <div class="row">
-          <customer-daycare-subscriptions-list
-            v-if="customerDaycareSubscriptions"
-            :model-value="customerDaycareSubscriptions"
-            :opened="true"
-          />
-        </div>
-        <div class="row justify-center">
-          <daycare-status-select v-model="daycareDatesStatus" />
-        </div>
-        <div class="row">
-          <daycare-calendar-month :events="events" @change-date="onChangeDate">
-          </daycare-calendar-month>
-        </div>
+    <q-card v-show="id" class="q-pa-md">
+      <div class="row">
+        <customer-daycare-subscriptions-list
+          v-if="customerDaycareSubscriptions"
+          :model-value="customerDaycareSubscriptions"
+          :opened="true"
+        />
+      </div>
+      <div class="row justify-center">
+        <daycare-status-select v-model="daycareDatesStatus" />
+      </div>
+      <div class="row">
+        <daycare-calendar-month :events="events" @change-date="onChangeDate">
+        </daycare-calendar-month>
+      </div>
 
-        <q-card-actions align="right" class="q-px-md">
-          <q-btn
-            :label="lang.daycare.labels.addDaycare"
-            icon="i-mdi-add"
-            color="primary"
-            @click="openCreateDaycareDialog"
-          />
-        </q-card-actions>
-      </q-card>
-    </div>
-  </resource-page>
+      <q-card-actions align="right" class="q-px-md">
+        <q-btn
+          :label="lang.daycare.labels.addDaycare"
+          icon="i-mdi-add"
+          color="primary"
+          @click="openCreateDaycareDialog"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-page>
 
   <responsive-dialog
+    ref="updateDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateDialogRef"
     persistent
     @submit="update"
   >
@@ -163,9 +157,9 @@
   </responsive-dialog>
 
   <responsive-dialog
+    ref="createBookingDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createBookingDialogRef"
     persistent
     @submit="submitBooking"
   >
@@ -182,9 +176,9 @@
   </responsive-dialog>
 
   <responsive-dialog
+    ref="createDaycareDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createDaycareDialogRef"
     persistent
     @submit="submitDaycare"
   >
@@ -222,7 +216,6 @@ import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
 import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
-import { ResourcePage } from '@simsustech/quasar-components'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }

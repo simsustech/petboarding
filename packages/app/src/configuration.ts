@@ -36,13 +36,13 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
   SUPPORT_EMAIL?: string
 }
 export const BOOKING_ICON = ref({
-  approved: 'check',
-  rejected: 'block',
-  canceled: 'clear',
-  canceledoutsideperiod: 'cancel',
-  pending: 'hourglass_empty',
-  standby: 'hourglass_full',
-  awaitingdownpayment: 'hourglass_top'
+  approved: 'i-mdi-check',
+  rejected: 'i-mdi-block',
+  canceled: 'i-mdi-clear',
+  canceledoutsideperiod: 'i-mdi-cancel',
+  pending: 'i-mdi-hourglass-empty',
+  standby: 'i-mdi-hourglass-full',
+  awaitingdownpayment: 'i-mdi-hourglass-top'
 })
 
 export const BOOKING_ICON_COLOR = ref({
@@ -64,11 +64,11 @@ export const DAYCARE_DATE_COLORS = {
 } as const
 
 export const DAYCARE_DATE_ICONS = {
-  approved: 'check',
-  rejected: 'block',
-  canceled: 'clear',
-  pending: 'hourglass_empty',
-  standby: 'hourglass_full'
+  approved: 'i-mdi-check',
+  rejected: 'i-mdi-block',
+  canceled: 'i-mdi-clear',
+  pending: 'i-mdi-hourglass-empty',
+  standby: 'i-mdi-hourglass-full'
 }
 
 export const AGENDA_CHIP_BADGE_COLORS = {
@@ -77,8 +77,8 @@ export const AGENDA_CHIP_BADGE_COLORS = {
 }
 
 export const AGENDA_CHIP_BADGE_ICONS = {
-  appointment: 'event',
-  isDoubleBooked: 'event_busy'
+  appointment: 'i-mdi-event',
+  isDoubleBooked: 'i-mdi-event-busy'
 }
 
 export const PET_CHIP_BADGE_COLORS = {
@@ -88,9 +88,9 @@ export const PET_CHIP_BADGE_COLORS = {
 }
 
 export const PET_CHIP_BADGE_ICONS = {
-  food: 'restaurant',
-  medicines: 'medical_services',
-  vaccinations: 'vaccines'
+  food: 'i-mdi-restaurant',
+  medicines: 'i-mdi-medical_services',
+  vaccinations: 'i-mdi-vaccines'
 }
 
 export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
@@ -106,7 +106,6 @@ export const useConfiguration = () => configuration
 export const loadConfiguration = async (language: Ref<string>) => {
   Loading.show({
     message: lang.value.configuration.loading + '...',
-    boxClass: 'bg-grey-2 text-grey-9',
     spinnerColor: 'primary'
   })
   return fetch('/configuration')

@@ -1,30 +1,28 @@
 <template>
-  <div v-if="termsAndConditionsUrl" class="row">
-    <a :href="termsAndConditionsUrl" target="_blank" class="col-12">
-      {{ lang.booking.messages.viewTermsAndConditions }}
-    </a>
-  </div>
-
-  <div v-show="!ignoreTermsAndConditions" class="row">
-    <q-field
-      :rules="rules"
+  <q-field
+    v-show="!ignoreTermsAndConditions"
+    :rules="rules"
+    :model-value="modelValue"
+    borderless
+    hide-bottom-space
+    :error-message="lang.booking.validations.termsAndConditions"
+  >
+    <q-checkbox
+      ref="termsAndConditionsRef"
       :model-value="modelValue"
-      borderless
-      hide-bottom-space
-      :error-message="lang.booking.validations.termsAndConditions"
+      color="primary"
+      @update:model-value="(evt) => $emit('update:model-value', evt)"
     >
-      <q-checkbox
-        ref="termsAndConditionsRef"
-        :model-value="modelValue"
-        color="primary"
-        @update:model-value="(evt) => $emit('update:model-value', evt)"
-      >
-        <template #default>
-          {{ lang.booking.messages.termsAndConditions }}
-        </template>
-      </q-checkbox>
-    </q-field>
-  </div>
+      <template #default>
+        {{ lang.booking.messages.termsAndConditions }}
+      </template>
+    </q-checkbox>
+    <template #hint>
+      <a :href="termsAndConditionsUrl" target="_blank" class="col-12">
+        {{ lang.booking.messages.viewTermsAndConditions }}
+      </a>
+    </template>
+  </q-field>
 </template>
 
 <script lang="ts">

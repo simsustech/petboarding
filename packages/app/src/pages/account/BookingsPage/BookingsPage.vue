@@ -1,17 +1,7 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    :disabled="disabled"
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
-    <template #header>
-      {{ lang.booking.title }}
-    </template>
+  <q-page padding>
     <q-banner class="q-mt-none q-pt-none" rounded>
-      <template v-slot:avatar>
+      <template #avatar>
         <q-icon name="i-mdi-info" color="info" />
       </template>
       {{ lang.booking.messages.changeDaycareToBooking }}
@@ -60,43 +50,44 @@
         }}</router-link>
       </div>
     </div>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="updateDialogRef"
-      persistent
-      @submit="update"
-    >
-      <booking-form
-        ref="updateBookingFormRef"
-        :pets="petsData"
-        :services="servicesData"
-        :terms-and-conditions-url="termsAndConditionsUrl"
-        :hide-approved-after-down-payment="
-          !configuration.INTEGRATIONS?.slimfact.hostname
-        "
-        @submit="updateBooking"
-      ></booking-form>
-    </responsive-dialog>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="createDialogRef"
-      persistent
-      @submit="create"
-    >
-      <booking-form
-        ref="createBookingFormRef"
-        :pets="petsData"
-        :services="servicesData"
-        :terms-and-conditions-url="termsAndConditionsUrl"
-        :hide-approved-after-down-payment="
-          !configuration.INTEGRATIONS?.slimfact.hostname
-        "
-        @submit="createBooking"
-      ></booking-form>
-    </responsive-dialog>
-  </resource-page>
+  </q-page>
+
+  <responsive-dialog
+    ref="updateDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="update"
+  >
+    <booking-form
+      ref="updateBookingFormRef"
+      :pets="petsData"
+      :services="servicesData"
+      :terms-and-conditions-url="termsAndConditionsUrl"
+      :hide-approved-after-down-payment="
+        !configuration.INTEGRATIONS?.slimfact.hostname
+      "
+      @submit="updateBooking"
+    ></booking-form>
+  </responsive-dialog>
+  <responsive-dialog
+    ref="createDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="create"
+  >
+    <booking-form
+      ref="createBookingFormRef"
+      :pets="petsData"
+      :services="servicesData"
+      :terms-and-conditions-url="termsAndConditionsUrl"
+      :hide-approved-after-down-payment="
+        !configuration.INTEGRATIONS?.slimfact.hostname
+      "
+      @submit="createBooking"
+    ></booking-form>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -106,17 +97,26 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { ref, nextTick, onMounted, inject } from 'vue'
+import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
-import BookingForm from '../../components/booking/BookingForm.vue'
-import BookingItem from '../../components/booking/BookingItem.vue'
-import { useLang } from '../../lang/index.js'
+import BookingForm from '../../../components/booking/BookingForm.vue'
+import BookingItem from '../../../components/booking/BookingItem.vue'
+import { useLang } from '../../../lang/index.js'
 import { extend } from 'quasar'
 import { computed } from 'vue'
-import { useConfiguration } from '../../configuration.js'
+import { useConfiguration } from '../../../configuration.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('account-open-bookings-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
 
 const $q = useQuasar()
 const configuration = useConfiguration()
@@ -155,7 +155,7 @@ const otherBookings = computed(() =>
 const { data: servicesData, execute: executeServices } =
   useQuery('public.getServices')
 
-const disabled = computed(() => !petsData.value?.length)
+// const disabled = computed(() => !petsData.value?.length)
 
 const termsAndConditionsUrl = computed(
   () =>

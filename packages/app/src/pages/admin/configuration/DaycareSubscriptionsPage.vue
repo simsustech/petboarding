@@ -24,9 +24,9 @@
     />
   </resource-page>
   <responsive-dialog
+    ref="createDaycareSubscriptionDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createDaycareSubscriptionDialogRef"
     persistent
     @submit="create"
   >
@@ -36,9 +36,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateDaycareSubscriptionDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateDaycareSubscriptionDialogRef"
     persistent
     @submit="update"
   >

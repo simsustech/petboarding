@@ -1,26 +1,18 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    :top-bar-shrink="false"
-  >
-    <template #header>
-      {{ lang.pet.title }}
-    </template>
-    <template #header-side>
-      <q-btn icon="i-mdi-search">
-        <q-menu class="q-pa-sm">
-          <pet-select
-            :model-value="ids"
-            multiple
-            clearable
-            @update:model-value="setParam"
-          >
-            <template #before> <q-icon name="i-mdi-search" /> </template>
-          </pet-select>
-        </q-menu>
-      </q-btn>
-    </template>
+  <q-page padding>
+    <q-toolbar class="q-mb-lg">
+      <pet-select
+        :model-value="ids"
+        multiple
+        clearable
+        :filled="false"
+        rounded
+        standout
+        @update:model-value="setParam"
+      >
+        <template #prepend> <q-icon name="i-mdi-search" /> </template>
+      </pet-select>
+    </q-toolbar>
     <div class="row">
       <pet-card
         v-for="pet in data"
@@ -38,12 +30,12 @@
         @delete="deletePet"
       />
     </div>
-  </resource-page>
+  </q-page>
 
   <responsive-dialog
+    ref="updatePetDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updatePetDialogRef"
     persistent
     @submit="update"
   >
@@ -60,9 +52,9 @@
   </responsive-dialog>
 
   <responsive-dialog
+    ref="createVaccinationDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="createVaccinationDialogRef"
     persistent
     @submit="submitVaccination"
   >
@@ -73,9 +65,9 @@
   </responsive-dialog>
 
   <responsive-dialog
+    ref="updateVaccinationDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateVaccinationDialogRef"
     persistent
     @submit="submitUpdateVaccination"
   >
@@ -104,7 +96,6 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import VaccinationForm from '../../components/vaccination/VaccinationForm.vue'
 import { useLang } from '../../lang/index.js'
 import { user } from '../../oauth.js'
-import { ResourcePage } from '@simsustech/quasar-components'
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 

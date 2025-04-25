@@ -63,9 +63,9 @@
     </q-list>
   </resource-page>
   <responsive-dialog
+    ref="updatePetDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updatePetDialogRef"
     @submit="submitPet"
   >
     <pet-form
@@ -79,9 +79,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="editorDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="editorDialogRef"
     button-type="send"
     @submit="submit"
   >
@@ -106,9 +106,9 @@
     />
   </responsive-dialog>
   <responsive-dialog
+    ref="updateBookingServiceDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    ref="updateBookingServiceDialogRef"
     @submit="submitBookingService"
   >
     <booking-service-form

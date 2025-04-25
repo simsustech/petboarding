@@ -1,14 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    :type="customerData ? 'update' : 'create'"
-    @create="openCreateDialog"
-    @update="openUpdateDialog"
-  >
-    <template #header>
-      {{ lang.customer.title }}
-    </template>
+  <q-page padding>
     <div class="row">
       <customer-card
         v-if="customerData"
@@ -16,40 +7,32 @@
         :model-value="customerData"
       />
     </div>
+  </q-page>
 
-    <q-page-sticky position="top-left" :offset="[-46, 0]">
-      <q-btn
-        :fab="$q.screen.gt.sm"
-        :fab-mini="$q.screen.lt.md"
-        icon="i-mdi-add"
-      />
-    </q-page-sticky>
-
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="updateDialogRef"
-      persistent
-      @submit="update"
-    >
-      <customer-form
-        ref="updateCustomerFormRef"
-        @submit="updateCustomer"
-      ></customer-form>
-    </responsive-dialog>
-    <responsive-dialog
-      padding
-      :icons="{ close: 'i-mdi-close' }"
-      ref="createDialogRef"
-      persistent
-      @submit="create"
-    >
-      <customer-form
-        ref="createCustomerFormRef"
-        @submit="createCustomer"
-      ></customer-form>
-    </responsive-dialog>
-  </resource-page>
+  <responsive-dialog
+    ref="updateDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="update"
+  >
+    <customer-form
+      ref="updateCustomerFormRef"
+      @submit="updateCustomer"
+    ></customer-form>
+  </responsive-dialog>
+  <responsive-dialog
+    ref="createDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="create"
+  >
+    <customer-form
+      ref="createCustomerFormRef"
+      @submit="createCustomer"
+    ></customer-form>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -60,17 +43,33 @@ export default {
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
-import CustomerForm from '../../components/customer/CustomerForm.vue'
-import CustomerCard from '../../components/customer/CustomerCard.vue'
+import CustomerForm from '../../../components/customer/CustomerForm.vue'
+import CustomerCard from '../../../components/customer/CustomerCard.vue'
 import { Customer } from '@petboarding/api/zod'
-import { useLang } from '../../lang/index.js'
+import { inject } from 'vue'
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('account-open-customer-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+bus.on('account-open-customer-update-dialog', () => {
+  if (openUpdateDialog)
+    openUpdateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
-const lang = useLang()
+// const lang = useLang()
 const { data: customerData, execute } = useQuery('user.getCustomer', {
   // immediate: true
 })

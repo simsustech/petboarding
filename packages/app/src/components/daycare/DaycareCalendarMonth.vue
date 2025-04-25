@@ -7,7 +7,7 @@
       <q-btn icon="i-mdi-arrow-left" @click="onPrev" />
       <q-btn icon="i-mdi-arrow-right" @click="onNext" />
     </div>
-    <div class="row">
+    <div class="row q-mt-sm">
       <q-scroll-area :style="contentSize">
         <q-resize-observer @resize="onResize" />
         <q-calendar-month
@@ -43,7 +43,10 @@
                 scope.timestamp.disabled ||
                 disabledDates?.includes(scope.timestamp.date)
               "
-              class="q-mb-sm q-mt-sm"
+              :class="{
+                'q-mb-sm': true,
+                'q-mt-sm': true
+              }"
               size="md"
               :outline="!getButtonColor(scope.timestamp.date)"
               rounded

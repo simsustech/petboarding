@@ -1,11 +1,11 @@
 <template>
   <accounts-table
     v-if="accounts"
+    v-model:pagination="pagination"
+    v-model:criteria="criteria"
     :model-value="accounts"
     :mapped-roles="mappedRoles"
     :count="count"
-    v-model:pagination="pagination"
-    v-model:criteria="criteria"
     @add-role="onAddRole"
     @remove-role="onRemoveRole"
   />

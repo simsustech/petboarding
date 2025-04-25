@@ -16,6 +16,7 @@
     <template #before>
       <slot name="before" />
     </template>
+    <template #prepend> <slot name="prepend" /> </template>
     <template #option="{ itemProps, opt }">
       <q-item v-bind="itemProps" :class="{ 'bg-grey-5': opt.deceased }">
         <q-item-section>

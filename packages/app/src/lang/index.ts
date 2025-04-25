@@ -28,6 +28,8 @@ export interface Language {
   delete: string
   documentation: string
   add: string
+  darkMode: string
+  language: string
   account: {
     title: string
     fields: {
@@ -448,6 +450,7 @@ export interface Language {
     messages: {
       verifyDeletion: string
       addDaycareSubscriptionNotification: string
+      noActiveSubscriptions: string
     }
   }
   customerDaycareSubscription: {

@@ -83,7 +83,7 @@
     </q-item-label>
   </q-item-section>
   <q-item-section side>
-    <div class="row">
+    <div class="row items-center">
       <div
         v-if="
           configuration.INTEGRATIONS?.slimfact.hostname &&
@@ -116,118 +116,120 @@
         </q-btn> -->
       </div>
 
-      <q-btn
-        v-if="
-          showApprovalButtons || showEditButton || showHandleCancelationButton
-        "
-        class="col-auto"
-        icon="more_vert"
-        flat
-      >
-        <q-menu>
-          <q-list>
-            <q-item
-              v-if="
-                showApprovalButtons &&
-                modelValue.status?.status !== BOOKING_STATUS.APPROVED
-              "
-              v-close-popup
-              clickable
-              class="bg-green"
-              @click="approve(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.replies.approve }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="
-                showApprovalButtons &&
-                modelValue.status?.status !== BOOKING_STATUS.REJECTED
-              "
-              v-close-popup
-              clickable
-              class="bg-red"
-              @click="reject(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.replies.reject }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="
-                showApprovalButtons &&
-                modelValue.status?.status !== BOOKING_STATUS.STANDBY
-              "
-              v-close-popup
-              clickable
-              class="bg-yellow"
-              @click="standby(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.replies.standby }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="showApprovalButtons"
-              v-close-popup
-              clickable
-              @click="reply(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.replies.reply }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="showHandleCancelationButton"
-              v-close-popup
-              clickable
-              @click="settleCancelation(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.booking.replies.settleCancelation }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
+      <div>
+        <q-btn
+          v-if="
+            showApprovalButtons || showEditButton || showHandleCancelationButton
+          "
+          class="col-auto"
+          icon="i-mdi-more-vert"
+          flat
+        >
+          <q-menu>
+            <q-list>
+              <q-item
+                v-if="
+                  showApprovalButtons &&
+                  modelValue.status?.status !== BOOKING_STATUS.APPROVED
+                "
+                v-close-popup
+                clickable
+                class="bg-green"
+                @click="approve(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.booking.replies.approve }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="
+                  showApprovalButtons &&
+                  modelValue.status?.status !== BOOKING_STATUS.REJECTED
+                "
+                v-close-popup
+                clickable
+                class="bg-red"
+                @click="reject(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.booking.replies.reject }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="
+                  showApprovalButtons &&
+                  modelValue.status?.status !== BOOKING_STATUS.STANDBY
+                "
+                v-close-popup
+                clickable
+                class="bg-yellow"
+                @click="standby(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.booking.replies.standby }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="showApprovalButtons"
+                v-close-popup
+                clickable
+                @click="reply(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.booking.replies.reply }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="showHandleCancelationButton"
+                v-close-popup
+                clickable
+                @click="settleCancelation(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.booking.replies.settleCancelation }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
 
-            <q-item
-              v-if="showEditButton"
-              v-close-popup
-              clickable
-              @click="update(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.edit }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                clickable
+                @click="update(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.edit }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
 
-            <q-item
-              v-if="showEditButton"
-              v-close-popup
-              class="text-red"
-              clickable
-              @click="cancel(modelValue)"
-            >
-              <q-item-section>
-                <q-item-label>
-                  {{ lang.cancel }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-menu>
-      </q-btn>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                class="text-red"
+                clickable
+                @click="cancel(modelValue)"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.cancel }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </div>
     </div>
   </q-item-section>
 </template>
