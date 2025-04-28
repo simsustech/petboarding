@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NavigationRailFabs } from '@simsustech/quasar-components'
+import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { ref } from 'vue'
 import { createUseTrpc } from '../../../trpc.js'
 const { useQuery } = await createUseTrpc()

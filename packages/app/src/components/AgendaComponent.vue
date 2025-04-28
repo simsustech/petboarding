@@ -3,7 +3,7 @@
     <slot name="navigation" />
     <q-input
       v-model="selectedDate"
-      class="q-pb-none"
+      class="q-pb-none q-pl-sm q-pr-sm"
       filled
       mask="date"
       :rules="['date']"

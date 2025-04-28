@@ -335,6 +335,18 @@ const routes: RouteRecordRaw[] = [
             }
           }
         }
+      },
+      {
+        path: 'pets/:ids*',
+        component: () => import('../pages/print/PetLabelsPage.vue')
+      },
+      {
+        path: 'bookings/:ids*',
+        component: () => import('../pages/print/BookingLabelsPage.vue')
+      },
+      {
+        path: 'overview/:date',
+        component: () => import('../pages/print/OverviewPage.vue')
       }
     ]
   }

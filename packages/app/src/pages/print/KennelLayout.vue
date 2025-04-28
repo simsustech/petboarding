@@ -1,5 +1,5 @@
 <template>
-  <q-page padding class="page">
+  <div class="page p-1em print:p-0">
     <div class="row justify-center text-h6">
       {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-  </q-page>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -156,9 +156,6 @@ onMounted(async () => {
   @page {
     size: auto;
     margin: 15mm;
-  }
-  .q-page {
-    padding: 0;
   }
 }
 </style>

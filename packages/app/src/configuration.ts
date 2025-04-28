@@ -89,8 +89,8 @@ export const PET_CHIP_BADGE_COLORS = {
 
 export const PET_CHIP_BADGE_ICONS = {
   food: 'i-mdi-restaurant',
-  medicines: 'i-mdi-medical_services',
-  vaccinations: 'i-mdi-vaccines'
+  medicines: 'i-mdi-medical-bag',
+  vaccinations: 'i-mdi-needle'
 }
 
 export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({

@@ -84,6 +84,7 @@
             <q-list>
               <q-expansion-item
                 ref="accountExpansionItemRef"
+                :content-inset-level="1"
                 :header-class="
                   route.path.includes('/account/') ? 'text-primary' : undefined
                 "
@@ -98,34 +99,34 @@
                     </q-item-section>
                   </q-item-section>
                 </template>
-                <q-item :inset-level="1" to="/account" exact>
+                <q-item to="/account" exact>
                   <q-item-section>
                     <q-item-label> {{ lang.overview }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/customer">
+                <q-item to="/account/customer">
                   <q-item-section>
                     <q-item-label> {{ lang.customer.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/contactpeople">
+                <q-item to="/account/contactpeople">
                   <q-item-section>
                     <q-item-label>
                       {{ lang.contactPerson.title }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/pets">
+                <q-item to="/account/pets">
                   <q-item-section>
                     <q-item-label> {{ lang.pet.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/bookings">
+                <q-item to="/account/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.bookings.title }} </q-item-label>
                   </q-item-section></q-item
                 >
-                <q-item :inset-level="1" to="/account/daycare">
+                <q-item to="/account/daycare">
                   <q-item-section>
                     <q-item-label> {{ lang.daycare.title }} </q-item-label>
                   </q-item-section>
@@ -142,32 +143,35 @@
                 :header-class="
                   route.path.includes('/employee/') ? 'text-primary' : undefined
                 "
+                :content-inset-level="1"
               >
-                <q-item :inset-level="1" to="/employee/overview">
+                <q-item to="/employee/overview">
                   <q-item-section>
                     <q-item-label> {{ lang.dayOverview }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/agenda">
+                <q-item to="/employee/agenda">
                   <q-item-section>
                     <q-item-label> {{ lang.agenda.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/kennellayout">
+                <q-item
+                  to="/employee/kennellayout"
+                  :active="route.path.includes('/employee/kennellayout')"
+                >
                   <q-item-section>
                     <q-item-label>
                       {{ lang.kennellayout.title }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/customers">
+                <q-item to="/employee/customers">
                   <q-item-section>
                     <q-item-label> {{ lang.customers }} </q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-expansion-item
-                  :header-inset-level="1"
-                  :content-inset-level="2"
+                  :content-inset-level="1"
                   to="/employee/pets"
                   :label="lang.pet.title"
                 >
@@ -177,7 +181,7 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <!-- <q-item :inset-level="1" to="/employee/bookings">
+                <!-- <q-item  to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>
                   </q-item-section>
@@ -190,6 +194,7 @@
               <q-expansion-item
                 ref="adminExpansionItemRef"
                 :label="lang.administrator"
+                :content-inset-level="1"
                 :header-class="
                   route.path.includes('/admin/') ? 'text-primary' : undefined
                 "
@@ -212,8 +217,7 @@
                   </q-item-section>
                 </template>
                 <q-expansion-item
-                  :header-inset-level="1"
-                  :content-inset-level="2"
+                  :content-inset-level="1"
                   :label="lang.financial.title"
                 >
                   <q-item to="/admin/financial/overview">
@@ -227,12 +231,12 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <q-item :inset-level="1" to="/admin/accounts">
+                <q-item to="/admin/accounts">
                   <q-item-section>
                     <q-item-label> Accounts </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/bookings">
+                <q-item to="/admin/bookings">
                   <q-item-section>
                     <q-item-label>
                       {{ lang.booking.title }}
@@ -244,7 +248,7 @@
                     >
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/daycare">
+                <q-item to="/admin/daycare">
                   <q-item-section>
                     <q-item-label> {{ lang.daycare.title }} </q-item-label>
                   </q-item-section>
@@ -254,19 +258,19 @@
                     >
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/occupancy">
+                <q-item to="/admin/occupancy">
                   <q-item-section>
                     <q-item-label> {{ lang.occupancy.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/announcements">
+                <q-item to="/admin/announcements">
                   <q-item-section>
                     <q-item-label>
                       {{ lang.announcement.title }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/periods">
+                <q-item to="/admin/periods">
                   <q-item-section>
                     <q-item-label> {{ lang.period.title }} </q-item-label>
                   </q-item-section>
@@ -375,7 +379,8 @@ import {
   LoginButton,
   UserMenuButton
 } from '@simsustech/quasar-components/authentication'
-import { QLanguageSelect, Md3Layout } from '@simsustech/quasar-components'
+import { QLanguageSelect } from '@simsustech/quasar-components'
+import { Md3Layout } from '@simsustech/quasar-components/md3'
 import { useOAuthClient, userRouteKey, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'

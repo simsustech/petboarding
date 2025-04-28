@@ -1,11 +1,7 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <div v-show="ready">
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </div>
-  </q-layout>
+  <div v-show="ready">
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -61,3 +57,9 @@ onMounted(async () => {
   ready.value = true
 })
 </script>
+
+<style>
+.wrapper {
+  padding: 16px;
+}
+</style>

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NavigationRailFabs } from '@simsustech/quasar-components'
+import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { ref } from 'vue'
 
 const busEmits = ref({
