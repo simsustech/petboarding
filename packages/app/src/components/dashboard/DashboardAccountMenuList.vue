@@ -31,7 +31,7 @@
       </q-item-section>
     </q-item>
     <q-item clickable to="/account/bookings">
-      <q-item-section side>
+      <q-item-section avatar>
         <q-icon name="i-mdi-calendar" />
       </q-item-section>
       <q-item-section>
@@ -41,7 +41,7 @@
       </q-item-section>
     </q-item>
     <q-item clickable to="/account/daycare">
-      <q-item-section side>
+      <q-item-section avatar>
         <q-icon name="i-mdi-events" />
       </q-item-section>
       <q-item-section>

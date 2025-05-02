@@ -1170,7 +1170,7 @@ export async function updateBookingService(
 }
 
 export async function getBookingsCount(status: BOOKING_STATUS) {
-  const count = (
+  let count = (
     await db
       .selectFrom('bookings')
       .where(({ eb, selectFrom }) =>
@@ -1192,6 +1192,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
       .executeTakeFirst()
   )?.count
 
+  if (typeof count === 'string') count = Number(count)
   return count
 }
 

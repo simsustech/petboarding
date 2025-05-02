@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.service.title }}
-    </template>
+  <q-page @create="openCreateDialog">
     <services-list
       v-if="services"
       :model-value="services"
@@ -16,7 +8,7 @@
       @update="openUpdateServiceDialog"
       @delete="openDeleteServiceDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createServiceDialogRef"
     padding
@@ -45,13 +37,23 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { Service } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
-import ServicesList from '../../../components/service/ServicesList.vue'
-import ServiceForm from '../../../components/service/ServiceForm.vue'
+import ServicesList from '../../../../components/service/ServicesList.vue'
+import ServiceForm from '../../../../components/service/ServiceForm.vue'
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-configuration-open-services-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: services, execute } = useQuery('configuration.getServices', {})

@@ -1,86 +1,94 @@
 <template>
-  <q-input
-    :model-value="parsedDate"
-    class="q-pb-none"
-    filled
-    mask="date"
-    :rules="['date']"
-    @update:model-value="updateDate"
-  >
-    <template #append>
-      <q-icon name="i-mdi-event" class="cursor-pointer">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-date
-            :model-value="parsedDate"
-            first-day-of-week="1"
-            @update:model-value="updateDate"
-          >
-            <div class="row items-center justify-end">
-              <q-btn v-close-popup label="Close" color="primary" flat />
-            </div>
-          </q-date>
-        </q-popup-proxy>
-      </q-icon>
-    </template>
-  </q-input>
-
-  <div class="column items-center">
-    <a class="col">
-      {{ getMonthYear(selectedDate) }}
-    </a>
-  </div>
-  <q-calendar-month
-    v-if="data && daycareOccupancy"
-    ref="calendar"
-    :model-value="selectedDate"
-    animated
-    bordered
-    focusable
-    hoverable
-    no-active-date
-    :locale="$q.lang.isoName"
-    :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-    :day-min-height="60"
-    :day-height="0"
-  >
-    <template #head-day-button="{ scope: { dayLabel, timestamp } }">
-      <q-btn
-        class="q-mb-sm q-mt-sm"
-        size="md"
-        outline
-        rounded
-        :label="dayLabel"
-        :to="`/employee/agenda/${timestamp.date}`"
-      />
-    </template>
-    <template #day="{ scope: { timestamp } }">
-      <div
-        v-if="data && daycareOccupancy"
-        :class="{
-          column: true,
-          'items-center': true,
-          'text-bold': true,
-          ...getClasses(timestamp.date)
-        }"
+  <q-page padding>
+    <q-toolbar>
+      <q-input
+        :model-value="parsedDate"
+        class="q-pb-none"
+        filled
+        mask="date"
+        :rules="['date']"
+        @update:model-value="updateDate"
       >
-        <div>
-          <a>
-            {{ data[timestamp.date] || 0 }}
-            <q-tooltip>
-              {{ lang.booking.title }}
-            </q-tooltip>
-          </a>
-          +
-          <a>
-            {{ daycareOccupancy[timestamp.date] || 0 }}
-            <q-tooltip>
-              {{ lang.daycare.title }}
-            </q-tooltip>
-          </a>
+        <template #append>
+          <q-icon name="i-mdi-event" class="cursor-pointer">
+            <q-popup-proxy
+              cover
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date
+                :model-value="parsedDate"
+                first-day-of-week="1"
+                @update:model-value="updateDate"
+              >
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+    </q-toolbar>
+
+    <div class="column items-center">
+      <a class="col">
+        {{ getMonthYear(selectedDate) }}
+      </a>
+    </div>
+    <q-calendar-month
+      v-if="data && daycareOccupancy"
+      ref="calendar"
+      :model-value="selectedDate"
+      animated
+      bordered
+      focusable
+      hoverable
+      no-active-date
+      :locale="$q.lang.isoName"
+      :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+      :day-min-height="60"
+      :day-height="0"
+    >
+      <template #head-day-button="{ scope: { dayLabel, timestamp } }">
+        <q-btn
+          class="q-mb-sm q-mt-sm"
+          size="md"
+          outline
+          rounded
+          :label="dayLabel"
+          :to="`/employee/agenda/${timestamp.date}`"
+        />
+      </template>
+      <template #day="{ scope: { timestamp } }">
+        <div
+          v-if="data && daycareOccupancy"
+          :class="{
+            column: true,
+            'items-center': true,
+            'text-bold': true,
+            ...getClasses(timestamp.date)
+          }"
+        >
+          <div>
+            <a>
+              {{ data[timestamp.date] || 0 }}
+              <q-tooltip>
+                {{ lang.booking.title }}
+              </q-tooltip>
+            </a>
+            +
+            <a>
+              {{ daycareOccupancy[timestamp.date] || 0 }}
+              <q-tooltip>
+                {{ lang.daycare.title }}
+              </q-tooltip>
+            </a>
+          </div>
         </div>
-      </div>
-    </template>
-  </q-calendar-month>
+      </template>
+    </q-calendar-month>
+  </q-page>
 </template>
 
 <script lang="ts">

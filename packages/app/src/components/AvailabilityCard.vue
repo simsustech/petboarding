@@ -1,25 +1,30 @@
 <template>
-  <q-styled-card>
-    <template #title>
-      {{ lang.availability.title }}
-      <q-btn icon="info" flat color="primary" @click="openDialog" />
-    </template>
-    <div class="row full-width justify-between">
-      <q-btn-toggle v-model="toggle" :options="buttonOptions" />
-    </div>
-    <div class="row">
+  <q-card>
+    <q-item-section>
+      <div class="row justify-center items-center">
+        {{ lang.availability.title }}
+        <q-btn icon="i-mdi-info" flat color="primary" @click="openDialog" />
+      </div>
+    </q-item-section>
+    <q-item-section>
+      <div class="row justify-center items-center">
+        <q-btn-toggle v-model="toggle" :options="buttonOptions" />
+      </div>
+    </q-item-section>
+    <q-item-section>
       <date-picker
         v-model="dateRange"
+        class="col-12 q-mt-md"
         :periods="unavailablePeriods"
         :range="toggle === 'boarding'"
         :options="options"
         first-day-of-week="1"
       />
-    </div>
-    <a class="text-caption">
+    </q-item-section>
+    <q-item-section>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
-    </a>
-  </q-styled-card>
+    </q-item-section>
+  </q-card>
   <responsive-dialog
     ref="dialogRef"
     padding
@@ -42,7 +47,7 @@ export default {
 <script setup lang="ts">
 import { Period } from '@petboarding/api/zod'
 import { watch, computed, ref, toRefs } from 'vue'
-import { QStyledCard, ResponsiveDialog } from '@simsustech/quasar-components'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DatePicker } from '@simsustech/quasar-components/form'
 import { useLang } from '../lang/index.js'
 import { useConfiguration } from '../configuration.js'

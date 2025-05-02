@@ -1,14 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.configuration.openingTimes }}
-    </template>
-
+  <q-page @create="openCreateDialog">
     <opening-times-list
       v-if="openingTimes"
       :model-value="openingTimes"
@@ -17,7 +8,7 @@
       @update="openUpdateOpeningTimeDialog"
       @delete="openDeleteOpeningTimeDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createOpeningTimeDialogRef"
     padding
@@ -55,13 +46,23 @@ export default {
 <script setup lang="ts">
 import { nextTick, onMounted, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { OpeningTime } from '@petboarding/api/zod'
-import OpeningTimeForm from '../../../components/booking/OpeningTimeForm.vue'
-import OpeningTimesList from '../../../components/openingTime/OpeningTimesList.vue'
-import { useConfiguration } from '../../../configuration.js'
+import OpeningTimeForm from '../../../../components/booking/OpeningTimeForm.vue'
+import OpeningTimesList from '../../../../components/openingTime/OpeningTimesList.vue'
+import { useConfiguration } from '../../../../configuration.js'
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-configuration-open-opening-times-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
 const { useQuery, useMutation } = await createUseTrpc()
 const $q = useQuasar()
 const configuration = useConfiguration()

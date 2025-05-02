@@ -21,12 +21,12 @@
       <q-item-section side>
         <q-btn
           v-if="showEditButton"
-          icon="edit"
+          icon="i-mdi-edit"
           @click="emit('update', { data: announcement })"
         />
         <q-btn
           v-if="showDeleteButton"
-          icon="delete"
+          icon="i-mdi-delete"
           color="red"
           @click="emit('delete', { data: announcement })"
         />

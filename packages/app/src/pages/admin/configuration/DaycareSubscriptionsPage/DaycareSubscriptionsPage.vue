@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.daycareSubscription.title }}
-    </template>
+  <q-page padding>
     <q-banner>
       <template #avatar>
         <q-icon name="i-mdi-info" color="info" />
@@ -22,7 +14,7 @@
       @update="openUpdateDaycareSubscriptionDialog"
       @delete="openDeleteDaycareSubscriptionDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createDaycareSubscriptionDialogRef"
     padding
@@ -57,13 +49,26 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { DaycareSubscription } from '@petboarding/api/zod'
-import DaycareSubscriptionForm from '../../../components/daycareSubscription/DaycareSubscriptionForm.vue'
-import DaycareSubscriptionsList from '../../../components/daycareSubscription/DaycareSubscriptionsList.vue'
+import DaycareSubscriptionForm from '../../../../components/daycareSubscription/DaycareSubscriptionForm.vue'
+import DaycareSubscriptionsList from '../../../../components/daycareSubscription/DaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on(
+  'administrator-configuration-open-daycare-subscriptions-create-dialog',
+  () => {
+    if (openCreateDialog)
+      openCreateDialog({
+        done: () => {}
+      })
+  }
+)
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: daycareSubscriptions, execute } = useQuery(

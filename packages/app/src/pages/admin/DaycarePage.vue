@@ -1,43 +1,45 @@
 <template>
-  <div class="row justify-center">
-    <daycare-status-select v-model="status" />
-  </div>
-  <daycare-legend />
-  <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
-  <daycare-calendar-month
-    :events="events"
-    :selected-events="selectedEventIds"
-    @click:event="onClickEvent"
-    @change-date="onChangeDate"
-    @open-pets="openPets"
-  >
-    <template #dayFooter="{ timestamp }">
-      <div
-        v-if="status === DAYCARE_DATE_STATUS.APPROVED"
-        class="text-bold text-center"
-      >
-        {{ numberOfPets[timestamp.date] }}
-      </div>
-    </template>
-  </daycare-calendar-month>
-  <div v-if="selectedEventIds.length" class="row justify-center q-ma-lg">
-    <q-btn
-      :label="lang.daycare.replies.approve"
-      color="green"
-      @click="approveDaycareDates"
-    />
-    <q-btn
-      :label="lang.daycare.replies.reject"
-      color="red"
-      @click="rejectDaycareDates"
-    />
-    <q-btn
-      :label="lang.daycare.replies.standby"
-      color="yellow"
-      text-color="black"
-      @click="standbyDaycareDates"
-    />
-  </div>
+  <q-page padding>
+    <q-toolbar>
+      <daycare-status-select v-model="status" />
+    </q-toolbar>
+    <daycare-legend />
+    <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
+    <daycare-calendar-month
+      :events="events"
+      :selected-events="selectedEventIds"
+      @click:event="onClickEvent"
+      @change-date="onChangeDate"
+      @open-pets="openPets"
+    >
+      <template #dayFooter="{ timestamp }">
+        <div
+          v-if="status === DAYCARE_DATE_STATUS.APPROVED"
+          class="text-bold text-center"
+        >
+          {{ numberOfPets[timestamp.date] }}
+        </div>
+      </template>
+    </daycare-calendar-month>
+    <div v-if="selectedEventIds.length" class="row justify-center q-ma-lg">
+      <q-btn
+        :label="lang.daycare.replies.approve"
+        color="green"
+        @click="approveDaycareDates"
+      />
+      <q-btn
+        :label="lang.daycare.replies.reject"
+        color="red"
+        @click="rejectDaycareDates"
+      />
+      <q-btn
+        :label="lang.daycare.replies.standby"
+        color="yellow"
+        text-color="black"
+        @click="standbyDaycareDates"
+      />
+    </div>
+  </q-page>
 </template>
 
 <script lang="ts">

@@ -384,11 +384,13 @@ export async function getDaycareDateCount({
   let query = db.selectFrom('daycareDates').where('status', '=', status)
 
   if (maxDate) query = query.where('date', '<=', maxDate)
-  const count = (
+  let count = (
     await query
       .select(({ fn }) => [fn.count<number>('daycareDates.id').as('count')])
       .executeTakeFirst()
   )?.count
+
+  if (typeof count === 'string') count = Number(count)
 
   return count
 }

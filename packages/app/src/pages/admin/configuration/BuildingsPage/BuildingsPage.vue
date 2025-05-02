@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.building.title }}
-    </template>
+  <q-page @create="openCreateDialog">
     <buildings-list
       v-if="buildings"
       :model-value="buildings"
@@ -16,7 +8,7 @@
       @update="openUpdateBuildingDialog"
       @delete="openDeleteBuildingDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createBuildingDialogRef"
     padding
@@ -45,13 +37,24 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { Building } from '@petboarding/api/zod'
-import BuildingForm from '../../../components/building/BuildingForm.vue'
-import BuildingsList from '../../../components/building/BuildingsList.vue'
+import BuildingForm from '../../../../components/building/BuildingForm.vue'
+import BuildingsList from '../../../../components/building/BuildingsList.vue'
 import { useQuasar } from 'quasar'
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-configuration-open-buildings-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: buildings, execute } = useQuery('configuration.getBuildings', {})

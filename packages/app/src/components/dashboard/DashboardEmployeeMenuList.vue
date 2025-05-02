@@ -42,6 +42,14 @@
         <q-item-label> {{ lang.pet.title }} </q-item-label>
       </q-item-section>
     </q-item>
+    <q-item :inset-level="1" clickable to="/employee/labels/pets">
+      <q-item-section avatar>
+        <q-icon name="i-mdi-chevron-right" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label> {{ lang.labels }} </q-item-label>
+      </q-item-section>
+    </q-item>
   </q-list>
 </template>
 

@@ -2,7 +2,7 @@
   <div>
     <q-avatar :class="{ 'cursor-pointer': modelValue }" @click="open">
       <img v-if="modelValue" :src="modelValue" />
-      <q-icon v-else size="lg" name="i-mdi-photo-camera" />
+      <q-icon v-else size="lg" name="i-mdi-camera" />
     </q-avatar>
     <q-btn
       v-if="allowChange"

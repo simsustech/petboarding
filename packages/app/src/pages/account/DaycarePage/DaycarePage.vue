@@ -2,80 +2,97 @@
   <q-page padding>
     <div v-if="ready">
       <div v-if="petsData?.length">
-        <customer-daycare-subscriptions-list
-          v-if="customerDaycareSubscriptions?.length"
-          :model-value="customerDaycareSubscriptions"
-        />
-        <q-banner
-          v-if="daycareSubscriptions.length"
-          :class="{
-            'q-mb-md': true,
-            'bg-warning': !customerDaycareSubscriptions?.length
-          }"
-          rounded
-        >
-          <template #avatar>
-            <q-icon
-              v-if="!customerDaycareSubscriptions?.length"
-              name="i-mdi-warning"
-              color="red"
-            />
-          </template>
-          <template #action>
-            <q-btn
-              v-if="allowPurchase"
-              :label="
-                lang.customerDaycareSubscription.labels.purchaseSubscription
-              "
-              icon="i-mdi-shopping-cart"
-              flat
-              @click="
-                purchaseCustomerDaycareSubscriptionDialogRef?.functions.open()
-              "
-            />
-          </template>
-          <a
-            v-if="
-              daycareSubscriptions?.length &&
-              !customerDaycareSubscriptions?.length
-            "
-          >
-            {{
-              lang.customerDaycareSubscription.messages
-                .daycareSubscriptionRequired
-            }}
-          </a>
-        </q-banner>
-        <div class="row">
-          <daycare-legend />
+        <div class="grid grid-cols-12 gap-3">
+          <q-card class="col-span-12">
+            <q-card-section>
+              <customer-daycare-subscriptions-list
+                v-if="customerDaycareSubscriptions?.length"
+                :model-value="customerDaycareSubscriptions"
+              />
+              <q-banner
+                v-if="daycareSubscriptions.length"
+                :class="{
+                  'q-mb-md': true,
+                  'bg-warning': !customerDaycareSubscriptions?.length
+                }"
+                rounded
+              >
+                <template #avatar>
+                  <q-icon
+                    v-if="!customerDaycareSubscriptions?.length"
+                    name="i-mdi-warning"
+                    color="red"
+                  />
+                </template>
+                <template #action>
+                  <q-btn
+                    v-if="allowPurchase"
+                    :label="
+                      lang.customerDaycareSubscription.labels
+                        .purchaseSubscription
+                    "
+                    icon="i-mdi-shopping-cart"
+                    @click="
+                      purchaseCustomerDaycareSubscriptionDialogRef?.functions.open()
+                    "
+                  />
+                </template>
+                <a
+                  v-if="
+                    daycareSubscriptions?.length &&
+                    !customerDaycareSubscriptions?.length
+                  "
+                >
+                  {{
+                    lang.customerDaycareSubscription.messages
+                      .daycareSubscriptionRequired
+                  }}
+                </a>
+              </q-banner>
+            </q-card-section>
+          </q-card>
+
+          <q-card class="col-span-12">
+            <q-card-section class="text-right">
+              <q-btn
+                outline
+                icon="i-mdi-add"
+                :label="lang.add"
+                @click="openCreateDialog"
+              />
+            </q-card-section>
+            <q-card-section>
+              <daycare-legend />
+              <daycare-calendar-month
+                :events="events"
+                :selected-events="selectedEvents"
+                :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
+                :focusable="false"
+                :hoverable="false"
+                @click:event="onClickEvent"
+                @change-date="onChangeDate"
+              >
+                <template #head-day-button-tooltip>
+                  {{ lang.daycare.messages.addDaycareDates }}
+                </template>
+              </daycare-calendar-month>
+              <div class="row justify-center">
+                <q-btn
+                  v-if="selectedEvents.length"
+                  :label="lang.daycare.messages.cancelSelected"
+                  color="red"
+                  @click="cancelDaycareDates"
+                />
+              </div>
+            </q-card-section>
+          </q-card>
         </div>
-        <daycare-calendar-month
-          :events="events"
-          :selected-events="selectedEvents"
-          :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
-          :focusable="false"
-          :hoverable="false"
-          @click:event="onClickEvent"
-          @change-date="onChangeDate"
-        >
-          <template #head-day-button-tooltip>
-            {{ lang.daycare.messages.addDaycareDates }}
-          </template>
-        </daycare-calendar-month>
       </div>
-      <div class="row justify-center">
-        <q-btn
-          v-if="selectedEvents.length"
-          :label="lang.daycare.messages.cancelSelected"
-          color="red"
-          @click="cancelDaycareDates"
-        />
+      <div v-else>
+        <router-link to="/account/pets">{{
+          lang.daycare.messages.addPets
+        }}</router-link>
       </div>
-    </div>
-    <div v-else>
-      <router-link to="/account/pets">{{
-        lang.daycare.messages.addPets
-      }}</router-link>
     </div>
   </q-page>
 

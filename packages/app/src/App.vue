@@ -26,6 +26,7 @@ import {
   QBtn,
   QBtnDropdown,
   QBtnToggle,
+  QBtnGroup,
   QInput,
   QSelect,
   QField,
@@ -41,6 +42,14 @@ const bus = new EventBus<{
   'account-open-pets-create-dialog': () => void
   'account-open-bookings-create-dialog': () => void
   'account-open-daycare-create-dialog': () => void
+  'administrator-open-announcements-create-dialog': () => void
+  'administrator-open-periods-create-dialog': () => void
+  'administrator-configuration-open-buildings-create-dialog': () => void
+  'administrator-configuration-open-kennels-create-dialog': () => void
+  'administrator-configuration-open-categories-create-dialog': () => void
+  'administrator-configuration-open-opening-times-create-dialog': () => void
+  'administrator-configuration-open-services-create-dialog': () => void
+  'administrator-configuration-open-daycare-subscriptions-create-dialog': () => void
 }>()
 provide<EventBus>('bus', bus)
 
@@ -54,6 +63,7 @@ useMeta(() => {
 setDefaultPropsMd3({
   QBtn,
   QBtnDropdown,
+  QBtnGroup,
   QBtnToggle,
   QInput,
   QSelect,

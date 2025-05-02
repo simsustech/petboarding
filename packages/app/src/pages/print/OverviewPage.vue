@@ -1,5 +1,8 @@
 <template>
   <div class="p-1em print:p-0">
+    <div class="row justify-center text-h6">
+      {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
+    </div>
     <div class="grid grid-cols-24 gap-3">
       <q-card class="col-span-24 sm:col-span-12">
         <q-card-section class="text-h6">
@@ -122,6 +125,7 @@ import {
 } from '@petboarding/api/zod'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
+import { formatDate } from '../../tools.js'
 
 const lang = useLang()
 const { useQuery } = await createUseTrpc()

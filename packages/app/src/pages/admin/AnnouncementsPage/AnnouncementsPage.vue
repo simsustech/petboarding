@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.announcement.title }}
-    </template>
+  <q-page padding>
     <announcements-list
       v-if="announcements"
       :model-value="announcements"
@@ -16,7 +8,7 @@
       @update="openUpdateAnnouncementDialog"
       @delete="openDeleteAnnouncementDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createAnnouncementDialogRef"
     padding
@@ -50,14 +42,24 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../lang/index.js'
+import { inject, nextTick, onMounted, ref } from 'vue'
+import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../trpc.js'
+import { createUseTrpc } from '../../../trpc.js'
 import { Announcement } from '@petboarding/api/zod'
-import AnnouncementForm from '../../components/announcement/AnnouncementForm.vue'
-import AnnouncementsList from '../../components/announcement/AnnouncementsList.vue'
+import AnnouncementForm from '../../../components/announcement/AnnouncementForm.vue'
+import AnnouncementsList from '../../../components/announcement/AnnouncementsList.vue'
 import { useQuasar } from 'quasar'
+import { EventBus } from 'quasar'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-open-announcements-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: announcements, execute } = useQuery(

@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.category.title }}
-    </template>
+  <q-page @create="openCreateDialog">
     <categories-list
       v-if="categories"
       v-model="categories"
@@ -18,7 +10,7 @@
       @add-price="openCreateCategoryPriceDialog"
       @delete-price="openDeleteCategoryPriceDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createCategoryDialogRef"
     padding
@@ -59,14 +51,24 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { Category, CategoryPrice } from '@petboarding/api/zod'
-import CategoryForm from '../../../components/category/CategoryForm.vue'
-import CategoryPriceForm from '../../../components/category/CategoryPriceForm.vue'
-import CategoriesList from '../../../components/category/CategoriesList.vue'
+import CategoryForm from '../../../../components/category/CategoryForm.vue'
+import CategoryPriceForm from '../../../../components/category/CategoryPriceForm.vue'
+import CategoriesList from '../../../../components/category/CategoriesList.vue'
 import { useQuasar } from 'quasar'
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-configuration-open-categories-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: categories, execute } = useQuery(

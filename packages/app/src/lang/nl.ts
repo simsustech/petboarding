@@ -173,7 +173,9 @@ const lang: Language = {
       vaccinationsMissing:
         'Huisdier heeft niet alle verplichte vaccinaties. Neem contact op met uw dierenarts en vergeet niet het paspoort van uw huisdier mee te nemen.',
       delete:
-        'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.'
+        'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.',
+      foodMoreThanTwoTimesADay: 'Meer dan twee maaltijden per dag.',
+      hasMedication: 'Heeft medicatie'
     },
     labels: {
       open: 'Open huisdier.'

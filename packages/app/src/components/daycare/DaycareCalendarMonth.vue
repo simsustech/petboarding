@@ -1,5 +1,6 @@
 <template>
   <div class="column col">
+    <slot name="navigation" />
     <div class="row justify-center">
       <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
     </div>

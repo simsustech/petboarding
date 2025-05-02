@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.configuration.periods }}
-    </template>
+  <q-page padding>
     <periods-list
       v-if="periods"
       :model-value="periods"
@@ -16,7 +8,7 @@
       @update="openUpdatePeriodDialog"
       @delete="openDeletePeriodDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createPeriodDialogRef"
     padding
@@ -45,13 +37,25 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../lang/index.js'
+import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../trpc.js'
+import { createUseTrpc } from '../../../trpc.js'
 import { Period } from '@petboarding/api/zod'
-import PeriodForm from '../../components/period/PeriodForm.vue'
-import PeriodsList from '../../components/period/PeriodsList.vue'
+import PeriodForm from '../../../components/period/PeriodForm.vue'
+import PeriodsList from '../../../components/period/PeriodsList.vue'
 import { useQuasar } from 'quasar'
+
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-open-periods-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: periods, execute } = useQuery('configuration.getPeriods', {})

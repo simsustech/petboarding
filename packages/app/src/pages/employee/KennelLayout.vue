@@ -1,13 +1,12 @@
 <template>
   <q-page padding>
-    <div class="row justify-center">
+    <q-toolbar>
       <date-input
         v-model="selectedDate"
+        hide-bottom-space
         :label="lang.kennellayout.labels.date"
         format="DD-MM-YYYY"
-        required
         clearable
-        class="col-auto"
         :date="{
           noUnset: true,
           firstDayOfWeek: '1'
@@ -16,33 +15,37 @@
           event: 'i-mdi-event',
           clear: 'i-mdi-clear'
         }"
-      />
-    </div>
-    <div class="row justify-center q-ma-sm">
+      >
+      </date-input>
       <q-btn
-        class="col-auto"
-        :label="lang.kennellayout.labels.today"
-        @click="setToToday"
+        outline
+        icon="i-mdi-printer"
+        :to="`/print/kennellayout/${selectedDate}`"
       />
-      <q-btn
-        class="col-auto"
-        :label="lang.kennellayout.labels.tomorrow"
-        @click="setToTomorrow"
-      />
-      <q-btn icon="i-mdi-printer" :to="`/print/kennellayout/${selectedDate}`" />
+    </q-toolbar>
+    <q-toolbar inset class="justify-center">
+      <q-btn-group rounded>
+        <q-btn :label="lang.kennellayout.labels.today" @click="setToToday" />
+        <q-btn
+          :label="lang.kennellayout.labels.tomorrow"
+          @click="setToTomorrow"
+        />
+      </q-btn-group>
+    </q-toolbar>
+
+    <div class="row">
+      <div class="col-12 col-sm">
+        <q-badge rounded text-color="black" color="blue-2"></q-badge>
+        {{ lang.booking.title }}
+      </div>
+      <div class="col-12 col-sm">
+        <q-badge rounded text-color="black" color="yellow-2"></q-badge>
+        {{ lang.daycare.title }}
+      </div>
     </div>
-    <div class="row q-col-gutter-md">
-      <div class="">
-        <q-badge rounded text-color="black" color="blue-2"></q-badge
-        ><a>{{ lang.booking.title }}</a>
-      </div>
-      <div class="">
-        <q-badge rounded text-color="black" color="yellow-2"></q-badge
-        ><a>{{ lang.daycare.title }}</a>
-      </div>
-      <div class="">
-        <a>{{ lang.kennellayout.messages.dragAndDrop }}</a>
-      </div>
+    <pet-legend />
+    <div class="row">
+      {{ lang.kennellayout.messages.dragAndDrop }}
     </div>
     <div class="grid grid-cols-12 gap-3">
       <q-card class="col-span-12 md:col-span-3">
@@ -138,7 +141,7 @@ import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
 import PetChip from '../../components/pet/PetChip.vue'
 import type { Pet } from '@petboarding/api/zod'
-
+import PetLegend from '../../components/pet/PetLegend.vue'
 const { useQuery, useMutation } = await createUseTrpc()
 const lang = useLang()
 

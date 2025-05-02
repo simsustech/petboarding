@@ -172,7 +172,9 @@ const lang: Language = {
       vaccinationsMissing:
         'Pet does not have all mandatory vaccinations. Contact your veterinarian and do not forget to bring the passport of your pet.',
       delete:
-        'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.'
+        'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.',
+      foodMoreThanTwoTimesADay: 'More than two meals a day.',
+      hasMedication: 'Has medication'
     },
     labels: {
       open: 'Open pet.'

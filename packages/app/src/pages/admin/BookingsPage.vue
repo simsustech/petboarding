@@ -1,9 +1,7 @@
 <template>
-  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
-    <template #header>
-      {{ lang.booking.title }}
-    </template>
-    <template #header-side>
+  <q-page padding>
+    <q-toolbar>
+      <q-space />
       <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <booking-status-select v-model="status" />
@@ -24,6 +22,10 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
           <date-input
             v-model="until"
@@ -34,10 +36,15 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
         </q-menu>
       </q-btn>
-    </template>
+    </q-toolbar>
+
     <q-list separator>
       <booking-expansion-item
         v-for="booking in bookingsData"
@@ -61,7 +68,8 @@
         @open-customer="openCustomer"
       />
     </q-list>
-  </resource-page>
+  </q-page>
+
   <responsive-dialog
     ref="updatePetDialogRef"
     padding
@@ -133,7 +141,7 @@ import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vu
 import BookingItem from '../../components/booking/BookingItem.vue'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
 import { createUseTrpc } from '../../trpc.js'
-import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { EmailInput, DateInput } from '@simsustech/quasar-components/form'
 import PetForm from '../../components/pet/PetForm.vue'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'

@@ -136,7 +136,7 @@
         <q-item-section side>
           <q-btn
             v-if="showAddVaccination"
-            rounded
+            outline
             icon="i-mdi-add"
             @click="addVaccination(modelValue)"
           />

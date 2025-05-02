@@ -167,6 +167,8 @@ export interface Language {
       showVaccinations: string
       vaccinationsMissing: string
       delete: string
+      foodMoreThanTwoTimesADay: string
+      hasMedication: string
     }
     labels: {
       open: string

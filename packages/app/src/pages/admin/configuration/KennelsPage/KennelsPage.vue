@@ -1,13 +1,5 @@
 <template>
-  <resource-page
-    padding
-    :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }"
-    type="create"
-    @create="openCreateDialog"
-  >
-    <template #header>
-      {{ lang.kennel.title }}
-    </template>
+  <q-page @create="openCreateDialog">
     <kennels-list
       v-if="kennels"
       :model-value="kennels"
@@ -16,7 +8,7 @@
       @update="openUpdateKennelDialog"
       @delete="openDeleteKennelDialog"
     />
-  </resource-page>
+  </q-page>
   <responsive-dialog
     ref="createKennelDialogRef"
     padding
@@ -53,13 +45,25 @@ export default {
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { useLang } from '../../../lang/index.js'
+import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
+import { createUseTrpc } from '../../../../trpc.js'
 import { Kennel } from '@petboarding/api/zod'
-import KennelForm from '../../../components/kennel/KennelForm.vue'
-import KennelsList from '../../../components/kennel/KennelsList.vue'
+import KennelForm from '../../../../components/kennel/KennelForm.vue'
+import KennelsList from '../../../../components/kennel/KennelsList.vue'
 import { useQuasar } from 'quasar'
+
+import { EventBus } from 'quasar'
+import { inject } from 'vue'
+
+const bus = inject<EventBus>('bus')!
+bus.on('administrator-configuration-open-kennels-create-dialog', () => {
+  if (openCreateDialog)
+    openCreateDialog({
+      done: () => {}
+    })
+})
+
 const { useQuery, useMutation } = await createUseTrpc()
 
 const { data: kennels, execute } = useQuery('configuration.getKennels', {})
