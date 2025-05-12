@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import { customerDaycareSubscription } from '../../zod/customerDaycareSubscription.js'
+import { db } from '../../kysely/index.js'
 // import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
 import {
@@ -64,7 +65,10 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       )
     })
   } catch (e) {
-    throw new Error('SlimFact not authorized.')
+    return {
+      success: false,
+      errorMessage: 'SlimFact not authorized.'
+    }
   }
 
   const clientDetails = {
@@ -201,74 +205,90 @@ export const userCustomerDaycareSubscriptionRoutes = ({
               }
             })
 
-          if (!customerDaycareSubscription) {
-            const newCustomerDaycareSubscription =
-              await createCustomerDaycareSubscription({
-                effectiveDate:
-                  input.effectiveDate || new Date().toISOString().slice(0, 10),
-                expirationDate: add(
-                  new Date(
-                    input.effectiveDate || new Date().toISOString().slice(0, 10)
-                  ),
-                  {
-                    ...daycareSubscription.validityPeriod
+          try {
+            await db.transaction().execute(async (trx) => {
+              if (!customerDaycareSubscription) {
+                const newCustomerDaycareSubscription =
+                  await createCustomerDaycareSubscription(
+                    {
+                      effectiveDate:
+                        input.effectiveDate ||
+                        new Date().toISOString().slice(0, 10),
+                      expirationDate: add(
+                        new Date(
+                          input.effectiveDate ||
+                            new Date().toISOString().slice(0, 10)
+                        ),
+                        {
+                          ...daycareSubscription.validityPeriod
+                        }
+                      )
+                        .toISOString()
+                        .slice(0, 10),
+                      status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN,
+                      daycareSubscriptionId: input.daycareSubscriptionId,
+                      customerId: customer.id
+                    },
+                    trx
+                  )
+                customerDaycareSubscription =
+                  await findCustomerDaycareSubscription({
+                    criteria: {
+                      id: newCustomerDaycareSubscription.id
+                    }
+                  })
+              }
+              let invoice: Invoice | null = null
+              if (customerDaycareSubscription && fastify.slimfact) {
+                if (!customerDaycareSubscription.invoiceUuid) {
+                  const result =
+                    await createOrUpdateSlimfactDaycareSubscription({
+                      fastify,
+                      customerDaycareSubscription,
+                      customer
+                    })
+                  if (result.success) {
+                    invoice = result.invoice
+                    await updateCustomerDaycareSubscription(
+                      { id: customerDaycareSubscription.id },
+                      {
+                        invoiceUuid: invoice.uuid
+                      }
+                    )
+                  } else {
+                    throw new Error(result.errorMessage)
                   }
-                )
-                  .toISOString()
-                  .slice(0, 10),
-                status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN,
-                daycareSubscriptionId: input.daycareSubscriptionId,
-                customerId: customer.id
-              })
-            customerDaycareSubscription = await findCustomerDaycareSubscription(
-              {
-                criteria: {
-                  id: newCustomerDaycareSubscription.id
+                } else {
+                  const result = await fastify.slimfact.admin.getInvoice.query({
+                    uuid: customerDaycareSubscription.invoiceUuid
+                  })
+                  if (result) {
+                    invoice = result
+                  }
                 }
               }
-            )
-          }
-          let invoice: Invoice | null = null
-          if (customerDaycareSubscription && fastify.slimfact) {
-            if (!customerDaycareSubscription.invoiceUuid) {
-              const result = await createOrUpdateSlimfactDaycareSubscription({
-                fastify,
-                customerDaycareSubscription,
-                customer
-              })
-              if (result.success) {
-                invoice = result.invoice
-                await updateCustomerDaycareSubscription(
-                  { id: customerDaycareSubscription.id },
-                  {
-                    invoiceUuid: invoice.uuid
-                  }
-                )
-              }
-            } else {
-              const result = await fastify.slimfact.admin.getInvoice.query({
-                uuid: customerDaycareSubscription.invoiceUuid
-              })
-              if (result) {
-                invoice = result
-              }
-            }
-          }
-          if (invoice) {
-            const payment =
-              await fastify.slimfact.admin.addPaymentToInvoice.mutate({
-                id: invoice.id,
-                payment: {
-                  currency,
-                  amount: invoice.totalIncludingTax,
-                  method: PaymentMethod.ideal,
-                  redirectUrl: `https://${hostname}/account/daycare`
+              if (invoice) {
+                const payment =
+                  await fastify.slimfact.admin.addPaymentToInvoice.mutate({
+                    id: invoice.id,
+                    payment: {
+                      currency,
+                      amount: invoice.totalIncludingTax,
+                      method: PaymentMethod.ideal,
+                      redirectUrl: `https://${hostname}/account/daycare`
+                    }
+                  })
+                return {
+                  customerDaycareSubscription,
+                  checkoutUrl: payment.checkoutUrl
                 }
-              })
-            return {
-              customerDaycareSubscription,
-              checkoutUrl: payment.checkoutUrl
-            }
+              }
+            })
+          } catch (e) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: e instanceof Error ? e.message : undefined
+            })
           }
         }
       }
