@@ -1,8 +1,10 @@
 import type { VitrifyConfig } from 'vitrify'
+import { QuasarPlugin, type QuasarPluginOptions } from 'vitrify/plugins'
 import { certificateFor } from 'devcert'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
 import { QuasarPreset } from 'unocss-preset-quasar'
 import { MaterialDesign3 } from 'unocss-preset-quasar/styles'
+import { loadEnv } from 'vite'
 
 const iconifyJsonIconSet = {
   name: 'iconify-json-mdi',
@@ -146,7 +148,7 @@ const iconifyJsonIconSet = {
   }
 }
 
-const quasarConf: NonNullable<VitrifyConfig['quasar']> = {
+const quasarConf: QuasarPluginOptions = {
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta'],
     iconSet: iconifyJsonIconSet
@@ -158,26 +160,20 @@ const quasarConf: NonNullable<VitrifyConfig['quasar']> = {
 }
 
 export default async function ({ mode, command }): Promise<VitrifyConfig> {
+  const env = loadEnv(mode, process.cwd(), '')
   const config: VitrifyConfig = {
     plugins: [QuasarComponentsPlugin()],
     vitrify: {
-      lang: process.env.VITE_LANG,
+      plugins: [
+        {
+          plugin: QuasarPlugin,
+          options: quasarConf
+        }
+      ],
+      lang: env.VITE_LANG,
       productName: 'Petboarding',
       hooks: {
         onSetup: [new URL('src/setup.ts', import.meta.url)]
-      },
-      sass: {
-        variables: {
-          // $primary: '#990000'
-          $primary: process.env.SASS_VARIABLE_PRIMARY,
-          $secondary: process.env.SASS_VARIABLE_SECONDARY,
-          $accent: process.env.SASS_VARIABLE_ACCENT,
-          $dark: process.env.SASS_VARIABLE_DARK,
-          $positive: process.env.SASS_VARIABLE_POSITIVE,
-          $negative: process.env.SASS_VARIABLE_NEGATIVE,
-          $info: process.env.SASS_VARIABLE_INFO,
-          $warning: process.env.SASS_VARIABLE_WARNING
-        }
       },
       ssr: {
         serverModules: []
@@ -206,7 +202,7 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
         presets: [
           QuasarPreset({
             style: MaterialDesign3,
-            sourceColor: process.env.SASS_VARIABLE_PRIMARY,
+            sourceColor: env.VITE_SOURCE_COLOR,
             plugins: quasarConf['framework']['plugins'],
             iconSet: quasarConf['framework']['iconSet']
           })
@@ -219,8 +215,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
         }
       }
       // pwa: true
-    },
-    quasar: quasarConf
+    }
+    // quasar: quasarConf
   }
   if (mode === 'development') {
     config.server = {

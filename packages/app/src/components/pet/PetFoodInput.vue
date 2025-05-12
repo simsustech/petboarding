@@ -20,7 +20,7 @@
           type="number"
           step="1"
           inputmode="numeric"
-          class="col-1 q-mr-sm"
+          class="!col-1 q-mr-sm"
           :placeholder="lang.pet.food.fields.timesADay"
           input-class="text-right"
           suffix="x"
@@ -34,7 +34,7 @@
           type="number"
           step="0.1"
           inputmode="numeric"
-          class="col-2 q-mr-sm"
+          class="!col-2 q-mr-sm"
           :placeholder="lang.pet.food.fields.amount"
           input-class="text-right"
           @update:model-value="
@@ -44,7 +44,7 @@
         <q-select
           :model-value="modelValue.amountUnit"
           :placeholder="lang.pet.food.fields.amountUnit"
-          class="col-2"
+          class="!col-2"
           map-options
           emit-value
           :options="amountUnitOptions"
@@ -52,7 +52,7 @@
         />
         <q-input
           :model-value="modelValue.kind"
-          class="col-auto"
+          class="!col-auto"
           :placeholder="lang.pet.food.fields.kind"
           @update:model-value="updateKey('kind', $event)"
         />

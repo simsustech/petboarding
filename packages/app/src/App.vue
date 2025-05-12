@@ -19,7 +19,6 @@ export default {
 
 <script setup lang="ts">
 import { provide } from 'vue'
-import '@simsustech/quasar-components/css'
 import { useConfiguration } from './configuration.js'
 import {
   useMeta,

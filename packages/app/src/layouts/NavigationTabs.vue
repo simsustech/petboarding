@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from '..//oauth.js'
+import { useUser } from '../oauth.js'
 import { useLang } from '../lang/index.js'
 
 const user = await useUser()

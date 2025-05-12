@@ -1,6 +1,10 @@
 packages:
   - packages/*
-
 overrides:
   unocss-preset-quasar: link:../unocss-preset-quasar/packages/preset
-  "@simsustech/quasar-components": link:../quasar-components/packages/components
+  '@simsustech/quasar-components': link:../quasar-components/packages/components
+  lionel-oauth-client: link:../lionel-oauth-client
+  '@modular-api/oidc-interactions': link:../modular-api/packages/oidc-interactions
+  '@modular-api/api': link:../modular-api/packages/api
+  '@modular-api/fastify-oidc': link:../modular-api/packages/fastify-oidc
+  vitrify: link:../vitrify/packages/vitrify

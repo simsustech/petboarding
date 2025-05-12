@@ -19,9 +19,14 @@ import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 } from './kysely/types.js'
 import { createBookingStatus, findBooking } from './repositories/booking.js'
+import { generateTheme } from 'unocss-preset-quasar/theme'
 
 const getString = (str: string) => str
 const host = getString(__HOST__)
+
+const theme = generateTheme(
+  env.read('SOURCE_COLOR') || env.read('VITE_SOURCE_COLOR')
+)
 
 const sassVariables = {
   $primary:
@@ -175,6 +180,7 @@ export default async function (fastify: FastifyInstance) {
       issuerName:
         env.read('OIDC_ISSUER_NAME') || env.read('VITE_OIDC_ISSUER_NAME'),
       locale: env.read('VITE_LANG') || 'en-US',
+      themeColors: theme['colors'],
       sassVariables,
       issuer: `https://${hostname}`,
       accountMethods,

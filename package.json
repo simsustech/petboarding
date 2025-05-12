@@ -40,5 +40,12 @@
   "simple-git-hooks": {
     "pre-commit": "pnpm run lint && pnpm run format:check",
     "commit-msg": "pnpm exec commitlint --edit $1"
+  },
+  "dependencies": {
+    "@modular-api/api": "link:../modular-api/packages/api",
+    "@modular-api/fastify-oidc": "link:../modular-api/packages/fastify-oidc",
+    "@modular-api/oidc-interactions": "link:../modular-api/packages/oidc-interactions",
+    "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
+    "vitrify": "link:../vitrify/packages/vitrify"
   }
 }

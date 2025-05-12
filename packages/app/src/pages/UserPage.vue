@@ -1,13 +1,11 @@
 <template>
   <q-page padding>
-    <div class="row q-mb-md">
-      <q-styled-card class="col-12 col-md-4">
-        <template #title>{{ lang.dashboard.account.menu.title }}</template>
+    <div class="grid grid-cols-12 gap-3">
+      <q-card class="col-span-12 md:col-span-4">
         <dashboard-user-menu-list />
-      </q-styled-card>
-    </div>
-    <div class="row">
-      <q-styled-card v-if="user" class="col-12 col-md-4">
+      </q-card>
+
+      <q-card v-if="user" class="col-span-12 md:col-span-4">
         <q-item>
           <q-item-section avatar>
             <q-icon name="i-mdi-person"></q-icon>
@@ -16,30 +14,33 @@
           <q-item-section>
             <q-item-label
               >{{ user.email }}
-              <q-icon
+              <!-- <q-icon
                 name="i-mdi-check"
                 :color="user.verified ? 'green' : 'grey'"
               >
                 <q-tooltip>
                   {{ user.verified ? 'Email verified' : 'Email not verified' }}
                 </q-tooltip>
-              </q-icon>
+              </q-icon> -->
             </q-item-label>
           </q-item-section>
 
           <q-item-section side top> </q-item-section>
         </q-item>
         <q-item clickable :href="emailChangeUri">
-          {{ lang.account.messages.changeEmailAddress }}</q-item
-        >
+          <q-item-section>
+            <q-item-label>
+              {{ lang.account.messages.changeEmailAddress }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
         <!-- <q-item clickable @click="emailVerifyRoute"> Verify email address</q-item> -->
-      </q-styled-card>
+      </q-card>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { QStyledCard } from '@simsustech/quasar-components'
 import { user } from '../oauth.js'
 import { useLang } from '../lang/index.js'
 import DashboardUserMenuList from '../components/dashboard/DashboardAccountMenuList.vue'

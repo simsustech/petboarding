@@ -2,7 +2,8 @@
   <navigation-rail-fabs
     :bus-emits="busEmits"
     :icons="icons"
-    :type="customerData ? 'edit' : 'add'"
+    :type="customer ? 'edit' : 'add'"
+    :seek-attention="!customer"
   />
 </template>
 
@@ -22,7 +23,7 @@ const icons = ref({
   edit: 'i-mdi-edit'
 })
 
-const { data: customerData } = useQuery('user.getCustomer', {
+const { data: customer } = useQuery('user.getCustomer', {
   immediate: true
 })
 </script>

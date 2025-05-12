@@ -16,12 +16,7 @@
           action="/federated/slimfact"
           method="post"
         >
-          <login-button
-            type="submit"
-            class="col"
-            text-color="primary"
-            color="white"
-          >
+          <login-button type="submit" class="col">
             <template #icon> </template>
           </login-button>
         </q-form>
