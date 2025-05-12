@@ -3,10 +3,11 @@ import { Database, db } from '../kysely/index.js'
 import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   DAYCARE_DATE_STATUS,
+  DB,
   type CustomerDaycareSubscriptions
 } from '../kysely/types.js'
 
-import type { Insertable, Selectable, Updateable } from 'kysely'
+import type { Insertable, Selectable, Transaction, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'
 import { FastifyInstance } from 'fastify'
 import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
@@ -357,9 +358,10 @@ export async function findCustomerDaycareSubscriptions({
 }
 
 export async function createCustomerDaycareSubscription(
-  customerDaycareSubscription: NewCustomerDaycareSubscription
+  customerDaycareSubscription: NewCustomerDaycareSubscription,
+  trx?: Transaction<DB>
 ) {
-  return db
+  return (trx ?? db)
     .insertInto('customerDaycareSubscriptions')
     .values(customerDaycareSubscription)
     .returningAll()
