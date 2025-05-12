@@ -18,10 +18,7 @@
       <div v-if="lang === 'nl'">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5"
-              >Geïnteresserd? Abonneer nu en krijg de eerste drie maanden
-              gratis!</a
-            >
+            <a class="text-h5">Geïnteresserd?</a>
           </div>
           <div class="row justify-center">
             <q-btn
@@ -35,10 +32,7 @@
       <div v-if="lang === 'en-US'">
         <div class="col-4">
           <div class="row justify-center">
-            <a class="text-h5"
-              >Interested? Subscribe now and get the first three months for
-              free.</a
-            >
+            <a class="text-h5">Interested?</a>
           </div>
           <div class="row justify-center">
             <q-no-ssr>
