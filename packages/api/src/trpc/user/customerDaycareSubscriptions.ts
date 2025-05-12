@@ -206,7 +206,7 @@ export const userCustomerDaycareSubscriptionRoutes = ({
             })
 
           try {
-            await db.transaction().execute(async (trx) => {
+            const trxResult = await db.transaction().execute(async (trx) => {
               if (!customerDaycareSubscription) {
                 const newCustomerDaycareSubscription =
                   await createCustomerDaycareSubscription(
@@ -284,6 +284,7 @@ export const userCustomerDaycareSubscriptionRoutes = ({
                 }
               }
             })
+            return trxResult
           } catch (e) {
             throw new TRPCError({
               code: 'INTERNAL_SERVER_ERROR',
