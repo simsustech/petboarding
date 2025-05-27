@@ -1,7 +1,26 @@
 <template>
   <q-page padding class="q-gutter-md">
     <q-toolbar>
-      <q-input
+      <date-input
+        ref="dateInputRef"
+        data-testid="date-input"
+        :model-value="selectedDate"
+        hide-bottom-space
+        :label="lang.kennellayout.labels.date"
+        format="DD-MM-YYYY"
+        clearable
+        :date="{
+          noUnset: true,
+          firstDayOfWeek: '1'
+        }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
+        @update:model-value="setDate"
+      >
+      </date-input>
+      <!-- <q-input
         ref="dateInputRef"
         :model-value="selectedDate"
         class="q-mr-md"
@@ -29,7 +48,7 @@
             </q-popup-proxy>
           </q-icon>
         </template>
-      </q-input>
+      </q-input> -->
       <q-btn-dropdown icon="i-mdi-printer">
         <q-list>
           <q-item clickable @click="printPage">
@@ -141,7 +160,7 @@
                     daycareDate.customerDaycareSubscription?.status ===
                     CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
                   "
-                  name="i-mdi-paid"
+                  name="i-mdi-dollar"
                   color="green"
                 />
               </q-item-section>
@@ -196,6 +215,7 @@ import {
 } from '@petboarding/api/zod'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
+import { DateInput } from '@simsustech/quasar-components/form'
 
 const lang = useLang()
 const { useQuery } = await createUseTrpc()
@@ -217,12 +237,9 @@ const dateInputRef = ref<QInput>()
 const dateError = computed(() => dateInputRef.value?.hasError)
 
 watch(selectedDate, async () => {
-  await dateInputRef.value?.validate()
-  if (!dateError.value) {
-    executeGetArrivals()
-    executeGetDepartures()
-    executeDaycareDates()
-  }
+  executeGetArrivals()
+  executeGetDepartures()
+  executeDaycareDates()
 })
 
 const { data: arrivalsData, execute: executeGetArrivals } = useQuery(
@@ -279,7 +296,7 @@ const sortedOpeningTimes = computed(() => {
 const getPetsFromDaycareDate = (pets: Pet[]) =>
   pets.map((pet) => pet.name).join(', ')
 
-const setDate = (date: string) => {
+const setDate = (date: string | null) => {
   if (date)
     router.push({
       path: `/employee/overview/${date.replaceAll('/', '-')}`

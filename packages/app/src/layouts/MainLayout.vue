@@ -425,7 +425,6 @@ const userRoute = {
   name: userRouteKey
 }
 
-watch(route, () => console.log(route))
 const title = computed(() => {
   let title = configuration.value.TITLE
   // @ts-expect-error key might not exist

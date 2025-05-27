@@ -210,7 +210,11 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
         theme: {},
         content: {
           pipeline: {
-            include: ['src/**/configuration.ts']
+            include: [
+              'src/**/configuration.ts',
+              /@simsustech\/quasar-components/,
+              /@modular-api\/quasar-components/
+            ]
           }
         }
       }

@@ -120,6 +120,7 @@ const create: InstanceType<
 >['$props']['onSubmit'] = async ({ done }) => {
   const afterCreate = (success?: boolean) => {
     done(success)
+    bus.emit('account-get-customer')
     execute()
   }
   createCustomerFormRef.value?.functions.submit({ done: afterCreate })

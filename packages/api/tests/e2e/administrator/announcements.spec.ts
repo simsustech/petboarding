@@ -34,7 +34,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 test.describe('Announcements', async () => {
@@ -42,7 +44,7 @@ test.describe('Announcements', async () => {
     await page.goto('/admin/announcements')
     await page.waitForLoadState('networkidle')
 
-    await page.getByRole('button', { name: 'Add' }).click()
+    await page.locator('#fabAdd').click()
     await page.getByLabel('Title').fill(announcement.title)
     await page.getByLabel('Message').fill(announcement.message)
     // await page.getByLabel('Expiration date').fill('2040/01/01')
@@ -56,7 +58,7 @@ test.describe('Announcements', async () => {
     await expect(page.locator(`text=${announcement.message}`)).toBeVisible()
   })
   test('Update announcement', async () => {
-    await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Title').fill('UpdatedTitle')
@@ -66,7 +68,7 @@ test.describe('Announcements', async () => {
   })
 
   test('Delete announcement', async () => {
-    await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

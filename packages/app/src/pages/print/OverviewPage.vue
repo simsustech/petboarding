@@ -71,7 +71,7 @@
                   daycareDate.customerDaycareSubscription?.status ===
                   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
                 "
-                name="i-mdi-paid"
+                name="i-mdi-dollar"
                 color="green"
               />
             </q-item-section>

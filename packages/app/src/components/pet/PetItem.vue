@@ -59,7 +59,12 @@
           icon-selected="i-mdi-star"
           icon-half="i-mdi-star-half"
         />
-        <q-btn v-if="showEditButton" icon="i-mdi-edit" @click="edit" />
+        <q-btn
+          v-if="showEditButton"
+          icon="i-mdi-edit"
+          data-testid="edit-button"
+          @click="edit"
+        />
       </q-item-label>
     </q-item-section>
     <slot name="default"> </slot>

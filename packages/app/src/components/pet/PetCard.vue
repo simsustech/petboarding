@@ -4,7 +4,13 @@
       <div class="row justify-between">
         <image-avatar :model-value="modelValue.image" />
         <div class="col text-right">
-          <q-btn outline rounded icon="i-mdi-edit" @click="update(modelValue)">
+          <q-btn
+            outline
+            rounded
+            icon="i-mdi-edit"
+            data-testid="edit-button"
+            @click="update(modelValue)"
+          >
             <q-tooltip>
               {{ lang.update }}
             </q-tooltip>

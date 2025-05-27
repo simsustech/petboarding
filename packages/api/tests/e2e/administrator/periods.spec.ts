@@ -36,7 +36,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 
@@ -45,7 +47,7 @@ test.describe('Periods', async () => {
     await page.goto('/admin/periods')
     await page.waitForLoadState('networkidle')
 
-    await page.getByRole('button', { name: 'Add' }).click()
+    await page.locator('#fabAdd').click()
     // await page.getByLabel('Start date').fill(period.startDate)
     // await page.getByLabel('End date').fill(`${period.endDate}`)
     await page.locator('.q-date__calendar-item--in').first().click()
@@ -62,7 +64,7 @@ test.describe('Periods', async () => {
     await expect(page.locator(`text=${period.comments}`)).toBeVisible()
   })
   test('Update period', async () => {
-    await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Comments').fill('UpdatedComments')
@@ -72,7 +74,7 @@ test.describe('Periods', async () => {
   })
 
   test('Delete period', async () => {
-    await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "run-s build:app build:api",
-    "build:app": "cd packages/app && pnpm run build:ssr",
+    "build:app": "cd packages/app && pnpm run build",
     "build:api": "cd packages/api && pnpm run build",
     "format:check:api": "cd packages/api && pnpm run format:check",
     "format:check:app": "cd packages/app && pnpm run format:check",
@@ -28,24 +28,20 @@
     "test:e2e": "run-s test:e2e:api"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.28.1",
-    "@commitlint/cli": "^19.8.0",
-    "@commitlint/config-conventional": "^19.8.0",
-    "@types/node": "^22.14.0",
+    "@changesets/cli": "^2.29.4",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@types/node": "^22.15.17",
     "changesets": "^1.0.2",
     "git-conventional-commits": "^2.8.0",
     "npm-run-all": "^4.1.5",
-    "simple-git-hooks": "^2.12.1"
+    "simple-git-hooks": "^2.13.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm run lint && pnpm run format:check",
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
   "dependencies": {
-    "@modular-api/api": "link:../modular-api/packages/api",
-    "@modular-api/fastify-oidc": "link:../modular-api/packages/fastify-oidc",
-    "@modular-api/oidc-interactions": "link:../modular-api/packages/oidc-interactions",
-    "unocss-preset-quasar": "link:../unocss-preset-quasar/packages/preset",
-    "vitrify": "link:../vitrify/packages/vitrify"
+    "use-trpc": "link:../use-trpc"
   }
 }

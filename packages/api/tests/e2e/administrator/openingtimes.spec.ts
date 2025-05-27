@@ -36,7 +36,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 
@@ -45,7 +47,7 @@ test.describe('Opening times', async () => {
     await page.goto('/admin/configuration/openingtimes')
     await page.waitForLoadState('networkidle')
 
-    await page.getByRole('button', { name: 'Add' }).click()
+    await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(openingTime.name)
     await page.getByLabel('Start time').fill(openingTime.startTime)
     await page.getByLabel('End time').fill(openingTime.endTime)
@@ -55,7 +57,7 @@ test.describe('Opening times', async () => {
     await expect(page.locator(`text=${openingTime.name}`)).toBeVisible()
   })
   test('Update opening time', async () => {
-    await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -65,7 +67,7 @@ test.describe('Opening times', async () => {
   })
 
   test('Delete opening time', async () => {
-    await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

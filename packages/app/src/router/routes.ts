@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 import { userRouteKey, redirectRouteKey } from '../oauth.js'
-import { today } from '@quasar/quasar-ui-qcalendar'
+import { today } from '@quasar/quasar-ui-qcalendar/Timestamp'
 
 const routes: RouteRecordRaw[] = [
   {

@@ -1,5 +1,4 @@
 import { initTRPC, TRPCError } from '@trpc/server'
-import type { inferAsyncReturnType } from '@trpc/server'
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify'
 import type { FastifyInstance } from 'fastify'
 import { userRoutes } from './user/index.js'
@@ -82,7 +81,8 @@ export const createContext = (fastify?: FastifyInstance) =>
     return {}
   }
 /* eslint-enable @typescript-eslint/no-unused-vars */
-export type Context = inferAsyncReturnType<
-  inferAsyncReturnType<typeof createContext>
+
+export type Context = Awaited<
+  ReturnType<Awaited<ReturnType<typeof createContext>>>
 > & { account: { id: string; roles?: string[] } | null }
 export type AppRouter = ReturnType<typeof createRouter>

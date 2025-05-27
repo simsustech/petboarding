@@ -36,7 +36,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 
   await page.goto('/admin/configuration/categories')
@@ -45,7 +47,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.describe('Categories', async () => {
   test('Create category', async () => {
-    await page.getByRole('button', { name: 'Add' }).click()
+    await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(category.name)
     // await page.getByLabel('Price').fill(`${category.price}`)
 
@@ -54,7 +56,7 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    // await page.locator('button').filter({ hasText: 'edit' }).last().click()
+    // await page.getByTestId('edit-button').last().click()
     await page
       .getByRole('main')
       .getByLabel('Expand')
@@ -90,7 +92,7 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
-    // await page.locator('button').filter({ hasText: 'delete' }).last().click()
+    // await page.getByTestId('delete-button').last().click()
     await page
       .getByRole('main')
       .getByLabel('Expand')

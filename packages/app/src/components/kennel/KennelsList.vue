@@ -19,12 +19,14 @@
         <q-btn
           v-if="showEditButton"
           icon="i-mdi-edit"
+          data-testid="edit-button"
           @click="emit('update', { data: kennel })"
         />
         <q-btn
           v-if="showDeleteButton"
           icon="i-mdi-delete"
           color="red"
+          data-testid="delete-button"
           @click="emit('delete', { data: kennel })"
         />
       </q-item-section>

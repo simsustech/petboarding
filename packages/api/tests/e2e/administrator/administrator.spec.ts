@@ -29,7 +29,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 

@@ -4,6 +4,7 @@
       v-if="modelValue.status"
       :name="BOOKING_ICON[modelValue.status!.status]"
       :color="BOOKING_ICON_COLOR[modelValue.status!.status]"
+      :data-testid="`booking-item-icon-${modelValue.status!.status}`"
       size="1.8rem"
     >
       <q-tooltip>

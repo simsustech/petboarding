@@ -71,6 +71,7 @@ onMounted(async () => {
     logo.value = './logo.svg'
   })
   await execute()
+  console.log(announcements)
   await executeUrgentAnnouncements()
   // executePeriods()
   if (urgentAnnouncements.value) {

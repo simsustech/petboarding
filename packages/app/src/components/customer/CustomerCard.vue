@@ -8,6 +8,7 @@
         rounded
         outline
         icon="i-mdi-edit"
+        data-testid="edit-button"
         @click="update(modelValue)"
       >
         <q-tooltip>

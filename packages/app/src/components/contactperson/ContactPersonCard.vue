@@ -3,7 +3,13 @@
     <template #title>
       <div class="row justify-between">
         <div class="col text-right">
-          <q-btn outline rounded icon="i-mdi-edit" @click="update">
+          <q-btn
+            outline
+            rounded
+            icon="i-mdi-edit"
+            data-testid="edit-button"
+            @click="update"
+          >
             <q-tooltip>
               {{ lang.update }}
             </q-tooltip>

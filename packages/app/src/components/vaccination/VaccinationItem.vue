@@ -21,6 +21,7 @@
       <q-btn
         v-if="showEditButton"
         icon="i-mdi-edit"
+        data-testid="edit-button"
         flat
         rounded
         @click="updateVaccination"

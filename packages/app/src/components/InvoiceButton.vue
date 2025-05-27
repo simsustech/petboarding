@@ -4,11 +4,13 @@
     class="q-pa-none"
     :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.uuid}`"
     target="_blank"
-    :text-color="invoiceTextColor"
+    outline
+    :rounded="false"
+    :class="classes"
   >
     <div class="column">
       <q-avatar class="col-12">
-        <q-icon name="i-mdi-receipt" size="md" />
+        <q-icon name="i-mdi-invoice-text" :class="classes" size="md" />
       </q-avatar>
       <q-icon
         v-if="
@@ -24,7 +26,9 @@
           bottom: 3px;
         "
         name="i-mdi-check"
-        color="green"
+        :class="{
+          'text-green': true
+        }"
         size="xs"
       />
       <q-icon
@@ -35,7 +39,9 @@
         "
         style="position: relative; width: 0; height: 0; bottom: 3px"
         name="i-mdi-exclamation"
-        color="red"
+        :class="{
+          'text-red': true
+        }"
         size="xs"
       />
     </div>
@@ -67,12 +73,12 @@ const $q = useQuasar()
 const lang = useLang()
 const configuration = useConfiguration()
 
-const invoiceTextColor = computed(() => {
+const classes = computed(() => {
   if (
     modelValue.value.amountDue !== void 0 &&
     modelValue.value.amountDue !== null
   ) {
-    if (modelValue.value.amountDue <= 0) return 'green'
+    if (modelValue.value.amountDue <= 0) return 'text-green'
     if (
       modelValue.value.amountPaid &&
       modelValue.value.requiredDownPaymentAmount
@@ -81,9 +87,9 @@ const invoiceTextColor = computed(() => {
         modelValue.value.amountPaid >=
         modelValue.value.requiredDownPaymentAmount
       )
-        return 'orange'
+        return 'text-orange'
     }
   }
-  return 'grey'
+  return 'text-grey'
 })
 </script>
