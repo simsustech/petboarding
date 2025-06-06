@@ -26,19 +26,21 @@
         <q-btn
           v-if="showEditButton"
           icon="edit"
-          @click="emit('update', { data: daycareSubscription })"
+          @click="emit('update', { data: daycareSubscription, done: () => {} })"
         />
         <q-btn
           v-if="showDeleteButton"
           icon="delete"
           color="red"
-          @click="emit('delete', { data: daycareSubscription })"
+          @click="emit('delete', { data: daycareSubscription, done: () => {} })"
         />
         <q-btn
           v-if="showPurchaseButton"
           icon="add_shopping_cart"
           :label="lang.customerDaycareSubscription.labels.purchase"
-          @click="emit('purchase', { data: daycareSubscription })"
+          @click="
+            emit('purchase', { data: daycareSubscription, done: () => {} })
+          "
         />
       </q-item-section>
     </q-item>

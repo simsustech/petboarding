@@ -342,7 +342,9 @@ const onPurchaseCustomerDaycareSubscription = async ({
   if (result.data.value?.checkoutUrl)
     window.location.href = result.data.value.checkoutUrl
 
-  done(!result.error.value)
+  if (done) {
+    done(!result.error.value)
+  }
 }
 
 const purchaseCustomerDaycareSubscriptionDialogRef =

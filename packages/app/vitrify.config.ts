@@ -1,10 +1,31 @@
 import type { VitrifyConfig } from 'vitrify'
 import { certificateFor } from 'devcert'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
+import { QuasarPlugin } from 'vitrify/plugins'
+import PresetIcons from '@unocss/preset-icons'
+
 export default async function ({ mode, command }): Promise<VitrifyConfig> {
   const config: VitrifyConfig = {
     plugins: [QuasarComponentsPlugin()],
     vitrify: {
+      unocss: {
+        presets: [PresetIcons()]
+      },
+      plugins: [
+        {
+          plugin: QuasarPlugin,
+          options: {
+            extras: ['material-icons'],
+            framework: {
+              components: [
+                // Deprecated
+              ],
+              iconSet: 'svg-material-icons',
+              plugins: ['Dialog', 'Notify', 'Loading', 'Meta']
+            }
+          }
+        }
+      ],
       lang: process.env.VITE_LANG,
       productName: 'Petboarding',
       hooks: {
@@ -47,16 +68,6 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
         }
       }
       // pwa: true
-    },
-    quasar: {
-      extras: ['material-icons'],
-      framework: {
-        components: [
-          // Deprecated
-        ],
-        iconSet: 'svg-material-icons',
-        plugins: ['Dialog', 'Notify', 'Loading', 'Meta']
-      }
     }
   }
   if (mode === 'development') {

@@ -38,6 +38,8 @@
           <q-language-select
             v-model="language"
             :language-imports="languageImports"
+            :locales="languageLocales"
+            is-item
           />
 
           <user-menu-button
@@ -354,7 +356,6 @@ import { useConfiguration, loadConfiguration } from '../configuration'
 import PetboardingIcon from '../components/PetboardingIcon.vue'
 import { createUseTrpc } from '../trpc.js'
 
-import type { QuasarLanguage } from 'quasar'
 import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
@@ -386,20 +387,22 @@ const userRoute = {
 const title = computed(() => configuration.value.TITLE)
 const language = ref($q.lang.isoName)
 
-const quasarLang = import.meta.glob<{ default: QuasarLanguage }>(
-  '../../node_modules/quasar/lang/*.js'
-)
+const languageLocales = ref([
+  {
+    icon: 'i-flagpack-nl',
+    isoName: 'nl'
+  },
+  {
+    icon: 'i-flagpack-us',
+    isoName: 'en-US'
+  }
+])
 
-const languageImports = ref(
-  Object.entries(quasarLang).reduce(
-    (acc, [key, value]) => {
-      const langKey = key.split('/').at(-1)?.split('.').at(0)
-      if (langKey) acc[langKey] = value
-      return acc
-    },
-    {} as Record<string, () => Promise<{ default: QuasarLanguage }>>
-  )
-)
+// prettier-ignore
+const languageImports = ref({
+  nl: () => import(`../../node_modules/quasar/lang/nl.js`),
+  'en-US': () => import(`../../node_modules/quasar/lang/en-US.js`)
+})
 
 if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
 watch($q.lang, () => {

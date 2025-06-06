@@ -2,7 +2,7 @@
   <q-btn
     :dense="$q.screen.lt.sm"
     class="q-pa-none"
-    :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.uuid}`"
+    :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.uuid}`"
     target="_blank"
     :text-color="invoiceTextColor"
   >

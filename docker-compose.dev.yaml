@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
       target: api
     labels:
-      caddy: ${HOSTNAME}.local
+      caddy: ${HOST}.local
       caddy.reverse_proxy: "{{upstreams 80}}"
     volumes:
       - ./packages/app/dist:/packages/app/dist
@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: ufgouifdgjdfg
     environment:
       # API env variables
-      VITE_API_HOSTNAME: ${HOSTNAME}.local
+      VITE_API_HOST: ${HOST}.local
       VITE_LICENSE_KEY: undefined
       VITE_TITLE: Petboarding dev
       POSTGRES_HOST: database
@@ -58,7 +58,7 @@ services:
       OTP_SECRET_FILE: nonsecure
       OTP_VALIDITY_SECONDS: 3600
       EMAIL_FOOTER: "Petboarding dev"
-      # SLIMFACT_HOSTNAME: xyz.slimfact.app
+      # SLIMFACT_HOST: xyz.slimfact.app
     secrets:
       - SIMSUSTECH_NPM_TOKEN
     networks:

@@ -27,9 +27,9 @@ import {
 } from '@modular-api/fastify-checkout'
 
 const currency = env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR'
-const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+const host = env.read('API_HOST') || env.read('VITE_API_HOST')
 // const slimfactHostname =
-//   env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+//   env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
 export const createOrUpdateSlimfactDaycareSubscription = async ({
   fastify,
   customerDaycareSubscription,
@@ -111,7 +111,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       status: InvoiceStatus.BILL,
       requiredDownPaymentAmount: 0,
       metadata: {
-        webhookUrl: `https://${hostname}/webhook/slimfact`
+        webhookUrl: `https://${host}/webhook/slimfact`
       }
     })
 
@@ -275,7 +275,7 @@ export const userCustomerDaycareSubscriptionRoutes = ({
                       currency,
                       amount: invoice.totalIncludingTax,
                       method: PaymentMethod.ideal,
-                      redirectUrl: `https://${hostname}/account/daycare`
+                      redirectUrl: `https://${host}/account/daycare`
                     }
                   })
                 return {

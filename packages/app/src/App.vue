@@ -34,4 +34,8 @@ useMeta(() => {
 [v-cloak] {
   display: none;
 }
+
+.bg-light-surface {
+  background-color: #ffffff;
+}
 </style>

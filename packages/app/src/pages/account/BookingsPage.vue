@@ -65,7 +65,7 @@
         :services="servicesData"
         :terms-and-conditions-url="termsAndConditionsUrl"
         :hide-approved-after-down-payment="
-          !configuration.INTEGRATIONS?.slimfact.hostname
+          !configuration.INTEGRATIONS?.slimfact.host
         "
         @submit="updateBooking"
       ></booking-form>
@@ -77,7 +77,7 @@
         :services="servicesData"
         :terms-and-conditions-url="termsAndConditionsUrl"
         :hide-approved-after-down-payment="
-          !configuration.INTEGRATIONS?.slimfact.hostname
+          !configuration.INTEGRATIONS?.slimfact.host
         "
         @submit="createBooking"
       ></booking-form>
