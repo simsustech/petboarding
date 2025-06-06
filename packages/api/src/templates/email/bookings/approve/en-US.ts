@@ -1,6 +1,6 @@
 import { c } from 'compress-tag'
 import env from '@vitrify/tools/env'
-const hostname = env.read('VITE_API_HOSTNAME') || env.read('API_HOSTNAME')
+const host = env.read('VITE_API_HOST') || env.read('API_HOST')
 
 const subject = c`\\{{#if requiredDownPaymentAmount}}Down payment required! \\{{/if}}Your booking has been approved.`
 const body = c`
@@ -15,7 +15,7 @@ const body = c`
       has been approved.
   </p>
   <p>
-    Please make sure you have read the <a href="https://${hostname}/information">information page</a>.
+    Please make sure you have read the <a href="https://${host}/information">information page</a>.
   </p>
   \\{{#if requiredDownPaymentAmount}}
   <p style="color:red;">

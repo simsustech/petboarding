@@ -4,11 +4,11 @@ services:
     # volumes:
     # - ./termsandconditions.pdf:/app/node_modules/@petboarding/app/dist/ssr/client/termsandconditions.pdf
     labels:
-      caddy: ${HOSTNAME}
+      caddy: ${HOST}
       caddy.reverse_proxy: "{{upstreams 80}}"
     environment:
       # Modular API
-      VITE_API_HOSTNAME: ${HOSTNAME}
+      VITE_API_HOST: ${HOST}
       OIDC_ISSUER_NAME: ${OIDC_ISSUER_NAME}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -32,7 +32,7 @@ services:
       VITE_ALLOWED_SPECIES: dog
       VITE_DAYCARE_DISABLED_WEEKDAYS: 6,0
       # VITE_UNIT_OF_MASS: kg # kg | lbs
-      # VITE_SLIMFACT_HOSTNAME: xyz.slimfact.app
+      # VITE_SLIMFACT_HOST: xyz.slimfact.app
       # VITE_SLIMFACT_COMPANY_ID: 1
     secrets:
       - POSTGRES_PASSWORD

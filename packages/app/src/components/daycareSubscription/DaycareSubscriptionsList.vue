@@ -27,20 +27,22 @@
           v-if="showEditButton"
           icon="i-mdi-edit"
           data-testid="edit-button"
-          @click="emit('update', { data: daycareSubscription })"
+          @click="emit('update', { data: daycareSubscription, done: () => {} })"
         />
         <q-btn
           v-if="showDeleteButton"
           icon="i-mdi-delete"
           color="red"
           data-testid="delete-button"
-          @click="emit('delete', { data: daycareSubscription })"
+          @click="emit('delete', { data: daycareSubscription, done: () => {} })"
         />
         <q-btn
           v-if="showPurchaseButton"
           icon="i-mdi-add-shopping-cart"
           :label="lang.customerDaycareSubscription.labels.purchase"
-          @click="emit('purchase', { data: daycareSubscription })"
+          @click="
+            emit('purchase', { data: daycareSubscription, done: () => {} })
+          "
         />
       </q-item-section>
     </q-item>

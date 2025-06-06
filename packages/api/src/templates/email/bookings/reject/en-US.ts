@@ -1,6 +1,6 @@
 import { c } from 'compress-tag'
 // import env from '@vitrify/tools/env'
-// const hostname = env.read('VITE_API_HOSTNAME') || env.read('API_HOSTNAME')
+// const host = env.read('VITE_API_HOST') || env.read('API_HOST')
 
 const subject = c`Your booking has been rejected.`
 const body = c`<p>

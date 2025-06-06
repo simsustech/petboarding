@@ -160,7 +160,9 @@ const purchaseDaycareSubscription: InstanceType<
       daycareSubscriptionId: data.id,
       effectiveDate: new Date().toISOString().slice(0, 10)
     }
-    if (done) done()
+    if (done) {
+      done()
+    }
     stepper.value?.next()
   }
 }

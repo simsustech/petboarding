@@ -11,10 +11,10 @@ declare module 'fastify' {
 
 let newTokenSetPromise: Promise<TokenSet | null>
 export const createSlimfactTrpcClient = ({
-  hostname,
+  host,
   fastify
 }: {
-  hostname: string
+  host: string
   fastify: FastifyInstance
 }) => {
   const handleErrorFetch = async (
@@ -59,7 +59,7 @@ export const createSlimfactTrpcClient = ({
   const client = createTRPCProxyClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: `${hostname}/trpc`,
+        url: `${host}/trpc`,
         // You can pass any HTTP headers you wish here
         async headers() {
           const tokenSet = await fastify.oidcClients?.slimfact.getTokenSet()

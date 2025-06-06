@@ -93,8 +93,7 @@ export const compileEmail = async ({
   }
 }
 
-const slimfactHostname =
-  env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+const slimfactHost = env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
 export const createOrUpdateSlimfactInvoice = async ({
   fastify,
   booking,
@@ -207,7 +206,7 @@ export const createOrUpdateSlimfactInvoice = async ({
   →
   ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
 
-  const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+  const host = env.read('API_HOST') || env.read('VITE_API_HOST')
 
   let computedCancelationCosts
   let cancelationSurcharge: RawInvoiceSurcharge
@@ -257,8 +256,8 @@ export const createOrUpdateSlimfactInvoice = async ({
         requiredDownPaymentAmount,
         metadata: {
           referenceId: 'petboarding',
-          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
-          webhookUrl: `https://${hostname}/webhook/slimfact`
+          referenceUrl: `https://${host}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${host}/webhook/slimfact`
         }
       })
 
@@ -286,8 +285,8 @@ export const createOrUpdateSlimfactInvoice = async ({
         requiredDownPaymentAmount,
         metadata: {
           referenceId: 'petboarding',
-          referenceUrl: `https://${hostname}/employee/bookings/${booking.id}`,
-          webhookUrl: `https://${hostname}/webhook/slimfact`
+          referenceUrl: `https://${host}/employee/bookings/${booking.id}`,
+          webhookUrl: `https://${host}/webhook/slimfact`
         }
       })
 
@@ -483,7 +482,7 @@ export const adminBookingRoutes = ({
               })
             }
             if (result.success) {
-              invoiceUrl = `https://${slimfactHostname}/invoice/${result.invoice.uuid}`
+              invoiceUrl = `https://${slimfactHost}/invoice/${result.invoice.uuid}`
               requiredDownPaymentAmount =
                 (booking.costs?.requiredDownPaymentAmount || 0) -
                 (booking.invoice?.amountPaid || 0)

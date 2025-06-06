@@ -75,4 +75,8 @@ setDefaultPropsMd3({
 [v-cloak] {
   display: none;
 }
+
+.bg-light-surface {
+  background-color: #ffffff;
+}
 </style>

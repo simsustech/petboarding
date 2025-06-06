@@ -55,8 +55,8 @@ export const createUseTrpc = async () => {
     client: {
       links: [
         httpBatchLink({
-          url: import.meta.env.VITE_API_HOSTNAME
-            ? `https://${import.meta.env.VITE_API_HOSTNAME}/trpc`
+          url: import.meta.env.VITE_API_HOST
+            ? `https://${import.meta.env.VITE_API_HOST}/trpc`
             : '/trpc',
           headers,
           fetch: handleErrorFetch

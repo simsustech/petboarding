@@ -30,7 +30,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
   UNIT_OF_MASS?: 'kg' | 'lbs'
   INTEGRATIONS?: {
     slimfact: {
-      hostname: string
+      host: string
     }
   }
   SUPPORT_EMAIL?: string

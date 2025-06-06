@@ -87,7 +87,7 @@
     <div class="row items-center">
       <div
         v-if="
-          configuration.INTEGRATIONS?.slimfact.hostname &&
+          configuration.INTEGRATIONS?.slimfact.host &&
           modelValue.invoiceUuid &&
           modelValue.invoice
         "
@@ -98,7 +98,7 @@
           :dense="$q.screen.lt.sm"
           class="q-pt-none q-pb-none"
           data-html2canvas-ignore="true"
-          :href="`https://${configuration.INTEGRATIONS?.slimfact.hostname}/invoice/${modelValue.invoiceUuid}`"
+          :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.invoiceUuid}`"
           target="_blank"
           :text-color="getInvoiceTextColor(modelValue)"
         >

@@ -21,8 +21,8 @@ import {
 import { createBookingStatus, findBooking } from './repositories/booking.js'
 import { generateTheme } from 'unocss-preset-quasar/theme'
 
-const getString = (str: string) => str
-const host = getString(__HOST__)
+// const getString = (str: string) => str
+// const host = getString(__HOST__)
 
 const theme = generateTheme(
   env.read('SOURCE_COLOR') || env.read('VITE_SOURCE_COLOR')
@@ -52,14 +52,14 @@ const sassVariables = {
  * Only used in SSR/SSG
  */
 export default async function (fastify: FastifyInstance) {
-  const hostname = env.read('API_HOSTNAME') || env.read('VITE_API_HOSTNAME')
+  const host = env.read('API_HOST') || env.read('VITE_API_HOST')
 
-  if (!hostname)
+  if (!host)
     throw new Error(
-      'Please define a API_HOSTNAME or VITE_API_HOSTNAME environment variable'
+      'Please define a API_HOST or VITE_API_HOST environment variable'
     )
 
-  const corsOrigin = [`https://${hostname}`]
+  const corsOrigin = [`https://${host}`]
 
   console.log('Running setup function....')
   const accountMethods = await createAccountMethods(
@@ -75,22 +75,22 @@ export default async function (fastify: FastifyInstance) {
     env.read('VITE_LANG') || 'en-US'
   )
 
-  const slimfactHostname =
-    env.read('VITE_SLIMFACT_HOSTNAME') || env.read('SLIMFACT_HOSTNAME')
+  const slimfactHost =
+    env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
 
-  if (slimfactHostname) {
-    corsOrigin.push(`https://${slimfactHostname}`)
+  if (slimfactHost) {
+    corsOrigin.push(`https://${slimfactHost}`)
     await fastify.register(oidcClientPlugin, {
       name: 'slimfact',
       clientId: 'petboarding',
-      clientHostname: hostname,
-      serverHostname: slimfactHostname,
-      // serverHostname: 'demo.slimfact.app'
+      clientHost: host,
+      serverHost: slimfactHost,
+      // serverHost: 'demo.slimfact.app'
       kysely
     })
 
     createSlimfactTrpcClient({
-      hostname: `https://${slimfactHostname}`,
+      host: `https://${slimfactHost}`,
       fastify
     })
 
@@ -182,7 +182,7 @@ export default async function (fastify: FastifyInstance) {
       locale: env.read('VITE_LANG') || 'en-US',
       themeColors: theme['colors'],
       sassVariables,
-      issuer: `https://${hostname}`,
+      issuer: `https://${host}`,
       accountMethods,
       firstPartyClients: ['petboarding'],
       jwksURL: new URL('./jwks/jwks.json', import.meta.url),
@@ -217,9 +217,9 @@ export default async function (fastify: FastifyInstance) {
             grant_types: ['authorization_code', 'refresh_token'],
             scope: 'openid offline_access profile email api',
             client_secret: 'secret',
-            redirect_uris: [`https://${hostname}/redirect`],
+            redirect_uris: [`https://${host}/redirect`],
             token_endpoint_auth_method: 'none',
-            'urn:custom:client:allowed-cors-origins': [`https://${hostname}`]
+            'urn:custom:client:allowed-cors-origins': [`https://${host}`]
           }
         ],
         scopes: ['openid', 'offline_access', 'profile', 'email', 'api'],
@@ -282,7 +282,7 @@ export default async function (fastify: FastifyInstance) {
       CURRENCY: env.read('CURRENCY') || env.read('VITE_CURRENCY'),
       INTEGRATIONS: {
         slimfact: {
-          hostname: slimfactHostname
+          host: slimfactHost
         }
       },
       SUPPORT_EMAIL: env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL')
