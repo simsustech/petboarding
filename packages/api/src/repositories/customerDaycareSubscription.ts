@@ -202,7 +202,7 @@ function withDaycareDates(
           web('daycareDates.status', '=', DAYCARE_DATE_STATUS.PENDING)
         ])
       )
-      .orderBy('daycareDates.date asc')
+      .orderBy('daycareDates.date', 'asc')
       .select('daycareDates.date')
   ).as('daycareDates')
 }
@@ -438,7 +438,7 @@ export async function setCustomerDaycareSubscriptionStatus({
           web('daycareDates.status', '=', DAYCARE_DATE_STATUS.STANDBY)
         ])
       )
-      .orderBy('daycareDates.date asc')
+      .orderBy('daycareDates.date', 'asc')
       .limit(customerDaycareSubscription.daycareSubscription?.numberOfDays || 0)
       .select('id')
       .execute()

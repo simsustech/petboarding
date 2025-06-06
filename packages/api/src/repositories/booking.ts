@@ -470,7 +470,7 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
           `.as('days')
       ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
-      .orderBy('bookingStatus.modifiedAt desc')
+      .orderBy('bookingStatus.modifiedAt', 'desc')
   ).as('statuses')
 }
 
@@ -832,7 +832,7 @@ export async function findBookings({
     query = query.limit(limit)
   }
 
-  const results = await query.orderBy('id desc').execute()
+  const results = await query.orderBy('id', 'desc').execute()
 
   const categories = await findCategories({
     criteria: {}
