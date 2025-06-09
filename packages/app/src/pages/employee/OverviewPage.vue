@@ -221,18 +221,24 @@ const lang = useLang()
 const { useQuery } = await createUseTrpc()
 const router = useRouter()
 const route = useRoute()
+// const selectedDate = ref(
+//   !Array.isArray(route.params.date)
+//     ? route.params.date.replaceAll('-', '/')
+//     : dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+// )
+
 const selectedDate = ref(
   !Array.isArray(route.params.date)
-    ? route.params.date.replaceAll('-', '/')
-    : dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
+    ? route.params.date
+    : dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
 )
 
 onBeforeRouteUpdate((to) => {
   if (to.params.date && !Array.isArray(to.params.date)) {
-    selectedDate.value = to.params.date.replaceAll('-', '/')
+    selectedDate.value = to.params.date
   }
 })
-const parsedDate = computed(() => selectedDate.value.replaceAll('/', '-'))
+// const parsedDate = computed(() => selectedDate.value.replaceAll('/', '-'))
 const dateInputRef = ref<QInput>()
 const dateError = computed(() => dateInputRef.value?.hasError)
 
@@ -247,9 +253,9 @@ const { data: arrivalsData, execute: executeGetArrivals } = useQuery(
   {
     args: () =>
       reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
-        startDate: parsedDate.value,
+        from: selectedDate.value,
+        until: selectedDate.value,
+        startDate: selectedDate.value,
         statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
       })
   }
@@ -260,9 +266,9 @@ const { data: departuresData, execute: executeGetDepartures } = useQuery(
   {
     args: () =>
       reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
-        endDate: parsedDate.value,
+        from: selectedDate.value,
+        until: selectedDate.value,
+        endDate: selectedDate.value,
         statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
       })
   }
@@ -273,8 +279,8 @@ const { data: daycareDatesData, execute: executeDaycareDates } = useQuery(
   {
     args: () =>
       reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
+        from: selectedDate.value,
+        until: selectedDate.value,
         status: DAYCARE_DATE_STATUS.APPROVED
       })
   }
@@ -304,12 +310,11 @@ const setDate = (date: string | null) => {
 }
 
 const printPage = async () => {
-  router.push(`/print/overview/${parsedDate.value}`)
+  router.push(`/print/overview/${selectedDate.value}`)
 }
 
 onMounted(async () => {
   await executeOpeningTimes()
-  await dateInputRef.value?.validate()
   if (!dateError.value) {
     // executeGetBookings()
     executeGetArrivals()

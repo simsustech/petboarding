@@ -1,5 +1,5 @@
 <template>
-  <q-page @create="openCreateDialog">
+  <q-page padding @create="openCreateDialog">
     <opening-times-list
       v-if="openingTimes"
       :model-value="openingTimes"

@@ -61,6 +61,7 @@
         />
         <q-btn
           v-if="showEditButton"
+          v-close-popup
           icon="i-mdi-edit"
           data-testid="edit-button"
           @click="edit"

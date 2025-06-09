@@ -1,5 +1,5 @@
 <template>
-  <q-page @create="openCreateDialog">
+  <q-page padding @create="openCreateDialog">
     <categories-list
       v-if="categories"
       v-model="categories"

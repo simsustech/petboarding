@@ -9,7 +9,11 @@
       @change-date="onChangeDate"
     >
       <template #navigation>
-        <booking-status-select v-model="status" :options="statusOptions" />
+        <booking-status-select
+          v-model="status"
+          class="col-span-12 md:col-span-3"
+          :options="statusOptions"
+        />
       </template>
     </agenda-component>
   </q-page>

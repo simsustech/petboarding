@@ -42,7 +42,7 @@ export const BOOKING_ICON = ref({
   canceledoutsideperiod: 'i-mdi-cancel',
   pending: 'i-mdi-hourglass-empty',
   standby: 'i-mdi-hourglass-full',
-  awaitingdownpayment: 'i-mdi-hourglass-top'
+  awaitingdownpayment: 'i-mdi-hourglass'
 })
 
 export const BOOKING_ICON_COLOR = ref({

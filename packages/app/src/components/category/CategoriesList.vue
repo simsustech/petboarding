@@ -42,7 +42,7 @@
                 <q-item
                   v-close-popup
                   clickable
-                  class="bg-red"
+                  class="text-red"
                   @click="emit('delete', { data: category })"
                 >
                   <q-item-section>

@@ -56,6 +56,7 @@ test.describe('Services', async () => {
     await expect(page.locator(`text=${service.name}`)).toBeVisible()
   })
   test('Update service', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -66,6 +67,7 @@ test.describe('Services', async () => {
   })
 
   test('Delete service', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()

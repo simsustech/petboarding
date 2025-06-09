@@ -145,7 +145,11 @@
           />
         </q-card-section>
         <q-card-section>
-          <daycare-calendar-month :events="events" @change-date="onChangeDate">
+          <daycare-calendar-month
+            :events="events"
+            :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
+            @change-date="onChangeDate"
+          >
             <template #navigation>
               <daycare-status-select v-model="daycareDatesStatus" />
             </template>
@@ -244,8 +248,11 @@ import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
+import { useConfiguration } from '../../configuration.js'
+
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
+const configuration = useConfiguration()
 const route = useRoute()
 const router = useRouter()
 const lang = useLang()

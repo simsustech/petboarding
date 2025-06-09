@@ -1,9 +1,8 @@
 <template>
-  <resource-page padding :icons="{ add: 'i-mdi-add', edit: 'i-mdi-edit' }">
-    <template #header>
-      {{ lang.booking.title }}
-    </template>
-    <template #header-side>
+  <q-page padding>
+    <q-toolbar class="q-mb-lg">
+      <q-space />
+
       <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <customer-select
@@ -23,6 +22,10 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
           <date-input
             v-model="until"
@@ -33,10 +36,14 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
         </q-menu>
       </q-btn>
-    </template>
+    </q-toolbar>
     <q-table
       :title="lang.bookings.title"
       :rows="data"
@@ -78,7 +85,7 @@
         </q-tr>
       </template>
     </q-table>
-  </resource-page>
+  </q-page>
 </template>
 
 <script lang="ts">
@@ -92,7 +99,6 @@ import { ref, reactive, onMounted } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { Booking, Customer } from '@petboarding/api/zod'
 import { createUseTrpc } from '../../../trpc.js'
-import { ResourcePage } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
 import CustomerSelect from '../../../components/employee/CustomerSelect.vue'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'

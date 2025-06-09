@@ -64,6 +64,7 @@ test.describe('Periods', async () => {
     await expect(page.locator(`text=${period.comments}`)).toBeVisible()
   })
   test('Update period', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -74,6 +75,7 @@ test.describe('Periods', async () => {
   })
 
   test('Delete period', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()

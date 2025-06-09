@@ -1,5 +1,5 @@
 <template>
-  <q-page @create="openCreateDialog">
+  <q-page padding @create="openCreateDialog">
     <buildings-list
       v-if="buildings"
       :model-value="buildings"

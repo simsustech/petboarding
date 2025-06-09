@@ -1,12 +1,12 @@
 <template>
   <q-form ref="formRef">
-    <div class="row justify-center">
+    <div class="flex flex-row justify-center q-mb-md">
       <image-avatar v-model="modelValue.image" allow-change />
     </div>
-    <div class="row">
+    <div class="grid grid-cols-12 gap-3">
       <vaccination-types-select
         v-model="modelValue.types"
-        class="col-12"
+        class="col-span-12"
         :species="species"
         required
       />
@@ -16,7 +16,7 @@
         format="DD-MM-YYYY"
         clearable
         required
-        class="col-12"
+        class="col-span-12"
         :date="{
           noUnset: true,
           defaultView: 'Years',

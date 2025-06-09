@@ -1,31 +1,40 @@
 <template>
-  <q-btn-group v-if="species === 'dog'" push>
-    <q-btn
+  <div class="grid grid-cols-12 gap-3">
+    <q-btn-group
+      v-if="species === 'dog'"
       push
-      :label="lang.pet.vaccination.dog.cocktail"
-      @click="setCocktail"
-    />
-    <q-btn
-      push
-      :label="lang.pet.vaccination.types.kennelcough"
-      @click="setKennelcough"
-    />
-    <q-btn
-      push
-      :label="`${lang.pet.vaccination.dog.cocktail} + ${lang.pet.vaccination.types.kennelcough}`"
-      @click="setCocktailKennelcough"
-    />
-  </q-btn-group>
-  <q-select
-    v-bind="attrs"
-    :model-value="modelValue"
-    :options="options"
-    :label="`${lang.pet.vaccination.title}${required ? '*' : ''}`"
-    emit-value
-    map-options
-    multiple
-    @update:model-value="$emit('update:model-value', $event)"
-  ></q-select>
+      spread
+      class="col-span-12 md:col-span-6"
+    >
+      <q-btn
+        push
+        :label="lang.pet.vaccination.dog.cocktail"
+        @click="setCocktail"
+      />
+      <q-btn
+        push
+        :label="lang.pet.vaccination.types.kennelcough"
+        @click="setKennelcough"
+      />
+      <q-btn
+        push
+        :label="`${lang.pet.vaccination.dog.cocktail} + ${lang.pet.vaccination.types.kennelcough}`"
+        @click="setCocktailKennelcough"
+      />
+    </q-btn-group>
+    <q-select
+      v-bind="attrs"
+      class="col-span-12 md:col-span-6"
+      :model-value="modelValue"
+      :options="options"
+      :label="`${lang.pet.vaccination.title}${required ? '*' : ''}`"
+      emit-value
+      map-options
+      multiple
+      @update:model-value="$emit('update:model-value', $event)"
+    >
+    </q-select>
+  </div>
 </template>
 
 <script lang="ts">

@@ -58,6 +58,7 @@ test.describe('Announcements', async () => {
     await expect(page.locator(`text=${announcement.message}`)).toBeVisible()
   })
   test('Update announcement', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -68,6 +69,7 @@ test.describe('Announcements', async () => {
   })
 
   test('Delete announcement', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()

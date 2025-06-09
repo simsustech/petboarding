@@ -4,6 +4,7 @@
       <q-rating v-if="modelValue.rating" :model-value="modelValue.rating" />
       <q-btn
         v-if="showEditButton"
+        v-close-popup
         class="float-right"
         rounded
         outline
@@ -60,7 +61,7 @@
     <template #actions>
       <!-- <div class="row full-width justify-center q-mb-md">
         <q-btn
-          v-if="showEditButton"
+          v-if="showEditButton" v-close-popup
           icon="edit"
           label="Update"
           @click="update(modelValue)"

@@ -1,12 +1,12 @@
 <template>
   <q-form ref="formRef">
-    <div class="row q-col-gutter-sm">
+    <div class="grid grid-cols-12 gap-3">
       <form-input
         v-bind="input"
         id="title"
         v-model="modelValue.title"
         required
-        class="col-12 col-md-6"
+        class="col-span-12 md:col-span-6"
         name="title"
         :label="lang.announcement.fields.title"
         bottom-slots
@@ -15,6 +15,7 @@
 
       <announcement-type-select
         v-model="modelValue.type"
+        class="col-span-12 md:col-span-6"
         :label="lang.announcement.fields.type"
       />
 
@@ -23,7 +24,7 @@
         id="message"
         v-model="modelValue.message"
         required
-        class="col-12"
+        class="col-span-12"
         name="message"
         :label="lang.announcement.fields.message"
         bottom-slots
@@ -37,7 +38,7 @@
         format="DD-MM-YYYY"
         required
         clearable
-        class="col-md-6 col-12"
+        class="col-span-12 md:col-span-6"
         :date="{
           noUnset: true,
           firstDayOfWeek: '1'

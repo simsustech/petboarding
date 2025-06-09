@@ -24,7 +24,7 @@
       />
     </q-toolbar>
     <q-toolbar inset class="justify-center">
-      <q-btn-group rounded>
+      <q-btn-group>
         <q-btn :label="lang.kennellayout.labels.today" @click="setToToday" />
         <q-btn
           :label="lang.kennellayout.labels.tomorrow"

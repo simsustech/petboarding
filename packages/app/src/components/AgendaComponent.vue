@@ -1,8 +1,9 @@
 <template>
-  <div class="row justify-center">
+  <div class="grid grid-cols-12 gap-3">
     <slot name="navigation" />
     <date-input
       v-model="selectedDate"
+      class="col-span-12 md:col-span-7"
       hide-bottom-space
       :label="lang.kennellayout.labels.date"
       format="DD-MM-YYYY"
@@ -20,6 +21,8 @@
 
     <q-btn-toggle
       v-model="view"
+      spread
+      class="col-span-12 md:col-span-2"
       push
       toggle-color="primary"
       :options="[
@@ -35,7 +38,7 @@
   </div>
   <agenda-legend />
   <pet-legend />
-  <div class="row">
+  <div class="row q-mb-md">
     <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   </div>
   <q-scroll-area :style="contentSize">
@@ -92,7 +95,7 @@
           >{{ lang.booking.title }}
           {{ getNumberOfBookingPets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none" inset />
+        <q-separator class="q-pt-none q-mb-md" inset />
         <div
           v-for="booking in getBookingArrivals(timestamp.date)"
           :key="booking.id"
@@ -148,7 +151,7 @@
           >{{ lang.daycare.title }}
           {{ getNumberOfDaycarePets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none" inset />
+        <q-separator class="q-pt-none q-mb-md" inset />
         <div
           v-for="daycareDate in getDaycareDates(timestamp.date)"
           :key="daycareDate.id"
@@ -234,10 +237,10 @@ const selectedDate = ref(
     ? route.params.date
     : new Date().toISOString().slice(0, 10)
 )
-const date = ref(selectedDate.value.replaceAll('/', '-'))
+const date = ref(selectedDate.value)
 watch(selectedDate, (val) => {
   if (dateUtil.isValid(val)) {
-    date.value = val.replaceAll('/', '-')
+    date.value = val
   }
 })
 

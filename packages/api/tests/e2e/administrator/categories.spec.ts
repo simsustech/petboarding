@@ -56,7 +56,8 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    // await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+    await page.getByTestId('edit-button').last().click()
     await page
       .getByRole('main')
       .getByLabel('Expand')
@@ -92,7 +93,7 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
-    // await page.getByTestId('delete-button').last().click()
+    await page.getByTestId('delete-button').last().click()
     await page
       .getByRole('main')
       .getByLabel('Expand')

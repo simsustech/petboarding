@@ -120,7 +120,8 @@ test.describe('Announcements', async () => {
     await expect(page.locator(`text=${announcement.message}`)).toBeVisible()
   })
   test('Update announcement', async () => {
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Title').fill('UpdatedTitle')
@@ -129,6 +130,7 @@ test.describe('Announcements', async () => {
   })
 
   test('Delete announcement', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -157,7 +159,8 @@ test.describe('Periods', async () => {
     await expect(page.locator(`text=${period.comments}`)).toBeVisible()
   })
   test('Update period', async () => {
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Comments').fill('UpdatedComments')
@@ -166,6 +169,7 @@ test.describe('Periods', async () => {
   })
 
   test('Delete period', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -189,7 +193,8 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -198,6 +203,7 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -221,7 +227,8 @@ test.describe('Services', async () => {
     await expect(page.locator(`text=${service.name}`)).toBeVisible()
   })
   test('Update service', async () => {
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -230,6 +237,7 @@ test.describe('Services', async () => {
   })
 
   test('Delete service', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -254,7 +262,8 @@ test.describe('Opening times', async () => {
     await expect(page.locator(`text=${openingTime.name}`)).toBeVisible()
   })
   test('Update opening time', async () => {
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').last().getByRole('button').click()
+await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -263,6 +272,7 @@ test.describe('Opening times', async () => {
   })
 
   test('Delete opening time', async () => {
+    await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()

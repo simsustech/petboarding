@@ -1,14 +1,16 @@
 <template>
-  <q-list>
-    <q-item-label header>
-      {{ lang.booking.messages.unpaidBookings(days) }}
-    </q-item-label>
-    <booking-expansion-item
-      v-for="booking in unpaidBookings"
-      :key="booking.id"
-      :model-value="booking"
-    />
-  </q-list>
+  <q-page padding>
+    <q-list>
+      <q-item-label header>
+        {{ lang.booking.messages.unpaidBookings(days) }}
+      </q-item-label>
+      <booking-expansion-item
+        v-for="booking in unpaidBookings"
+        :key="booking.id"
+        :model-value="booking"
+      />
+    </q-list>
+  </q-page>
 </template>
 
 <script setup lang="ts">

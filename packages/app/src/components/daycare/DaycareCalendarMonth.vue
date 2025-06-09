@@ -67,7 +67,7 @@
                 v-for="event in eventsMap[timestamp.date]"
                 :key="event.id"
               >
-                <div class="text-center">
+                <div class="text-center q-mb-sm">
                   <q-chip
                     class="q-mt-none q-mb-none"
                     size="sm"

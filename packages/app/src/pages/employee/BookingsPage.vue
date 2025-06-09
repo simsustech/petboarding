@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <div v-if="data">
       <q-list v-if="upcomingBookings?.length">
         <q-item-label header>{{

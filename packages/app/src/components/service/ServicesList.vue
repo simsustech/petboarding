@@ -17,18 +17,54 @@
       </q-item-section>
       <q-item-section side>
         <q-btn
-          v-if="showEditButton"
+          v-if="showEditButton || showDeleteButton"
+          icon="i-mdi-more-vert"
+          flat
+        >
+          <q-menu>
+            <q-list>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                clickable
+                data-testid="edit-button"
+                @click="emit('update', { data: service })"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.update }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="showDeleteButton"
+                v-close-popup
+                clickable
+                data-testid="delete-button"
+                @click="emit('delete', { data: service })"
+              >
+                <q-item-section>
+                  <q-item-label class="text-red">
+                    {{ lang.delete }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+        <!-- <q-btn
+          v-if="showEditButton" v-close-popup
           icon="i-mdi-edit"
           data-testid="edit-button"
           @click="emit('update', { data: service })"
         />
         <q-btn
-          v-if="showDeleteButton"
+          v-if="showDeleteButton" v-close-popup
           icon="i-mdi-delete"
           color="red"
           data-testid="delete-button"
           @click="emit('delete', { data: service })"
-        />
+        /> -->
       </q-item-section>
     </q-item>
   </q-list>
@@ -44,6 +80,7 @@ export default {
 import { ref } from 'vue'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
+import { useLang } from '../../lang/index.js'
 import type { Service } from '@petboarding/api/zod'
 
 export interface Props {
@@ -76,6 +113,7 @@ const emit = defineEmits<{
   ): void
 }>()
 
+const lang = useLang()
 const configuration = useConfiguration()
 
 const variables = ref({

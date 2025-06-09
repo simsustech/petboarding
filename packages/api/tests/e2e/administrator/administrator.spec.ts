@@ -40,7 +40,8 @@ test.describe('Accounts', async () => {
     await page.goto('/admin/accounts')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button').filter({ hasText: 'search' }).click()
+    await page.getByTestId('search-button').click()
+
     await page.getByLabel('Email').click()
     await page.getByLabel('Email').fill('admin@petboarding.app')
 

@@ -24,18 +24,54 @@
       </q-item-section>
       <q-item-section side>
         <q-btn
-          v-if="showEditButton"
+          v-if="showEditButton || showDeleteButton"
+          icon="i-mdi-more-vert"
+          flat
+        >
+          <q-menu>
+            <q-list>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                clickable
+                data-testid="edit-button"
+                @click="emit('update', { data: daycareSubscription })"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.update }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="showDeleteButton"
+                v-close-popup
+                clickable
+                data-testid="delete-button"
+                @click="emit('delete', { data: daycareSubscription })"
+              >
+                <q-item-section>
+                  <q-item-label class="text-red">
+                    {{ lang.delete }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+        <!-- <q-btn
+          v-if="showEditButton" v-close-popup
           icon="i-mdi-edit"
           data-testid="edit-button"
           @click="emit('update', { data: daycareSubscription, done: () => {} })"
         />
         <q-btn
-          v-if="showDeleteButton"
+          v-if="showDeleteButton" v-close-popup
           icon="i-mdi-delete"
           color="red"
           data-testid="delete-button"
           @click="emit('delete', { data: daycareSubscription, done: () => {} })"
-        />
+        /> -->
         <q-btn
           v-if="showPurchaseButton"
           icon="i-mdi-add-shopping-cart"
