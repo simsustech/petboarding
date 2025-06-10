@@ -46,7 +46,7 @@
         </q-badge>
         <q-badge
           v-if="modelValue.isDoubleBooked"
-          :color="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
+          :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
           rounded
         >
           <q-icon
