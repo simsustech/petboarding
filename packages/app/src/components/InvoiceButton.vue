@@ -8,7 +8,7 @@
     :rounded="false"
     :class="classes"
   >
-    <div class="column">
+    <div class="column items-center">
       <q-avatar class="col-12">
         <q-icon name="i-mdi-invoice-text" :class="classes" size="md" />
       </q-avatar>
@@ -18,13 +18,7 @@
           modelValue.amountDue !== null &&
           modelValue.amountDue <= 0
         "
-        style="
-          position: relative;
-          width: 0;
-          height: 0;
-          right: -30px;
-          bottom: 3px;
-        "
+        style="position: absolute; right: 20px; bottom: 20px"
         name="i-mdi-check"
         :class="{
           'text-green': true
@@ -37,7 +31,7 @@
           modelValue.amountDue !== null &&
           modelValue.amountDue < 0
         "
-        style="position: relative; width: 0; height: 0; bottom: 3px"
+        style="position: absolute; right: 20px; bottom: 20px"
         name="i-mdi-exclamation"
         :class="{
           'text-red': true

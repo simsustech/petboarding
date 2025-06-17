@@ -18,7 +18,12 @@
       </template>
     </q-checkbox>
     <template #hint>
-      <a :href="termsAndConditionsUrl" target="_blank" class="col-12">
+      <a
+        :href="termsAndConditionsUrl"
+        target="_blank"
+        class="col-12"
+        @click.stop
+      >
         {{ lang.booking.messages.viewTermsAndConditions }}
       </a>
     </template>

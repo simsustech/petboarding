@@ -64,7 +64,7 @@
         @reply="reply"
         @settle-cancelation="settleCancelation"
         @edit-pet="openUpdatePetDialog"
-        @edit-booking-service="openUpdateBookingServiceDialog"
+        @update-booking-service="openUpdateBookingServiceDialog"
         @open-customer="openCustomer"
       />
     </q-list>
@@ -360,7 +360,7 @@ const updateBookingServiceDialogRef = ref<typeof ResponsiveDialog>()
 const updateBookingServiceFormRef = ref<typeof BookingServiceForm>()
 const openUpdateBookingServiceDialog: InstanceType<
   typeof BookingExpansionItem
->['$props']['onEditBookingService'] = async ({ data, done }) => {
+>['$props']['onUpdateBookingService'] = async ({ data, done }) => {
   if (data.id) {
     const {
       data: bookingServiceData,

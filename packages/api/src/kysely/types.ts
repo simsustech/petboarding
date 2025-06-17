@@ -319,6 +319,12 @@ export interface Vaccinations {
   createdAt: Generated<string>
 }
 
+export interface Documents {
+  id: Generated<number>
+  name: string
+  content: string
+}
+
 export interface DB {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
@@ -347,4 +353,5 @@ export interface DB {
   pets: Pets
   services: Services
   vaccinations: Vaccinations
+  documents: Documents
 }

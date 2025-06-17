@@ -1,10 +1,10 @@
 <template>
   <q-form ref="formRef">
-    <div class="row q-col-gutter-sm">
+    <div class="grid grid-cols-12 gap-3">
       <form-input
         v-bind="input"
         v-model="modelValue.name"
-        class="col-md-3 col-12"
+        class="col-span-12 md:col-span-3"
         required
         field="name"
         bottom-slots
@@ -15,7 +15,7 @@
       <form-input
         v-bind="input"
         v-model="modelValue.description"
-        class="col-md-3 col-12"
+        class="col-span-12 md:cols-span-3"
         required
         :label="lang.service.fields.description"
         bottom-slots
@@ -23,11 +23,14 @@
         name="description"
       />
 
-      <service-type-select v-model="modelValue.type" class="col-md-3 col-12" />
+      <service-type-select
+        v-model="modelValue.type"
+        class="col-span-12 md:col-span-3"
+      />
 
       <q-input
         v-model.number="modelValue.listPrice"
-        class="col-12"
+        class="col-span-12"
         :label="lang.service.fields.listPrice"
         :prefix="configuration.CURRENCY"
         :hint="lang.service.helpers.priceHint"
@@ -40,7 +43,7 @@
       <boolean-select
         v-model="modelValue.hidden"
         :label="lang.service.fields.hidden"
-        class="col-md-4 col-12"
+        class="col-span-12 md:col-span-4"
         required
         name="sterilized"
       />
@@ -48,7 +51,7 @@
       <boolean-select
         v-model="modelValue.disabled"
         :label="lang.service.fields.disabled"
-        class="col-md-4 col-12"
+        class="col-span-12 md:col-span-4"
         required
         name="sterilized"
       />

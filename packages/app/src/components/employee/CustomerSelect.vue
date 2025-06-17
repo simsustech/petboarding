@@ -19,8 +19,8 @@
             v-if="opt.extraFields.rating"
             :model-value="opt.extraFields.rating"
             icon="i-mdi-star-border"
-            icon-selected="star"
-            icon-half="star_half"
+            icon-selected="i-mdi-star"
+            icon-half="i-mdi-star-half"
           />
         </q-item-section>
       </q-item>

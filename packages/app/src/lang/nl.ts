@@ -32,6 +32,7 @@ const lang: Language = {
   add: 'Toevoegen',
   darkMode: 'Donkere modus',
   language: 'Taal',
+  termsAndConditions: 'Algemene voorwaarden',
   account: {
     title: 'Account',
     fields: {
@@ -72,7 +73,8 @@ const lang: Language = {
     periods: 'Periodes',
     emailTemplates: 'Email sjablonen',
     openingTimes: 'Openingstijden',
-    integrations: 'Integraties'
+    integrations: 'Integraties',
+    documents: 'Documenten'
   },
   customer: {
     title: 'Klantgegevens',

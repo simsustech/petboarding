@@ -30,6 +30,7 @@ export interface Language {
   add: string
   darkMode: string
   language: string
+  termsAndConditions: string
   account: {
     title: string
     fields: {
@@ -69,6 +70,7 @@ export interface Language {
     emailTemplates: string
     openingTimes: string
     integrations: string
+    documents: string
   }
   customer: {
     title: string

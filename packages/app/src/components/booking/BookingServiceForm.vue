@@ -1,19 +1,18 @@
 <template>
-  <q-form ref="formRef" class="row justtify-center">
-    <div class="row q-gutter-md">
-      <q-input
-        :model-value="modelValue.price ? modelValue.price / 100 : 0"
-        :label="lang.service.fields.price"
-        class="col-12"
-        :prefix="currencySymbols[configuration.CURRENCY]"
-        :lang="$q.lang.isoName"
-        type="number"
-        step="0.01"
-        @update:model-value="
-          ($event) => (modelValue.price = Math.round(Number($event) * 100))
-        "
-      />
-      <!-- <q-input
+  <q-form ref="formRef" class="grid grid-cols-12 gap-3">
+    <q-input
+      :model-value="modelValue.price ? modelValue.price / 100 : 0"
+      :label="lang.service.fields.price"
+      class="col-span-12"
+      :prefix="currencySymbols[configuration.CURRENCY]"
+      :lang="$q.lang.isoName"
+      type="number"
+      step="0.01"
+      @update:model-value="
+        ($event) => (modelValue.price = Math.round(Number($event) * 100))
+      "
+    />
+    <!-- <q-input
         v-model.number="modelValue.price"
         class="col-12"
         :label="lang.service.fields.price"
@@ -23,12 +22,11 @@
         unmasked-value
         reverse-fill-mask
       /> -->
-    </div>
     <q-input
       v-bind="input"
       id="comments"
       v-model="modelValue.comments"
-      class="col-12"
+      class="col-span-12"
       name="comments"
       :label="lang.service.fields.comments"
       bottom-slots

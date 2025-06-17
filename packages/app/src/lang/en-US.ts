@@ -32,6 +32,7 @@ const lang: Language = {
   add: 'Add',
   darkMode: 'Dark mode',
   language: 'Language',
+  termsAndConditions: 'Terms and conditions',
   account: {
     title: 'Account',
     fields: {
@@ -71,7 +72,8 @@ const lang: Language = {
     periods: 'Periods',
     emailTemplates: 'Email templates',
     openingTimes: 'Opening times',
-    integrations: 'Integrations'
+    integrations: 'Integrations',
+    documents: 'Documents'
   },
   customer: {
     title: 'Customer details',

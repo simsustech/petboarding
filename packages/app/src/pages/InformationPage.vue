@@ -3,7 +3,7 @@
     <template #avatar>
       <q-icon name="i-mdi-warning" color="warning" />
     </template>
-    <a href="/termsandconditions.pdf" target="_blank">{{
+    <a href="/print/termsandconditions" target="_blank">{{
       lang.information.messages.termsAndConditions
     }}</a>
   </q-banner>

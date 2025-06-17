@@ -213,7 +213,9 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
             include: [
               'src/**/configuration.ts',
               /@simsustech\/quasar-components/,
-              /@modular-api\/quasar-components/
+              /@modular-api\/quasar-components/,
+              /simsustech/,
+              /modular-api/
             ]
           }
         }

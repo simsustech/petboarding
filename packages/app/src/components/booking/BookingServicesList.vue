@@ -3,6 +3,12 @@
     <q-item v-for="service in modelValue" :key="service.id">
       <q-item-section>
         <q-item-label>
+          <price
+            :model-value="service.listPrice"
+            :currency="configuration.CURRENCY"
+          />
+        </q-item-label>
+        <q-item-label>
           {{ service.service?.name }}
         </q-item-label>
         <q-item-label caption>
@@ -10,17 +16,25 @@
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <price
-          :model-value="service.listPrice"
-          :currency="configuration.CURRENCY"
-        />
-        <q-btn
-          v-if="showEditButton"
-          v-close-popup
-          icon="i-mdi-edit"
-          data-testid="edit-button"
-          @click="emit('edit', { data: service })"
-        />
+        <q-btn flat icon="i-mdi-more-vert">
+          <q-menu>
+            <q-list>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                clickable
+                data-testid="edit-button"
+                @click="emit('update', { data: service })"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.update }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-item-section>
     </q-item>
   </q-list>
@@ -36,6 +50,7 @@ export default {
 import { BookingService } from '@petboarding/api/zod'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
+import { useLang } from '../../lang/index.js'
 
 export interface Props {
   modelValue: BookingService[]
@@ -45,7 +60,7 @@ defineProps<Props>()
 
 const emit = defineEmits<{
   (
-    e: 'edit',
+    e: 'update',
     {
       data,
       done
@@ -57,4 +72,5 @@ const emit = defineEmits<{
 }>()
 
 const configuration = useConfiguration()
+const lang = useLang()
 </script>

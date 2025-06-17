@@ -321,7 +321,7 @@ const onClickEvent = (event: QCalendarEvent) => {
 
 const termsAndConditionsUrl = computed(
   () =>
-    configuration.value.TERMS_AND_CONDITIONS_URL || '/termsandconditions.pdf'
+    configuration.value.TERMS_AND_CONDITIONS_URL || '/print/termsandconditions'
 )
 
 const onChangeDate: InstanceType<

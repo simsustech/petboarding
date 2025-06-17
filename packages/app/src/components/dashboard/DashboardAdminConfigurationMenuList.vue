@@ -52,6 +52,16 @@
         </q-item-label>
       </q-item-section>
     </q-item>
+    <q-item to="/admin/configuration/documents">
+      <q-item-section avatar>
+        <q-icon name="i-mdi-document" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>
+          {{ lang.configuration.documents }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
     <q-item to="/admin/configuration/integrations">
       <q-item-section avatar>
         <q-icon name="i-mdi-external-link" />

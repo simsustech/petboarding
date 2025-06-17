@@ -23,14 +23,14 @@
               @cancel="cancelBooking"
             />
           </q-list>
-          <q-expansion-item class="col-12 col-md-6">
+          <q-expansion-item v-if="otherBookings.length" class="col-12 col-md-6">
             <template #header>
               <q-item-label header>{{
                 lang.booking.messages.otherBookings
               }}</q-item-label>
             </template>
 
-            <q-list v-if="otherBookings?.length">
+            <q-list>
               <booking-expansion-item
                 v-for="booking in otherBookings"
                 :key="booking.id"
@@ -159,7 +159,7 @@ const { data: servicesData, execute: executeServices } =
 
 const termsAndConditionsUrl = computed(
   () =>
-    configuration.value.TERMS_AND_CONDITIONS_URL || '/termsandconditions.pdf'
+    configuration.value.TERMS_AND_CONDITIONS_URL || '/print/termsandconditions'
 )
 
 const updateBookingFormRef = ref<typeof BookingForm>()

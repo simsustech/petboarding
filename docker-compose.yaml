@@ -1,8 +1,6 @@
 services:
   api:
     image: "ghcr.io/simsustech/petboarding:latest"
-    # volumes:
-    # - ./termsandconditions.pdf:/app/node_modules/@petboarding/app/dist/ssr/client/termsandconditions.pdf
     labels:
       caddy: ${HOST}
       caddy.reverse_proxy: "{{upstreams 80}}"

@@ -210,6 +210,11 @@ const routes: RouteRecordRaw[] = [
                       '../pages/admin/configuration/KennelsPage/KennelsPageFabs.vue'
                     )
                 }
+              },
+              {
+                path: 'documents',
+                component: () =>
+                  import('../pages/admin/configuration/DocumentsPage.vue')
               }
             ]
           }
@@ -344,7 +349,7 @@ const routes: RouteRecordRaw[] = [
                 )
             },
             meta: {
-              lang: 'contactperson'
+              lang: 'contactPerson'
             }
           },
           {
@@ -383,6 +388,8 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
+      // Always leave this as last one,
+      // but you can also remove it
       {
         path: '/:catchAll(.*)*',
         component: () => import('../pages/Error404Page.vue')
@@ -416,11 +423,19 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'overview/:date',
         component: () => import('../pages/print/OverviewPage.vue')
+      },
+      {
+        path: 'termsandconditions',
+        component: () => import('../pages/TermsAndConditions.vue'),
+        alias: ['algemenevoorwaarden']
+      },
+      {
+        path: 'privacypolicy',
+        component: () => import('../pages/PrivacyPolicy.vue'),
+        alias: ['privacyverklaring']
       }
     ]
   }
-  // Always leave this as last one,
-  // but you can also remove it
 ]
 
 export default routes

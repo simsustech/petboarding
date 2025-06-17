@@ -4,10 +4,11 @@
       <q-item-label header>
         {{ lang.booking.messages.unpaidBookings(days) }}
       </q-item-label>
-      <booking-expansion-item
+      <booking-item
         v-for="booking in unpaidBookings"
         :key="booking.id"
         :model-value="booking"
+        @open-booking="onOpenBooking"
       />
     </q-list>
   </q-page>
@@ -15,11 +16,14 @@
 
 <script setup lang="ts">
 import { createUseTrpc } from '../../../trpc.js'
-import BookingExpansionItem from '../../../components/booking/BookingExpansionItem.vue'
 import { useLang } from '../../../lang/index.js'
 import { onMounted } from 'vue'
 import { ref } from 'vue'
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import BookingItem from '../../../components/booking/BookingItem.vue'
+
+const router = useRouter()
 
 const lang = useLang()
 
@@ -29,6 +33,11 @@ const { data: unpaidBookings, execute: executeUnpaidBookings } = useQuery(
   'admin.getUnpaidBookings',
   { args: reactive({ days }) }
 )
+
+const onOpenBooking: InstanceType<
+  typeof BookingItem
+>['$props']['onOpenBooking'] = ({ id }) =>
+  router.push(`/employee/bookings/${id}`)
 
 onMounted(async () => {
   await executeUnpaidBookings()

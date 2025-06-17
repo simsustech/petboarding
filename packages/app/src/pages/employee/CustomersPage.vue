@@ -20,7 +20,6 @@
         v-if="data"
         class="col-span-12 md:col-span-4"
         :model-value="data"
-        :categories="categories"
         show-edit-button
         use-rating
         @update="openUpdateDialog"

@@ -14,7 +14,7 @@
       <q-btn icon="i-mdi-more-vert" flat>
         <q-menu>
           <q-list>
-            <q-item clickable href="/privacypolicy.pdf" target="_blank">
+            <q-item clickable href="/print/privacypolicy" target="_blank">
               <q-item-section avatar>
                 <q-icon name="i-mdi-document" />
               </q-item-section>
@@ -344,6 +344,13 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item> -->
+                  <q-item to="/admin/configuration/documents">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.documents }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item to="/admin/configuration/integrations">
                     <q-item-section>
                       <q-item-label>

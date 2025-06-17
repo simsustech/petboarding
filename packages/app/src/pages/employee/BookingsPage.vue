@@ -17,7 +17,7 @@
           @cancel="cancelBooking"
           @open-customer="openCustomer"
           @update-booking-invoice="updateBookingInvoice"
-          @edit-booking-service="openUpdateBookingServiceDialog"
+          @update-booking-service="openUpdateBookingServiceDialog"
         />
       </q-list>
       <q-list v-if="otherBookings?.length">
@@ -252,7 +252,7 @@ const updateBookingServiceDialogRef = ref<typeof ResponsiveDialog>()
 const updateBookingServiceFormRef = ref<typeof BookingServiceForm>()
 const openUpdateBookingServiceDialog: InstanceType<
   typeof BookingExpansionItem
->['$props']['onEditBookingService'] = async ({ data, done }) => {
+>['$props']['onUpdateBookingService'] = async ({ data, done }) => {
   if (data.id) {
     const {
       data: bookingServiceData,
