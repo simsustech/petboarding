@@ -1049,7 +1049,7 @@ export async function updateBooking(
         .selectAll()
         .where('bookingId', '=', criteria.id)
         .where('status', '=', BOOKING_STATUS.APPROVED)
-        .orderBy('modifiedAt desc')
+        .orderBy('modifiedAt', 'desc')
         .limit(1)
         .executeTakeFirst()
 
