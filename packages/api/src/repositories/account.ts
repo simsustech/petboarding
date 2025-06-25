@@ -42,7 +42,13 @@ function find({
   }
 
   if (criteria.email) {
-    query = query.where('email', 'like', `%${criteria.email.toLowerCase()}%`)
+    query = query.where((web) =>
+      web(
+        web.fn('lower', ['email']),
+        'like',
+        `%${criteria.email?.toLowerCase()}%`
+      )
+    )
   }
 
   if (criteria.name) {
@@ -130,9 +136,14 @@ export async function getAccountsCount({
   criteria: Partial<Account> & { roles?: string[] }
 }) {
   let query = db.selectFrom('accounts')
-
   if (criteria.email) {
-    query = query.where('email', 'like', `%${criteria.email}%`)
+    query = query.where((web) =>
+      web(
+        web.fn('lower', ['email']),
+        'like',
+        `%${criteria.email?.toLowerCase()}%`
+      )
+    )
   }
 
   if (criteria.name) {

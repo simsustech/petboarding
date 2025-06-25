@@ -140,8 +140,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, reactive, inject } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
+import { ref, onMounted, computed, inject } from 'vue'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import DaycareForm from '../../../components/daycare/DaycareForm.vue'
 import DaycareCalendarMonth, {
@@ -163,6 +162,18 @@ import customerDaycareSubscriptionStepper from '../../../components/daycareSubsc
 import customerDaycareSubscriptionsList from '../../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 
 import { EventBus } from 'quasar'
+import { useAccountGetPetsQuery } from 'src/queries/account/pet.js'
+import { useAccountGetDaycareDatesQuery } from 'src/queries/account/daycare.js'
+import {
+  useAccountCancelDaycareDateMutation,
+  useAccountCreateDaycareDatesMutation
+} from 'src/mutations/account/daycare.js'
+import { useAccountGetCustomerDaycareSubscriptionsQuery } from 'src/queries/account/customerDaycareSubscription.js'
+import {
+  usePublicGetDaycareSubscriptionsQuery,
+  usePublicGetUnavailableDaycareDatesQuery
+} from 'src/queries/public.js'
+import { useAccountCreateCustomerDaycareSubscriptionMutation } from 'src/mutations/account/customerDaycareSubscription.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-open-daycare-create-dialog', () => {
@@ -173,43 +184,68 @@ bus.on('account-open-daycare-create-dialog', () => {
 })
 
 const $q = useQuasar()
-const { useQuery, useMutation } = await createUseTrpc()
 
 const lang = useLang()
 const configuration = useConfiguration()
 
-const startDate = ref('')
-const endDate = ref('')
+// const startDate = ref('')
+// const endDate = ref('')
 
-const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
-  // immediate: true
-})
+// const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
+//   // immediate: true
+// })
 
-const { data, execute } = useQuery('user.getDaycareDates', {
-  args: reactive({ from: startDate, until: endDate }),
-  reactive: {
-    args: true
-  }
-  // immediate: true
-})
+// const { data, execute } = useQuery('user.getDaycareDates', {
+//   args: reactive({ from: startDate, until: endDate }),
+//   reactive: {
+//     args: true
+//   }
+//   // immediate: true
+// })
 
-const { data: daycareSubscriptions, execute: executeDaycareSubscriptions } =
-  useQuery('public.getDaycareSubscriptions', {})
+// const { data: daycareSubscriptions, execute: executeDaycareSubscriptions } =
+//   useQuery('public.getDaycareSubscriptions', {})
 
+// const {
+//   data: customerDaycareSubscriptions,
+//   execute: executeCustomerDaycareSubscriptions
+// } = useQuery('user.getCustomerDaycareSubscriptions', {
+//   reactive: {
+//     args: true
+//   }
+//   // immediate: true
+// })
+
+// const { data: disabledDates, execute: executeDisabledDates } = useQuery(
+//   'public.getUnavailableDaycareDates',
+//   {}
+// )
+
+const { pets: petsData, refetch: executePets } = useAccountGetPetsQuery()
 const {
-  data: customerDaycareSubscriptions,
-  execute: executeCustomerDaycareSubscriptions
-} = useQuery('user.getCustomerDaycareSubscriptions', {
-  reactive: {
-    args: true
-  }
-  // immediate: true
-})
+  daycareDates: data,
+  from: startDate,
+  until: endDate,
+  refetch: execute
+} = useAccountGetDaycareDatesQuery()
 
-const { data: disabledDates, execute: executeDisabledDates } = useQuery(
-  'public.getUnavailableDaycareDates',
-  {}
-)
+const { daycareSubscriptions, refetch: executeDaycareSubscriptions } =
+  usePublicGetDaycareSubscriptionsQuery()
+const {
+  customerDaycareSubscriptions,
+  refetch: executeCustomerDaycareSubscriptions
+} = useAccountGetCustomerDaycareSubscriptionsQuery()
+const {
+  unavailableDaycareDates: disabledDates,
+  refetch: executeDisabledDates
+} = usePublicGetUnavailableDaycareDatesQuery()
+
+const { mutateAsync: createDaycareDatesMutation } =
+  useAccountCreateDaycareDatesMutation()
+const { mutateAsync: cancelDaycareDatesMutation } =
+  useAccountCancelDaycareDateMutation()
+const { mutateAsync: createCustomerDaycareSubscriptionMutation } =
+  useAccountCreateCustomerDaycareSubscriptionMutation()
 
 const createDaycareFormRef = ref<typeof DaycareForm>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
@@ -246,21 +282,16 @@ const create: InstanceType<
 const createDaycare: InstanceType<
   typeof DaycareForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('user.createDaycareDates', {
-    args: data,
-    immediate: true
-  })
+  try {
+    await createDaycareDatesMutation(data)
 
-  await result.immediatePromise
-
-  if (!result.error.value) {
+    done()
     $q.dialog({
       message: lang.value.daycare.messages.submitted
     })
     await execute()
     await executeCustomerDaycareSubscriptions()
-  }
-  done(!result.error.value)
+  } catch (e) {}
 }
 
 const dateFormatter = (date: Date, locale: string) =>
@@ -282,16 +313,12 @@ const cancelDaycareDates = async () => {
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
-    const result = useMutation('user.cancelDaycareDates', {
-      args: selectedEvents.value,
-      immediate: true
-    })
-    await result.immediatePromise
+    try {
+      await cancelDaycareDatesMutation(selectedEvents.value)
 
-    if (!result.error.value) {
+      await execute()
       selectedEvents.value = []
-      execute()
-    }
+    } catch (e) {}
   })
 }
 
@@ -338,22 +365,12 @@ const onPurchaseCustomerDaycareSubscription = async ({
   data: CustomerDaycareSubscription
   done: (success?: boolean) => void
 }) => {
-  const result = useMutation('user.createCustomerDaycareSubscription', {
-    args: data,
-    immediate: true
-  })
+  try {
+    const result = await createCustomerDaycareSubscriptionMutation(data)
 
-  await result.immediatePromise
-
-  if (!result.error.value) {
-  }
-
-  if (result.data.value?.checkoutUrl)
-    window.location.href = result.data.value.checkoutUrl
-
-  if (done) {
-    done(!result.error.value)
-  }
+    if (result?.checkoutUrl) window.location.href = result.checkoutUrl
+    done()
+  } catch (e) {}
 }
 
 const purchaseCustomerDaycareSubscriptionDialogRef =
@@ -384,7 +401,7 @@ const allowPurchase = computed(() => {
 
 const ready = ref<boolean>(false)
 onMounted(async () => {
-  await executeCustomer()
+  await executePets()
   await executeDaycareSubscriptions()
   await executeCustomerDaycareSubscriptions()
   await executeDisabledDates()

@@ -15,24 +15,28 @@
 </template>
 
 <script setup lang="ts">
-import { createUseTrpc } from '../../../trpc.js'
 import { useLang } from '../../../lang/index.js'
 import { onMounted } from 'vue'
-import { ref } from 'vue'
-import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import BookingItem from '../../../components/booking/BookingItem.vue'
+import { useAdminFinancialGetUnpaidBookingsQuery } from 'src/queries/admin/financial.js'
 
 const router = useRouter()
 
 const lang = useLang()
 
-const days = ref(90)
-const { useQuery } = await createUseTrpc()
-const { data: unpaidBookings, execute: executeUnpaidBookings } = useQuery(
-  'admin.getUnpaidBookings',
-  { args: reactive({ days }) }
-)
+// const days = ref(90)
+// const { useQuery } = await createUseTrpc()
+// const { data: unpaidBookings, execute: executeUnpaidBookings } = useQuery(
+//   'admin.getUnpaidBookings',
+//   { args: reactive({ days }) }
+// )
+
+const {
+  bookings: unpaidBookings,
+  refetch: executeUnpaidBookings,
+  days
+} = useAdminFinancialGetUnpaidBookingsQuery()
 
 const onOpenBooking: InstanceType<
   typeof BookingItem

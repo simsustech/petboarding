@@ -80,31 +80,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { onMounted, ref, watch } from 'vue'
 import { extend, useMeta } from 'quasar'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { formatDate } from '../../tools.js'
 import PetChip from '../../components/pet/PetChip.vue'
 import type { Pet } from '@petboarding/api/zod'
+import { useEmployeeGetPetKennelsQuery } from 'src/queries/employee/petKennel.js'
+import { useEmployeeGetBuildingsQuery } from 'src/queries/employee/building.js'
 
-const { useQuery } = await createUseTrpc()
+// const { useQuery } = await createUseTrpc()
 
 const route = useRoute()
-const selectedDate = ref(
-  !Array.isArray(route.params.date)
-    ? route.params.date
-    : new Date().toISOString().slice(0, 10)
-)
+// const selectedDate = ref(
+//   !Array.isArray(route.params.date)
+//     ? route.params.date
+//     : new Date().toISOString().slice(0, 10)
+// )
 
 onBeforeRouteUpdate((to) => {
   if (to.params.date && !Array.isArray(to.params.date)) {
     selectedDate.value = to.params.date
   }
-})
-
-useMeta({
-  title: `kennel layout ${selectedDate.value}`
 })
 
 const internalPetKennels = ref<
@@ -118,17 +115,30 @@ const internalPetKennels = ref<
   })[]
 >([])
 
-const { data: buildings, execute: executeBuildings } = useQuery(
-  'employee.getBuildings'
-)
-const { data: petKennels, execute: executePets } = useQuery(
-  'employee.getPetKennels',
-  {
-    args: reactive({
-      date: selectedDate
-    })
-  }
-)
+const { buildings, refetch: executeBuildings } = useEmployeeGetBuildingsQuery()
+const {
+  petKennels,
+  refetch: executePets,
+  selectedDate
+} = useEmployeeGetPetKennelsQuery()
+selectedDate.value = !Array.isArray(route.params.date)
+  ? route.params.date
+  : new Date().toISOString().slice(0, 10)
+
+useMeta({
+  title: `kennel layout ${selectedDate.value}`
+})
+// const { data: buildings, execute: executeBuildings } = useQuery(
+//   'employee.getBuildings'
+// )
+// const { data: petKennels, execute: executePets } = useQuery(
+//   'employee.getPetKennels',
+//   {
+//     args: reactive({
+//       date: selectedDate
+//     })
+//   }
+// )
 
 watch(
   () => petKennels.value,

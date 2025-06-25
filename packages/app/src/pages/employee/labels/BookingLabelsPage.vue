@@ -23,35 +23,42 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import BookingLabel from '../../../components/booking/BookingLabel.vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import { useEmployeeGetBookingLabelsQuery } from 'src/queries/employee/labels/booking'
 
 const LABEL_WIDTH = import.meta.env.VITE_LABEL_WIDTH || 62
 const LABEL_HEIGHT = import.meta.env.VITE_LABEL_HEIGHT || 62
 
-const { useQuery } = await createUseTrpc()
 const route = useRoute()
 const router = useRouter()
 
 const labelsRef = ref()
-const selectedBookings = ref<number[]>([])
-if (Array.isArray(route.params.ids)) {
-  selectedBookings.value = [...route.params.ids.map((id) => Number(id))]
-}
+// const selectedBookings = ref<number[]>([])
+// if (Array.isArray(route.params.ids)) {
+//   selectedBookings.value = [...route.params.ids.map((id) => Number(id))]
+// }
 onBeforeRouteUpdate((to) => {
   if (to.params.ids && Array.isArray(to.params.ids)) {
     selectedBookings.value = to.params.ids.map((val) => Number(val))
   }
 })
 
-const { data, execute } = useQuery('employee.getBookingsByIds', {
-  args: reactive({ ids: selectedBookings }),
-  reactive: {
-    args: true
-  }
-})
+const {
+  bookings: data,
+  refetch: execute,
+  ids: selectedBookings
+} = useEmployeeGetBookingLabelsQuery()
+if (Array.isArray(route.params.ids)) {
+  selectedBookings.value = [...route.params.ids.map((id) => Number(id))]
+}
+// const { data, execute } = useQuery('employee.getBookingsByIds', {
+//   args: reactive({ ids: selectedBookings }),
+//   reactive: {
+//     args: true
+//   }
+// })
 
 const printLabels = async () => {
   router.push(`/print/bookings/${selectedBookings.value.join('/')}`)

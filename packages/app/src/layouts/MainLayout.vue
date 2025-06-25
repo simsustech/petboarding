@@ -412,8 +412,7 @@ import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
 import NavigationTabs from './NavigationTabs.vue'
-
-const configuration = useConfiguration()
+import { initializeTRPCClient } from 'src/trpc.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -463,22 +462,20 @@ const languageLocales = ref([
 //   )
 // )
 const languageImports = ref({
-  nl: () => import(`../../node_modules/quasar/lang/nl.js`),
-  'en-US': () => import(`../../node_modules/quasar/lang/en-US.js`)
+  nl: () => import(`quasar/lang/nl.js`),
+  'en-US': () => import(`quasar/lang/en-US.js`)
 })
 
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-  loadComponentsFormLang($q.lang.isoName)
-  loadModularApiQuasarComponentsCheckoutLang($q.lang.isoName)
+watch(language, (newVal) => {
+  loadLang(newVal)
+  loadComponentsFormLang(newVal)
+  loadModularApiQuasarComponentsCheckoutLang(newVal)
 })
 
-watch(route, () => {
-  // if (val.path.includes('account')) accountExpansionItemRef.value.show()
-  // if (val.path.includes('employee')) employeeExpansionItemRef.value.show()
-  // if (val.path.includes('admin')) adminExpansionItemRef.value.show()
-})
+await loadConfiguration(language)
+const configuration = useConfiguration()
+await initializeTRPCClient(configuration.value.API_HOST)
+
 const accountExpansionItemRef = ref()
 const employeeExpansionItemRef = ref()
 const adminExpansionItemRef = ref()

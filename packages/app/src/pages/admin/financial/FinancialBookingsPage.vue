@@ -95,58 +95,71 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useLang } from '../../../lang/index.js'
-import { Booking, Customer } from '@petboarding/api/zod'
-import { createUseTrpc } from '../../../trpc.js'
+import { Booking } from '@petboarding/api/zod'
 import { DateInput } from '@simsustech/quasar-components/form'
 import CustomerSelect from '../../../components/employee/CustomerSelect.vue'
-import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
-import { type QTableColumn, useQuasar, date as dateUtil } from 'quasar'
+import { type QTableColumn, useQuasar } from 'quasar'
 import { computed } from 'vue'
+import { useAdminFinancialGetBookingsQuery } from 'src/queries/admin/financial.js'
+import { useEmployeeSearchCustomersQuery } from 'src/queries/employee/customer.js'
 
 const $q = useQuasar()
 const lang = useLang()
 
-const { useQuery } = await createUseTrpc()
+// const customerId = ref<number>()
+// const from = ref<string | null>(
+//   dateUtil.subtractFromDate(new Date(), { years: 2 }).toISOString().slice(0, 10)
+// )
 
-const customerId = ref<number>()
-const from = ref<string | null>(
-  dateUtil.subtractFromDate(new Date(), { years: 2 }).toISOString().slice(0, 10)
-)
+// const until = ref<string | null>(
+//   dateUtil.addToDate(new Date(), { years: 1 }).toISOString().slice(0, 10)
+// )
 
-const until = ref<string | null>(
-  dateUtil.addToDate(new Date(), { years: 1 }).toISOString().slice(0, 10)
-)
+const {
+  bookings: data,
+  refetch: executeBookings,
+  customerId,
+  from,
+  until
+} = useAdminFinancialGetBookingsQuery()
+// const { data, execute: executeBookings } = useQuery('admin.getBookings', {
+//   args: reactive({
+//     customerId,
+//     from,
+//     until,
+//     invoice: {
+//       status: InvoiceStatus.BILL
+//     }
+//   }),
+//   reactive: {
+//     args: true
+//   },
+//   initialData: []
+// })
 
-const { data, execute: executeBookings } = useQuery('admin.getBookings', {
-  args: reactive({
-    customerId,
-    from,
-    until,
-    invoice: {
-      status: InvoiceStatus.BILL
-    }
-  }),
-  reactive: {
-    args: true
-  },
-  initialData: []
-})
+// const filteredCustomers = ref<Customer[]>([])
 
-const filteredCustomers = ref<Customer[]>([])
+const {
+  customers: filteredCustomers,
+  searchPhrase: customerSearchPhrase,
+  customerIds
+} = useEmployeeSearchCustomersQuery()
 
 const onFilterCustomers: InstanceType<
   typeof CustomerSelect
 >['$props']['onFilter'] = async ({ searchPhrase, ids, done }) => {
-  const result = useQuery('employee.searchCustomers', {
-    args: { searchPhrase, ids },
-    immediate: true
-  })
+  customerSearchPhrase.value = searchPhrase
+  customerIds.value = ids
+  // const result = useQuery('employee.searchCustomers', {
+  //   args: { searchPhrase, ids },
+  //   immediate: true
+  // })
 
-  await result.immediatePromise
+  // await result.immediatePromise
 
-  if (result.data.value) filteredCustomers.value = result.data.value
+  // if (result.data.value) filteredCustomers.value = result.data.value
 
   if (done) done()
 }

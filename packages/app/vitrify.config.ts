@@ -1,5 +1,10 @@
 import type { VitrifyConfig } from 'vitrify'
-import { QuasarPlugin, type QuasarPluginOptions } from 'vitrify/plugins'
+import {
+  PiniaPlugin,
+  type PiniaPluginOptions,
+  QuasarPlugin,
+  type QuasarPluginOptions
+} from 'vitrify/plugins'
 import { certificateFor } from 'devcert'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
 import { QuasarPreset } from 'unocss-preset-quasar'
@@ -167,7 +172,11 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       plugins: [
         {
           plugin: QuasarPlugin,
-          options: quasarConf
+          options: quasarConf as QuasarPluginOptions
+        },
+        {
+          plugin: PiniaPlugin,
+          options: { colada: true } as PiniaPluginOptions
         }
       ],
       lang: env.VITE_LANG,

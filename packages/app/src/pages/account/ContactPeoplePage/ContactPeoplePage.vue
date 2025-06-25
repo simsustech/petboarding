@@ -54,13 +54,18 @@ export default {
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, inject } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import ContactPersonForm from '../../../components/contactperson/ContactPersonForm.vue'
 import ContactPersonCard from '../../../components/contactperson/ContactPersonCard.vue'
 import { useLang } from '../../../lang/index.js'
 import { extend } from 'quasar'
 import { EventBus } from 'quasar'
+import { useAccountGetCustomerQuery } from 'src/queries/account/customer.js'
+import { useAccountGetContactPeopleQuery } from 'src/queries/account/contactperson.js'
+import {
+  useAccountCreateContactPersonMutation,
+  useAccountUpdateContactPersonMutation
+} from 'src/mutations/account/contactperson.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-open-contact-people-create-dialog', () => {
@@ -70,27 +75,33 @@ bus.on('account-open-contact-people-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
-
 const lang = useLang()
 
-const { data: customerData, execute: executeCustomer } = useQuery(
-  'user.getCustomer',
-  {
-    // immediate: true
-  }
-)
+// const { data: customerData, execute: executeCustomer } = useQuery(
+//   'user.getCustomer',
+//   {
+//     // immediate: true
+//   }
+// )
 
-const { data, execute } = useQuery('user.getContactPeople', {
-  // immediate: true
-})
+// const { data, execute } = useQuery('user.getContactPeople', {
+//   // immediate: true
+// })
 
-const modelValue = ref({
-  firstName: '',
-  lastName: '',
-  telephoneNumber: ''
-})
+const { customer: customerData, refetch: executeCustomer } =
+  useAccountGetCustomerQuery()
+const { contactPeople: data, refetch: execute } =
+  useAccountGetContactPeopleQuery()
+const { mutateAsync: createContactPersonMutation } =
+  useAccountCreateContactPersonMutation()
+const { mutateAsync: updateContactPersonMutation } =
+  useAccountUpdateContactPersonMutation()
+
+// const modelValue = ref({
+//   firstName: '',
+//   lastName: '',
+//   telephoneNumber: ''
+// })
 const updateContactPersonFormRef = ref<typeof ContactPersonForm>()
 const createContactPersonFormRef = ref<typeof ContactPersonForm>()
 const updateDialogRef = ref<typeof ResponsiveDialog>()
@@ -136,15 +147,12 @@ const updateContactPerson: InstanceType<
   contactPerson = extend(true, {}, contactPerson)
   delete contactPerson.customerId
 
-  const result = useMutation('user.updateContactPerson', {
-    args: contactPerson as WithRequired<typeof contactPerson, 'id'>,
-    immediate: true
-  })
+  try {
+    await updateContactPersonMutation(contactPerson)
 
-  await result.immediatePromise
-
-  if (result.data.value) modelValue.value = result.data.value
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const createContactPerson: InstanceType<
@@ -152,15 +160,12 @@ const createContactPerson: InstanceType<
 >['$props']['onSubmit'] = async ({ contactPerson, done }) => {
   delete contactPerson.customerId
 
-  const result = useMutation('user.createContactPerson', {
-    args: contactPerson as WithRequired<typeof contactPerson, 'id'>,
-    immediate: true
-  })
+  try {
+    await createContactPersonMutation(contactPerson)
 
-  await result.immediatePromise
-
-  if (result.data.value) modelValue.value = result.data.value
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const ready = ref<boolean>(false)

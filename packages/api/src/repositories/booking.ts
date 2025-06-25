@@ -98,7 +98,7 @@ export interface BookingService {
   comments: string | null
   price: number | null
   listPrice: number | null
-  service: Service | null
+  service: Service
 }
 
 export type BookingPets = Pick<ParsedPet, 'id' | 'name' | 'categoryId'>[]

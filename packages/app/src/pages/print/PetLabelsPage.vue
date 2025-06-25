@@ -19,33 +19,41 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import PetLabel from '../../components/pet/PetLabel.vue'
-import { createUseTrpc } from '../../trpc.js'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+import { useEmployeeGetPetLabelsQuery } from 'src/queries/employee/labels/pet'
 
 const LABEL_WIDTH = (import.meta.env.VITE_LABEL_WIDTH || 62) - 4
 const LABEL_HEIGHT = (import.meta.env.VITE_LABEL_HEIGHT || 62) - 4
 
-const { useQuery } = await createUseTrpc()
 const route = useRoute()
 const labelsRef = ref()
-const selectedPetIds = ref<number[]>([])
-if (Array.isArray(route.params.ids)) {
-  selectedPetIds.value = [...route.params.ids.map((id) => Number(id))]
-}
+// const selectedPetIds = ref<number[]>([])
+// if (Array.isArray(route.params.ids)) {
+//   selectedPetIds.value = [...route.params.ids.map((id) => Number(id))]
+// }
 onBeforeRouteUpdate((to) => {
   if (to.params.ids && Array.isArray(to.params.ids)) {
     selectedPetIds.value = to.params.ids.map((val) => Number(val))
   }
 })
 
-const { data, execute } = useQuery('employee.getPetsByIds', {
-  args: reactive({ ids: selectedPetIds }),
-  reactive: {
-    args: true
-  }
-})
+const {
+  pets: data,
+  refetch: execute,
+  ids: selectedPetIds
+} = useEmployeeGetPetLabelsQuery()
+if (Array.isArray(route.params.ids)) {
+  selectedPetIds.value = [...route.params.ids.map((id) => Number(id))]
+}
+
+// const { data, execute } = useQuery('employee.getPetsByIds', {
+//   args: reactive({ ids: selectedPetIds }),
+//   reactive: {
+//     args: true
+//   }
+// })
 
 onMounted(() => {
   if (route.params.ids) execute()

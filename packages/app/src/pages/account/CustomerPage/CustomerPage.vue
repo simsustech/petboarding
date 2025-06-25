@@ -43,13 +43,16 @@ export default {
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import CustomerForm from '../../../components/customer/CustomerForm.vue'
 import CustomerCard from '../../../components/customer/CustomerCard.vue'
-import { Customer } from '@petboarding/api/zod'
 import { inject } from 'vue'
 import { EventBus } from 'quasar'
+import { useAccountGetCustomerQuery } from '../../../queries/account/customer.js'
+import {
+  useAccountCreateCustomerMutation,
+  useAccountUpdateCustomerMutation
+} from '../../../mutations/account/customer'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-open-customer-create-dialog', () => {
@@ -65,25 +68,28 @@ bus.on('account-open-customer-update-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
-
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
-
 // const lang = useLang()
-const { data: customerData, execute } = useQuery('user.getCustomer', {
-  // immediate: true
-})
+// const { data: customerData, execute } = useQuery('user.getCustomer', {
+//   // immediate: true
+// })
+const { customer: customerData, refetch: execute } =
+  useAccountGetCustomerQuery()
 
-const modelValue = ref<Customer>({
-  gender: 'male',
-  firstName: '',
-  lastName: '',
-  address: '',
-  postalCode: '',
-  city: '',
-  telephoneNumber: '',
-  veterinarian: ''
-})
+// const modelValue = ref<Customer>({
+//   gender: 'male',
+//   firstName: '',
+//   lastName: '',
+//   address: '',
+//   postalCode: '',
+//   city: '',
+//   telephoneNumber: '',
+//   veterinarian: ''
+// })
+
+const { mutateAsync: createCustomerMutation } =
+  useAccountCreateCustomerMutation()
+const { mutateAsync: updateCustomerMutation } =
+  useAccountUpdateCustomerMutation()
 
 const updateCustomerFormRef = ref<typeof CustomerForm>()
 const createCustomerFormRef = ref<typeof CustomerForm>()
@@ -133,15 +139,12 @@ const updateCustomer: InstanceType<
   delete customer.rating
   delete customer.comments
 
-  const result = useMutation('user.updateCustomer', {
-    args: customer as WithRequired<typeof customer, 'id'>,
-    immediate: true
-  })
+  try {
+    await updateCustomerMutation(customer)
 
-  await result.immediatePromise
-
-  if (result.data.value) modelValue.value = result.data.value
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const createCustomer: InstanceType<
@@ -151,16 +154,15 @@ const createCustomer: InstanceType<
   delete customer.rating
   delete customer.comments
 
-  const result = useMutation('user.createCustomer', {
-    args: customer as WithRequired<typeof customer, 'id'>,
-    immediate: true
-  })
+  try {
+    await createCustomerMutation(customer)
 
-  await result.immediatePromise
-
-  if (result.data.value) modelValue.value = result.data.value
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
-onMounted(() => execute())
+onMounted(async () => {
+  await execute()
+})
 </script>

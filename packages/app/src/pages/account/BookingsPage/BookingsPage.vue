@@ -98,7 +98,6 @@ export default {
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, inject } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../../components/booking/BookingForm.vue'
 import BookingItem from '../../../components/booking/BookingItem.vue'
@@ -109,6 +108,14 @@ import { useConfiguration } from '../../../configuration.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
 import { EventBus } from 'quasar'
+import { usePublicGetServicesQuery } from '../../../queries/public.js'
+import { useAccountGetPetsQuery } from '../../../queries/account/pet.js'
+import {
+  useAccountCancelBookingMutation,
+  useAccountCreateBookingMutation,
+  useAccountUpdateBookingMutation
+} from '../../../mutations/account/booking.js'
+import { useAccountGetBookingsQuery } from '../../../queries/account/booking.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-open-bookings-create-dialog', () => {
@@ -120,18 +127,25 @@ bus.on('account-open-bookings-create-dialog', () => {
 
 const $q = useQuasar()
 const configuration = useConfiguration()
-const { useQuery, useMutation } = await createUseTrpc()
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
 const lang = useLang()
 
-const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
-  // immediate: true
-})
+const { services: servicesData, refetch: executeServices } =
+  usePublicGetServicesQuery()
+const { pets: petsData, refetch: executePets } = useAccountGetPetsQuery()
+const { bookings: data, refetch: execute } = useAccountGetBookingsQuery()
 
-const { data, execute } = useQuery('user.getBookings', {
-  // immediate: true
-})
+const { mutateAsync: createBookingMutation } = useAccountCreateBookingMutation()
+const { mutateAsync: updateBookingMutation } = useAccountUpdateBookingMutation()
+const { mutateAsync: cancelBookingMutation } = useAccountCancelBookingMutation()
+
+// const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
+//   // immediate: true
+// })
+
+// const { data, execute } = useQuery('user.getBookings', {
+//   // immediate: true
+// })
 const upcomingBookings = computed(() =>
   data.value?.filter(
     (booking) =>
@@ -152,8 +166,8 @@ const otherBookings = computed(() =>
     .sort((a, b) => (a.startDate > b.startDate ? -1 : 1))
 )
 
-const { data: servicesData, execute: executeServices } =
-  useQuery('public.getServices')
+// const { data: servicesData, execute: executeServices } =
+//   useQuery('public.getServices')
 
 // const disabled = computed(() => !petsData.value?.length)
 
@@ -200,35 +214,27 @@ const updateBooking: InstanceType<
   data = extend(true, {}, data)
   delete data.customerId
 
-  const result = useMutation('user.updateBooking', {
-    args: data as WithRequired<typeof data, 'id'>,
-    immediate: true
-  })
+  try {
+    await updateBookingMutation(data)
 
-  await result.immediatePromise
-
-  if (!result.error.value) await execute()
-
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const cancelBooking: InstanceType<
   typeof BookingItem
 >['$props']['onCancel'] = async ({ data: { booking, reason }, done }) => {
   if (booking.id) {
-    const result = useMutation('user.cancelBooking', {
-      args: {
+    try {
+      await cancelBookingMutation({
         id: booking.id,
         reason
-      },
-      immediate: true
-    })
+      })
 
-    await result.immediatePromise
-
-    if (!result.error.value) await execute()
-    // if (result.data.value) modelValue.value = result.data.value
-    done(!result.error.value)
+      done()
+      await execute()
+    } catch (e) {}
   }
 }
 
@@ -237,27 +243,22 @@ const createBooking: InstanceType<
 >['$props']['onSubmit'] = async ({ data, done }) => {
   delete data.customerId
 
-  const result = useMutation('user.createBooking', {
-    args: data as WithRequired<typeof data, 'id'>,
-    immediate: true
-  })
+  try {
+    await createBookingMutation(data)
 
-  await result.immediatePromise
-
-  if (!result.error.value) {
+    done()
     $q.dialog({
       message: lang.value.booking.messages.submitted,
       persistent: true
     })
-    await execute()
-  }
 
-  done(!result.error.value)
+    await execute()
+  } catch (e) {}
 }
 
 const ready = ref<boolean>(false)
 onMounted(async () => {
-  await executeCustomer()
+  await executePets()
   await executeServices()
   await execute()
   ready.value = true

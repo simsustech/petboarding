@@ -222,8 +222,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick, computed, watch } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import CustomerSelect from '../../components/employee/CustomerSelect.vue'
 import CustomerCard from '../../components/customer/CustomerCard.vue'
 import CustomerForm from '../../components/customer/CustomerForm.vue'
@@ -235,12 +234,7 @@ import PetItem from '../../components/pet/PetItem.vue'
 import ContactPersonItem from '../../components/contactperson/ContactPersonItem.vue'
 import { useLang } from '../../lang/index.js'
 import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
-import {
-  BOOKING_STATUS,
-  Customer,
-  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
-  DAYCARE_DATE_STATUS
-} from '@petboarding/api/zod'
+import { BOOKING_STATUS } from '@petboarding/api/zod'
 import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
 import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 import BookingForm from '../../components/booking/BookingForm.vue'
@@ -248,17 +242,25 @@ import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
-
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
+import {
+  useEmployeeGetCustomerQuery,
+  useEmployeeSearchCustomersQuery
+} from 'src/queries/employee/customer.js'
+import {
+  usePublicGetCategories,
+  usePublicGetServicesQuery
+} from 'src/queries/public.js'
+import { useEmployeeCreateBookingMutation } from 'src/mutations/employee/booking.js'
+import { useEmployeeCreateDaycareDatesMutation } from 'src/mutations/employee/daycareDate.js'
+import { useEmployeeUpdateCustomerMutation } from 'src/mutations/employee/customer.js'
 
 const configuration = useConfiguration()
 const route = useRoute()
 const router = useRouter()
 const lang = useLang()
 const $q = useQuasar()
-const { useQuery, useMutation } = await createUseTrpc()
 
-const id = ref(Number(route.params.id))
+// const id = ref(Number(route.params.id))
 onBeforeRouteUpdate((to) => {
   if (to.params.id) {
     id.value = Number(to.params.id)
@@ -266,12 +268,13 @@ onBeforeRouteUpdate((to) => {
 })
 
 const setParam = (id: number) => router.push({ params: { id } })
-const { data, execute } = useQuery('employee.getCustomer', {
-  args: reactive({ id }),
-  reactive: {
-    args: true
-  }
-})
+
+// const { data, execute } = useQuery('employee.getCustomer', {
+//   args: reactive({ id }),
+//   reactive: {
+//     args: true
+//   }
+// })
 
 const dateFormatter = (date: Date) =>
   new Intl.DateTimeFormat($q.lang.isoName, {
@@ -286,67 +289,89 @@ const until = dateUtil.addToDate(new Date(), { years: 1 })
 const todayFormatted = computed(() => dateFormatter(new Date()))
 const fromFormatted = computed(() => dateFormatter(from))
 const untilFormatted = computed(() => dateFormatter(until))
-const { data: bookings, execute: executeBookings } = useQuery(
-  'employee.getBookings',
-  {
-    args: reactive({
-      from: from.toISOString().slice(0, 10),
-      until: until.toISOString().slice(0, 10),
-      customerId: id
-    }),
-    reactive: {
-      args: true
-    }
-  }
-)
-
-const { data: pets, execute: executePets } = useQuery(
-  'employee.getPetsByCustomerId',
-  {
-    args: reactive({ customerId: id }),
-    reactive: {
-      args: true
-    }
-  }
-)
-
-const { data: contactPeople, execute: executeContactPeople } = useQuery(
-  'employee.getContactPeopleByCustomerId',
-  {
-    args: reactive({ customerId: id }),
-    reactive: {
-      args: true
-    }
-  }
-)
 
 const {
-  data: customerDaycareSubscriptions,
-  execute: executeCustomerDaycareSubscriptions
-} = useQuery('employee.getCustomerDaycareSubscriptions', {
-  args: reactive({
-    from: from.toISOString().slice(0, 10),
-    until: until.toISOString().slice(0, 10),
-    customerId: id,
-    statuses: [
-      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
-      CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
-    ]
-  }),
-  reactive: {
-    args: true
-  }
-})
+  customer: data,
+  contactPeople,
+  pets,
+  bookings,
+  customerDaycareSubscriptions,
+  daycareDates,
+  daycareDatesFrom,
+  daycareDatesUntil,
+  daycareDatesStatus,
+  customerId: id,
+  refetch: execute
+} = useEmployeeGetCustomerQuery()
 
-const { data: categories, execute: executeCategories } = useQuery(
-  'public.getCategories',
-  {
-    // immediate: true
-  }
-)
+const { services, refetch: executeServices } = usePublicGetServicesQuery()
+const { categories, refetch: executeCategories } = usePublicGetCategories()
 
-const { data: services, execute: executeServices } =
-  useQuery('public.getServices')
+const { mutateAsync: updateCustomerMutation } =
+  useEmployeeUpdateCustomerMutation()
+
+if (route.params.id) id.value = Number(route.params.id)
+// const { data: bookings, execute: executeBookings } = useQuery(
+//   'employee.getBookings',
+//   {
+//     args: reactive({
+//       from: from.toISOString().slice(0, 10),
+//       until: until.toISOString().slice(0, 10),
+//       customerId: id
+//     }),
+//     reactive: {
+//       args: true
+//     }
+//   }
+// )
+
+// const { data: pets, execute: executePets } = useQuery(
+//   'employee.getPetsByCustomerId',
+//   {
+//     args: reactive({ customerId: id }),
+//     reactive: {
+//       args: true
+//     }
+//   }
+// )
+
+// const { data: contactPeople, execute: executeContactPeople } = useQuery(
+//   'employee.getContactPeopleByCustomerId',
+//   {
+//     args: reactive({ customerId: id }),
+//     reactive: {
+//       args: true
+//     }
+//   }
+// )
+
+// const {
+//   data: customerDaycareSubscriptions,
+//   execute: executeCustomerDaycareSubscriptions
+// } = useQuery('employee.getCustomerDaycareSubscriptions', {
+//   args: reactive({
+//     from: from.toISOString().slice(0, 10),
+//     until: until.toISOString().slice(0, 10),
+//     customerId: id,
+//     statuses: [
+//       CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+//       CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+//     ]
+//   }),
+//   reactive: {
+//     args: true
+//   }
+// })
+
+// const { data: categories, execute: executeCategories } = useQuery(
+//   'public.getCategories',
+//   {
+//     // immediate: true
+//   }
+// )
+
+// const { data: services, execute: executeServices } =
+//   useQuery('public.getServices')
 
 const upcomingBookings = computed(() =>
   bookings.value?.filter(
@@ -366,44 +391,44 @@ const otherBookings = computed(() =>
   )
 )
 
-const daycareDatesFrom = ref('')
-const daycareDatesUntil = ref('')
-const daycareDatesStatus = ref(DAYCARE_DATE_STATUS.APPROVED)
+// const daycareDatesFrom = ref('')
+// const daycareDatesUntil = ref('')
+// const daycareDatesStatus = ref(DAYCARE_DATE_STATUS.APPROVED)
 const onChangeDate: InstanceType<
   typeof DaycareCalendarMonth
 >['$props']['onChangeDate'] = (data) => {
   daycareDatesFrom.value = data.start
   daycareDatesUntil.value = data.end
 }
-const { data: daycareDates, execute: executeDaycareDates } = useQuery(
-  'employee.getDaycareDates',
-  {
-    args: reactive({
-      customerId: id,
-      from: daycareDatesFrom,
-      until: daycareDatesUntil,
-      status: daycareDatesStatus
-    }),
-    reactive: false
-  }
-)
-watch(
-  [id, daycareDatesFrom, daycareDatesUntil, daycareDatesStatus],
-  ([
-    newId,
-    newDaycareDatesFrom,
-    newDaycareDatesUntil,
-    newDaycareDatesStatus
-  ]) => {
-    if (
-      newId &&
-      newDaycareDatesFrom &&
-      newDaycareDatesUntil &&
-      newDaycareDatesStatus
-    )
-      executeDaycareDates()
-  }
-)
+// const { data: daycareDates, execute: executeDaycareDates } = useQuery(
+//   'employee.getDaycareDates',
+//   {
+//     args: reactive({
+//       customerId: id,
+//       from: daycareDatesFrom,
+//       until: daycareDatesUntil,
+//       status: daycareDatesStatus
+//     }),
+//     reactive: false
+//   }
+// )
+// watch(
+//   [id, daycareDatesFrom, daycareDatesUntil, daycareDatesStatus],
+//   ([
+//     newId,
+//     newDaycareDatesFrom,
+//     newDaycareDatesUntil,
+//     newDaycareDatesStatus
+//   ]) => {
+//     if (
+//       newId &&
+//       newDaycareDatesFrom &&
+//       newDaycareDatesUntil &&
+//       newDaycareDatesStatus
+//     )
+//       executeDaycareDates()
+//   }
+// )
 const events = computed(() =>
   daycareDates.value?.map((daycareDate) => ({
     id: daycareDate.id,
@@ -445,14 +470,23 @@ const updateCustomer: InstanceType<
   customer = extend(true, {}, customer)
   delete customer.customerId
 
-  const result = useMutation('employee.updateCustomer', {
-    args: customer as WithRequired<typeof customer, 'id'>,
-    immediate: true
-  })
+  try {
+    await updateCustomerMutation(customer)
 
-  await result.immediatePromise
+    done()
+    await execute()
+  } catch (e) {
+    console.error(e)
+  }
 
-  done(!result.error.value)
+  // const result = useMutation('employee.updateCustomer', {
+  //   args: customer as WithRequired<typeof customer, 'id'>,
+  //   immediate: true
+  // })
+
+  // await result.immediatePromise
+
+  // done(!result.error.value)
 }
 
 const openBookings = () =>
@@ -467,19 +501,32 @@ const openPets = () =>
     path: `/employee/pets/${pets.value?.map((pet) => pet.id).join('/')}`
   })
 
-const filteredCustomers = ref<Customer[]>([])
+const {
+  customers: filteredCustomers,
+  searchPhrase: customerSearchPhrase,
+  customerIds
+} = useEmployeeSearchCustomersQuery()
+
+const { mutateAsync: createBookingMutation } =
+  useEmployeeCreateBookingMutation()
+const { mutateAsync: createDaycareDatesMutation } =
+  useEmployeeCreateDaycareDatesMutation()
+
+// const filteredCustomers = ref<Customer[]>([])
 
 const onFilterCustomers: InstanceType<
   typeof CustomerSelect
 >['$props']['onFilter'] = async ({ searchPhrase, ids, done }) => {
-  const result = useQuery('employee.searchCustomers', {
-    args: { searchPhrase, ids },
-    immediate: true
-  })
+  customerSearchPhrase.value = searchPhrase
+  customerIds.value = ids
+  // const result = useQuery('employee.searchCustomers', {
+  //   args: { searchPhrase, ids },
+  //   immediate: true
+  // })
 
-  await result.immediatePromise
+  // await result.immediatePromise
 
-  if (result.data.value) filteredCustomers.value = result.data.value
+  // if (result.data.value) filteredCustomers.value = result.data.value
 
   if (done) done()
 }
@@ -495,17 +542,29 @@ const createBooking: InstanceType<
 >['$props']['onSubmit'] = async ({ data, done }) => {
   delete data.customerId
 
-  const result = useMutation('employee.createBooking', {
-    args: { ...data, customerId: id.value } as WithRequired<typeof data, 'id'>,
-    immediate: true
-  })
+  try {
+    await createBookingMutation({
+      ...data,
+      customerId: id.value
+    })
 
-  await result.immediatePromise
-
-  done(!result.error.value)
-  if (!result.error.value) {
-    await executeBookings()
+    done()
+    await execute()
+  } catch (e) {
+    console.error(e)
   }
+
+  // const result = useMutation('employee.createBooking', {
+  //   args: { ...data, customerId: id.value } as WithRequired<typeof data, 'id'>,
+  //   immediate: true
+  // })
+
+  // await result.immediatePromise
+
+  // done(!result.error.value)
+  // if (!result.error.value) {
+  //   await executeBookings()
+  // }
 }
 
 const submitBooking: InstanceType<
@@ -538,20 +597,34 @@ const submitDaycare: InstanceType<
 const createDaycare: InstanceType<
   typeof DaycareForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('employee.createDaycareDates', {
-    args: data.map((daycareDate) => ({
-      ...daycareDate,
-      customerId: id.value
-    })),
-    immediate: true
-  })
+  try {
+    await createDaycareDatesMutation(
+      data.map((daycareDate) => ({
+        ...daycareDate,
+        customerId: id.value
+      }))
+    )
 
-  await result.immediatePromise
-
-  if (!result.error.value) {
-    await executeDaycareDates()
+    done()
+    await execute()
+  } catch (e) {
+    console.error(e)
   }
-  done(!result.error.value)
+
+  // const result = useMutation('employee.createDaycareDates', {
+  //   args: data.map((daycareDate) => ({
+  //     ...daycareDate,
+  //     customerId: id.value
+  //   })),
+  //   immediate: true
+  // })
+
+  // await result.immediatePromise
+
+  // if (!result.error.value) {
+  //   await executeDaycareDates()
+  // }
+  // done(!result.error.value)
 }
 
 onMounted(async () => {
@@ -559,11 +632,12 @@ onMounted(async () => {
   if (route.params.id) {
     await Promise.all([
       execute(),
-      executeContactPeople(),
-      executePets(),
-      executeBookings(),
-      executeServices(),
-      executeCustomerDaycareSubscriptions()
+      // executeContactPeople(),
+      // executePets(),
+      // executeBookings(),
+      executeCategories(),
+      executeServices()
+      // executeCustomerDaycareSubscriptions()
     ])
   }
 })

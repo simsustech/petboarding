@@ -46,9 +46,9 @@ export default {
 
 <script setup lang="ts">
 import { QSelect } from 'quasar'
-import { createUseTrpc } from '../../trpc.js'
 import { ref, toRefs, useAttrs } from 'vue'
 import { useLang } from '../../lang/index.js'
+import { useEmployeeSearchPetsQuery } from 'src/queries/employee/pet.js'
 
 export interface Props {
   modelValue?: number | number[]
@@ -57,16 +57,20 @@ const props = defineProps<Props>()
 const attrs = useAttrs()
 
 const lang = useLang()
-const { useQuery } = await createUseTrpc()
 const { modelValue } = toRefs(props)
-const searchPhrase = ref('')
+// const searchPhrase = ref('')
 
-const { data, execute } = useQuery('employee.searchPets', {
-  args: () => searchPhrase.value,
-  reactive: {
-    args: true
-  }
-})
+const {
+  pets: data,
+  refetch: execute,
+  searchPhrase
+} = useEmployeeSearchPetsQuery()
+// const { data, execute } = useQuery('employee.searchPets', {
+//   args: () => searchPhrase.value,
+//   reactive: {
+//     args: true
+//   }
+// })
 
 const options = ref([])
 

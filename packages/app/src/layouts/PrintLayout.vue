@@ -10,10 +10,11 @@ import { useQuasar } from 'quasar'
 import { useOAuthClient, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'
-import { loadConfiguration } from '../configuration.js'
+import { loadConfiguration, useConfiguration } from '../configuration.js'
 
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
+import { initializeTRPCClient } from 'src/trpc.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -22,6 +23,10 @@ const lang = useLang()
 const $q = useQuasar()
 
 const language = ref($q.lang.isoName)
+
+await loadConfiguration(language)
+const configuration = useConfiguration()
+await initializeTRPCClient(configuration.value.API_HOST)
 
 if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
 watch($q.lang, () => {

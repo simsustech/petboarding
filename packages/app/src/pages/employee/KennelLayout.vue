@@ -133,8 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { onMounted, ref, watch } from 'vue'
 import { extend, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
@@ -142,16 +141,16 @@ import { DateInput } from '@simsustech/quasar-components/form'
 import PetChip from '../../components/pet/PetChip.vue'
 import type { Pet } from '@petboarding/api/zod'
 import PetLegend from '../../components/pet/PetLegend.vue'
-const { useQuery, useMutation } = await createUseTrpc()
+import { useEmployeeGetPetKennelsQuery } from 'src/queries/employee/petKennel.js'
+import { useEmployeeGetBuildingsQuery } from 'src/queries/employee/building.js'
+import {
+  useEmployeeSetBookingPetKennelMutation,
+  useEmployeeSetDaycareDatePetKennelMutation
+} from 'src/mutations/employee/petKennel.js'
 const lang = useLang()
 
 const router = useRouter()
 const route = useRoute()
-const selectedDate = ref(
-  !Array.isArray(route.params.date)
-    ? route.params.date
-    : new Date().toISOString().slice(0, 10)
-)
 
 onBeforeRouteUpdate((to) => {
   if (to.params.date && !Array.isArray(to.params.date)) {
@@ -170,17 +169,32 @@ const internalPetKennels = ref<
   })[]
 >([])
 
-const { data: buildings, execute: executeBuildings } = useQuery(
-  'employee.getBuildings'
-)
-const { data: petKennels, execute: executePets } = useQuery(
-  'employee.getPetKennels',
-  {
-    args: reactive({
-      date: selectedDate
-    })
-  }
-)
+const { buildings, refetch: executeBuildings } = useEmployeeGetBuildingsQuery()
+const {
+  petKennels,
+  refetch: executePets,
+  selectedDate
+} = useEmployeeGetPetKennelsQuery()
+selectedDate.value = !Array.isArray(route.params.date)
+  ? route.params.date
+  : new Date().toISOString().slice(0, 10)
+
+const { mutateAsync: setBookingPetKennelMutation } =
+  useEmployeeSetBookingPetKennelMutation()
+const { mutateAsync: setDaycareDatePetKennelMutation } =
+  useEmployeeSetDaycareDatePetKennelMutation()
+
+// const { data: buildings, execute: executeBuildings } = useQuery(
+//   'employee.getBuildings'
+// )
+// const { data: petKennels, execute: executePets } = useQuery(
+//   'employee.getPetKennels',
+//   {
+//     args: reactive({
+//       date: selectedDate
+//     })
+//   }
+// )
 
 watch(
   () => petKennels.value,
@@ -251,15 +265,17 @@ function onDrop(e) {
   petKennel.kennelId = kennelId
 
   if (petKennel.bookingId) {
-    useMutation('employee.setBookingPetKennel', {
-      args: petKennel,
-      immediate: true
-    })
+    setBookingPetKennelMutation(petKennel)
+    // useMutation('employee.setBookingPetKennel', {
+    //   args: petKennel,
+    //   immediate: true
+    // })
   } else if (petKennel.daycareDateId) {
-    useMutation('employee.setDaycareDatePetKennel', {
-      args: petKennel,
-      immediate: true
-    })
+    setDaycareDatePetKennelMutation(petKennel)
+    // useMutation('employee.setDaycareDatePetKennel', {
+    //   args: petKennel,
+    //   immediate: true
+    // })
   }
 
   e.target.classList.remove('drag-enter')

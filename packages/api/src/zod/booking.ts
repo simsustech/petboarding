@@ -10,8 +10,8 @@ export const bookingServiceValidation = {
   id: z.number().optional(),
   bookingId: z.number(),
   serviceId: z.number(),
-  comments: z.string().optional(),
-  price: z.number().optional(),
+  comments: z.string().nullable().optional(),
+  price: z.number().nullable().optional(),
   service: service.optional(),
   listPrice: z.number().nullable().optional()
 }

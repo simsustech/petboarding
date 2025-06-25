@@ -35,6 +35,11 @@ export enum PERIOD_TYPE {
   UNAVAILABLE_FOR_DAYCARE = 'unavailablefordaycare'
 }
 
+export enum SERVICE_TYPE {
+  APPOINTMENT = 'appointment',
+  SURCHARGE = 'surcharge'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -304,7 +309,7 @@ export interface Services {
   name: string
   description: string | null
   listPrice: number | null
-  type: string
+  type: SERVICE_TYPE
   hidden: Generated<boolean | null>
   disabled: Generated<boolean | null>
   createdAt: Generated<string>

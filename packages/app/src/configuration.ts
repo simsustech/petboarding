@@ -6,6 +6,7 @@ import { PET_SPECIES } from '@petboarding/api/zod'
 const lang = useLang()
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
+  API_HOST: string
   LICENSE_KEY?: string
   LANG: string
   COUNTRY: string

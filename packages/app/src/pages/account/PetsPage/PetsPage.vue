@@ -57,7 +57,6 @@ export default {
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, inject } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { ResourcePage, ResponsiveDialog } from '@simsustech/quasar-components'
 import PetForm from '../../../components/pet/PetForm.vue'
 import PetCard from '../../../components/pet/PetCard.vue'
@@ -65,6 +64,13 @@ import { useLang } from '../../../lang/index.js'
 import { extend } from 'quasar'
 
 import { EventBus } from 'quasar'
+import { useAccountGetContactPeopleQuery } from 'src/queries/account/contactperson.js'
+import { useAccountGetPetsQuery } from 'src/queries/account/pet.js'
+import { usePublicGetCategories } from 'src/queries/public.js'
+import {
+  useAccountCreatePetMutation,
+  useAccountUpdatePetMutation
+} from 'src/mutations/account/pet.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-open-pets-create-dialog', () => {
@@ -74,28 +80,33 @@ bus.on('account-open-pets-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
-
 const lang = useLang()
 
-const { data: contactPeopleData, execute: executeContactPeople } = useQuery(
-  'user.getContactPeople',
-  {
-    // immediate: true
-  }
-)
+// const { data: contactPeopleData, execute: executeContactPeople } = useQuery(
+//   'user.getContactPeople',
+//   {
+//     // immediate: true
+//   }
+// )
 
-const { data: categories, execute: executeCategories } = useQuery(
-  'public.getCategories',
-  {
-    // immediate: true
-  }
-)
+// const { data: categories, execute: executeCategories } = useQuery(
+//   'public.getCategories',
+//   {
+//     // immediate: true
+//   }
+// )
 
-const { data, execute } = useQuery('user.getPets', {
-  // immediate: true
-})
+// const { data, execute } = useQuery('user.getPets', {
+//   // immediate: true
+// })
+
+const { contactPeople: contactPeopleData, refetch: executeContactPeople } =
+  useAccountGetContactPeopleQuery()
+const { pets: data, refetch: execute } = useAccountGetPetsQuery()
+const { categories, refetch: executeCategories } = usePublicGetCategories()
+
+const { mutateAsync: createPetMutation } = useAccountCreatePetMutation()
+const { mutateAsync: updatePetMutation } = useAccountUpdatePetMutation()
 
 const updatePetFormRef = ref<typeof PetForm>()
 const createPetFormRef = ref<typeof PetForm>()
@@ -144,14 +155,12 @@ const updatePet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
   pet = extend(true, {}, pet)
   delete pet.customerId
 
-  const result = useMutation('user.updatePet', {
-    args: pet as WithRequired<typeof pet, 'id'>,
-    immediate: true
-  })
+  try {
+    await updatePetMutation(pet)
 
-  await result.immediatePromise
-
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const createPet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
@@ -160,14 +169,12 @@ const createPet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
 }) => {
   delete pet.customerId
 
-  const result = useMutation('user.createPet', {
-    args: pet as WithRequired<typeof pet, 'id'>,
-    immediate: true
-  })
+  try {
+    await createPetMutation(pet)
 
-  await result.immediatePromise
-
-  done(!result.error.value)
+    done()
+    await execute()
+  } catch (e) {}
 }
 
 const ready = ref<boolean>(false)
