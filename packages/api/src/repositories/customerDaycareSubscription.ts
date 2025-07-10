@@ -10,7 +10,9 @@ import {
 import type { Insertable, Selectable, Transaction, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'
 import { FastifyInstance } from 'fastify'
-import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
+import { type Invoice } from '@modular-api/fastify-checkout'
+
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import { DaycareSubscription } from './daycareSubscription.js'
 import { subDays, subMonths } from 'date-fns'
 export type CustomerDaycareSubscription =

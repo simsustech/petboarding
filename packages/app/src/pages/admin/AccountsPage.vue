@@ -26,7 +26,7 @@ export default {
 
 <script setup lang="ts">
 import { AccountsTable } from '@simsustech/quasar-components/authentication'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/zod'
 import { useAdminGetAccountsQuery } from 'src/queries/admin/account.js'
@@ -129,4 +129,8 @@ const onRemoveRole = async ({
 
   // if (!result.error.value) executeAccounts()
 }
+
+onMounted(async () => {
+  await executeAccounts()
+})
 </script>

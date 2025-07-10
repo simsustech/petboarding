@@ -62,7 +62,8 @@ const lang: Language = {
     title: 'Beschikbaarheid',
     messages: {
       doesNotApplyToApprovedBookings:
-        'Dit is niet van toepassing op reeds goedgekeurde reserveringen!'
+        'Dit is niet van toepassing op reeds goedgekeurde reserveringen!',
+      addBooking: 'Een reservering toevoegen kan in uw account.'
     }
   },
   configuration: {

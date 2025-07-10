@@ -113,89 +113,43 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
-import { QInput, date as dateUtil } from 'quasar'
+import { computed, onMounted, ref, watch } from 'vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
-import {
-  BOOKING_STATUS,
-  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
-  DAYCARE_DATE_STATUS,
-  Pet
-} from '@petboarding/api/zod'
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS, Pet } from '@petboarding/api/zod'
+import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
 import { formatDate } from '../../tools.js'
+import { useEmployeeGetOverviewQuery } from 'src/queries/employee/overview.js'
+import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
 
 const lang = useLang()
-const { useQuery } = await createUseTrpc()
 const router = useRouter()
-const route = useRoute()
-const selectedDate = ref(
-  !Array.isArray(route.params.date)
-    ? route.params.date.replaceAll('-', '/')
-    : dateUtil.formatDate(new Date(), 'YYYY/MM/DD')
-)
+
+const { openingTimes: openingTimesData, refetch: executeOpeningTimes } =
+  usePublicGetOpeningTimesQuery()
+const {
+  arrivals: arrivalsData,
+  departures: departuresData,
+  daycareDates: daycareDatesData,
+  refetch,
+  selectedDate
+} = useEmployeeGetOverviewQuery()
 
 onBeforeRouteUpdate((to) => {
   if (to.params.date && !Array.isArray(to.params.date)) {
     selectedDate.value = to.params.date.replaceAll('-', '/')
   }
 })
-const parsedDate = computed(() => selectedDate.value.replaceAll('/', '-'))
+// const parsedDate = computed(() => selectedDate.value.replaceAll('/', '-'))
 const dateInputRef = ref<QInput>()
 const dateError = computed(() => dateInputRef.value?.hasError)
 
 watch(selectedDate, async () => {
   await dateInputRef.value?.validate()
   if (!dateError.value) {
-    executeGetArrivals()
-    executeGetDepartures()
-    executeDaycareDates()
+    await refetch()
   }
 })
-
-const { data: arrivalsData, execute: executeGetArrivals } = useQuery(
-  'employee.getBookings',
-  {
-    args: () =>
-      reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
-        startDate: parsedDate.value,
-        statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
-      })
-  }
-)
-
-const { data: departuresData, execute: executeGetDepartures } = useQuery(
-  'employee.getBookings',
-  {
-    args: () =>
-      reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
-        endDate: parsedDate.value,
-        statuses: [BOOKING_STATUS.APPROVED, BOOKING_STATUS.AWAITING_DOWNPAYMENT]
-      })
-  }
-)
-
-const { data: daycareDatesData, execute: executeDaycareDates } = useQuery(
-  'employee.getDaycareDates',
-  {
-    args: () =>
-      reactive({
-        from: parsedDate.value,
-        until: parsedDate.value,
-        status: DAYCARE_DATE_STATUS.APPROVED
-      })
-  }
-)
-
-const { data: openingTimesData, execute: executeOpeningTimes } = useQuery(
-  'public.getOpeningTimes'
-)
 
 const sortedOpeningTimes = computed(() => {
   if (openingTimesData.value) {
@@ -213,11 +167,7 @@ onMounted(async () => {
   await executeOpeningTimes()
   await dateInputRef.value?.validate()
   if (!dateError.value) {
-    // executeGetBookings()
-    executeGetArrivals()
-    executeGetDepartures()
-    // executeAwaitingDownPaymentBookings()
-    executeDaycareDates()
+    await refetch()
   }
 })
 </script>

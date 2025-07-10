@@ -60,6 +60,7 @@ export interface Language {
     title: string
     messages: {
       doesNotApplyToApprovedBookings: string
+      addBooking: string
     }
   }
   configuration: {

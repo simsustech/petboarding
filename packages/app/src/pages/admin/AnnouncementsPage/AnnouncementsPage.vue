@@ -45,12 +45,17 @@ export default {
 import { inject, nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
 import { Announcement } from '@petboarding/api/zod'
 import AnnouncementForm from '../../../components/announcement/AnnouncementForm.vue'
 import AnnouncementsList from '../../../components/announcement/AnnouncementsList.vue'
 import { useQuasar } from 'quasar'
 import { EventBus } from 'quasar'
+import { useConfigurationGetAnnouncementsQuery } from 'src/queries/configuration/announcement.js'
+import {
+  useConfigurationCreateAnnouncementMutation,
+  useConfigurationDeleteAnnouncementMutation,
+  useConfigurationUpdateAnnouncementMutation
+} from 'src/mutations/configuration/announcement.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-open-announcements-create-dialog', () => {
@@ -60,12 +65,15 @@ bus.on('administrator-open-announcements-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
+const { announcements, refetch: execute } =
+  useConfigurationGetAnnouncementsQuery()
 
-const { data: announcements, execute } = useQuery(
-  'configuration.getAnnouncements',
-  {}
-)
+const { mutateAsync: createAnnouncementMutation } =
+  useConfigurationCreateAnnouncementMutation()
+const { mutateAsync: updateAnnouncementMutation } =
+  useConfigurationUpdateAnnouncementMutation()
+const { mutateAsync: deleteAnnouncementMutation } =
+  useConfigurationDeleteAnnouncementMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -91,14 +99,11 @@ const create: InstanceType<
 const createAnnouncement: InstanceType<
   typeof AnnouncementForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createAnnouncement', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createAnnouncementMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {}
 }
 
 const updateAnnouncementDialogRef = ref<typeof ResponsiveDialog>()
@@ -124,14 +129,11 @@ const update: InstanceType<
 const updateAnnouncement: InstanceType<
   typeof AnnouncementForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateAnnouncement', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateAnnouncementMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {}
 }
 
 const openDeleteAnnouncementDialog = ({ data }: { data: Announcement }) => {
@@ -143,13 +145,10 @@ const openDeleteAnnouncementDialog = ({ data }: { data: Announcement }) => {
     ${lang.value.announcement.fields.message}: ${data.message}
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteAnnouncement', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteAnnouncementMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

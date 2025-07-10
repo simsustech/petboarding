@@ -39,7 +39,6 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../trpc.js'
 import { Period } from '@petboarding/api/zod'
 import PeriodForm from '../../../components/period/PeriodForm.vue'
 import PeriodsList from '../../../components/period/PeriodsList.vue'
@@ -47,6 +46,12 @@ import { useQuasar } from 'quasar'
 
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import { useConfigurationGetPeriodsQuery } from 'src/queries/configuration/period.js'
+import {
+  useConfigurationCreatePeriodMutation,
+  useConfigurationDeletePeriodMutation,
+  useConfigurationUpdatePeriodMutation
+} from 'src/mutations/configuration/period.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-open-periods-create-dialog', () => {
@@ -56,9 +61,13 @@ bus.on('administrator-open-periods-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
-
-const { data: periods, execute } = useQuery('configuration.getPeriods', {})
+const { periods, refetch: execute } = useConfigurationGetPeriodsQuery()
+const { mutateAsync: createPeriodMutation } =
+  useConfigurationCreatePeriodMutation()
+const { mutateAsync: updatePeriodMutation } =
+  useConfigurationUpdatePeriodMutation()
+const { mutateAsync: deletePeriodMutation } =
+  useConfigurationDeletePeriodMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -83,14 +92,13 @@ const create: InstanceType<
 const createPeriod: InstanceType<
   typeof PeriodForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createPeriod', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createPeriodMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updatePeriodDialogRef = ref<typeof ResponsiveDialog>()
@@ -116,14 +124,13 @@ const update: InstanceType<
 const updatePeriod: InstanceType<
   typeof PeriodForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updatePeriod', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updatePeriodMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeletePeriodDialog = ({ data }: { data: Period }) => {
@@ -135,13 +142,10 @@ const openDeletePeriodDialog = ({ data }: { data: Period }) => {
     ${lang.value.period.fields.endDate}: ${data.endDate}
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deletePeriod', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deletePeriodMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

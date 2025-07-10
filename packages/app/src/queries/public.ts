@@ -65,3 +65,70 @@ export const usePublicGetOpeningTimesQuery = defineQuery(() => {
     ...rest
   }
 })
+
+export const usePublicGetPeriodsQuery = defineQuery(() => {
+  const { data: periods, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetPeriodsQuery'],
+    query: () => trpc.public.getPeriods.query()
+  })
+
+  return {
+    periods,
+    ...rest
+  }
+})
+
+export const usePublicGetAnnouncementsQuery = defineQuery(() => {
+  const { data: announcements, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetAnnouncementsQuery'],
+    query: () => trpc.public.getAnnouncements.query(),
+    placeholderData: () => []
+  })
+
+  return {
+    announcements,
+    ...rest
+  }
+})
+
+export const usePublicGetUrgentAnnouncementsQuery = defineQuery(() => {
+  const { data: urgentAnnouncements, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetUrgentAnnouncements'],
+    query: () => trpc.public.getUrgentAnnouncements.query(),
+    placeholderData: () => []
+  })
+
+  return {
+    urgentAnnouncements,
+    ...rest
+  }
+})
+
+export const usePublicGetPrivacyPolicyQuery = defineQuery(() => {
+  const { data: privacyPolicy, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetPrivacyPolicy'],
+    query: () => trpc.public.getPrivacyPolicy.query()
+  })
+
+  return {
+    privacyPolicy,
+    ...rest
+  }
+})
+
+export const usePublicGetTermsAndConditionsQuery = defineQuery(() => {
+  const { data: termsAndConditions, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetTermsAndConditions'],
+    query: () => trpc.public.getTermsAndConditions.query()
+  })
+
+  return {
+    termsAndConditions,
+    ...rest
+  }
+})

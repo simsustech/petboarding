@@ -48,13 +48,20 @@ import { nextTick, onMounted, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { OpeningTime } from '@petboarding/api/zod'
 import OpeningTimeForm from '../../../../components/booking/OpeningTimeForm.vue'
 import OpeningTimesList from '../../../../components/openingTime/OpeningTimesList.vue'
-import { useConfiguration } from '../../../../configuration.js'
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import {
+  useConfigurationGetHolidaysQuery,
+  useConfigurationGetOpeningTimesQuery
+} from '../../../../queries/configuration/openingTime.js'
+import {
+  useConfigurationCreateOpeningTimeMutation,
+  useConfigurationDeleteOpeningTimeMutation,
+  useConfigurationUpdateOpeningTimeMutation
+} from '../../../../mutations/configuration/openingTime.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-opening-times-create-dialog', () => {
@@ -63,24 +70,20 @@ bus.on('administrator-configuration-open-opening-times-create-dialog', () => {
       done: () => {}
     })
 })
-const { useQuery, useMutation } = await createUseTrpc()
 const $q = useQuasar()
-const configuration = useConfiguration()
 
-const { data: openingTimes, execute } = useQuery(
-  'configuration.getOpeningTimes',
-  {}
-)
+const { holidays, refetch: executeHolidays } =
+  useConfigurationGetHolidaysQuery()
 
-const { data: holidays, execute: executeHolidays } = useQuery(
-  'configuration.getHolidays',
-  {
-    args: {
-      country: configuration.value.COUNTRY,
-      language: $q.lang.isoName.substring(0, 2)
-    }
-  }
-)
+const { openingTimes, refetch: execute } =
+  useConfigurationGetOpeningTimesQuery()
+
+const { mutateAsync: createOpeningTimeMutation } =
+  useConfigurationCreateOpeningTimeMutation()
+const { mutateAsync: updateOpeningTimeMutation } =
+  useConfigurationUpdateOpeningTimeMutation()
+const { mutateAsync: deleteOpeningTimeMutation } =
+  useConfigurationDeleteOpeningTimeMutation()
 
 const unavailableHolidaysOptions = computed(() => {
   return holidays.value?.map((v, i) => ({
@@ -112,14 +115,13 @@ const create: InstanceType<
 const createOpeningTime: InstanceType<
   typeof OpeningTimeForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createOpeningTime', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createOpeningTimeMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateOpeningTimeDialogRef = ref<typeof ResponsiveDialog>()
@@ -145,14 +147,13 @@ const update: InstanceType<
 const updateOpeningTime: InstanceType<
   typeof OpeningTimeForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateOpeningTime', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateOpeningTimeMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteOpeningTimeDialog = ({ data }: { data: OpeningTime }) => {
@@ -164,13 +165,10 @@ const openDeleteOpeningTimeDialog = ({ data }: { data: OpeningTime }) => {
     ${lang.value.openingTime.fields.endTime}: ${data.endTime}
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteOpeningTime', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteOpeningTimeMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 onMounted(async () => {

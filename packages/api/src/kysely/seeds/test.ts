@@ -4,7 +4,8 @@ import { sql } from 'kysely'
 import {
   BOOKING_STATUS,
   DAYCARE_DATE_STATUS,
-  OPENING_TIME_TYPE
+  OPENING_TIME_TYPE,
+  SERVICE_TYPE
 } from '../types.js'
 
 const seed = async () => {
@@ -138,28 +139,28 @@ const seed = async () => {
     {
       name: 'Wash pet(s)',
       description: 'Pet(s) will be washed before leaving.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Groom pet(s)',
       description: 'Pet(s) will be groomed during their stay.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Intensive medical care',
       description: 'Pet(s) required intensive medical care during their stay.',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
     },
     {
       name: 'Veterinarian visit',
       description: 'Pet(s) required a visit to the veterinarian',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
     }

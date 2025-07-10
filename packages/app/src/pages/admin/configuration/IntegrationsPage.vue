@@ -30,12 +30,13 @@
 
 <script setup lang="ts">
 import { LoginButton } from '@simsustech/quasar-components/authentication'
+import { onMounted } from 'vue'
+import { useAdminSlimfactHealthCheckQuery } from 'src/queries/admin/slimfact.js'
 
-import { createUseTrpc } from '../../../trpc.js'
-const { useQuery } = await createUseTrpc()
+const { error: slimfactError, refetch: refetchSlimfactHealthCheck } =
+  useAdminSlimfactHealthCheckQuery()
 
-const { error: slimfactError } = useQuery('admin.slimfactHealthcheck', {
-  immediate: true,
-  initialData: false
+onMounted(async () => {
+  await refetchSlimfactHealthCheck()
 })
 </script>

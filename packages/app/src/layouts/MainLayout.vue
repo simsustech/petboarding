@@ -407,12 +407,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'
 import { useConfiguration, loadConfiguration } from '../configuration'
 import PetboardingIcon from '../components/PetboardingIcon.vue'
-import { createUseTrpc } from '../trpc.js'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
 import NavigationTabs from './NavigationTabs.vue'
 import { initializeTRPCClient } from 'src/trpc.js'
+
+import { useAdminGetBookingsCount } from '../queries/admin/booking.js'
+import { useAdminGetDaycareCount } from '../queries/admin/daycare.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -451,16 +452,6 @@ const languageLocales = ref([
   }
 ])
 
-// const languageImports = ref(
-//   Object.entries(quasarLang).reduce(
-//     (acc, [key, value]) => {
-//       const langKey = key.split('/').at(-1)?.split('.').at(0)
-//       if (langKey) acc[langKey] = value
-//       return acc
-//     },
-//     {} as Record<string, () => Promise<{ default: QuasarLanguage }>>
-//   )
-// )
 const languageImports = ref({
   nl: () => import(`quasar/lang/nl.js`),
   'en-US': () => import(`quasar/lang/en-US.js`)
@@ -480,37 +471,19 @@ const accountExpansionItemRef = ref()
 const employeeExpansionItemRef = ref()
 const adminExpansionItemRef = ref()
 
-const numberOfPendingBookings = ref<number>(0)
-const numberOfPendingDaycareDates = ref<number>(0)
+const {
+  bookingsCount: numberOfPendingBookings,
+  refetch: refetchBookingsCount
+} = useAdminGetBookingsCount()
+const {
+  daycareCount: numberOfPendingDaycareDates,
+  refetch: refetchDaycareCount
+} = useAdminGetDaycareCount()
 
 watch(user, async () => {
   if (user.value?.roles?.includes('administrator')) {
-    const { useQuery } = await createUseTrpc()
-    const {
-      data: bookingsCount,
-      immediatePromise: immediaPromiseBookingsCount
-    } = useQuery('admin.getBookingsCount', {
-      args: {
-        status: BOOKING_STATUS.PENDING
-      },
-      immediate: true
-    })
-    await immediaPromiseBookingsCount
-    if (bookingsCount.value !== void 0)
-      numberOfPendingBookings.value = bookingsCount.value
-
-    const {
-      data: daycareDatesCount,
-      immediatePromise: immediatePromiseDaycareDatesCount
-    } = useQuery('admin.getDaycareCount', {
-      args: {
-        status: DAYCARE_DATE_STATUS.PENDING
-      },
-      immediate: true
-    })
-    await immediatePromiseDaycareDatesCount
-    if (daycareDatesCount.value !== void 0)
-      numberOfPendingDaycareDates.value = daycareDatesCount.value
+    await refetchBookingsCount()
+    await refetchDaycareCount()
   }
 })
 

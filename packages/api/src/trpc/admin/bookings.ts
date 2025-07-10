@@ -32,10 +32,10 @@ import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import {
   computeInvoiceCosts,
-  Invoice,
-  RawInvoiceDiscount,
-  RawInvoiceLine,
-  RawInvoiceSurcharge
+  type Invoice,
+  type RawInvoiceDiscount,
+  type RawInvoiceLine,
+  type RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
 
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'

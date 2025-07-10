@@ -6,10 +6,9 @@
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import '@quasar/quasar-ui-qmarkdown/dist/index.css'
-import { createUseTrpc } from 'src/trpc'
-const { useQuery } = await createUseTrpc()
+import { usePublicGetPrivacyPolicyQuery } from 'src/queries/public'
 
-const { data: privacyPolicy, execute } = useQuery('public.getPrivacyPolicy')
+const { privacyPolicy, refetch: execute } = usePublicGetPrivacyPolicyQuery()
 
 onMounted(async () => {
   execute()

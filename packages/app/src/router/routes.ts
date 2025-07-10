@@ -148,13 +148,6 @@ const routes: RouteRecordRaw[] = [
                 }
               },
               {
-                path: 'email',
-                component: () =>
-                  import(
-                    '../pages/admin/configuration/BookingEmailRepliesPage.vue'
-                  )
-              },
-              {
                 path: 'openingtimes',
                 components: {
                   default: () =>

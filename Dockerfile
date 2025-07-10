@@ -1,4 +1,4 @@
-FROM node:lts as install-stage
+FROM node:lts AS install-stage
 
 RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" > ~/.npmrc
 
@@ -9,7 +9,7 @@ RUN rm -rf node_modules
 RUN pnpm install --frozen-lockfile
 RUN rm ~/.npmrc
 
-FROM install-stage as build-stage
+FROM install-stage AS build-stage
 # App env arguments
 ARG VITE_API_HOST
 ARG VITE_OIDC_ISSUER
@@ -23,8 +23,12 @@ ARG VITE_ALLOWED_SPECIES
 ARG SASS_VARIABLE_PRIMARY
 
 RUN pnpm run build
+WORKDIR /build/packages/app
+RUN pnpm exec vitrify build -m ssr --debug
+WORKDIR /build
 
-FROM build-stage as api-deploy
+
+FROM build-stage AS api-deploy
 # Remove circular dependency
 # RUN pnpm -C packages/app remove @petboarding/api
 RUN pnpm prune --prod
@@ -36,7 +40,7 @@ RUN rm /build/app/dist/ssr/client/termsandconditions.pdf.gz
 RUN rm /build/app/dist/ssr/client/privacypolicy.pdf.gz
 RUN rm /build/app/dist/ssr/client/logo.svg.gz
 
-FROM node:lts-slim as api
+FROM node:lts-slim AS api
 LABEL "io.petboarding.vendor"="simsustech"
 RUN apt-get update && apt-get install -y curl
 WORKDIR /app

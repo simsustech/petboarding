@@ -56,3 +56,23 @@ export const useAdminGetAccountsQuery = defineQuery(() => {
     ...rest
   }
 })
+
+export const useAdminFindAccountsQuery = defineQuery(() => {
+  const email = ref<string>('')
+
+  const { data: accounts, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['adminFindAccounts', email.value],
+    query: () =>
+      trpc.admin.findAccounts.query({
+        email: email.value
+      }),
+    placeholderData: () => []
+  })
+
+  return {
+    accounts,
+    email,
+    ...rest
+  }
+})

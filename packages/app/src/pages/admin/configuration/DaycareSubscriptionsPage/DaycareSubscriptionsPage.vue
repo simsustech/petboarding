@@ -51,13 +51,18 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { DaycareSubscription } from '@petboarding/api/zod'
 import DaycareSubscriptionForm from '../../../../components/daycareSubscription/DaycareSubscriptionForm.vue'
 import DaycareSubscriptionsList from '../../../../components/daycareSubscription/DaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import {
+  useConfigurationCreateDaycareSubscriptionMutation,
+  useConfigurationDeleteDaycareSubscriptionMutation,
+  useConfigurationUpdateDaycareSubscriptionMutation
+} from 'src/mutations/configuration/daycareSubscription.js'
+import { useConfigurationGetDaycareSubscriptionsQuery } from 'src/queries/configuration/daycareSubscription.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on(
@@ -69,12 +74,16 @@ bus.on(
       })
   }
 )
-const { useQuery, useMutation } = await createUseTrpc()
 
-const { data: daycareSubscriptions, execute } = useQuery(
-  'configuration.getDaycareSubscriptions',
-  {}
-)
+const { daycareSubscriptions, refetch: execute } =
+  useConfigurationGetDaycareSubscriptionsQuery()
+
+const { mutateAsync: createDaycareSubscriptionMutation } =
+  useConfigurationCreateDaycareSubscriptionMutation()
+const { mutateAsync: updateDaycareSubscriptionMutation } =
+  useConfigurationUpdateDaycareSubscriptionMutation()
+const { mutateAsync: deleteDaycareSubscriptionMutation } =
+  useConfigurationDeleteDaycareSubscriptionMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -104,14 +113,13 @@ const create: InstanceType<
 const createDaycareSubscription: InstanceType<
   typeof DaycareSubscriptionForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createDaycareSubscription', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createDaycareSubscriptionMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateDaycareSubscriptionDialogRef = ref<typeof ResponsiveDialog>()
@@ -143,14 +151,13 @@ const update: InstanceType<
 const updateDaycareSubscription: InstanceType<
   typeof DaycareSubscriptionForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateDaycareSubscription', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateDaycareSubscriptionMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteDaycareSubscriptionDialog = ({
@@ -165,15 +172,10 @@ const openDeleteDaycareSubscriptionDialog = ({
     ${lang.value.daycareSubscription.fields.description}: ${data.description}<br />
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteDaycareSubscription', {
-      args: {
-        id: data.id!
-      },
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteDaycareSubscriptionMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

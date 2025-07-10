@@ -6,12 +6,10 @@
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import '@quasar/quasar-ui-qmarkdown/dist/index.css'
-import { createUseTrpc } from 'src/trpc'
-const { useQuery } = await createUseTrpc()
+import { usePublicGetTermsAndConditionsQuery } from 'src/queries/public'
 
-const { data: termsAndConditions, execute } = useQuery(
-  'public.getTermsAndConditions'
-)
+const { termsAndConditions, refetch: execute } =
+  usePublicGetTermsAndConditionsQuery()
 
 onMounted(async () => {
   execute()

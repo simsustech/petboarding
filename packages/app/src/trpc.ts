@@ -75,64 +75,64 @@ export function isTRPCClientError(
   return cause instanceof TRPCClientError
 }
 
-import { useTRPC } from 'use-trpc'
-export const createUseTrpc = async () => {
-  const oAuthClient = await useOAuthClient()
+// import { useTRPC } from 'use-trpc'
+// export const createUseTrpc = async () => {
+//   const oAuthClient = await useOAuthClient()
 
-  const headers = () => ({
-    Authorization: oAuthClient.value?.getAccessToken()
-      ? `Bearer ${oAuthClient.value.getAccessToken()}`
-      : ''
-  })
+//   const headers = () => ({
+//     Authorization: oAuthClient.value?.getAccessToken()
+//       ? `Bearer ${oAuthClient.value.getAccessToken()}`
+//       : ''
+//   })
 
-  const lang = useLang()
-  const fetch = getFetch()
-  const handleErrorFetch = async (input, init) => {
-    return fetch(input, init).then(async (res) => {
-      try {
-        if (!res.ok) {
-          const body = await res.clone().json()
+//   const lang = useLang()
+//   const fetch = getFetch()
+//   const handleErrorFetch = async (input, init) => {
+//     return fetch(input, init).then(async (res) => {
+//       try {
+//         if (!res.ok) {
+//           const body = await res.clone().json()
 
-          const serverErrors = body?.error || body?.[0]?.error
-          let caption: string
-          if (serverErrors) {
-            const { message, code, path, expected, received } = serverErrors
-            if (message) {
-              caption = message
-            } else if (path && lang.value.errors?.[code]) {
-              caption = lang.value.errors[code]({ path, expected, received })
-            } else if (path) {
-              caption = `${message}: ${path.join(':')}`
-            } else {
-              caption = ''
-            }
-            Notify.create({
-              message: lang.value.serverError,
-              caption,
-              icon: 'i-mdi-alert',
-              color: 'negative'
-            })
-          }
-        }
-        return res
-      } catch (e) {
-        console.error(e)
-        return res
-      }
-    })
-  }
-  return useTRPC<AppRouter>({
-    client: {
-      links: [
-        httpBatchLink({
-          url: import.meta.env.VITE_API_HOST
-            ? `https://${import.meta.env.VITE_API_HOST}/trpc`
-            : '/trpc',
-          headers,
-          fetch: handleErrorFetch
-        })
-      ]
-    },
-    headers
-  })
-}
+//           const serverErrors = body?.error || body?.[0]?.error
+//           let caption: string
+//           if (serverErrors) {
+//             const { message, code, path, expected, received } = serverErrors
+//             if (message) {
+//               caption = message
+//             } else if (path && lang.value.errors?.[code]) {
+//               caption = lang.value.errors[code]({ path, expected, received })
+//             } else if (path) {
+//               caption = `${message}: ${path.join(':')}`
+//             } else {
+//               caption = ''
+//             }
+//             Notify.create({
+//               message: lang.value.serverError,
+//               caption,
+//               icon: 'i-mdi-alert',
+//               color: 'negative'
+//             })
+//           }
+//         }
+//         return res
+//       } catch (e) {
+//         console.error(e)
+//         return res
+//       }
+//     })
+//   }
+//   return useTRPC<AppRouter>({
+//     client: {
+//       links: [
+//         httpBatchLink({
+//           url: import.meta.env.VITE_API_HOST
+//             ? `https://${import.meta.env.VITE_API_HOST}/trpc`
+//             : '/trpc',
+//           headers,
+//           fetch: handleErrorFetch
+//         })
+//       ]
+//     },
+//     headers
+//   })
+// }

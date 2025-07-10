@@ -1,7 +1,7 @@
 import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import env from '@vitrify/tools/env'
-import { OPENING_TIME_TYPE } from '../types.js'
+import { OPENING_TIME_TYPE, SERVICE_TYPE } from '../types.js'
 
 const ADMIN_PASSWORD = env.read('PETBOARDING_ADMIN_PASSWORD')
 if (!ADMIN_PASSWORD)
@@ -55,28 +55,28 @@ const seed = async () => {
     {
       name: 'Wash pet(s)',
       description: 'Pet(s) will be washed before leaving.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Groom pet(s)',
       description: 'Pet(s) will be groomed during their stay.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Intensive medical care',
       description: 'Pet(s) required intensive medical care during their stay.',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
     },
     {
       name: 'Veterinarian visit',
       description: 'Pet(s) required a visit to the veterinarian',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
     }

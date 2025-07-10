@@ -73,6 +73,13 @@
             @dragstart="onDragStart"
             @open-pet="openPet"
           >
+            <template #menu-items>
+              <pet-kennel-context-menu-items
+                :pet-kennel="pet"
+                :buildings="buildings"
+                @set-pet-kennel="setPetKennel"
+              />
+            </template>
           </pet-chip>
         </q-card-section>
       </q-card>
@@ -139,14 +146,16 @@ import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
 import PetChip from '../../components/pet/PetChip.vue'
-import type { Pet } from '@petboarding/api/zod'
 import PetLegend from '../../components/pet/PetLegend.vue'
-import { useEmployeeGetPetKennelsQuery } from 'src/queries/employee/petKennel.js'
-import { useEmployeeGetBuildingsQuery } from 'src/queries/employee/building.js'
+import { useEmployeeGetPetKennelsQuery } from '../../queries/employee/petKennel.js'
+import { useEmployeeGetBuildingsQuery } from '../../queries/employee/building.js'
 import {
   useEmployeeSetBookingPetKennelMutation,
   useEmployeeSetDaycareDatePetKennelMutation
-} from 'src/mutations/employee/petKennel.js'
+} from '../../mutations/employee/petKennel.js'
+import type { PetKennel } from '../../configuration.js'
+import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
+
 const lang = useLang()
 
 const router = useRouter()
@@ -158,16 +167,7 @@ onBeforeRouteUpdate((to) => {
   }
 })
 
-const internalPetKennels = ref<
-  (Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
-    customer: {
-      lastName: string
-    }
-    kennelId: number | null
-    bookingId?: number
-    daycareDateId?: number
-  })[]
->([])
+const internalPetKennels = ref<PetKennel[]>([])
 
 const { buildings, refetch: executeBuildings } = useEmployeeGetBuildingsQuery()
 const {
@@ -183,18 +183,6 @@ const { mutateAsync: setBookingPetKennelMutation } =
   useEmployeeSetBookingPetKennelMutation()
 const { mutateAsync: setDaycareDatePetKennelMutation } =
   useEmployeeSetDaycareDatePetKennelMutation()
-
-// const { data: buildings, execute: executeBuildings } = useQuery(
-//   'employee.getBuildings'
-// )
-// const { data: petKennels, execute: executePets } = useQuery(
-//   'employee.getPetKennels',
-//   {
-//     args: reactive({
-//       date: selectedDate
-//     })
-//   }
-// )
 
 watch(
   () => petKennels.value,
@@ -264,21 +252,24 @@ function onDrop(e) {
     ]
   petKennel.kennelId = kennelId
 
-  if (petKennel.bookingId) {
-    setBookingPetKennelMutation(petKennel)
-    // useMutation('employee.setBookingPetKennel', {
-    //   args: petKennel,
-    //   immediate: true
-    // })
-  } else if (petKennel.daycareDateId) {
-    setDaycareDatePetKennelMutation(petKennel)
-    // useMutation('employee.setDaycareDatePetKennel', {
-    //   args: petKennel,
-    //   immediate: true
-    // })
-  }
+  setPetKennel(petKennel)
 
   e.target.classList.remove('drag-enter')
+}
+
+const setPetKennel = async (petKennel: PetKennel) => {
+  if (petKennel.bookingId) {
+    await setBookingPetKennelMutation(petKennel)
+  } else if (petKennel.daycareDateId) {
+    await setDaycareDatePetKennelMutation(petKennel)
+  }
+  const internalPetKennelIndex = internalPetKennels.value.findIndex(
+    (pet) => pet.id === petKennel.id
+  )
+  internalPetKennels.value[internalPetKennelIndex] = {
+    ...internalPetKennels.value[internalPetKennelIndex],
+    kennelId: petKennel.kennelId
+  }
 }
 
 const setToToday = () => {
@@ -310,7 +301,6 @@ const openPet = (id: number) =>
 onMounted(async () => {
   await executeBuildings()
   await executePets()
-  // internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
 })
 </script>
 

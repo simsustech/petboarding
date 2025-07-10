@@ -52,42 +52,49 @@ export default {
 import { computed, onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { createUseTrpc } from '../../trpc.js'
 import DaycareCalendarMonth from '../../components/daycare/DaycareCalendarMonth.vue'
 import { DAYCARE_DATE_COLORS, DAYCARE_DATE_ICONS } from '../../configuration.js'
 import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vue'
 import type { QCalendarEvent } from '../../components/daycare/DaycareCalendarMonth.vue'
-import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
 import { Customer, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
-const { useQuery, useMutation } = await createUseTrpc()
+import {
+  useAdminGetDaycareDatesByIdQuery,
+  useAdminGetDaycareDatesQuery
+} from 'src/queries/admin/daycare.js'
+import {
+  useAdminApproveDaycareDateMutation,
+  useAdminRejectDaycareDateMutation,
+  useAdminStandbyDaycareDateMutation
+} from 'src/mutations/admin/daycare.js'
+
 const router = useRouter()
 
-const status = ref(DAYCARE_DATE_STATUS.PENDING)
-const startDate = ref('')
-const endDate = ref('')
 const onChangeDate: InstanceType<
   typeof DaycareCalendarMonth
 >['$props']['onChangeDate'] = (data) => {
-  startDate.value = data.start
-  endDate.value = data.end
+  from.value = data.start
+  until.value = data.end
 }
-const selectedEventIds = ref<number[]>([])
 
-const { data, execute } = useQuery('admin.getDaycareDates', {
-  args: reactive({
-    from: startDate,
-    until: endDate,
-    status
-  })
-})
+const {
+  daycareDates: data,
+  refetch: execute,
+  from,
+  until,
+  daycareDateStatus: status
+} = useAdminGetDaycareDatesQuery()
 
-const { data: selectedEventsData } = useQuery('admin.getDaycareDates', {
-  args: reactive({
-    ids: selectedEventIds
-  })
-})
+const { daycareDates: selectedEventsData, ids: selectedEventIds } =
+  useAdminGetDaycareDatesByIdQuery()
+
+const { mutateAsync: approveDaycareDatesMutation } =
+  useAdminApproveDaycareDateMutation()
+const { mutateAsync: rejectDaycareDatesMutation } =
+  useAdminRejectDaycareDateMutation()
+const { mutateAsync: standbyDaycareDatesMutation } =
+  useAdminStandbyDaycareDateMutation()
 
 const $q = useQuasar()
 const lang = useLang()
@@ -172,13 +179,11 @@ const approveDaycareDates = async () => {
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
-    const { immediatePromise } = useMutation('admin.approveDaycareDateIds', {
-      args: selectedEventIds.value,
-      immediate: true
-    })
-    await immediatePromise
-    await execute()
-    selectedEventIds.value = []
+    try {
+      await approveDaycareDatesMutation({ ids: selectedEventIds.value })
+      await execute()
+      selectedEventIds.value = []
+    } catch (e) {}
   })
 }
 
@@ -196,13 +201,11 @@ const rejectDaycareDates = async () => {
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
-    const { immediatePromise } = useMutation('admin.rejectDaycareDateIds', {
-      args: selectedEventIds.value,
-      immediate: true
-    })
-    await immediatePromise
-    await execute()
-    selectedEventIds.value = []
+    try {
+      await rejectDaycareDatesMutation({ ids: selectedEventIds.value })
+      await execute()
+      selectedEventIds.value = []
+    } catch (e) {}
   })
 }
 
@@ -220,13 +223,11 @@ const standbyDaycareDates = async () => {
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
-    const { immediatePromise } = useMutation('admin.standbyDaycareDateIds', {
-      args: selectedEventIds.value,
-      immediate: true
-    })
-    await immediatePromise
-    await execute()
-    selectedEventIds.value = []
+    try {
+      await standbyDaycareDatesMutation({ ids: selectedEventIds.value })
+      await execute()
+      selectedEventIds.value = []
+    } catch (e) {}
   })
 }
 

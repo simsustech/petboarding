@@ -44,9 +44,9 @@ import {
   type RawInvoiceDiscount,
   type RawInvoiceSurcharge,
   computeInvoiceCosts,
-  type Invoice,
-  InvoiceStatus
+  type Invoice
 } from '@modular-api/fastify-checkout'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
 import { FastifyInstance } from 'fastify'
 import { bookingEmailTemplates } from '../templates/email/bookings/index.js'

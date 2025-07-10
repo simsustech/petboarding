@@ -67,3 +67,22 @@ export const useAdminGetBookingEmailQuery = defineQuery(() => {
     ...rest
   }
 })
+
+export const useAdminGetBookingsCount = defineQuery(() => {
+  const bookingStatus = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+
+  const { data: bookingsCount, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['adminGetBookingsCount', bookingStatus.value],
+    query: () =>
+      trpc.admin.getBookingsCount.query({
+        status: bookingStatus.value
+      })
+  })
+
+  return {
+    bookingsCount,
+    bookingStatus,
+    ...rest
+  }
+})

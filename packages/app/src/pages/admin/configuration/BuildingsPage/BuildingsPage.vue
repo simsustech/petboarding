@@ -39,13 +39,18 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { Building } from '@petboarding/api/zod'
 import BuildingForm from '../../../../components/building/BuildingForm.vue'
 import BuildingsList from '../../../../components/building/BuildingsList.vue'
 import { useQuasar } from 'quasar'
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import {
+  useConfigurationCreateBuildingMutation,
+  useConfigurationDeleteBuildingMutation,
+  useConfigurationUpdateBuildingMutation
+} from 'src/mutations/configuration/building.js'
+import { useConfigurationGetBuildingsQuery } from 'src/queries/configuration/building.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-buildings-create-dialog', () => {
@@ -55,9 +60,14 @@ bus.on('administrator-configuration-open-buildings-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
+const { buildings, refetch: execute } = useConfigurationGetBuildingsQuery()
 
-const { data: buildings, execute } = useQuery('configuration.getBuildings', {})
+const { mutateAsync: createBuildingMutation } =
+  useConfigurationCreateBuildingMutation()
+const { mutateAsync: updateBuildingMutation } =
+  useConfigurationUpdateBuildingMutation()
+const { mutateAsync: deleteBuildingMutation } =
+  useConfigurationDeleteBuildingMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -83,14 +93,13 @@ const create: InstanceType<
 const createBuilding: InstanceType<
   typeof BuildingForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createBuilding', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createBuildingMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateBuildingDialogRef = ref<typeof ResponsiveDialog>()
@@ -116,14 +125,13 @@ const update: InstanceType<
 const updateBuilding: InstanceType<
   typeof BuildingForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateBuilding', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateBuildingMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteBuildingDialog = ({ data }: { data: Building }) => {
@@ -135,13 +143,10 @@ const openDeleteBuildingDialog = ({ data }: { data: Building }) => {
     ${lang.value.building.fields.location}: ${data.location}
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteBuilding', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteBuildingMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

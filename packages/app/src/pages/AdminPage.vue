@@ -11,26 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import DashboardAdminMenuList from 'src/components/dashboard/DashboardAdminMenuList.vue'
-import { createUseTrpc } from '../trpc.js'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
+import DashboardAdminMenuList from '../components/dashboard/DashboardAdminMenuList.vue'
+import { useAdminGetBookingsCount } from '../queries/admin/booking.js'
+import { useAdminGetDaycareCount } from '../queries/admin/daycare.js'
 
-const { useQuery } = await createUseTrpc()
-
-const { data: numberOfPendingBookings } = useQuery('admin.getBookingsCount', {
-  args: {
-    status: BOOKING_STATUS.PENDING
-  },
-  immediate: true
-})
-
-const { data: numberOfPendingDaycareDates } = useQuery(
-  'admin.getDaycareCount',
-  {
-    args: {
-      status: DAYCARE_DATE_STATUS.PENDING
-    },
-    immediate: true
-  }
-)
+const { bookingsCount: numberOfPendingBookings } = useAdminGetBookingsCount()
+const { daycareCount: numberOfPendingDaycareDates } = useAdminGetDaycareCount()
 </script>

@@ -10,8 +10,7 @@
 <script lang="ts" setup>
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { onMounted, ref } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
-const { useQuery } = await createUseTrpc()
+import { useAccountGetPetsQuery } from 'src/queries/account/pet.js'
 
 const busEmits = ref({
   add: 'account-open-bookings-create-dialog'
@@ -22,9 +21,7 @@ const icons = ref({
   edit: 'i-mdi-edit'
 })
 
-const { data: pets, execute: executePets } = useQuery('user.getPets', {
-  // immediate: true
-})
+const { pets, refetch: executePets } = useAccountGetPetsQuery()
 
 onMounted(async () => {
   await executePets()

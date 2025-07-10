@@ -90,9 +90,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick, computed } from 'vue'
+import { ref, onMounted, nextTick, computed } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
-import { createUseTrpc } from '../../trpc.js'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
@@ -101,25 +100,56 @@ import { extend, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
-
-const { useQuery, useMutation } = await createUseTrpc()
+import { useEmployeeGetBookingsByIdsQuery } from 'src/queries/employee/booking.js'
+import { useEmployeeGetPetsByCustomerId } from 'src/queries/employee/pet.js'
+import {
+  useEmployeeCancelBookingMutation,
+  useEmployeeUpdateBookingInvoiceMutation,
+  useEmployeeUpdateBookingMutation
+} from 'src/mutations/employee/booking.js'
+import { useEmployeeGetBookingServiceQuery } from 'src/queries/employee/bookingService.js'
+import { useAdminUpdateBookingServiceMutation } from 'src/mutations/admin/bookingService.js'
+import { usePublicGetServicesQuery } from 'src/queries/public.js'
 
 const lang = useLang()
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 
-const ids = ref(((route.params.ids as string[]) || []).map((id) => Number(id)))
+const {
+  bookings: data,
+  refetch: execute,
+  ids
+} = useEmployeeGetBookingsByIdsQuery()
+const {
+  pets: petsData,
+  refetch: executePets,
+  customerId
+} = useEmployeeGetPetsByCustomerId()
+const {
+  bookingService,
+  refetch: executeBookingService,
+  id: bookingServiceId
+} = useEmployeeGetBookingServiceQuery()
+const { services: servicesData, refetch: executeServices } =
+  usePublicGetServicesQuery()
+
+const { mutateAsync: updateBookingMutation } =
+  useEmployeeUpdateBookingMutation()
+
+const { mutateAsync: updateBookingServiceMutation } =
+  useAdminUpdateBookingServiceMutation()
+
+const { mutateAsync: cancelBookingMutation } =
+  useEmployeeCancelBookingMutation()
+
+const { mutateAsync: updateBookingInvoiceMutation } =
+  useEmployeeUpdateBookingInvoiceMutation()
+
+ids.value = ((route.params.ids as string[]) || []).map((id) => Number(id))
 onBeforeRouteUpdate((to) => {
   if (to.params.ids && Array.isArray(to.params.ids)) {
     ids.value = to.params.ids.map((id) => Number(id))
-  }
-})
-
-const { data, execute } = useQuery('employee.getBookingsByIds', {
-  args: reactive({ ids }),
-  reactive: {
-    args: true
   }
 })
 
@@ -145,17 +175,6 @@ const otherBookings = computed(() =>
 
 const updateBookingFormRef = ref<typeof BookingForm>()
 const updateDialogRef = ref<typeof ResponsiveDialog>()
-const customerId = ref<number>()
-const { data: petsData, execute: executePets } = useQuery(
-  'employee.getPetsByCustomerId',
-  {
-    args: reactive({ customerId }),
-    initialData: [],
-    reactive: {
-      args: true
-    }
-  }
-)
 
 const update: InstanceType<
   typeof ResponsiveDialog
@@ -183,37 +202,25 @@ const updateBooking: InstanceType<
 >['$props']['onSubmit'] = async ({ data, done }) => {
   data = extend(true, {}, data)
 
-  const result = useMutation('employee.updateBooking', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  // if (result.data.value) modelValue.value = result.data.value
-  done(!result.error.value)
+  try {
+    await updateBookingMutation(data)
+    done(true)
+  } catch (e) {
+    done(false)
+  }
 }
-
-const { data: servicesData, execute: executeServices } =
-  useQuery('public.getServices')
 
 const cancelBooking: InstanceType<
   typeof BookingItem
 >['$props']['onCancel'] = async ({ data: { booking, reason }, done }) => {
   if (booking.id) {
-    const result = useMutation('employee.cancelBooking', {
-      args: {
-        id: booking.id,
-        reason
-      },
-      immediate: true
-    })
-
-    await result.immediatePromise
-
-    execute()
-    // if (result.data.value) modelValue.value = result.data.value
-    done(!result.error.value)
+    try {
+      await cancelBookingMutation(booking.id)
+      done(true)
+      await execute()
+    } catch (e) {
+      done(false)
+    }
   }
 }
 
@@ -221,25 +228,18 @@ const updateBookingInvoice: InstanceType<
   typeof BookingExpansionItem
 >['$props']['onUpdateBookingInvoice'] = async ({ data, done }) => {
   if (data.id) {
-    const result = useMutation('employee.updateBookingInvoice', {
-      args: {
-        id: data.id
-      },
-      immediate: true
-    })
-
-    await result.immediatePromise
-
-    execute()
-    if (!result.error.value) {
+    try {
+      await updateBookingInvoiceMutation(data.id)
+      done(true)
       $q.notify({
         icon: 'i-mdi-check-circle',
         color: 'positive',
         message: lang.value.booking.messages.invoiceSynchronized
       })
+      await execute()
+    } catch (e) {
+      done(false)
     }
-    // if (result.data.value) modelValue.value = result.data.value
-    done(!result.error.value)
   }
 }
 
@@ -254,23 +254,13 @@ const openUpdateBookingServiceDialog: InstanceType<
   typeof BookingExpansionItem
 >['$props']['onUpdateBookingService'] = async ({ data, done }) => {
   if (data.id) {
-    const {
-      data: bookingServiceData,
-      immediatePromise,
-      error
-    } = useQuery('employee.getBookingService', {
-      args: {
-        id: data.id
-      },
-      immediate: true
-    })
-
-    await immediatePromise
+    bookingServiceId.value = data.id
+    await executeBookingService()
 
     updateBookingServiceDialogRef.value?.functions.open()
     nextTick(() => {
       updateBookingServiceFormRef.value?.functions.setValue(
-        bookingServiceData.value
+        bookingService.value
       )
     })
   }
@@ -284,18 +274,18 @@ const submitBookingService: InstanceType<
 const updateBookingService: InstanceType<
   typeof BookingServiceForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('admin.updateBookingService', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-  if (!result.error.value) execute()
-  if (done) done(!result.error.value)
+  try {
+    await updateBookingServiceMutation(data)
+    if (done) done(true)
+    await execute()
+  } catch (e) {
+    if (done) done(false)
+  }
 }
 
 onMounted(async () => {
   await executeServices()
+  await executePets()
   if (route.params.ids) await execute()
 })
 </script>

@@ -27,11 +27,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { watch, useAttrs, ref, toRefs, computed, reactive } from 'vue'
+import { watch, useAttrs, ref, toRefs, computed } from 'vue'
 import { QSelect, useQuasar, ValidationRule } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
-import { createUseTrpc } from '../../trpc.js'
 import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
+import { useAccountGetOpeningTimesQuery } from 'src/queries/account/openingTime.js'
 
 export interface Props {
   modelValue?: string | number
@@ -41,14 +41,14 @@ export interface Props {
   type?: OPENING_TIME_TYPE
 }
 const props = defineProps<Props>()
-const { useQuery } = await createUseTrpc()
 
 const { date, type } = toRefs(props)
-const { data } = useQuery('user.getOpeningTimes', {
-  args: reactive({ date }),
-  immediate: true,
-  reactive: true
-})
+
+const { openingTimes: data, date: openingTimesDate } =
+  useAccountGetOpeningTimesQuery()
+
+watch(date, (newVal) => (openingTimesDate.value = newVal))
+
 const attrs = useAttrs()
 defineEmits<{
   (e: 'update:modelValue', value: string | number): void

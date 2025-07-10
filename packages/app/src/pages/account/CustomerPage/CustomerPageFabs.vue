@@ -10,15 +10,13 @@
 <script lang="ts" setup>
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { ref, inject } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
 import { EventBus } from 'quasar'
+import { useAccountGetCustomerQuery } from 'src/queries/account/customer.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('account-get-customer', () => {
-  executeGetCustomer()
+  executeCustomer()
 })
-
-const { useQuery } = await createUseTrpc()
 
 const busEmits = ref({
   add: 'account-open-customer-create-dialog',
@@ -30,10 +28,5 @@ const icons = ref({
   edit: 'i-mdi-edit'
 })
 
-const { data: customer, execute: executeGetCustomer } = useQuery(
-  'user.getCustomer',
-  {
-    immediate: true
-  }
-)
+const { customer, refetch: executeCustomer } = useAccountGetCustomerQuery()
 </script>

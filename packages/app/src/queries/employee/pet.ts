@@ -58,3 +58,23 @@ export const useEmployeeSearchPetsQuery = defineQuery(() => {
     ...rest
   }
 })
+
+export const useEmployeeGetPetsByCustomerId = defineQuery(() => {
+  const customerId = ref(NaN)
+
+  const { data: pets, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['employeeGetPetsByCustomerId', customerId.value],
+    query: () =>
+      trpc.employee.getPetsByCustomerId.query({
+        customerId: customerId.value
+      }),
+    placeholderData: () => []
+  })
+
+  return {
+    pets,
+    customerId,
+    ...rest
+  }
+})

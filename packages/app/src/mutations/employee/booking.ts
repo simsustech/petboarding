@@ -10,3 +10,31 @@ export const useEmployeeCreateBookingMutation = () => {
     ...rest
   }
 }
+
+export const useEmployeeUpdateBookingMutation = () => {
+  const { ...rest } = useMutation({
+    mutation: (booking: Booking) => trpc.employee.updateBooking.mutate(booking)
+  })
+  return {
+    ...rest
+  }
+}
+
+export const useEmployeeCancelBookingMutation = () => {
+  const { ...rest } = useMutation({
+    mutation: ({ id, reason }: { id: number; reason: string }) =>
+      trpc.employee.cancelBooking.mutate({ id, reason })
+  })
+  return {
+    ...rest
+  }
+}
+
+export const useEmployeeUpdateBookingInvoiceMutation = () => {
+  const { ...rest } = useMutation({
+    mutation: (id: number) => trpc.employee.updateBookingInvoice.mutate(id)
+  })
+  return {
+    ...rest
+  }
+}

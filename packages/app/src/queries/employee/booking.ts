@@ -39,3 +39,23 @@ export const useEmployeeGetBookingsQuery = defineQuery(() => {
     ...rest
   }
 })
+
+export const useEmployeeGetBookingsByIdsQuery = defineQuery(() => {
+  const ids = ref<number[]>([])
+
+  const { data: bookings, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['employeeGetBookingsByIds', ids.value],
+    query: () =>
+      trpc.employee.getBookingsByIds.query({
+        ids: ids.value
+      }),
+    placeholderData: () => []
+  })
+
+  return {
+    bookings,
+    ids,
+    ...rest
+  }
+})

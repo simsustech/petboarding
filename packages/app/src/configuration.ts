@@ -1,9 +1,18 @@
 import { Ref, ref } from 'vue'
 import { Loading, setCssVar } from 'quasar'
 import { useLang } from './lang/index.js'
-import { PET_SPECIES } from '@petboarding/api/zod'
+import { Pet, PET_SPECIES } from '@petboarding/api/zod'
 
 const lang = useLang()
+
+export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
+  customer: {
+    lastName: string
+  }
+  kennelId: number | null
+  bookingId?: number
+  daycareDateId?: number
+}
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
   API_HOST: string

@@ -62,7 +62,8 @@ const lang: Language = {
     title: 'Availability',
     messages: {
       doesNotApplyToApprovedBookings:
-        'This does not apply to bookings which are already approved!'
+        'This does not apply to bookings which are already approved!',
+      addBooking: 'You can add a booking in your account.'
     }
   },
   configuration: {

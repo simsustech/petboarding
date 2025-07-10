@@ -1,29 +1,32 @@
 <template>
   <q-card>
-    <q-item-section>
+    <q-card-section>
       <div class="row justify-center items-center">
         {{ lang.availability.title }}
         <q-btn icon="i-mdi-info" flat color="primary" @click="openDialog" />
       </div>
-    </q-item-section>
-    <q-item-section>
       <div class="row justify-center items-center">
         <q-btn-toggle v-model="toggle" :options="buttonOptions" />
       </div>
-    </q-item-section>
-    <q-item-section>
-      <date-picker
-        v-model="dateRange"
-        class="col-12 q-mt-md"
-        :periods="unavailablePeriods"
-        :range="toggle === 'boarding'"
-        :options="options"
-        first-day-of-week="1"
-      />
-    </q-item-section>
-    <q-item-section>
+
+      <div class="row justify-center items-center">
+        <date-picker
+          v-model="dateRange"
+          class="col-12 q-mt-md"
+          :periods="unavailablePeriods"
+          :range="toggle === 'boarding'"
+          :options="options"
+          first-day-of-week="1"
+        />
+      </div>
+    </q-card-section>
+    <q-card-section>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
-    </q-item-section>
+      <br />
+      <router-link to="/account/bookings">{{
+        lang.availability.messages.addBooking
+      }}</router-link>
+    </q-card-section>
   </q-card>
   <responsive-dialog
     ref="dialogRef"

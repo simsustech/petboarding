@@ -9,9 +9,8 @@
 
 <script lang="ts" setup>
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
+import { useAccountGetCustomerQuery } from 'src/queries/account/customer'
 import { onMounted, ref } from 'vue'
-import { createUseTrpc } from '../../../trpc.js'
-const { useQuery } = await createUseTrpc()
 
 const busEmits = ref({
   add: 'account-open-contact-people-create-dialog'
@@ -22,12 +21,7 @@ const icons = ref({
   edit: 'i-mdi-edit'
 })
 
-const { data: customer, execute: executeCustomer } = useQuery(
-  'user.getCustomer',
-  {
-    // immediate: true
-  }
-)
+const { customer, refetch: executeCustomer } = useAccountGetCustomerQuery()
 
 onMounted(async () => {
   await executeCustomer()

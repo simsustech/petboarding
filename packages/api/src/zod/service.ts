@@ -15,3 +15,4 @@ export const serviceValidation = {
 export const service = z.object(serviceValidation)
 
 export type Service = z.infer<typeof service>
+export { SERVICE_TYPE }

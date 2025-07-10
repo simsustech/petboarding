@@ -98,35 +98,21 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { createUseTrpc } from '../../trpc.js'
-import { today } from '@quasar/quasar-ui-qcalendar/Timestamp'
 import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { useRoute } from 'vue-router'
 import { date as dateUtil } from 'quasar'
+import { useAdminGetOccupancyQuery } from 'src/queries/admin/occupancy.js'
 
 const MAX_OCCUPANCY = Number(import.meta.env.MAX_OCCUPANCY) || 50
 
 const route = useRoute()
-const { useQuery } = await createUseTrpc()
 const router = useRouter()
-
-const selectedDate = ref(
-  !Array.isArray(route.params.date) ? route.params.date : null || today()
-)
-
-const parsedDate = computed(() => selectedDate.value.replaceAll('-', '/'))
-onBeforeRouteUpdate((to) => {
-  if (to.params.date && !Array.isArray(to.params.date)) {
-    selectedDate.value = to.params.date
-  }
-})
 
 const updateDate = (val: string | number | null) => {
   if (typeof val === 'string') {
@@ -134,22 +120,21 @@ const updateDate = (val: string | number | null) => {
   }
 }
 
-const { data, execute } = useQuery('admin.getBookingOccupancy', {
-  args: reactive({
-    date: selectedDate,
-    status: BOOKING_STATUS.APPROVED
-  })
-})
+const {
+  bookingOccupancy: data,
+  daycareOccupancy,
+  refetch: execute,
+  date: selectedDate
+} = useAdminGetOccupancyQuery()
 
-const { data: daycareOccupancy, execute: executeDaycareOccupancy } = useQuery(
-  'admin.getDaycareOccupancy',
-  {
-    args: reactive({
-      date: selectedDate,
-      status: DAYCARE_DATE_STATUS.APPROVED
-    })
+if (!Array.isArray(route.params.date)) selectedDate.value = route.params.date
+
+const parsedDate = computed(() => selectedDate.value.replaceAll('-', '/'))
+onBeforeRouteUpdate((to) => {
+  if (to.params.date && !Array.isArray(to.params.date)) {
+    selectedDate.value = to.params.date
   }
-)
+})
 
 const lang = useLang()
 
@@ -166,6 +151,5 @@ const getMonthYear = (date: string) => dateUtil.formatDate(date, 'MMMM YYYY')
 
 onMounted(async () => {
   await execute()
-  await executeDaycareOccupancy()
 })
 </script>

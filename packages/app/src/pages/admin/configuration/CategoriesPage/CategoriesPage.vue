@@ -53,7 +53,6 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { Category, CategoryPrice } from '@petboarding/api/zod'
 import CategoryForm from '../../../../components/category/CategoryForm.vue'
 import CategoryPriceForm from '../../../../components/category/CategoryPriceForm.vue'
@@ -61,6 +60,14 @@ import CategoriesList from '../../../../components/category/CategoriesList.vue'
 import { useQuasar } from 'quasar'
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import { useConfigurationGetCategoriesQuery } from 'src/queries/configuration/category.js'
+import {
+  useConfigurationCreateCategoryMutation,
+  useConfigurationCreateCategoryPriceMutation,
+  useConfigurationDeleteCategoryMutation,
+  useConfigurationDeleteCategoryPriceMutation,
+  useConfigurationUpdateCategoryMutation
+} from 'src/mutations/configuration/category.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-categories-create-dialog', () => {
@@ -69,12 +76,20 @@ bus.on('administrator-configuration-open-categories-create-dialog', () => {
       done: () => {}
     })
 })
-const { useQuery, useMutation } = await createUseTrpc()
 
-const { data: categories, execute } = useQuery(
-  'configuration.getCategories',
-  {}
-)
+const { categories, refetch: execute } = useConfigurationGetCategoriesQuery()
+
+const { mutateAsync: createCategoryMutation } =
+  useConfigurationCreateCategoryMutation()
+const { mutateAsync: updateCategoryMutation } =
+  useConfigurationUpdateCategoryMutation()
+const { mutateAsync: deleteCategoryMutation } =
+  useConfigurationDeleteCategoryMutation()
+
+const { mutateAsync: createCategoryPriceMutation } =
+  useConfigurationCreateCategoryPriceMutation()
+const { mutateAsync: deleteCategoryPriceMutation } =
+  useConfigurationDeleteCategoryPriceMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -100,14 +115,13 @@ const create: InstanceType<
 const createCategory: InstanceType<
   typeof CategoryForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createCategory', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createCategoryMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateCategoryDialogRef = ref<typeof ResponsiveDialog>()
@@ -133,14 +147,13 @@ const update: InstanceType<
 const updateCategory: InstanceType<
   typeof CategoryForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateCategory', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateCategoryMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteCategoryDialog = ({ data }: { data: Category }) => {
@@ -151,13 +164,10 @@ const openDeleteCategoryDialog = ({ data }: { data: Category }) => {
     ${lang.value.category.fields.name}: ${data.name}<br />
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteCategory', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteCategoryMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 
@@ -169,13 +179,10 @@ const openDeleteCategoryPriceDialog = ({ data }: { data: CategoryPrice }) => {
     ${lang.value.categoryPrice.fields.date}: ${data.date}<br />
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteCategoryPrice', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteCategoryPriceMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 
@@ -208,16 +215,12 @@ const submitCategoryPrice: InstanceType<
 const createCategoryPrice: InstanceType<
   typeof CategoryPriceForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createCategoryPrice', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) {
-    done(!result.error.value)
+  try {
+    await createCategoryPriceMutation(data)
+    done(true)
     await execute()
+  } catch (e) {
+    done(false)
   }
 }
 

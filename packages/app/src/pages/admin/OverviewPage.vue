@@ -12,21 +12,18 @@
 </template>
 
 <script setup lang="ts">
-import { createUseTrpc } from '../../trpc.js'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
 import { useLang } from '../../lang/index.js'
 import { onMounted } from 'vue'
-import { ref } from 'vue'
-import { reactive } from 'vue'
+import { useAdminFinancialGetUnpaidBookingsQuery } from 'src/queries/admin/financial.js'
 
 const lang = useLang()
 
-const days = ref(90)
-const { useQuery } = await createUseTrpc()
-const { data: unpaidBookings, execute: executeUnpaidBookings } = useQuery(
-  'admin.getUnpaidBookings',
-  { args: reactive({ days }) }
-)
+const {
+  bookings: unpaidBookings,
+  days,
+  refetch: executeUnpaidBookings
+} = useAdminFinancialGetUnpaidBookingsQuery()
 
 onMounted(async () => {
   await executeUnpaidBookings()

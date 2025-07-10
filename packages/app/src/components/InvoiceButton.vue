@@ -1,7 +1,7 @@
 <template>
   <q-btn
     :dense="$q.screen.lt.sm"
-    class="q-pa-none"
+    class="q-pa-none max-w-62px max-h-80px"
     :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.uuid}`"
     target="_blank"
     outline

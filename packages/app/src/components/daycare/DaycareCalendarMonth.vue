@@ -296,7 +296,7 @@ const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   size
 ) => {
   contentSize.value.width = '100%'
-  contentSize.value.height = `${size.height}px`
+  contentSize.value.height = '75vh' //`${size.height}px`
 }
 
 const getButtonColor = (date: string) => {

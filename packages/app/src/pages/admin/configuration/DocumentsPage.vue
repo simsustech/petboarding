@@ -90,16 +90,28 @@
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
 import '@quasar/quasar-ui-qmarkdown/dist/index.css'
-import { createUseTrpc } from '../../../trpc.js'
 import { useLang } from '../../../lang/index.js'
 import { ref } from 'vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
+import {
+  usePublicGetPrivacyPolicyQuery,
+  usePublicGetTermsAndConditionsQuery
+} from 'src/queries/public.js'
+import {
+  useAdminUpdatePrivacyPolicyMutation,
+  useAdminUpdateTermsAndConditionsMutation
+} from 'src/mutations/admin/document.js'
 
-const { useQuery, useMutation } = await createUseTrpc()
+const { termsAndConditions, refetch: executeTermsAndConditions } =
+  usePublicGetTermsAndConditionsQuery()
+const { privacyPolicy, refetch: executePrivacyPolicy } =
+  usePublicGetPrivacyPolicyQuery()
+const { mutateAsync: updateTermsAndConditionsMutation } =
+  useAdminUpdateTermsAndConditionsMutation()
+const { mutateAsync: updatePrivacyPolicyMutation } =
+  useAdminUpdatePrivacyPolicyMutation()
 const lang = useLang()
 
-const { data: termsAndConditions, execute: executeTermsAndConditions } =
-  useQuery('public.getTermsAndConditions')
 const termsAndConditionsCopy = ref<string>()
 const termsAndConditionsDialogRef = ref<typeof ResponsiveDialog>()
 
@@ -108,20 +120,17 @@ const openTermsAndConditionsDialog = () => {
 }
 
 const updateTermsAndConditions = async ({ done }) => {
-  const { immediatePromise } = useMutation('admin.updateTermsAndConditions', {
-    args: {
+  try {
+    await updateTermsAndConditionsMutation({
       content: termsAndConditionsCopy.value
-    },
-    immediate: true
-  })
-  done()
-  await immediatePromise
-  await executeTermsAndConditions()
+    })
+    done()
+    await executeTermsAndConditions()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
-const { data: privacyPolicy, execute: executePrivacyPolicy } = useQuery(
-  'public.getPrivacyPolicy'
-)
 const privacyPolicyCopy = ref<string>()
 const privacyPolicyDialogRef = ref<typeof ResponsiveDialog>()
 
@@ -130,15 +139,16 @@ const openPrivacyPolicyDialog = () => {
 }
 
 const updatePrivacyPolicy = async ({ done }) => {
-  const { immediatePromise } = useMutation('admin.updatePrivacyPolicy', {
-    args: {
+  try {
+    await updatePrivacyPolicyMutation({
       content: privacyPolicyCopy.value
-    },
-    immediate: true
-  })
-  done()
-  await immediatePromise
-  await executePrivacyPolicy()
+    })
+    done(true)
+    await executePrivacyPolicy()
+  } catch (e) {
+    console.error(e)
+    done(false)
+  }
 }
 
 onMounted(async () => {

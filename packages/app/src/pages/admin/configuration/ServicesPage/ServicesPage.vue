@@ -39,13 +39,18 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { Service } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
 import ServicesList from '../../../../components/service/ServicesList.vue'
 import ServiceForm from '../../../../components/service/ServiceForm.vue'
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import { useConfigurationGetServicesQuery } from 'src/queries/configuration/service.js'
+import {
+  useConfigurationCreateServiceMutation,
+  useConfigurationDeleteServiceMutation,
+  useConfigurationUpdateServiceMutation
+} from 'src/mutations/configuration/service.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-services-create-dialog', () => {
@@ -54,9 +59,15 @@ bus.on('administrator-configuration-open-services-create-dialog', () => {
       done: () => {}
     })
 })
-const { useQuery, useMutation } = await createUseTrpc()
 
-const { data: services, execute } = useQuery('configuration.getServices', {})
+const { services, refetch: execute } = useConfigurationGetServicesQuery()
+
+const { mutateAsync: createServiceMutation } =
+  useConfigurationCreateServiceMutation()
+const { mutateAsync: updateServiceMutation } =
+  useConfigurationUpdateServiceMutation()
+const { mutateAsync: deleteServiceMutation } =
+  useConfigurationDeleteServiceMutation()
 
 const lang = useLang()
 const $q = useQuasar()
@@ -82,14 +93,13 @@ const create: InstanceType<
 const createService: InstanceType<
   typeof ServiceForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createService', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createServiceMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateServiceDialogRef = ref<typeof ResponsiveDialog>()
@@ -115,14 +125,13 @@ const update: InstanceType<
 const updateService: InstanceType<
   typeof ServiceForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateService', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateServiceMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteServiceDialog = ({ data }: { data: Service }) => {
@@ -133,13 +142,10 @@ const openDeleteServiceDialog = ({ data }: { data: Service }) => {
     ${lang.value.service.fields.name}: ${data.name}<br />
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteService', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteServiceMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

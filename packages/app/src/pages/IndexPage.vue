@@ -47,31 +47,30 @@ export default {
 <script setup lang="ts">
 import AnnouncementsList from '../components/announcement/AnnouncementsList.vue'
 import { useConfiguration } from '../configuration.js'
-import { createUseTrpc } from '../trpc.js'
 import { computed, onMounted, ref } from 'vue'
 import petboardingLogo from '../assets/logo.svg'
 import { useQuasar } from 'quasar'
 import DashboardHomeMenuList from 'src/components/dashboard/DashboardHomeMenuList.vue'
+import {
+  usePublicGetAnnouncementsQuery,
+  usePublicGetUrgentAnnouncementsQuery
+} from 'src/queries/public'
 
-const { useQuery } = await createUseTrpc()
 const configuration = useConfiguration()
 const $q = useQuasar()
 
 const title = computed(() => configuration.value.TITLE)
 const logo = ref(petboardingLogo)
 
-const { data: announcements, execute } = useQuery('public.getAnnouncements')
-const { data: urgentAnnouncements, execute: executeUrgentAnnouncements } =
-  useQuery('public.getUrgentAnnouncements')
-
-// const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
+const { announcements, refetch: execute } = usePublicGetAnnouncementsQuery()
+const { urgentAnnouncements, refetch: executeUrgentAnnouncements } =
+  usePublicGetUrgentAnnouncementsQuery()
 
 onMounted(async () => {
   await fetch('./logo.svg').then(() => {
     logo.value = './logo.svg'
   })
   await execute()
-  console.log(announcements)
   await executeUrgentAnnouncements()
   // executePeriods()
   if (urgentAnnouncements.value) {

@@ -13,7 +13,9 @@ import {
   findCustomerDaycareSubscription,
   setCustomerDaycareSubscriptionStatus
 } from './repositories/customerDaycareSubscription.js'
-import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
+import { type Invoice } from '@modular-api/fastify-checkout'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+
 import {
   BOOKING_STATUS,
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS

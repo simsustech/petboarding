@@ -47,7 +47,6 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { createUseTrpc } from '../../../../trpc.js'
 import { Kennel } from '@petboarding/api/zod'
 import KennelForm from '../../../../components/kennel/KennelForm.vue'
 import KennelsList from '../../../../components/kennel/KennelsList.vue'
@@ -55,6 +54,13 @@ import { useQuasar } from 'quasar'
 
 import { EventBus } from 'quasar'
 import { inject } from 'vue'
+import { useConfigurationGetBuildingsQuery } from 'src/queries/configuration/building.js'
+import { useConfigurationGetKennelsQuery } from 'src/queries/configuration/kennel.js'
+import {
+  useConfigurationCreateKennelMutation,
+  useConfigurationDeleteKennelMutation,
+  useConfigurationUpdateKennelMutation
+} from 'src/mutations/configuration/kennel.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-kennels-create-dialog', () => {
@@ -64,12 +70,18 @@ bus.on('administrator-configuration-open-kennels-create-dialog', () => {
     })
 })
 
-const { useQuery, useMutation } = await createUseTrpc()
+const { buildings, refetch: executeBuildings } =
+  useConfigurationGetBuildingsQuery()
 
-const { data: kennels, execute } = useQuery('configuration.getKennels', {})
-const { data: buildings, execute: executeBuildings } = useQuery(
-  'configuration.getBuildings'
-)
+const { kennels, refetch: execute } = useConfigurationGetKennelsQuery()
+
+const { mutateAsync: createKennelMutation } =
+  useConfigurationCreateKennelMutation()
+const { mutateAsync: updateKennelMutation } =
+  useConfigurationUpdateKennelMutation()
+const { mutateAsync: deleteKennelMutation } =
+  useConfigurationDeleteKennelMutation()
+
 const lang = useLang()
 const $q = useQuasar()
 
@@ -94,14 +106,13 @@ const create: InstanceType<
 const createKennel: InstanceType<
   typeof KennelForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.createKennel', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await createKennelMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const updateKennelDialogRef = ref<typeof ResponsiveDialog>()
@@ -127,14 +138,13 @@ const update: InstanceType<
 const updateKennel: InstanceType<
   typeof KennelForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('configuration.updateKennel', {
-    args: data,
-    immediate: true
-  })
-
-  await result.immediatePromise
-
-  if (done) done(!result.error.value)
+  try {
+    await updateKennelMutation(data)
+    done(true)
+    await execute()
+  } catch (e) {
+    done(false)
+  }
 }
 
 const openDeleteKennelDialog = ({ data }: { data: Kennel }) => {
@@ -146,13 +156,10 @@ const openDeleteKennelDialog = ({ data }: { data: Kennel }) => {
     ${lang.value.kennel.fields.building}: ${data.building?.name}
     `
   }).onOk(async () => {
-    const result = useMutation('configuration.deleteKennel', {
-      args: data.id,
-      immediate: true
-    })
-
-    await result.immediatePromise
-    if (!result.error.value) await execute()
+    try {
+      await deleteKennelMutation({ id: data.id })
+      await execute()
+    } catch (e) {}
   })
 }
 

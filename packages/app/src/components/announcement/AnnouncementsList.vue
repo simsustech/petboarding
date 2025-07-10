@@ -124,7 +124,7 @@ const icon = {
   general: 'i-mdi-info',
   important: 'i-mdi-warning',
   priority: 'i-mdi-priorityhigh',
-  urgent: 'i-mdi-crisis-alert'
+  urgent: 'i-mdi-alert'
 }
 const iconColor = {
   general: 'blue',
