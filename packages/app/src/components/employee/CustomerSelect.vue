@@ -1,5 +1,6 @@
 <template>
   <filtered-model-select
+    v-if="filteredOptions"
     v-bind="attrs"
     :label="lang.customer.customer"
     :filtered-options="filteredOptions"

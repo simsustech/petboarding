@@ -6,7 +6,6 @@
       <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <customer-select
-            v-if="filteredCustomers"
             v-model="customerId"
             clearable
             :label="lang.customer.customer"
