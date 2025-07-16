@@ -18,7 +18,7 @@
           modelValue.amountDue !== null &&
           modelValue.amountDue <= 0
         "
-        style="position: absolute; right: 20px; bottom: 20px"
+        style="position: absolute; right: 10px; bottom: 20px"
         name="i-mdi-check"
         :class="{
           'text-green': true
