@@ -112,7 +112,7 @@
                 </template>
                 <q-item to="/account" exact>
                   <q-item-section>
-                    <q-item-label> {{ lang.overview }} </q-item-label>
+                    <q-item-label> {{ lang.overview.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item to="/account/customer">
@@ -245,7 +245,7 @@
                 >
                   <q-item to="/admin/financial/overview">
                     <q-item-section>
-                      <q-item-label> {{ lang.overview }} </q-item-label>
+                      <q-item-label> {{ lang.overview.title }} </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item to="/admin/financial/bookings">
@@ -434,10 +434,9 @@ const userRoute = {
 }
 
 const title = computed(() => {
-  let title = configuration.value.TITLE
   // @ts-expect-error key might not exist
-  if (lang.value[route.meta?.lang]) title = lang.value[route.meta.lang].title
-  return title
+  if (lang.value[route.meta?.lang]) return lang.value[route.meta.lang].title
+  return configuration.value.TITLE ?? 'Petboarding'
 })
 const language = ref<string>('en-US')
 

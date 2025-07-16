@@ -10,7 +10,6 @@ const lang: Language = {
   goTo: 'Ga naar',
   administrator: 'Administrator',
   employee: 'Medewerker',
-  overview: 'Overzicht',
   dayOverview: 'Dag overzicht',
   customers: 'Klanten',
   labels: 'Labels',
@@ -598,6 +597,9 @@ const lang: Language = {
         addOrViewDaycareDates: 'Ik wil dagopvang datums toevoegen of bekijken.'
       }
     }
+  },
+  overview: {
+    title: 'Overzicht'
   }
 }
 

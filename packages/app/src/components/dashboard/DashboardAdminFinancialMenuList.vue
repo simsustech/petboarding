@@ -5,7 +5,7 @@
         <q-icon name="i-mdi-view-dashboard" />
       </q-item-section>
       <q-item-section>
-        <q-item-label> {{ lang.overview }} </q-item-label>
+        <q-item-label> {{ lang.overview.title }} </q-item-label>
       </q-item-section>
     </q-item>
     <q-item to="/admin/financial/bookings">

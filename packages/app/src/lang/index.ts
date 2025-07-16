@@ -8,7 +8,6 @@ export interface Language {
   goTo: string
   administrator: string
   employee: string
-  overview: string
   dayOverview: string
   customers: string
   labels: string
@@ -552,6 +551,9 @@ export interface Language {
         addOrViewDaycareDates: string
       }
     }
+  }
+  overview: {
+    title: string
   }
 }
 

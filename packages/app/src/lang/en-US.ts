@@ -10,7 +10,6 @@ const lang: Language = {
   goTo: 'Go to',
   administrator: 'Administrator',
   employee: 'Employee',
-  overview: 'Overview',
   dayOverview: 'Day overview',
   customers: 'Customers',
   labels: 'Labels',
@@ -586,6 +585,9 @@ const lang: Language = {
         addOrViewDaycareDates: 'I want to add or review daycare dates.'
       }
     }
+  },
+  overview: {
+    title: 'Overview'
   }
 }
 
