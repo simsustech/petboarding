@@ -436,7 +436,7 @@ const userRoute = {
 const title = computed(() => {
   // @ts-expect-error key might not exist
   if (lang.value[route.meta?.lang]) return lang.value[route.meta.lang].title
-  return configuration.value.TITLE ?? 'Petboarding'
+  return configuration.value.TITLE
 })
 const language = ref<string>('en-US')
 
@@ -460,6 +460,11 @@ watch(language, (newVal) => {
   loadLang(newVal)
   loadComponentsFormLang(newVal)
   loadModularApiQuasarComponentsCheckoutLang(newVal)
+
+  // @ts-expect-error string
+  languageImports.value[newVal]().then((lang) => {
+    $q.lang.set(lang.default)
+  })
 })
 
 await loadConfiguration()

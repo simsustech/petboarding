@@ -27,10 +27,15 @@ await loadConfiguration()
 const configuration = useConfiguration()
 await initializeTRPCClient(configuration.value.API_HOST)
 
-watch(language, () => {
-  loadLang($q.lang.isoName)
-  loadComponentsFormLang($q.lang.isoName)
-  loadModularApiQuasarComponentsCheckoutLang($q.lang.isoName)
+watch(language, (newVal) => {
+  loadLang(newVal)
+  loadComponentsFormLang(newVal)
+  loadModularApiQuasarComponentsCheckoutLang(newVal)
+
+  // @ts-expect-error string
+  languageImports.value[newVal]().then((lang) => {
+    $q.lang.set(lang.default)
+  })
 })
 
 const authenticatedRoutes = ['/account', '/employee', '/admin', '/user']
