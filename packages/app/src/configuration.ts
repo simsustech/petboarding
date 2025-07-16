@@ -1,4 +1,4 @@
-import { Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { Loading, setCssVar } from 'quasar'
 import { useLang } from './lang/index.js'
 import { Pet, PET_SPECIES } from '@petboarding/api/zod'
@@ -115,7 +115,7 @@ export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
 
 export const useConfiguration = () => configuration
 
-export const loadConfiguration = async (language: Ref<string>) => {
+export const loadConfiguration = async () => {
   Loading.show({
     message: lang.value.configuration.loading + '...',
     spinnerColor: 'primary'
@@ -124,7 +124,7 @@ export const loadConfiguration = async (language: Ref<string>) => {
     .then((res) => res.json())
     .then((res) => {
       configuration.value = { ...configuration.value, ...res }
-      if (configuration.value.LANG) language.value = configuration.value.LANG
+      // if (configuration.value.LANG) language.value = configuration.value.LANG
     })
     .then(() => {
       const sassVariables = configuration.value.SASS_VARIABLES

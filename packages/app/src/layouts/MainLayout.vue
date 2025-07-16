@@ -463,8 +463,7 @@ watch(language, (newVal) => {
   loadModularApiQuasarComponentsCheckoutLang(newVal)
 })
 
-language.value = $q.lang.isoName
-await loadConfiguration(language)
+await loadConfiguration()
 const configuration = useConfiguration()
 await initializeTRPCClient(configuration.value.API_HOST)
 
@@ -500,7 +499,7 @@ onMounted(async () => {
   if (__IS_PWA__) {
     await import('../pwa.js')
   }
-  await loadConfiguration(language)
+  language.value = configuration.value.LANG
   await useOAuthClient()
   await oAuthClient.value?.getUserInfo()
 
