@@ -18,7 +18,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, watch } from 'vue'
 import { useConfiguration } from './configuration.js'
 import {
   useMeta,
@@ -33,6 +33,7 @@ import {
 } from 'quasar'
 import { setDefaultPropsMd3 } from 'unocss-preset-quasar/styles'
 import { EventBus } from 'quasar'
+import { setThemeColors } from 'unocss-preset-quasar/theme'
 
 const bus = new EventBus<{
   'account-open-customer-create-dialog': () => void
@@ -68,6 +69,12 @@ setDefaultPropsMd3({
   QSelect,
   QField,
   QChip
+})
+
+watch(configuration, (newVal) => {
+  if (newVal.THEME_COLORS) {
+    setThemeColors(newVal.THEME_COLORS)
+  }
 })
 </script>
 

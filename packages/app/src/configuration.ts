@@ -2,6 +2,7 @@ import { Ref, ref } from 'vue'
 import { Loading, setCssVar } from 'quasar'
 import { useLang } from './lang/index.js'
 import { Pet, PET_SPECIES } from '@petboarding/api/zod'
+import { QuasarTheme } from 'unocss-preset-quasar/theme'
 
 const lang = useLang()
 
@@ -15,7 +16,7 @@ export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
 }
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
-  API_HOST: string
+  API_HOST?: string
   LICENSE_KEY?: string
   LANG: string
   COUNTRY: string
@@ -44,6 +45,7 @@ export interface PETBOARDING_CLIENT_CONFIGURATION {
     }
   }
   SUPPORT_EMAIL?: string
+  THEME_COLORS?: QuasarTheme['colors']
 }
 export const BOOKING_ICON = ref({
   approved: 'i-mdi-check',

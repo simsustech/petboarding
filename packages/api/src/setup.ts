@@ -288,7 +288,9 @@ export default async function (fastify: FastifyInstance) {
           host: slimfactHost
         }
       },
-      SUPPORT_EMAIL: env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL')
+      SUPPORT_EMAIL:
+        env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL'),
+      THEME_COLORS: theme['colors']
     })
   })
 
