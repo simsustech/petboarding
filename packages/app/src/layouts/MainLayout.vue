@@ -439,7 +439,7 @@ const title = computed(() => {
   if (lang.value[route.meta?.lang]) title = lang.value[route.meta.lang].title
   return title
 })
-const language = ref($q.lang.isoName)
+const language = ref<string>('en-US')
 
 const languageLocales = ref([
   {
@@ -463,6 +463,7 @@ watch(language, (newVal) => {
   loadModularApiQuasarComponentsCheckoutLang(newVal)
 })
 
+language.value = $q.lang.isoName
 await loadConfiguration(language)
 const configuration = useConfiguration()
 await initializeTRPCClient(configuration.value.API_HOST)
