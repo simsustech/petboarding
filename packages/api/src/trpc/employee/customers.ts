@@ -41,7 +41,8 @@ export const employeeCustomerRoutes = ({
         })
         return customers
       }
-      throw new TRPCError({ code: 'BAD_REQUEST' })
+      return []
+      // throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
   getCustomer: procedure
     .input(

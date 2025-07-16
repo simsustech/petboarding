@@ -48,7 +48,8 @@ export const employeePetRoutes = ({
       const pets = searchPets(searchPhrase)
       return pets
     }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    return []
+    // throw new TRPCError({ code: 'BAD_REQUEST' })
   }),
   getPet: procedure
     .input(

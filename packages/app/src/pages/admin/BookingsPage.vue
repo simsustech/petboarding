@@ -7,6 +7,7 @@
           <booking-status-select v-model="status" />
 
           <customer-select
+            v-if="filteredCustomers"
             v-model="customerId"
             :label="lang.customer.customer"
             :filtered-options="filteredCustomers"

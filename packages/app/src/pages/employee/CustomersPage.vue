@@ -2,6 +2,7 @@
   <q-page padding>
     <q-toolbar class="q-mb-lg">
       <customer-select
+        v-if="filteredCustomers"
         :model-value="id"
         standout
         rounded
