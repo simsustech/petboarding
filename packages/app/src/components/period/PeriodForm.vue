@@ -36,9 +36,9 @@
               v-if="modelValue.minimumRatingForException !== void 0"
               :model-value="modelValue.minimumRatingForException || 0"
               size="3em"
-              icon="star_border"
-              icon-selected="star"
-              icon-half="star_half"
+              icon="i-mdi-star-border"
+              icon-selected="i-mdi-star"
+              icon-half="i-mdi-star-half"
               @update:model-value="
                 ($event) => (modelValue.minimumRatingForException = $event)
               "

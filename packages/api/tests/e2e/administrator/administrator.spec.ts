@@ -29,7 +29,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 
@@ -38,7 +40,8 @@ test.describe('Accounts', async () => {
     await page.goto('/admin/accounts')
     await page.waitForLoadState('networkidle')
 
-    await page.locator('button').filter({ hasText: 'search' }).click()
+    await page.getByTestId('search-button').click()
+
     await page.getByLabel('Email').click()
     await page.getByLabel('Email').fill('admin@petboarding.app')
 

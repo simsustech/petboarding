@@ -32,10 +32,10 @@ import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import {
   computeInvoiceCosts,
-  Invoice,
-  RawInvoiceDiscount,
-  RawInvoiceLine,
-  RawInvoiceSurcharge
+  type Invoice,
+  type RawInvoiceDiscount,
+  type RawInvoiceLine,
+  type RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
 
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
@@ -772,9 +772,14 @@ export const adminBookingRoutes = ({
         criteria: {
           until: new Date().toISOString().slice(0, 10),
           from: subDays(new Date(), days).toISOString().slice(0, 10),
-          status: BOOKING_STATUS.APPROVED
+          statuses: [
+            BOOKING_STATUS.APPROVED,
+            BOOKING_STATUS.CANCELED,
+            BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+          ]
         }
       })
+      console.log(bookings)
       const unpaidBookingUuids = bookings
         .map((booking) => booking.invoiceUuid)
         .filter((uuid): uuid is string => !!uuid)

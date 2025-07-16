@@ -13,7 +13,6 @@ const lang: Language = {
   overview: 'Overzicht',
   dayOverview: 'Dag overzicht',
   customers: 'Klanten',
-  bookings: 'Reserveringen pension',
   labels: 'Labels',
   tbd: 'n.o.t.k.',
   pricesSubjectToChange: 'Prijzen onder voorbehoud.',
@@ -31,6 +30,9 @@ const lang: Language = {
   delete: 'Verwijderen',
   documentation: 'Documentatie',
   add: 'Toevoegen',
+  darkMode: 'Donkere modus',
+  language: 'Taal',
+  termsAndConditions: 'Algemene voorwaarden',
   account: {
     title: 'Account',
     fields: {
@@ -60,7 +62,8 @@ const lang: Language = {
     title: 'Beschikbaarheid',
     messages: {
       doesNotApplyToApprovedBookings:
-        'Dit is niet van toepassing op reeds goedgekeurde reserveringen!'
+        'Dit is niet van toepassing op reeds goedgekeurde reserveringen!',
+      addBooking: 'Een reservering toevoegen kan in uw account.'
     }
   },
   configuration: {
@@ -71,7 +74,8 @@ const lang: Language = {
     periods: 'Periodes',
     emailTemplates: 'Email sjablonen',
     openingTimes: 'Openingstijden',
-    integrations: 'Integraties'
+    integrations: 'Integraties',
+    documents: 'Documenten'
   },
   customer: {
     title: 'Klantgegevens',
@@ -172,7 +176,9 @@ const lang: Language = {
       vaccinationsMissing:
         'Huisdier heeft niet alle verplichte vaccinaties. Neem contact op met uw dierenarts en vergeet niet het paspoort van uw huisdier mee te nemen.',
       delete:
-        'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.'
+        'Weet u zeker dat u het volgende huisdier wilt verwijderen? Type hieronder de naam van het huisdier om te bevestigen.',
+      foodMoreThanTwoTimesADay: 'Meer dan twee maaltijden per dag.',
+      hasMedication: 'Heeft medicatie'
     },
     labels: {
       open: 'Open huisdier.'
@@ -290,6 +296,9 @@ const lang: Language = {
         'U dient akkoord te gaan met de algemene voorwaarden.',
       approvedAfterDownPayment: 'U dient akkoord te gaan.'
     }
+  },
+  bookings: {
+    title: 'Reserveringen pension'
   },
   service: {
     title: 'Diensten',
@@ -483,7 +492,9 @@ const lang: Language = {
       verifyDeletion:
         'Weet u zeker dat u de volgende dagopvang abonnement wilt verwijderen?',
       addDaycareSubscriptionNotification:
-        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.'
+        'Als u dagopvang abonnementen toevoegt moeten klanten eerst een abonnement afnemen voordat zij nieuwe datums kunnen indienen.',
+      noActiveSubscriptions:
+        'U heeft momenteel geen actieve dagopvang abonnementen.'
     }
   },
   customerDaycareSubscription: {
@@ -574,6 +585,18 @@ const lang: Language = {
       amountDue: 'Te betalen',
       amountPaid: 'Betaald',
       amountRefunded: 'Terugbetaald'
+    }
+  },
+  dashboard: {
+    account: {
+      menu: {
+        title: 'Snelmenu',
+        editCustomer: 'Ik wil mijn persoonlijke gegevens wijzigen.',
+        editContactPeople: 'Ik wil mijn contactpersonen wijzigen.',
+        editPets: 'Ik wil de informatie van mijn huisdier(en) wijzigen.',
+        addOrViewBooking: 'Ik wil een reservering toevoegen of bekijken.',
+        addOrViewDaycareDates: 'Ik wil dagopvang datums toevoegen of bekijken.'
+      }
     }
   }
 }

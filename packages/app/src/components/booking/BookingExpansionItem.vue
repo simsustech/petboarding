@@ -85,28 +85,29 @@
                 onUpdateBookingInvoice &&
                 twoWeeksInThePast < modelValue.endDate
               "
+              outline
+              :rounded="false"
               @click.stop="updateBookingInvoice(modelValue)"
             >
-              <q-icon name="receipt" />
-              <q-icon
-                name="sync"
-                class="text-black q-ma-none q-pa-none"
-                size="xs"
-                rounded
-                style="
-                  position: relative;
-                  right: 12px;
-                  bottom: -10px;
-                  margin-right: -12px;
-                "
-              />
+              <div class="column items-center">
+                <q-avatar class="col-12">
+                  <q-icon name="i-mdi-invoice-text" size="md" />
+                </q-avatar>
+                <q-icon
+                  style="position: absolute; right: 16px; bottom: 6px"
+                  name="i-mdi-sync"
+                  size="xs"
+                />
+              </div>
             </q-btn>
           </q-item-section>
         </template>
-        <booking-costs
-          v-if="modelValue.costs"
-          :model-value="modelValue.costs"
-        />
+        <q-list bordered>
+          <booking-costs
+            v-if="modelValue.costs"
+            :model-value="modelValue.costs"
+          />
+        </q-list>
       </q-expansion-item>
       <q-expansion-item
         v-if="modelValue.services?.length"
@@ -123,7 +124,7 @@
         <booking-services-list
           :model-value="modelValue.services"
           :show-edit-button="showBookingServicesEditButton"
-          @edit="editBookingService"
+          @update="updateBookingService"
         />
       </q-expansion-item>
     </q-list>
@@ -168,7 +169,7 @@ const emit = defineEmits<{
     }
   ): void
   (
-    e: 'editBookingService',
+    e: 'updateBookingService',
     {
       data,
       done
@@ -193,10 +194,10 @@ const emit = defineEmits<{
 const lang = useLang()
 const configuration = useConfiguration()
 
-const editBookingService: InstanceType<
+const updateBookingService: InstanceType<
   typeof BookingServicesList
->['$props']['onEdit'] = ({ data, done }) =>
-  emit('editBookingService', { data, done })
+>['$props']['onUpdate'] = ({ data, done }) =>
+  emit('updateBookingService', { data, done })
 
 const updateBookingInvoice = (booking: Booking) => {
   const done = () => {}

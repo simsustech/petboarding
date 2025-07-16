@@ -14,20 +14,23 @@
         </q-item-label> -->
         </q-item-section>
         <q-item-section side>
-          <q-btn flat icon="more_vert">
+          <q-btn flat icon="i-mdi-more-vert">
             <q-menu>
               <q-list>
                 <q-item
+                  v-if="showEditButton"
                   v-close-popup
                   clickable
+                  data-testid="edit-button"
                   @click="emit('update', { data: category })"
                 >
                   <q-item-section>
                     <q-item-label>
-                      {{ lang.edit }}
+                      {{ lang.update }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
+
                 <q-item
                   v-close-popup
                   clickable
@@ -40,13 +43,14 @@
                   </q-item-section>
                 </q-item>
                 <q-item
+                  v-if="showDeleteButton"
                   v-close-popup
                   clickable
-                  class="bg-red"
+                  data-testid="delete-button"
                   @click="emit('delete', { data: category })"
                 >
                   <q-item-section>
-                    <q-item-label>
+                    <q-item-label class="text-red">
                       {{ lang.delete }}
                     </q-item-label>
                   </q-item-section>
@@ -74,7 +78,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            icon="delete"
+            icon="i-mdi-delete"
             color="red"
             @click="emit('deletePrice', { data: price })"
           />

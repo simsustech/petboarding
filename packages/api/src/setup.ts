@@ -4,7 +4,7 @@ import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
 import env from '@vitrify/tools/env'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
-import { onRendered as appOnRendered } from '@petboarding/app/hooks'
+import { onAppRendered as appOnAppRendered } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
 import { oidcClientPlugin } from '@modular-api/api'
 import { createSlimfactTrpcClient } from './slimfact/index.js'
@@ -13,12 +13,22 @@ import {
   findCustomerDaycareSubscription,
   setCustomerDaycareSubscriptionStatus
 } from './repositories/customerDaycareSubscription.js'
-import { Invoice, InvoiceStatus } from '@modular-api/fastify-checkout'
+import { type Invoice } from '@modular-api/fastify-checkout'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+
 import {
   BOOKING_STATUS,
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 } from './kysely/types.js'
 import { createBookingStatus, findBooking } from './repositories/booking.js'
+import { generateTheme } from 'unocss-preset-quasar/theme'
+
+// const getString = (str: string) => str
+// const host = getString(__HOST__)
+
+const theme = generateTheme(
+  env.read('SOURCE_COLOR') || env.read('VITE_SOURCE_COLOR')
+)
 
 const sassVariables = {
   $primary:
@@ -172,6 +182,7 @@ export default async function (fastify: FastifyInstance) {
       issuerName:
         env.read('OIDC_ISSUER_NAME') || env.read('VITE_OIDC_ISSUER_NAME'),
       locale: env.read('VITE_LANG') || 'en-US',
+      themeColors: theme['colors'],
       sassVariables,
       issuer: `https://${host}`,
       accountMethods,
@@ -246,6 +257,7 @@ export default async function (fastify: FastifyInstance) {
       }
     },
     configuration: () => ({
+      API_HOST: host,
       LICENSE_KEY: env.read('VITE_LICENSE_KEY'),
       LANG: env.read('VITE_LANG') || 'en-US',
       COUNTRY: env.read('VITE_COUNTRY') || 'NL',
@@ -282,7 +294,7 @@ export default async function (fastify: FastifyInstance) {
 
   await fastify.register(appSsrPlugin, {
     host,
-    onRendered: appOnRendered
+    onAppRendered: appOnAppRendered
   })
 
   const boss = await initialize({ fastify })

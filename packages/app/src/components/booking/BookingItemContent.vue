@@ -4,6 +4,7 @@
       v-if="modelValue.status"
       :name="BOOKING_ICON[modelValue.status!.status]"
       :color="BOOKING_ICON_COLOR[modelValue.status!.status]"
+      :data-testid="`booking-item-icon-${modelValue.status!.status}`"
       size="1.8rem"
     >
       <q-tooltip>
@@ -45,17 +46,17 @@
       "
       caption
     >
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{ lang.booking.messages.bookingModified }}
     </q-item-label>
     <q-item-label v-if="modelValue.isDoubleBooked" caption>
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{
         `${lang.booking.messages.isDoubleBooked} ${lang.booking.messages.cancelDoubleBookings}`
       }}
     </q-item-label>
     <q-item-label v-if="modelValue.overlapsWithUnavailablePeriod" caption>
-      <q-icon name="warning" color="red"> </q-icon>
+      <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{ `${lang.booking.messages.overlapsWithUnavailablePeriod}` }}
     </q-item-label>
     <q-item-label
@@ -83,46 +84,24 @@
     </q-item-label>
   </q-item-section>
   <q-item-section side>
-    <div class="row">
-      <div
+    <div class="row min-w-92px items-center">
+      <invoice-button
         v-if="
           configuration.INTEGRATIONS?.slimfact.host &&
           modelValue.invoiceUuid &&
           modelValue.invoice
         "
-        class="col-sm-auto"
-      >
-        <invoice-button :model-value="modelValue.invoice" />
-        <!-- <q-btn
-          :dense="$q.screen.lt.sm"
-          class="q-pt-none q-pb-none"
-          data-html2canvas-ignore="true"
-          :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.invoiceUuid}`"
-          target="_blank"
-          :text-color="getInvoiceTextColor(modelValue)"
-        >
-          <div class="column">
-            <q-icon class="col-12" name="receipt" />
-            <div class="col-12 text-caption">
-              <price
-                :model-value="modelValue.invoice.totalIncludingTax || 0"
-                :currency="modelValue.invoice.currency"
-              />
-            </div>
-          </div>
-          <q-tooltip>
-            {{ lang.booking.messages.openInvoice }}
-          </q-tooltip>
-        </q-btn> -->
-      </div>
-
+        :model-value="modelValue.invoice"
+        @click.stop
+      />
       <q-btn
         v-if="
           showApprovalButtons || showEditButton || showHandleCancelationButton
         "
-        class="col-auto"
-        icon="more_vert"
+        icon="i-mdi-more-vert"
         flat
+        dense
+        @click.stop
       >
         <q-menu>
           <q-list>

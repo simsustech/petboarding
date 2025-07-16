@@ -6,7 +6,8 @@
     <q-item-section>
       <q-item-label overline>
         <q-badge v-if="hasExpired" color="red">
-          <q-icon name="warning" /> {{ lang.pet.vaccination.expired }}</q-badge
+          <q-icon name="i-mdi-warning" />
+          {{ lang.pet.vaccination.expired }}</q-badge
         >
       </q-item-label>
       <q-item-label>
@@ -19,7 +20,9 @@
     <q-item-section side>
       <q-btn
         v-if="showEditButton"
-        icon="edit"
+        v-close-popup
+        icon="i-mdi-edit"
+        data-testid="edit-button"
         flat
         rounded
         @click="updateVaccination"

@@ -1,86 +1,98 @@
 <template>
   <q-page padding>
-    <div class="row justify-center">
+    <q-toolbar>
       <date-input
         v-model="selectedDate"
+        hide-bottom-space
         :label="lang.kennellayout.labels.date"
         format="DD-MM-YYYY"
-        required
         clearable
-        class="col-auto"
         :date="{
           noUnset: true,
           firstDayOfWeek: '1'
         }"
-      />
-    </div>
-    <div class="row justify-center q-ma-sm">
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
+      >
+      </date-input>
       <q-btn
-        class="col-auto"
-        :label="lang.kennellayout.labels.today"
-        @click="setToToday"
+        outline
+        icon="i-mdi-printer"
+        :to="`/print/kennellayout/${selectedDate}`"
       />
-      <q-btn
-        class="col-auto"
-        :label="lang.kennellayout.labels.tomorrow"
-        @click="setToTomorrow"
-      />
-      <q-btn icon="print" :to="`/print/kennellayout/${selectedDate}`" />
+    </q-toolbar>
+    <q-toolbar inset class="justify-center">
+      <q-btn-group>
+        <q-btn :label="lang.kennellayout.labels.today" @click="setToToday" />
+        <q-btn
+          :label="lang.kennellayout.labels.tomorrow"
+          @click="setToTomorrow"
+        />
+      </q-btn-group>
+    </q-toolbar>
+
+    <div class="row">
+      <div class="col-12 col-sm">
+        <q-badge rounded text-color="black" color="blue-2"></q-badge>
+        {{ lang.booking.title }}
+      </div>
+      <div class="col-12 col-sm">
+        <q-badge rounded text-color="black" color="yellow-2"></q-badge>
+        {{ lang.daycare.title }}
+      </div>
     </div>
-    <div class="row q-col-gutter-md">
-      <div class="col-auto">
-        <q-badge rounded text-color="black" color="blue-2"></q-badge
-        ><a>{{ lang.booking.title }}</a>
-      </div>
-      <div class="col-auto">
-        <q-badge rounded text-color="black" color="yellow-2"></q-badge
-        ><a>{{ lang.daycare.title }}</a>
-      </div>
-      <div class="col-auto">
-        <a>{{ lang.kennellayout.messages.dragAndDrop }}</a>
-      </div>
+    <pet-legend />
+    <div class="row">
+      {{ lang.kennellayout.messages.dragAndDrop }}
     </div>
-    <div class="row q-col-gutter-sm" style="height: 150px">
-      <div class="col-12 col-md-3">
-        <q-card>
-          <q-card-section
-            id="waitlist"
-            @dragenter="onDragEnter"
-            @dragleave="onDragLeave"
-            @dragover="onDragOver"
-            @drop="onDrop"
+    <div class="grid grid-cols-12 gap-3">
+      <q-card class="col-span-12 md:col-span-3">
+        <q-card-section
+          id="waitlist"
+          @dragenter="onDragEnter"
+          @dragleave="onDragLeave"
+          @dragover="onDragOver"
+          @drop="onDrop"
+        >
+          <pet-chip
+            v-for="pet in internalPetKennels.filter(
+              (pet) => pet.kennelId === null
+            )"
+            :id="`pet${pet.id}`"
+            :key="pet.id"
+            :model-value="pet"
+            :class="{
+              'bg-blue-2': pet.bookingId,
+              'bg-yellow-2': pet.daycareDateId
+            }"
+            :draggable="true"
+            show-image
+            show-last-name
+            @dragstart="onDragStart"
+            @open-pet="openPet"
           >
-            <pet-chip
-              v-for="pet in internalPetKennels.filter(
-                (pet) => pet.kennelId === null
-              )"
-              :id="`pet${pet.id}`"
-              :key="pet.id"
-              :model-value="pet"
-              :class="{
-                'bg-blue-2': pet.bookingId,
-                'bg-yellow-2': pet.daycareDateId
-              }"
-              :draggable="true"
-              show-image
-              show-last-name
-              @dragstart="onDragStart"
-              @open-pet="openPet"
-            >
-            </pet-chip>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-md-9 q-col-gutter-md">
+            <template #menu-items>
+              <pet-kennel-context-menu-items
+                :pet-kennel="pet"
+                :buildings="buildings"
+                @set-pet-kennel="setPetKennel"
+              />
+            </template>
+          </pet-chip>
+        </q-card-section>
+      </q-card>
+      <div class="col-span-12 md:col-span-9">
         <div v-for="building in buildings" :key="building.id" class="row">
-          <div class="col-12 row">
+          <div class="col-12">
             {{ building.name }}
           </div>
-          <div class="col-12 row">
+          <div class="col-12 grid grid-cols-12 gap-4">
             <q-card
               v-for="kennel in building.kennels"
               :key="kennel.id"
-              class="col-6 col-md-3 column"
+              class="col-span-12 md:col-span-3"
               :style="{ 'min-height': '120px' }"
             >
               <q-card-section header>
@@ -88,7 +100,7 @@
               </q-card-section>
               <q-card-section
                 :id="`kennel${kennel.id}`"
-                class="col drop-target rounded-borders overflow-hidden"
+                class="min-h-80px !border-rd-8px drop-target rounded-borders overflow-hidden"
                 @dragenter="onDragEnter"
                 @dragleave="onDragLeave"
                 @dragover="onDragOver"
@@ -128,25 +140,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
-import { createUseTrpc } from '../../trpc.js'
+import { onMounted, ref, watch } from 'vue'
 import { extend, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
 import PetChip from '../../components/pet/PetChip.vue'
-import type { Pet } from '@petboarding/api/zod'
+import PetLegend from '../../components/pet/PetLegend.vue'
+import { useEmployeeGetPetKennelsQuery } from '../../queries/employee/petKennel.js'
+import { useEmployeeGetBuildingsQuery } from '../../queries/employee/building.js'
+import {
+  useEmployeeSetBookingPetKennelMutation,
+  useEmployeeSetDaycareDatePetKennelMutation
+} from '../../mutations/employee/petKennel.js'
+import type { PetKennel } from '../../configuration.js'
+import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
 
-const { useQuery, useMutation } = await createUseTrpc()
 const lang = useLang()
 
 const router = useRouter()
 const route = useRoute()
-const selectedDate = ref(
-  !Array.isArray(route.params.date)
-    ? route.params.date
-    : new Date().toISOString().slice(0, 10)
-)
 
 onBeforeRouteUpdate((to) => {
   if (to.params.date && !Array.isArray(to.params.date)) {
@@ -154,28 +167,22 @@ onBeforeRouteUpdate((to) => {
   }
 })
 
-const internalPetKennels = ref<
-  (Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
-    customer: {
-      lastName: string
-    }
-    kennelId: number | null
-    bookingId?: number
-    daycareDateId?: number
-  })[]
->([])
+const internalPetKennels = ref<PetKennel[]>([])
 
-const { data: buildings, execute: executeBuildings } = useQuery(
-  'employee.getBuildings'
-)
-const { data: petKennels, execute: executePets } = useQuery(
-  'employee.getPetKennels',
-  {
-    args: reactive({
-      date: selectedDate
-    })
-  }
-)
+const { buildings, refetch: executeBuildings } = useEmployeeGetBuildingsQuery()
+const {
+  petKennels,
+  refetch: executePets,
+  selectedDate
+} = useEmployeeGetPetKennelsQuery()
+selectedDate.value = !Array.isArray(route.params.date)
+  ? route.params.date
+  : new Date().toISOString().slice(0, 10)
+
+const { mutateAsync: setBookingPetKennelMutation } =
+  useEmployeeSetBookingPetKennelMutation()
+const { mutateAsync: setDaycareDatePetKennelMutation } =
+  useEmployeeSetDaycareDatePetKennelMutation()
 
 watch(
   () => petKennels.value,
@@ -245,19 +252,24 @@ function onDrop(e) {
     ]
   petKennel.kennelId = kennelId
 
-  if (petKennel.bookingId) {
-    useMutation('employee.setBookingPetKennel', {
-      args: petKennel,
-      immediate: true
-    })
-  } else if (petKennel.daycareDateId) {
-    useMutation('employee.setDaycareDatePetKennel', {
-      args: petKennel,
-      immediate: true
-    })
-  }
+  setPetKennel(petKennel)
 
   e.target.classList.remove('drag-enter')
+}
+
+const setPetKennel = async (petKennel: PetKennel) => {
+  if (petKennel.bookingId) {
+    await setBookingPetKennelMutation(petKennel)
+  } else if (petKennel.daycareDateId) {
+    await setDaycareDatePetKennelMutation(petKennel)
+  }
+  const internalPetKennelIndex = internalPetKennels.value.findIndex(
+    (pet) => pet.id === petKennel.id
+  )
+  internalPetKennels.value[internalPetKennelIndex] = {
+    ...internalPetKennels.value[internalPetKennelIndex],
+    kennelId: petKennel.kennelId
+  }
 }
 
 const setToToday = () => {
@@ -289,7 +301,6 @@ const openPet = (id: number) =>
 onMounted(async () => {
   await executeBuildings()
   await executePets()
-  // internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
 })
 </script>
 

@@ -45,6 +45,7 @@
         <q-language-select
           v-model="language"
           :language-imports="languageImports"
+          :locales="languageLocales"
         />
         <q-btn
           flat
@@ -136,16 +137,11 @@ import { fabGithub } from '@quasar/extras/fontawesome-v6'
 import logo from '../assets/logo.svg?url'
 import { QLanguageSelect } from '@simsustech/quasar-components'
 import { loadLang, useLang } from '../lang/index.js'
-import type { QuasarLanguage } from 'quasar'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 const $q = useQuasar()
 
 const route = useRoute()
 const router = useRouter()
-
-const quasarLang = import.meta.glob<{ default: QuasarLanguage }>(
-  '../../node_modules/quasar/lang/*.js'
-)
 
 watch($q.lang, () => {
   loadLang($q.lang.isoName)
@@ -154,16 +150,21 @@ watch($q.lang, () => {
 const language = ref($q.lang.isoName)
 const lang = useLang()
 
-const languageImports = ref(
-  Object.entries(quasarLang).reduce(
-    (acc, [key, value]) => {
-      const langKey = key.split('/').at(-1)?.split('.').at(0)
-      if (langKey) acc[langKey] = value
-      return acc
-    },
-    {} as Record<string, () => Promise<{ default: QuasarLanguage }>>
-  )
-)
+const languageLocales = ref([
+  {
+    icon: 'i-flagpack-nl',
+    isoName: 'nl'
+  },
+  {
+    icon: 'i-flagpack-us',
+    isoName: 'en-US'
+  }
+])
+
+const languageImports = ref({
+  nl: () => import(`../../node_modules/quasar/lang/nl.js`),
+  'en-US': () => import(`../../node_modules/quasar/lang/en-US.js`)
+})
 
 const leftDrawerOpen = ref(false)
 

@@ -1,10 +1,8 @@
 <template>
-  <resource-page>
-    <template #header>
-      {{ lang.booking.title }}
-    </template>
-    <template #header-side>
-      <q-btn icon="search">
+  <q-page padding>
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search">
         <q-menu class="q-pa-sm">
           <booking-status-select v-model="status" />
 
@@ -24,6 +22,10 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
           <date-input
             v-model="until"
@@ -34,10 +36,15 @@
               noUnset: true,
               firstDayOfWeek: '1'
             }"
+            :icons="{
+              event: 'i-mdi-event',
+              clear: 'i-mdi-clear'
+            }"
           />
         </q-menu>
       </q-btn>
-    </template>
+    </q-toolbar>
+
     <q-list separator>
       <booking-expansion-item
         v-for="booking in bookingsData"
@@ -56,13 +63,18 @@
         @standby="standby"
         @reply="reply"
         @settle-cancelation="settleCancelation"
-        @edit-pet="openUpdatePetDialog"
-        @edit-booking-service="openUpdateBookingServiceDialog"
+        @update-booking-service="openUpdateBookingServiceDialog"
         @open-customer="openCustomer"
-      />
+      ></booking-expansion-item>
     </q-list>
-  </resource-page>
-  <responsive-dialog ref="updatePetDialogRef" @submit="submitPet">
+  </q-page>
+  <!-- 
+  <responsive-dialog
+    ref="updatePetDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    @submit="submitPet"
+  >
     <pet-form
       ref="updatePetFormRef"
       :categories="categories"
@@ -72,8 +84,14 @@
       use-food
       @submit="updatePet"
     />
-  </responsive-dialog>
-  <responsive-dialog ref="editorDialogRef" button-type="send" @submit="submit">
+  </responsive-dialog> -->
+  <responsive-dialog
+    ref="editorDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    button-type="send"
+    @submit="submit"
+  >
     <template #title>
       <a v-if="replyType">
         {{ lang.booking.replies[replyType] }}
@@ -96,6 +114,8 @@
   </responsive-dialog>
   <responsive-dialog
     ref="updateBookingServiceDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
     @submit="submitBookingService"
   >
     <booking-service-form
@@ -112,53 +132,97 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, nextTick } from 'vue'
-import { extend, useQuasar } from 'quasar'
+import { ref, onMounted, computed, nextTick } from 'vue'
+import { useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { BOOKING_STATUS } from '@petboarding/api/zod'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
 import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
-import { createUseTrpc } from '../../trpc.js'
-import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { EmailInput, DateInput } from '@simsustech/quasar-components/form'
-import PetForm from '../../components/pet/PetForm.vue'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
 import { useRouter } from 'vue-router'
 import CustomerSelect from '../../components/employee/CustomerSelect.vue'
+import {
+  useAdminGetBookingEmailQuery,
+  useAdminGetBookingsQuery
+} from 'src/queries/admin/booking.js'
+import { useEmployeeGetBookingServiceQuery } from 'src/queries/employee/bookingService.js'
+import { useAdminUpdateBookingServiceMutation } from 'src/mutations/admin/bookingService.js'
+import {
+  useAdminApproveBookingMutation,
+  useAdminBookingSettleCancellationMutation,
+  useAdminRejectBookingMutation,
+  useAdminReplyBookingMutation,
+  useAdminStandbyBookingMutation
+} from 'src/mutations/admin/booking.js'
+import { useEmployeeSearchCustomersQuery } from 'src/queries/employee/customer.js'
 
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
-enum MUTATION_NAMES {
-  approve = 'admin.approveBooking',
-  reject = 'admin.rejectBooking',
-  standby = 'admin.standbyBooking',
-  reply = 'admin.replyBooking'
-}
 const router = useRouter()
 const lang = useLang()
 const $q = useQuasar()
 
-const { useQuery, useMutation } = await createUseTrpc()
+const {
+  bookings: data,
+  refetch: executeBookings,
+  customerId,
+  from,
+  until,
+  bookingStatus: status
+} = useAdminGetBookingsQuery()
 
-const status = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
-const customerId = ref<number>()
-const from = ref<string | null>(null)
-const until = ref<string | null>(null)
+const {
+  email,
+  type: emailType,
+  id: emailId,
+  refetch: refetchEmail
+} = useAdminGetBookingEmailQuery()
 
-const { data: categories, execute: executeCategories } = useQuery(
-  'public.getCategories',
-  {
-    // immediate: true
-  }
-)
+const {
+  bookingService,
+  refetch: refetchBookingService,
+  id: bookingServiceId
+} = useEmployeeGetBookingServiceQuery()
 
-const { data, execute: executeBookings } = useQuery('admin.getBookings', {
-  args: reactive({ status, customerId, from, until }),
-  reactive: {
-    args: true
-  }
-})
+const {
+  customers: filteredCustomers,
+  searchPhrase: customerSearchPhrase,
+  customerIds
+} = useEmployeeSearchCustomersQuery()
+
+const { mutateAsync: updateBookingServiceMutation } =
+  useAdminUpdateBookingServiceMutation()
+
+const { mutateAsync: settleBookingCancellationMutation } =
+  useAdminBookingSettleCancellationMutation()
+
+const { mutateAsync: approveBookingMutation } = useAdminApproveBookingMutation()
+const { mutateAsync: rejectBookingMutation } = useAdminRejectBookingMutation()
+const { mutateAsync: replyBookingMutation } = useAdminReplyBookingMutation()
+const { mutateAsync: standbyBookingMutation } = useAdminStandbyBookingMutation()
+
+// const { pet, id: petId, refetch: refetchPet } = useEmployeeGetPetQuery()
+
+// const status = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+// const customerId = ref<number>()
+// const from = ref<string | null>(null)
+// const until = ref<string | null>(null)
+
+// const { data: categories, execute: executeCategories } = useQuery(
+//   'public.getCategories',
+//   {
+//     // immediate: true
+//   }
+// )
+
+// const { data, execute: executeBookings } = useQuery('admin.getBookings', {
+//   args: reactive({ status, customerId, from, until }),
+//   reactive: {
+//     args: true
+//   }
+// })
 
 const bookingsData = computed(() =>
   data?.value?.filter(
@@ -167,7 +231,7 @@ const bookingsData = computed(() =>
 )
 
 const replyBookingId = ref<number>()
-const replyType = ref<'approve' | 'reject' | 'reply'>()
+const replyType = ref<'approve' | 'reject' | 'reply' | 'standby'>()
 const editorDialogRef = ref<typeof ResponsiveDialog>()
 const replyEmailBody = ref('')
 const replyEmailSubject = ref('')
@@ -182,28 +246,72 @@ const submit: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
   if (replyType.value && replyBookingId.value) {
-    let mutationName = MUTATION_NAMES[replyType.value]
+    // let mutationName = MUTATION_NAMES[replyType.value]
 
-    if (mutationName !== void 0) {
-      const { immediatePromise, error } = useMutation(mutationName, {
-        args: {
-          id: replyBookingId.value,
-          emailText: replyEmailBody.value,
-          emailSubject: replyEmailSubject.value,
-          skipDownPayment:
-            replyType.value === 'approve' ? skipDownPayment.value : undefined
-        },
-        immediate: true
-      })
+    try {
+      switch (replyType.value) {
+        case 'approve':
+          await approveBookingMutation({
+            id: replyBookingId.value,
+            emailText: replyEmailBody.value,
+            emailSubject: replyEmailSubject.value,
+            skipDownPayment: skipDownPayment.value
+          })
+          break
+        case 'reject':
+          await rejectBookingMutation({
+            id: replyBookingId.value,
+            emailText: replyEmailBody.value,
+            emailSubject: replyEmailSubject.value
+          })
+          break
+        case 'reply':
+          await replyBookingMutation({
+            id: replyBookingId.value,
+            emailText: replyEmailBody.value,
+            emailSubject: replyEmailSubject.value
+          })
+          break
+        case 'standby':
+          await standbyBookingMutation({
+            id: replyBookingId.value,
+            emailText: replyEmailBody.value,
+            emailSubject: replyEmailSubject.value
+          })
+          break
+        default:
+          break
+      }
 
-      await immediatePromise
-      done(!error.value)
-      if (!error.value && replyBookingId.value && replyType.value !== 'reply') {
+      if (replyBookingId.value && replyType.value !== 'reply') {
         handledBookingIds.value.push(replyBookingId.value)
         replyType.value = undefined
         replyBookingId.value = undefined
       }
+      done(true)
+    } catch (e) {
+      done(false)
     }
+    // if (mutationName !== void 0) {
+    //   const { immediatePromise, error } = useMutation(mutationName, {
+    //     args: {
+    //       id: replyBookingId.value,
+    //       emailText: replyEmailBody.value,
+    //       emailSubject: replyEmailSubject.value,
+    //       skipDownPayment:
+    //         replyType.value === 'approve' ? skipDownPayment.value : undefined
+    //     },
+    //     immediate: true
+    //   })
+
+    //   await immediatePromise
+    //   done(!error.value)
+    //   if (!error.value && replyBookingId.value && replyType.value !== 'reply') {
+    //     handledBookingIds.value.push(replyBookingId.value)
+    //     replyType.value = undefined
+    //     replyBookingId.value = undefined
+    //   }
+    // }
   }
 }
 
@@ -214,15 +322,18 @@ const getBookingEmail = async ({
   id: number
   type: REPLY_TYPES[number]
 }) => {
-  const { immediatePromise, data } = useQuery('admin.getBookingEmail', {
-    args: { type, id },
-    immediate: true
-  })
+  emailType.value = type
+  emailId.value = id
+  await refetchEmail()
+  // const { immediatePromise, data } = useQuery('admin.getBookingEmail', {
+  //   args: { type, id },
+  //   immediate: true
+  // })
 
-  await immediatePromise
+  // await immediatePromise
   return {
-    subject: data.value?.subject,
-    body: data.value?.body
+    subject: email.value?.subject,
+    body: email.value?.body
   }
 }
 
@@ -291,73 +402,84 @@ const reply: InstanceType<typeof BookingItem>['$props']['onReply'] = async ({
   }
 }
 
-const updatePetDialogRef = ref<typeof ResponsiveDialog>()
-const updatePetFormRef = ref<typeof PetForm>()
+// const updatePetDialogRef = ref<typeof ResponsiveDialog>()
+// const updatePetFormRef = ref<typeof PetForm>()
 
-const openUpdatePetDialog: InstanceType<
-  typeof BookingExpansionItem
->['$props']['onEditPet'] = async ({ id, done }) => {
-  const { data, immediatePromise, error } = useQuery('employee.getPet', {
-    args: {
-      id
-    },
-    immediate: true
-  })
+// const openUpdatePetDialog: InstanceType<
+//   typeof BookingExpansionItem
+// >['$props']['onEditPet'] = async ({ id, done }) => {
+//   petId.value = id
+//   await refetchPet()
 
-  await immediatePromise
-  updatePetDialogRef.value?.functions.open()
-  nextTick(() => {
-    updatePetFormRef.value?.functions.setValue(data.value)
-  })
-}
+//   updatePetDialogRef.value?.functions.open()
+//   nextTick(() => {
+//     updatePetFormRef.value?.functions.setValue(data.value)
+//   })
 
-const submitPet: InstanceType<
-  typeof ResponsiveDialog
->['$props']['onSubmit'] = async ({ done }) => {
-  updatePetFormRef.value?.functions.submit({ done })
-}
+//   // const { data, immediatePromise, error } = useQuery('employee.getPet', {
+//   //   args: {
+//   //     id
+//   //   },
+//   //   immediate: true
+//   // })
 
-const updatePet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
-  pet,
-  done
-}) => {
-  pet = extend(true, {}, pet)
-  delete pet.customer
-  delete pet.customerId
+//   // await immediatePromise
+//   // updatePetDialogRef.value?.functions.open()
+//   // nextTick(() => {
+//   //   updatePetFormRef.value?.functions.setValue(data.value)
+//   // })
+// }
 
-  const result = useMutation('employee.updatePet', {
-    args: pet,
-    immediate: true
-  })
+// const submitPet: InstanceType<
+//   typeof ResponsiveDialog
+// >['$props']['onSubmit'] = async ({ done }) => {
+//   updatePetFormRef.value?.functions.submit({ done })
+// }
 
-  await result.immediatePromise
-  if (!result.error.value) executeBookings()
-  done(!result.error.value)
-}
+// const updatePet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
+//   pet,
+//   done
+// }) => {
+//   pet = extend(true, {}, pet)
+//   delete pet.customer
+//   delete pet.customerId
+
+//   const result = useMutation('employee.updatePet', {
+//     args: pet,
+//     immediate: true
+//   })
+
+//   await result.immediatePromise
+//   if (!result.error.value) executeBookings()
+//   done(!result.error.value)
+// }
 
 const updateBookingServiceDialogRef = ref<typeof ResponsiveDialog>()
 const updateBookingServiceFormRef = ref<typeof BookingServiceForm>()
 const openUpdateBookingServiceDialog: InstanceType<
   typeof BookingExpansionItem
->['$props']['onEditBookingService'] = async ({ data, done }) => {
+>['$props']['onUpdateBookingService'] = async ({ data, done }) => {
   if (data.id) {
-    const {
-      data: bookingServiceData,
-      immediatePromise,
-      error
-    } = useQuery('employee.getBookingService', {
-      args: {
-        id: data.id
-      },
-      immediate: true
-    })
+    bookingServiceId.value = data.id
+    await refetchBookingService()
 
-    await immediatePromise
+    // const {
+    //   data: bookingServiceData,
+    //   immediatePromise,
+    //   error
+    // } = useQuery('employee.getBookingService', {
+    //   args: {
+    //     id: data.id
+    //   },
+    //   immediate: true
+    // })
+
+    // await immediatePromise
 
     updateBookingServiceDialogRef.value?.functions.open()
     nextTick(() => {
       updateBookingServiceFormRef.value?.functions.setValue(
-        bookingServiceData.value
+        bookingService.value
       )
     })
   }
@@ -371,14 +493,22 @@ const submitBookingService: InstanceType<
 const updateBookingService: InstanceType<
   typeof BookingServiceForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  const result = useMutation('admin.updateBookingService', {
-    args: data,
-    immediate: true
-  })
+  try {
+    await updateBookingServiceMutation(data)
+    await executeBookings()
+    if (done) done(true)
+  } catch (e) {
+    if (done) done(false)
+  }
 
-  await result.immediatePromise
-  if (!result.error.value) executeBookings()
-  if (done) done(!result.error.value)
+  // const result = useMutation('admin.updateBookingService', {
+  //   args: data,
+  //   immediate: true
+  // })
+
+  // await result.immediatePromise
+  // if (!result.error.value) executeBookings()
+  // if (done) done(!result.error.value)
 }
 
 const openCustomer: InstanceType<
@@ -398,37 +528,46 @@ const settleCancelation: InstanceType<
       }`,
       html: true
     }).onOk(async () => {
-      const result = useMutation('admin.settleBookingCancelation', {
-        args: {
-          id: data.id
-        },
-        immediate: true
-      })
-
-      await result.immediatePromise
-      if (!result.error.value) {
+      try {
+        await settleBookingCancellationMutation({ id: data.id })
         handledBookingIds.value.push(data.id)
+        if (done) done(true)
+      } catch (e) {
+        if (done) done(false)
       }
-      if (done) done(!result.error.value)
+      // const result = useMutation('admin.settleBookingCancelation', {
+      //   args: {
+      //     id: data.id
+      //   },
+      //   immediate: true
+      // })
+
+      // await result.immediatePromise
+      // if (!result.error.value) {
+      //   handledBookingIds.value.push(data.id)
+      // }
+      // if (done) done(!result.error.value)
     })
   }
 }
 
-const filteredCustomers = ref<Customer[]>([])
+// const filteredCustomers = ref<Customer[]>([])
 
 const onFilterCustomers: InstanceType<
   typeof CustomerSelect
 >['$props']['onFilter'] = async ({ searchPhrase, ids, done }) => {
-  const result = useQuery('employee.searchCustomers', {
-    args: { searchPhrase, ids },
-    immediate: true
-  })
+  customerSearchPhrase.value = searchPhrase
+  customerIds.value = ids
+  // const result = useQuery('employee.searchCustomers', {
+  //   args: { searchPhrase, ids },
+  //   immediate: true
+  // })
 
-  await result.immediatePromise
+  // await result.immediatePromise
 
-  if (result.data.value) filteredCustomers.value = result.data.value
+  // if (result.data.value) filteredCustomers.value = result.data.value
 
-  if (done) done()
+  // if (done) done()
 }
 
 function capitalizeFirstLetter(string: string) {
@@ -436,7 +575,6 @@ function capitalizeFirstLetter(string: string) {
 }
 
 onMounted(async () => {
-  await executeCategories()
   await executeBookings()
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  q-page padding>
     <div class="row q-mt-lg justify-evenly q-col-gutter-x-md">
       <comparison-card
         v-for="(option, index) in options[lang]"

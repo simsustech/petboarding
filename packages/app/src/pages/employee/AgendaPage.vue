@@ -1,16 +1,22 @@
 <template>
-  <agenda-component
-    ref="agendaComponentRef"
-    :bookings="bookingsData"
-    :daycare-dates="daycareDatesData"
-    :opening-times="openingTimesData"
-    @click-pet="onClickPet"
-    @change-date="onChangeDate"
-  >
-    <template #navigation>
-      <booking-status-select v-model="status" :options="statusOptions" />
-    </template>
-  </agenda-component>
+  <q-page padding>
+    <agenda-component
+      ref="agendaComponentRef"
+      :bookings="bookingsData"
+      :daycare-dates="daycareDatesData"
+      :opening-times="openingTimesData"
+      @click-pet="onClickPet"
+      @change-date="onChangeDate"
+    >
+      <template #navigation>
+        <booking-status-select
+          v-model="status"
+          class="col-span-12 md:col-span-3"
+          :options="statusOptions"
+        />
+      </template>
+    </agenda-component>
+  </q-page>
 </template>
 
 <script lang="ts">
@@ -22,17 +28,17 @@ export default {
 <script setup lang="ts">
 import { BOOKING_STATUS } from '@petboarding/api/zod'
 import AgendaComponent from '../../components/AgendaComponent.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
-import { createUseTrpc } from '../../trpc.js'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
 import { useRouter } from 'vue-router'
-const { useQuery } = await createUseTrpc()
+import { useEmployeeGetAgendaQuery } from 'src/queries/employee/agenda'
+import { usePublicGetOpeningTimesQuery } from 'src/queries/public'
 
 const lang = useLang()
 const selectedPets = ref<number[]>([])
-const status = ref<BOOKING_STATUS>(BOOKING_STATUS.APPROVED)
+// const status = ref<BOOKING_STATUS>(BOOKING_STATUS.APPROVED)
 
 const onClickPet: InstanceType<
   typeof AgendaComponent
@@ -56,25 +62,35 @@ onBeforeRouteUpdate((to) => {
   }
 })
 
-const startDate = ref('')
-const endDate = ref('')
-const { data: openingTimesData, execute: executeOpeningTimes } = useQuery(
-  'public.getOpeningTimes'
-)
+const { openingTimes: openingTimesData, refetch: executeOpeningTimes } =
+  usePublicGetOpeningTimesQuery()
+const {
+  bookings: bookingsData,
+  daycareDates: daycareDatesData,
+  startDate,
+  endDate,
+  status
+} = useEmployeeGetAgendaQuery()
 
-const { data: bookingsData } = useQuery('employee.getBookings', {
-  args: reactive({ from: startDate, until: endDate, status }),
-  reactive: {
-    args: true
-  }
-})
+// const startDate = ref('')
+// const endDate = ref('')
+// const { data: openingTimesData, execute: executeOpeningTimes } = useQuery(
+//   'public.getOpeningTimes'
+// )
 
-const { data: daycareDatesData } = useQuery('employee.getDaycareDates', {
-  args: reactive({ from: startDate, until: endDate, status }),
-  reactive: {
-    args: true
-  }
-})
+// const { data: bookingsData } = useQuery('employee.getBookings', {
+//   args: reactive({ from: startDate, until: endDate, status }),
+//   reactive: {
+//     args: true
+//   }
+// })
+
+// const { data: daycareDatesData } = useQuery('employee.getDaycareDates', {
+//   args: reactive({ from: startDate, until: endDate, status }),
+//   reactive: {
+//     args: true
+//   }
+// })
 const onChangeDate: InstanceType<
   typeof AgendaComponent
 >['$props']['onChangeDate'] = (data) => {

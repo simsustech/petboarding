@@ -35,6 +35,11 @@ export enum PERIOD_TYPE {
   UNAVAILABLE_FOR_DAYCARE = 'unavailablefordaycare'
 }
 
+export enum SERVICE_TYPE {
+  APPOINTMENT = 'appointment',
+  SURCHARGE = 'surcharge'
+}
+
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
     ? ColumnType<S, I | undefined, U>
@@ -304,7 +309,7 @@ export interface Services {
   name: string
   description: string | null
   listPrice: number | null
-  type: string
+  type: SERVICE_TYPE
   hidden: Generated<boolean | null>
   disabled: Generated<boolean | null>
   createdAt: Generated<string>
@@ -317,6 +322,12 @@ export interface Vaccinations {
   types: Generated<Json | null>
   petId: number | null
   createdAt: Generated<string>
+}
+
+export interface Documents {
+  id: Generated<number>
+  name: string
+  content: string
 }
 
 export interface DB {
@@ -347,4 +358,5 @@ export interface DB {
   pets: Pets
   services: Services
   vaccinations: Vaccinations
+  documents: Documents
 }

@@ -12,6 +12,7 @@ import { ANNOUNCEMENT_TYPE } from '../../zod/announcement.js'
 import Holidays from 'date-holidays'
 import { PERIOD_TYPE } from '../../kysely/types.js'
 import { eachDayOfInterval } from '../../tools.js'
+import { findDocument } from 'src/repositories/document.js'
 
 export const publicRoutes = ({
   // fastify,
@@ -135,5 +136,25 @@ export const publicRoutes = ({
         return acc
       }, [] as string[])
     ]
+  }),
+  getPrivacyPolicy: procedure.query(async () => {
+    const privacyPolicy = await findDocument({
+      criteria: {
+        name: 'privacyPolicy'
+      }
+    })
+    if (privacyPolicy) return privacyPolicy.content
+
+    throw new TRPCError({ code: 'BAD_REQUEST' })
+  }),
+  getTermsAndConditions: procedure.query(async () => {
+    const termsAndConditions = await findDocument({
+      criteria: {
+        name: 'termsAndConditions'
+      }
+    })
+    if (termsAndConditions) return termsAndConditions.content
+
+    throw new TRPCError({ code: 'BAD_REQUEST' })
   })
 })

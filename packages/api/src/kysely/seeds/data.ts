@@ -1,7 +1,7 @@
 import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import env from '@vitrify/tools/env'
-import { OPENING_TIME_TYPE } from '../types.js'
+import { OPENING_TIME_TYPE, SERVICE_TYPE } from '../types.js'
 
 const ADMIN_PASSWORD = env.read('PETBOARDING_ADMIN_PASSWORD')
 if (!ADMIN_PASSWORD)
@@ -55,30 +55,73 @@ const seed = async () => {
     {
       name: 'Wash pet(s)',
       description: 'Pet(s) will be washed before leaving.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Groom pet(s)',
       description: 'Pet(s) will be groomed during their stay.',
-      type: 'appointment',
+      type: SERVICE_TYPE.APPOINTMENT,
       listPrice: null,
       hidden: false
     },
     {
       name: 'Intensive medical care',
       description: 'Pet(s) required intensive medical care during their stay.',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
     },
     {
       name: 'Veterinarian visit',
       description: 'Pet(s) required a visit to the veterinarian',
-      type: 'surcharge',
+      type: SERVICE_TYPE.SURCHARGE,
       listPrice: null,
       hidden: true
+    }
+  ]
+
+  const documents = [
+    {
+      name: 'privacyPolicy',
+      content: `# Petboarding
+A product of:
+simsustech
+https://www.simsus.tech
+info@simsus.tech
+Privacy policy
+Petboarding collects the following information:
+- First and last name
+- Gender
+- Address details
+- Contact information
+The purpose of collecting this information is the following:
+- Providing the user the ability to create an account.
+- Provide the ability to perform online payments.
+The information is shared only with the client (i.e. the business that uses our services). The
+information will not be shared with anyone else.
+The user has the ability to change or delete their information in their account.
+If you have any questions or remarks about the security, please contact info@simsus.tech.
+
+# Privacy verklaring
+Petboarding verzamelt de volgende informatie:
+- Voor en achternaam
+- Geslacht
+- Adres gegevens
+- Contact gegevens
+Het doel van het verzamelen van deze informatie is het volgende:
+- Het mogelijk maken voor de gebruiker om een account aan te maken
+- Het mogelijk maken om online betalingen te doen
+De informatie wordt alleen gedeeld met onze klant (i.e. het bedrijf dat onze dienst afneemt). De
+informatie zal niet worden gedeeld met anderen.
+De gebruiker heeft de mogelijkheid om zijn informatie te verwijderen of te veranderen in zijn
+account.
+Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@simsus.tech.`
+    },
+    {
+      name: 'termsAndConditions',
+      content: `# Terms and conditions`
     }
   ]
 
@@ -180,6 +223,7 @@ const seed = async () => {
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
+  await db.insertInto('documents').values(documents).execute()
   // await db.insertInto('emailTemplates').values(emailTemplates).execute()
 
   const adminAccounts = await db

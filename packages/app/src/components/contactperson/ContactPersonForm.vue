@@ -1,36 +1,38 @@
 <template>
-  <q-form :key="updateCounter" ref="formRef" class="row justtify-center">
-    <form-input
-      v-bind="input"
-      v-model="modelValue.firstName"
-      class="col-md-4 col-12"
-      required
-      field="firstName"
-      bottom-slots
-      lazy-rules
-      name="firstName"
-    />
-    <form-input
-      v-bind="input"
-      v-model="modelValue.lastName"
-      class="col-md-4 col-12"
-      required
-      field="lastName"
-      bottom-slots
-      lazy-rules
-      name="lastName"
-    />
+  <q-form :key="updateCounter" ref="formRef">
+    <div class="grid grid-cols-12 grid-flow-row gap-3">
+      <form-input
+        v-bind="input"
+        v-model="modelValue.firstName"
+        class="col-span-12 md:col-span-4"
+        required
+        field="firstName"
+        bottom-slots
+        lazy-rules
+        name="firstName"
+      />
+      <form-input
+        v-bind="input"
+        v-model="modelValue.lastName"
+        class="col-span-12 md:col-span-4"
+        required
+        field="lastName"
+        bottom-slots
+        lazy-rules
+        name="lastName"
+      />
 
-    <telephone-number-input
-      v-bind="input"
-      v-model="modelValue.telephoneNumber"
-      class="col-md-4 col-12"
-      required
-      bottom-slots
-      lazy-rules
-      type="tel"
-      name="telephonenumber"
-    />
+      <telephone-number-input
+        v-bind="input"
+        v-model="modelValue.telephoneNumber"
+        class="col-span-12 md:col-span-4"
+        required
+        bottom-slots
+        lazy-rules
+        type="tel"
+        name="telephonenumber"
+      />
+    </div>
   </q-form>
 </template>
 

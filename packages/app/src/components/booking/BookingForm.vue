@@ -1,16 +1,18 @@
 <template>
   <q-form ref="formRef" class="justtify-center">
-    <div class="row q-col-gutter-md">
-      <q-date
-        v-model="dateRange"
-        class="col-md-5 col-12"
-        first-day-of-week="1"
-        range
-        :options="limitDateOptionsFn"
-        @update:model-value="removeDates"
-        @range-end="setDates"
-      />
-      <div class="col-md-6 col-12">
+    <div class="grid grid-cols-6 md:grid-cols-12">
+      <div class="col-span-12 md:col-span-6 q-mr-md">
+        <q-date
+          v-model="dateRange"
+          class="full-width"
+          first-day-of-week="1"
+          range
+          :options="limitDateOptionsFn"
+          @update:model-value="removeDates"
+          @range-end="setDates"
+        />
+      </div>
+      <div class="col-span-12 md:col-span-6">
         <q-select
           v-model="modelValue.petIds"
           :options="petOptions"
@@ -43,6 +45,7 @@
         <div v-if="services">
           <booking-services-select
             v-model="modelValue.serviceIds"
+            class="q-mb-md"
             :services="services"
             :allow-hidden="allowHiddenServices"
           />
@@ -52,7 +55,6 @@
           v-bind="input"
           id="comments"
           v-model="modelValue.comments"
-          class="col-12"
           name="comments"
           :label="lang.customer.fields.comments"
           bottom-slots

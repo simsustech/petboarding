@@ -12,6 +12,10 @@
           noUnset: true,
           firstDayOfWeek: '1'
         }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
       <q-input
         :model-value="modelValue.listPrice ? modelValue.listPrice / 100 : 0"

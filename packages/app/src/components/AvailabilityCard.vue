@@ -1,26 +1,39 @@
 <template>
-  <q-styled-card>
-    <template #title>
-      {{ lang.availability.title }}
-      <q-btn icon="info" flat color="primary" @click="openDialog" />
-    </template>
-    <div class="row full-width justify-between">
-      <q-btn-toggle v-model="toggle" :options="buttonOptions" />
-    </div>
-    <div class="row">
-      <date-picker
-        v-model="dateRange"
-        :periods="unavailablePeriods"
-        :range="toggle === 'boarding'"
-        :options="options"
-        first-day-of-week="1"
-      />
-    </div>
-    <a class="text-caption">
+  <q-card>
+    <q-card-section>
+      <div class="row justify-center items-center">
+        {{ lang.availability.title }}
+        <q-btn icon="i-mdi-info" flat color="primary" @click="openDialog" />
+      </div>
+      <div class="row justify-center items-center">
+        <q-btn-toggle v-model="toggle" :options="buttonOptions" />
+      </div>
+
+      <div class="row justify-center items-center">
+        <date-picker
+          v-model="dateRange"
+          class="col-12 q-mt-md"
+          :periods="unavailablePeriods"
+          :range="toggle === 'boarding'"
+          :options="options"
+          first-day-of-week="1"
+        />
+      </div>
+    </q-card-section>
+    <q-card-section>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
-    </a>
-  </q-styled-card>
-  <responsive-dialog ref="dialogRef" display>
+      <br />
+      <router-link to="/account/bookings">{{
+        lang.availability.messages.addBooking
+      }}</router-link>
+    </q-card-section>
+  </q-card>
+  <responsive-dialog
+    ref="dialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    display
+  >
     <a>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
     </a>
@@ -37,7 +50,7 @@ export default {
 <script setup lang="ts">
 import { Period } from '@petboarding/api/zod'
 import { watch, computed, ref, toRefs } from 'vue'
-import { QStyledCard, ResponsiveDialog } from '@simsustech/quasar-components'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DatePicker } from '@simsustech/quasar-components/form'
 import { useLang } from '../lang/index.js'
 import { useConfiguration } from '../configuration.js'

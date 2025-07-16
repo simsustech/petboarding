@@ -16,6 +16,7 @@
     <template #before>
       <slot name="before" />
     </template>
+    <template #prepend> <slot name="prepend" /> </template>
     <template #option="{ itemProps, opt }">
       <q-item v-bind="itemProps" :class="{ 'bg-grey-5': opt.deceased }">
         <q-item-section>
@@ -27,9 +28,9 @@
           <q-rating
             v-if="opt.rating"
             :model-value="opt.rating"
-            icon="star_border"
-            icon-selected="star"
-            icon-half="star_half"
+            icon="i-mdi-star-border"
+            icon-selected="i-mdi-star"
+            icon-half="i-mdi-star-half"
           />
         </q-item-section>
       </q-item>
@@ -45,9 +46,9 @@ export default {
 
 <script setup lang="ts">
 import { QSelect } from 'quasar'
-import { createUseTrpc } from '../../trpc.js'
 import { ref, toRefs, useAttrs } from 'vue'
 import { useLang } from '../../lang/index.js'
+import { useEmployeeSearchPetsQuery } from 'src/queries/employee/pet.js'
 
 export interface Props {
   modelValue?: number | number[]
@@ -56,16 +57,20 @@ const props = defineProps<Props>()
 const attrs = useAttrs()
 
 const lang = useLang()
-const { useQuery } = await createUseTrpc()
 const { modelValue } = toRefs(props)
-const searchPhrase = ref('')
+// const searchPhrase = ref('')
 
-const { data, execute } = useQuery('employee.searchPets', {
-  args: () => searchPhrase.value,
-  reactive: {
-    args: true
-  }
-})
+const {
+  pets: data,
+  refetch: execute,
+  searchPhrase
+} = useEmployeeSearchPetsQuery()
+// const { data, execute } = useQuery('employee.searchPets', {
+//   args: () => searchPhrase.value,
+//   reactive: {
+//     args: true
+//   }
+// })
 
 const options = ref([])
 

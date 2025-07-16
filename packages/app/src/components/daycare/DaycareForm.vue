@@ -71,7 +71,7 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { QForm, QSelect } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
-import { Timestamp } from '@quasar/quasar-ui-qcalendar'
+import { Timestamp } from '@quasar/quasar-ui-qcalendar/Timestamp'
 
 export interface Props {
   pets: Pet[]

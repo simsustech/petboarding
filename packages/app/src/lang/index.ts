@@ -11,7 +11,6 @@ export interface Language {
   overview: string
   dayOverview: string
   customers: string
-  bookings: string
   labels: string
   tbd: string
   pricesSubjectToChange: string
@@ -29,6 +28,9 @@ export interface Language {
   delete: string
   documentation: string
   add: string
+  darkMode: string
+  language: string
+  termsAndConditions: string
   account: {
     title: string
     fields: {
@@ -58,6 +60,7 @@ export interface Language {
     title: string
     messages: {
       doesNotApplyToApprovedBookings: string
+      addBooking: string
     }
   }
   configuration: {
@@ -68,6 +71,7 @@ export interface Language {
     emailTemplates: string
     openingTimes: string
     integrations: string
+    documents: string
   }
   customer: {
     title: string
@@ -166,6 +170,8 @@ export interface Language {
       showVaccinations: string
       vaccinationsMissing: string
       delete: string
+      foodMoreThanTwoTimesADay: string
+      hasMedication: string
     }
     labels: {
       open: string
@@ -270,6 +276,9 @@ export interface Language {
       termsAndConditions: string
       approvedAfterDownPayment: string
     }
+  }
+  bookings: {
+    title: string
   }
   service: {
     title: string
@@ -446,6 +455,7 @@ export interface Language {
     messages: {
       verifyDeletion: string
       addDaycareSubscriptionNotification: string
+      noActiveSubscriptions: string
     }
   }
   customerDaycareSubscription: {
@@ -529,6 +539,18 @@ export interface Language {
       amountDue: string
       amountPaid: string
       amountRefunded: string
+    }
+  }
+  dashboard: {
+    account: {
+      menu: {
+        title: string
+        editCustomer: string
+        editContactPeople: string
+        editPets: string
+        addOrViewBooking: string
+        addOrViewDaycareDates: string
+      }
     }
   }
 }

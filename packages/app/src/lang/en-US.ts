@@ -13,7 +13,6 @@ const lang: Language = {
   overview: 'Overview',
   dayOverview: 'Day overview',
   customers: 'Customers',
-  bookings: 'Bookings boarding',
   labels: 'Labels',
   tbd: 'TBD',
   pricesSubjectToChange: 'Prices subject to change.',
@@ -31,6 +30,9 @@ const lang: Language = {
   delete: 'Delete',
   documentation: 'Documentation',
   add: 'Add',
+  darkMode: 'Dark mode',
+  language: 'Language',
+  termsAndConditions: 'Terms and conditions',
   account: {
     title: 'Account',
     fields: {
@@ -60,7 +62,8 @@ const lang: Language = {
     title: 'Availability',
     messages: {
       doesNotApplyToApprovedBookings:
-        'This does not apply to bookings which are already approved!'
+        'This does not apply to bookings which are already approved!',
+      addBooking: 'You can add a booking in your account.'
     }
   },
   configuration: {
@@ -70,7 +73,8 @@ const lang: Language = {
     periods: 'Periods',
     emailTemplates: 'Email templates',
     openingTimes: 'Opening times',
-    integrations: 'Integrations'
+    integrations: 'Integrations',
+    documents: 'Documents'
   },
   customer: {
     title: 'Customer details',
@@ -171,7 +175,9 @@ const lang: Language = {
       vaccinationsMissing:
         'Pet does not have all mandatory vaccinations. Contact your veterinarian and do not forget to bring the passport of your pet.',
       delete:
-        'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.'
+        'Are you sure you want to delete the following pet? Type the name of the pet in the box below to confirm.',
+      foodMoreThanTwoTimesADay: 'More than two meals a day.',
+      hasMedication: 'Has medication'
     },
     labels: {
       open: 'Open pet.'
@@ -284,6 +290,9 @@ const lang: Language = {
       termsAndConditions: 'You need to acccept the terms and conditions.',
       approvedAfterDownPayment: 'You need to accept.'
     }
+  },
+  bookings: {
+    title: 'Bookings boarding'
   },
   service: {
     title: 'Services',
@@ -471,7 +480,9 @@ const lang: Language = {
       verifyDeletion:
         'Are you sure you want to delete the following daycare subscription?',
       addDaycareSubscriptionNotification:
-        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.'
+        'If you add daycare subscriptions, customers will need to purchase a subscription before they can add new daycare dates.',
+      noActiveSubscriptions:
+        'You do not have any active daycare subscriptions at the moment.'
     }
   },
   customerDaycareSubscription: {
@@ -562,6 +573,18 @@ const lang: Language = {
       amountDue: 'Amount due',
       amountPaid: 'Amount paid',
       amountRefunded: 'Amount refunded'
+    }
+  },
+  dashboard: {
+    account: {
+      menu: {
+        title: 'Quick menu',
+        editCustomer: 'I want to edit my personal details.',
+        editContactPeople: 'I want to change my contact people.',
+        editPets: 'I want to edit my pet(s) information.',
+        addOrViewBooking: 'I want to add or review a booking.',
+        addOrViewDaycareDates: 'I want to add or review daycare dates.'
+      }
     }
   }
 }

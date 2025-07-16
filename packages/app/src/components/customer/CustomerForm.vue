@@ -1,10 +1,10 @@
 <template>
-  <q-form ref="formRef" class="row justtify-center">
+  <q-form ref="formRef" class="grid grid-cols-12 gap-3">
     <gender-select
       v-bind="input"
       id="gender"
       v-model="modelValue.gender"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       name="gender"
       bottom-slots
       required
@@ -15,7 +15,7 @@
     <form-input
       v-bind="input"
       v-model="modelValue.firstName"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       required
       field="firstName"
       bottom-slots
@@ -26,7 +26,7 @@
     <form-input
       v-bind="input"
       v-model="modelValue.lastName"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       required
       field="lastName"
       bottom-slots
@@ -37,7 +37,7 @@
     <form-input
       v-bind="input"
       v-model="modelValue.address"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       required
       field="address"
       bottom-slots
@@ -48,7 +48,7 @@
     <form-input
       v-bind="input"
       v-model="modelValue.city"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       required
       field="city"
       bottom-slots
@@ -63,7 +63,7 @@
       v-model="modelValue.postalCode"
       :country="configuration.COUNTRY"
       required
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       name="zip"
       bottom-slots
       lazy-rules
@@ -73,7 +73,7 @@
     <telephone-number-input
       v-bind="input"
       v-model="modelValue.telephoneNumber"
-      class="col-md-4 col-12"
+      class="col-span-12 md:col-span-4"
       required
       bottom-slots
       lazy-rules
@@ -85,7 +85,7 @@
       v-bind="input"
       id="veterinarian"
       v-model="modelValue.veterinarian"
-      class="col-md-8 col-12"
+      class="col-span-12 md:col-span-8"
       name="veterinarian"
       :label="lang.customer.fields.veterinarian"
       bottom-slots
@@ -97,7 +97,7 @@
       v-bind="input"
       id="comments"
       v-model="modelValue.comments"
-      class="col-12"
+      class="col-span-12"
       name="comments"
       :label="lang.customer.fields.comments"
       bottom-slots
@@ -106,14 +106,14 @@
       type="textarea"
       rows="3"
     />
-    <div class="col-12 text-center">
+    <div class="col-span-12 text-center">
       <q-rating
         v-if="useRating && modelValue.rating !== void 0"
         :model-value="modelValue.rating || 0"
         size="3em"
-        icon="star_border"
-        icon-selected="star"
-        icon-half="star_half"
+        icon="i-mdi-star-border"
+        icon-selected="i-mdi-star"
+        icon-half="i-mdi-star-half"
         @update:model-value="($event) => (modelValue.rating = $event)"
       />
     </div>

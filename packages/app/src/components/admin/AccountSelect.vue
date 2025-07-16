@@ -23,8 +23,8 @@ export default {
 
 <script setup lang="ts">
 import { QSelect } from 'quasar'
-import { createUseTrpc } from '../../trpc.js'
-import { reactive, ref, toRefs, useAttrs } from 'vue'
+import { ref, toRefs, useAttrs } from 'vue'
+import { useAdminFindAccountsQuery } from 'src/queries/admin/account.js'
 
 export interface Props {
   modelValue?: number
@@ -32,13 +32,9 @@ export interface Props {
 const props = defineProps<Props>()
 const attrs = useAttrs()
 
-const { useQuery } = await createUseTrpc()
 const { modelValue } = toRefs(props)
-const email = ref('')
 
-const { data, execute } = useQuery('admin.findAccounts', {
-  args: reactive({ email: email })
-})
+const { accounts: data, email, refetch: execute } = useAdminFindAccountsQuery()
 
 const options = ref<
   {

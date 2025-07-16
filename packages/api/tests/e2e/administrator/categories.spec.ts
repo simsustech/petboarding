@@ -36,7 +36,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Administrator').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Administrator' })
+      .or(page.getByText('Administrator').locator(':scope.q-item__label'))
   ).toBeVisible()
 
   await page.goto('/admin/configuration/categories')
@@ -45,7 +47,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.describe('Categories', async () => {
   test('Create category', async () => {
-    await page.getByRole('button', { name: 'Add' }).click()
+    await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(category.name)
     // await page.getByLabel('Price').fill(`${category.price}`)
 
@@ -54,14 +56,10 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    // await page.locator('button').filter({ hasText: 'edit' }).last().click()
-    await page
-      .getByRole('main')
-      .getByLabel('Expand')
-      .getByRole('button')
-      .last()
-      .click()
-    await page.getByText('Edit').click()
+    await page.getByRole('list').locator('button').last().click()
+    // await page.getByRole('listitem').last().getByRole('button').click()
+    await page.getByTestId('edit-button').last().click()
+
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
@@ -71,12 +69,13 @@ test.describe('Categories', async () => {
   })
 
   test('Add category price', async () => {
-    await page
-      .getByRole('main')
-      .getByLabel('Expand')
-      .getByRole('button')
-      .last()
-      .click()
+    // await page
+    //   .getByRole('main')
+    //   .getByLabel('Expand')
+    //   .getByRole('button')
+    //   .last()
+    //   .click()
+    await page.getByRole('list').locator('button').last().click()
     await page.getByText('Add price').click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -90,14 +89,8 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
-    // await page.locator('button').filter({ hasText: 'delete' }).last().click()
-    await page
-      .getByRole('main')
-      .getByLabel('Expand')
-      .getByRole('button')
-      .last()
-      .click()
-    await page.getByText('Delete', { exact: true }).click()
+    await page.getByRole('list').locator('button').last().click()
+    await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

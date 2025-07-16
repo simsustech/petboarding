@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  q-page padding>
     <!-- <div class="row">
       <div class="col text-center">
         <a class="text-h4">Petboarding</a><br />

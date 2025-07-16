@@ -2,15 +2,22 @@
   <q-list>
     <q-item-label header>
       <div class="row items-center justify-between">
-        <div>
+        <div class="col'">
           {{ lang.customerDaycareSubscription.title }}
         </div>
-        <q-toggle
-          v-model="showAll"
-          :label="lang.customerDaycareSubscription.labels.showAll"
-        />
+        <div class="col-auto">
+          <q-toggle
+            v-model="showAll"
+            :label="lang.customerDaycareSubscription.labels.showAll"
+          />
+        </div>
       </div>
     </q-item-label>
+    <q-item v-if="!filteredCustomerDaycareSubscriptions.length">
+      <q-item-section label>
+        {{ lang.daycareSubscription.messages.noActiveSubscriptions }}
+      </q-item-section>
+    </q-item>
     <q-expansion-item
       v-for="(
         customerDaycareSubscription, index
@@ -26,7 +33,7 @@
               customerDaycareSubscription.status ===
               CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
             "
-            name="paid"
+            name="i-mdi-dollar"
             color="green"
           />
         </q-item-section>

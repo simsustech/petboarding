@@ -18,13 +18,13 @@ import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '../../kysely/types.js'
 import env from '@vitrify/tools/env'
 import { Customer } from '../../zod/customer.js'
 import {
-  Invoice,
-  InvoiceStatus,
-  PaymentMethod,
-  RawInvoiceDiscount,
-  RawInvoiceLine,
-  RawInvoiceSurcharge
+  type Invoice,
+  type PaymentMethod,
+  type RawInvoiceDiscount,
+  type RawInvoiceLine,
+  type RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 
 const currency = env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR'
 const host = env.read('API_HOST') || env.read('VITE_API_HOST')

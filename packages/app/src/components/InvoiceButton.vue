@@ -1,14 +1,16 @@
 <template>
   <q-btn
     :dense="$q.screen.lt.sm"
-    class="q-pa-none"
+    class="q-pa-none max-w-62px max-h-80px"
     :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.uuid}`"
     target="_blank"
-    :text-color="invoiceTextColor"
+    outline
+    :rounded="false"
+    :class="classes"
   >
-    <div class="column">
+    <div class="column items-center">
       <q-avatar class="col-12">
-        <q-icon name="receipt" size="md" />
+        <q-icon name="i-mdi-invoice-text" :class="classes" size="md" />
       </q-avatar>
       <q-icon
         v-if="
@@ -16,15 +18,11 @@
           modelValue.amountDue !== null &&
           modelValue.amountDue <= 0
         "
-        style="
-          position: relative;
-          width: 0;
-          height: 0;
-          right: -30px;
-          bottom: 3px;
-        "
-        name="check"
-        color="green"
+        style="position: absolute; right: 20px; bottom: 20px"
+        name="i-mdi-check"
+        :class="{
+          'text-green': true
+        }"
         size="xs"
       />
       <q-icon
@@ -33,9 +31,11 @@
           modelValue.amountDue !== null &&
           modelValue.amountDue < 0
         "
-        style="position: relative; width: 0; height: 0; bottom: 3px"
-        name="priority_high"
-        color="red"
+        style="position: absolute; right: 20px; bottom: 20px"
+        name="i-mdi-exclamation"
+        :class="{
+          'text-red': true
+        }"
         size="xs"
       />
     </div>
@@ -67,12 +67,12 @@ const $q = useQuasar()
 const lang = useLang()
 const configuration = useConfiguration()
 
-const invoiceTextColor = computed(() => {
+const classes = computed(() => {
   if (
     modelValue.value.amountDue !== void 0 &&
     modelValue.value.amountDue !== null
   ) {
-    if (modelValue.value.amountDue <= 0) return 'green'
+    if (modelValue.value.amountDue <= 0) return 'text-green'
     if (
       modelValue.value.amountPaid &&
       modelValue.value.requiredDownPaymentAmount
@@ -81,9 +81,9 @@ const invoiceTextColor = computed(() => {
         modelValue.value.amountPaid >=
         modelValue.value.requiredDownPaymentAmount
       )
-        return 'orange'
+        return 'text-orange'
     }
   }
-  return 'grey'
+  return 'text-grey'
 })
 </script>

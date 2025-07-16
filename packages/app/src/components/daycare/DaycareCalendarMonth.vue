@@ -1,13 +1,14 @@
 <template>
   <div class="column col">
+    <slot name="navigation" />
     <div class="row justify-center">
       <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
     </div>
     <div class="row justify-center">
-      <q-btn icon="arrow_left" @click="onPrev" />
-      <q-btn icon="arrow_right" @click="onNext" />
+      <q-btn icon="i-mdi-arrow-left" @click="onPrev" />
+      <q-btn icon="i-mdi-arrow-right" @click="onNext" />
     </div>
-    <div class="row">
+    <div class="row q-mt-sm">
       <q-scroll-area :style="contentSize">
         <q-resize-observer @resize="onResize" />
         <q-calendar-month
@@ -43,7 +44,10 @@
                 scope.timestamp.disabled ||
                 disabledDates?.includes(scope.timestamp.date)
               "
-              class="q-mb-sm q-mt-sm"
+              :class="{
+                'q-mb-sm': true,
+                'q-mt-sm': true
+              }"
               size="md"
               :outline="!getButtonColor(scope.timestamp.date)"
               rounded
@@ -63,7 +67,7 @@
                 v-for="event in eventsMap[timestamp.date]"
                 :key="event.id"
               >
-                <div class="text-center">
+                <div class="text-center q-mb-sm">
                   <q-chip
                     class="q-mt-none q-mb-none"
                     size="sm"
@@ -118,12 +122,12 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
 import {
-  QCalendarMonth,
   addToDate,
   parseTimestamp,
   today
-} from '@quasar/quasar-ui-qcalendar'
+} from '@quasar/quasar-ui-qcalendar/Timestamp'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
@@ -292,7 +296,7 @@ const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   size
 ) => {
   contentSize.value.width = '100%'
-  contentSize.value.height = `${size.height}px`
+  contentSize.value.height = '75vh' //`${size.height}px`
 }
 
 const getButtonColor = (date: string) => {

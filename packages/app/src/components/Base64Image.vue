@@ -5,7 +5,7 @@
     fit="contain"
     style="max-height: 60vh"
   >
-    <q-icon v-if="!modelValue" name="photo_camera" />
+    <q-icon v-if="!modelValue" name="i-mdi-camera" />
   </q-img>
 </template>
 

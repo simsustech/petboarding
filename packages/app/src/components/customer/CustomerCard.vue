@@ -1,20 +1,25 @@
 <template>
-  <q-styled-card>
-    <template #title>
-      <q-rating v-if="modelValue.rating" :model-value="modelValue.rating" />
-      <q-btn
-        v-if="showEditButton"
-        class="float-right"
-        rounded
-        outline
-        icon="edit"
-        @click="update(modelValue)"
-      >
-        <q-tooltip>
-          {{ lang.update }}
-        </q-tooltip></q-btn
-      >
-    </template>
+  <q-card>
+    <q-card-section>
+      <div class="row justify-between">
+        <q-rating v-if="modelValue.rating" :model-value="modelValue.rating" />
+        <q-btn
+          v-if="showEditButton"
+          v-close-popup
+          class="float-right"
+          rounded
+          outline
+          icon="i-mdi-edit"
+          data-testid="edit-button"
+          @click="update(modelValue)"
+        >
+          <q-tooltip>
+            {{ lang.edit }}
+          </q-tooltip>
+        </q-btn>
+      </div>
+    </q-card-section>
+
     <q-list>
       <gender-item :model-value="modelValue.gender" />
       <form-item field="firstName" :model-value="modelValue.firstName" />
@@ -50,35 +55,12 @@
             {{ lang.account.fields.email }}
           </q-item-label>
           <q-item-label>
-            {{ modelValue.account.email }}
+            {{ modelValue.account?.email }}
           </q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
-
-    <template #actions>
-      <!-- <div class="row full-width justify-center q-mb-md">
-        <q-btn
-          v-if="showEditButton"
-          icon="edit"
-          label="Update"
-          @click="update(modelValue)"
-        />
-      </div> -->
-      <!-- <div class="row full-width justify-between">
-        <q-btn
-          v-if="modelValue.pets"
-          :label="lang.pet.title"
-          @click="openPets"
-        />
-        <q-btn
-          v-if="modelValue.bookings"
-          :label="lang.booking.title"
-          @click="openBookings"
-        />
-      </div> -->
-    </template>
-  </q-styled-card>
+  </q-card>
 </template>
 
 <script lang="ts">
@@ -88,7 +70,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { QStyledCard } from '@simsustech/quasar-components'
 import type { Customer } from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
 import { GenderItem, FormItem } from '@simsustech/quasar-components/form'

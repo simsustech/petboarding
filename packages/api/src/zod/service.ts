@@ -1,9 +1,6 @@
 import * as z from 'zod'
 
-export enum SERVICE_TYPE {
-  APPOINTMENT = 'appointment',
-  SURCHARGE = 'surcharge'
-}
+import { SERVICE_TYPE } from '../kysely/types.js'
 
 export const serviceValidation = {
   id: z.number().optional(),
@@ -18,3 +15,4 @@ export const serviceValidation = {
 export const service = z.object(serviceValidation)
 
 export type Service = z.infer<typeof service>
+export { SERVICE_TYPE }

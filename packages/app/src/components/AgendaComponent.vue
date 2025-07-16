@@ -1,28 +1,28 @@
 <template>
-  <div class="row justify-center">
+  <div class="grid grid-cols-12 gap-3">
     <slot name="navigation" />
-    <q-input
+    <date-input
       v-model="selectedDate"
-      class="q-pb-none"
-      filled
-      mask="date"
-      :rules="['date']"
+      class="col-span-12 md:col-span-7"
+      hide-bottom-space
+      :label="lang.kennellayout.labels.date"
+      format="DD-MM-YYYY"
+      clearable
+      :date="{
+        noUnset: true,
+        firstDayOfWeek: '1'
+      }"
+      :icons="{
+        event: 'i-mdi-event',
+        clear: 'i-mdi-clear'
+      }"
     >
-      <template #append>
-        <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date v-model="selectedDate" first-day-of-week="1">
-              <div class="row items-center justify-end">
-                <q-btn v-close-popup label="Close" color="primary" flat />
-              </div>
-            </q-date>
-          </q-popup-proxy>
-        </q-icon>
-      </template>
-    </q-input>
+    </date-input>
 
     <q-btn-toggle
       v-model="view"
+      spread
+      class="col-span-12 md:col-span-2"
       push
       toggle-color="primary"
       :options="[
@@ -36,42 +36,9 @@
       {{ getMonthYear(selectedDate) }}
     </a>
   </div>
-  <div class="row">
-    <div class="col-12 col-sm">
-      <q-badge rounded :color="AGENDA_CHIP_BADGE_COLORS.appointment">
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="AGENDA_CHIP_BADGE_ICONS.appointment"
-          size="0.8em"
-        /> </q-badge
-      ><a>{{ lang.service.type.appointment }}</a>
-
-      <q-badge
-        class="q-ml-lg"
-        rounded
-        :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
-          size="0.8em"
-        /> </q-badge
-      ><a>{{ lang.booking.messages.isDoubleBooked }}</a>
-
-      <q-badge
-        class="q-ml-lg"
-        rounded
-        :color="PET_CHIP_BADGE_COLORS.vaccinations"
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="PET_CHIP_BADGE_ICONS.vaccinations"
-          size="0.8em"
-        /> </q-badge
-      ><a>{{ lang.pet.vaccination.missingVaccinations }}</a>
-    </div>
-  </div>
-  <div class="row">
+  <agenda-legend />
+  <pet-legend />
+  <div class="row q-mb-md">
     <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   </div>
   <q-scroll-area :style="contentSize">
@@ -128,7 +95,7 @@
           >{{ lang.booking.title }}
           {{ getNumberOfBookingPets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none" inset />
+        <q-separator class="q-pt-none q-mb-md" inset />
         <div
           v-for="booking in getBookingArrivals(timestamp.date)"
           :key="booking.id"
@@ -184,7 +151,7 @@
           >{{ lang.daycare.title }}
           {{ getNumberOfDaycarePets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none" inset />
+        <q-separator class="q-pt-none q-mb-md" inset />
         <div
           v-for="daycareDate in getDaycareDates(timestamp.date)"
           :key="daycareDate.id"
@@ -210,29 +177,22 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {
-  QCalendarAgenda,
-  today,
-  validateTimestamp
-} from '@quasar/quasar-ui-qcalendar'
+import { QCalendarAgenda } from '@quasar/quasar-ui-qcalendar/QCalendarAgenda'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.scss'
 
 import AgendaChip from './AgendaChip.vue'
-import { onMounted, ref, toRefs, watch } from 'vue'
+import { ref, toRefs, watch } from 'vue'
 import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
 import { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
-import {
-  AGENDA_CHIP_BADGE_COLORS,
-  AGENDA_CHIP_BADGE_ICONS,
-  PET_CHIP_BADGE_COLORS,
-  PET_CHIP_BADGE_ICONS
-} from '../configuration.js'
 import { formatBookingDates } from './booking/BookingItemContent.vue'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
+import AgendaLegend from './agenda/AgendaLegend.vue'
+import PetLegend from './pet/PetLegend.vue'
+import { DateInput } from '@simsustech/quasar-components/form'
 export interface Props {
   bookings?: Booking[]
   daycareDates?: DaycareDate[]
@@ -272,11 +232,15 @@ const route = useRoute()
 const router = useRouter()
 const lang = useLang()
 
-const selectedDate = ref(today())
-const date = ref(selectedDate.value.replaceAll('/', '-'))
+const selectedDate = ref(
+  !Array.isArray(route.params.date)
+    ? route.params.date
+    : new Date().toISOString().slice(0, 10)
+)
+const date = ref(selectedDate.value)
 watch(selectedDate, (val) => {
   if (dateUtil.isValid(val)) {
-    date.value = val.replaceAll('/', '-')
+    date.value = val
   }
 })
 
@@ -376,12 +340,5 @@ const showLastNames = ref(false)
 
 defineExpose({
   setDate
-})
-onMounted(() => {
-  if (typeof route.params.date === 'string') {
-    if (validateTimestamp(route.params.date)) {
-      selectedDate.value = route.params.date.replace('-', '/')
-    }
-  }
 })
 </script>

@@ -15,16 +15,54 @@
       </q-item-section>
       <q-item-section side>
         <q-btn
-          v-if="showEditButton"
-          icon="edit"
+          v-if="showEditButton || showDeleteButton"
+          icon="i-mdi-more-vert"
+          flat
+        >
+          <q-menu>
+            <q-list>
+              <q-item
+                v-if="showEditButton"
+                v-close-popup
+                clickable
+                data-testid="edit-button"
+                @click="emit('update', { data: openingTime })"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ lang.update }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="showDeleteButton"
+                v-close-popup
+                clickable
+                data-testid="delete-button"
+                @click="emit('delete', { data: openingTime })"
+              >
+                <q-item-section>
+                  <q-item-label class="text-red">
+                    {{ lang.delete }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+        <!-- <q-btn
+          v-if="showEditButton" v-close-popup
+          icon="i-mdi-edit"
+          data-testid="edit-button"
           @click="emit('update', { data: openingTime })"
         />
         <q-btn
-          v-if="showDeleteButton"
-          icon="delete"
+          v-if="showDeleteButton" v-close-popup
+          icon="i-mdi-delete"
           color="red"
+          data-testid="delete-button"
           @click="emit('delete', { data: openingTime })"
-        />
+        /> -->
       </q-item-section>
     </q-item>
   </q-list>
@@ -39,6 +77,7 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { OpeningTime } from '@petboarding/api/zod'
+import { useLang } from '../../lang/index.js'
 
 export interface Props {
   modelValue: OpeningTime[]
@@ -70,6 +109,7 @@ const emit = defineEmits<{
   ): void
 }>()
 
+const lang = useLang()
 const variables = ref({
   // header: lang.value.some.nested.prop
 })

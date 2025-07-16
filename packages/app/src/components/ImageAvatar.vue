@@ -2,7 +2,7 @@
   <div>
     <q-avatar :class="{ 'cursor-pointer': modelValue }" @click="open">
       <img v-if="modelValue" :src="modelValue" />
-      <q-icon v-else size="lg" name="photo_camera" />
+      <q-icon v-else size="lg" name="i-mdi-camera" />
     </q-avatar>
     <q-btn
       v-if="allowChange"
@@ -12,7 +12,7 @@
       size="xs"
       padding="xs"
       style="position: relative; right: 18px; bottom: -15px"
-      :icon="modelValue ? 'edit' : 'add'"
+      :icon="modelValue ? 'i-mdi-edit' : 'i-mdi-add'"
       @click="pickFiles"
     ></q-btn>
     <q-file
@@ -24,7 +24,13 @@
       @update:model-value="setImage"
     />
   </div>
-  <responsive-dialog ref="imageDialog" persistent display>
+  <responsive-dialog
+    ref="imageDialog"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    display
+  >
     <base64-image class="text-center" :model-value="modelValue" />
   </responsive-dialog>
 </template>

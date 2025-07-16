@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from 'vue-router'
 import { userRouteKey, redirectRouteKey } from '../oauth.js'
-import { today } from '@quasar/quasar-ui-qcalendar'
+import { today } from '@quasar/quasar-ui-qcalendar/Timestamp'
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -10,12 +11,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'availability',
         alias: ['beschikbaarheid'],
-        component: () => import('../pages/AvailabilityPage.vue')
+        component: () => import('../pages/AvailabilityPage.vue'),
+        meta: {
+          lang: 'availability'
+        }
       },
       {
         path: 'information',
         alias: ['informatie'],
-        component: () => import('../pages/InformationPage.vue')
+        component: () => import('../pages/InformationPage.vue'),
+        meta: {
+          lang: 'information'
+        }
       },
       {
         path: 'redirect',
@@ -38,12 +45,18 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'admin',
-        component: () => import('../pages/AdminPage.vue'),
         children: [
           {
+            path: '',
+            component: () => import('../pages/AdminPage.vue')
+          },
+          {
             path: 'financial',
-            component: () => import('../pages/admin/FinancialPage.vue'),
             children: [
+              {
+                path: '',
+                component: () => import('../pages/admin/FinancialPage.vue')
+              },
               {
                 path: 'overview',
                 component: () =>
@@ -81,37 +94,71 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'announcements',
-            component: () => import('../pages/admin/AnnouncementsPage.vue')
+            components: {
+              default: () =>
+                import(
+                  '../pages/admin/AnnouncementsPage/AnnouncementsPage.vue'
+                ),
+              fabs: () =>
+                import(
+                  '../pages/admin/AnnouncementsPage/AnnouncementsPageFabs.vue'
+                )
+            }
           },
           {
             path: 'periods',
-            component: () => import('../pages/admin/PeriodsPage.vue')
+            components: {
+              default: () =>
+                import('../pages/admin/PeriodsPage/PeriodsPage.vue'),
+              fabs: () =>
+                import('../pages/admin/PeriodsPage/PeriodsPageFabs.vue')
+            }
           },
           {
             path: 'configuration',
-            component: () => import('../pages/admin/ConfigurationPage.vue'),
             children: [
               {
+                path: '',
+                component: () => import('../pages/admin/ConfigurationPage.vue')
+              },
+              {
                 path: 'categories',
-                component: () =>
-                  import('../pages/admin/configuration/CategoriesPage.vue')
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/CategoriesPage/CategoriesPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/CategoriesPage/CategoriesPageFabs.vue'
+                    )
+                }
               },
               {
                 path: 'services',
-                component: () =>
-                  import('../pages/admin/configuration/ServicesPage.vue')
-              },
-              {
-                path: 'email',
-                component: () =>
-                  import(
-                    '../pages/admin/configuration/BookingEmailRepliesPage.vue'
-                  )
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/ServicesPage/ServicesPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/ServicesPage/ServicesPageFabs.vue'
+                    )
+                }
               },
               {
                 path: 'openingtimes',
-                component: () =>
-                  import('../pages/admin/configuration/OpeningTimesPage.vue')
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/OpeningTimesPage/OpeningTimesPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/OpeningTimesPage/OpeningTimesPageFabs.vue'
+                    )
+                }
               },
               {
                 path: 'integrations',
@@ -120,20 +167,47 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'daycaresubscriptions',
-                component: () =>
-                  import(
-                    '../pages/admin/configuration/DaycareSubscriptionsPage.vue'
-                  )
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPageFabs.vue'
+                    )
+                }
               },
               {
                 path: 'buildings',
-                component: () =>
-                  import('../pages/admin/configuration/BuildingsPage.vue')
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/BuildingsPage/BuildingsPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/BuildingsPage/BuildingsPageFabs.vue'
+                    )
+                }
               },
               {
                 path: 'kennels',
+                components: {
+                  default: () =>
+                    import(
+                      '../pages/admin/configuration/KennelsPage/KennelsPage.vue'
+                    ),
+                  fabs: () =>
+                    import(
+                      '../pages/admin/configuration/KennelsPage/KennelsPageFabs.vue'
+                    )
+                }
+              },
+              {
+                path: 'documents',
                 component: () =>
-                  import('../pages/admin/configuration/KennelsPage.vue')
+                  import('../pages/admin/configuration/DocumentsPage.vue')
               }
             ]
           }
@@ -141,8 +215,11 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'employee',
-        component: () => import('../pages/EmployeePage.vue'),
         children: [
+          {
+            path: '',
+            component: () => import('../pages/EmployeePage.vue')
+          },
           {
             path: 'overview/:date?',
             component: () => import('../pages/employee/OverviewPage.vue'),
@@ -152,6 +229,9 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'overview'
             }
           },
           {
@@ -163,19 +243,31 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'agenda'
             }
           },
           {
             path: 'customers/:id?',
-            component: () => import('../pages/employee/CustomersPage.vue')
+            component: () => import('../pages/employee/CustomersPage.vue'),
+            meta: {
+              lang: 'customer'
+            }
           },
           {
             path: 'pets/:ids*',
-            component: () => import('../pages/employee/PetsPage.vue')
+            component: () => import('../pages/employee/PetsPage.vue'),
+            meta: {
+              lang: 'pet'
+            }
           },
           {
             path: 'bookings/:ids*',
-            component: () => import('../pages/employee/BookingsPage.vue')
+            component: () => import('../pages/employee/BookingsPage.vue'),
+            meta: {
+              lang: 'booking'
+            }
           },
           {
             path: 'labels',
@@ -203,13 +295,15 @@ const routes: RouteRecordRaw[] = [
                   path: route.path + '/' + today()
                 }
               }
+            },
+            meta: {
+              lang: 'kennellayout'
             }
           }
         ]
       },
       {
         path: 'account',
-        component: () => import('../pages/AccountPage.vue'),
         beforeEnter: async () => {
           // oAuth doesn't work in SSR
           // return { path: '' }
@@ -220,27 +314,75 @@ const routes: RouteRecordRaw[] = [
         },
         children: [
           {
+            path: '',
+            component: () => import('../pages/AccountPage.vue')
+          },
+          {
             path: 'customer',
-            component: () => import('../pages/account/CustomerPage.vue')
+            components: {
+              default: () =>
+                import('../pages/account/CustomerPage/CustomerPage.vue'),
+              fabs: () =>
+                import('../pages/account/CustomerPage/CustomerPageFabs.vue')
+            },
+            meta: {
+              lang: 'customer'
+            }
           },
           {
             path: 'contactpeople',
-            component: () => import('../pages/account/ContactPeoplePage.vue')
+            components: {
+              default: () =>
+                import(
+                  '../pages/account/ContactPeoplePage/ContactPeoplePage.vue'
+                ),
+              fabs: () =>
+                import(
+                  '../pages/account/ContactPeoplePage/ContactPeoplePageFabs.vue'
+                )
+            },
+            meta: {
+              lang: 'contactPerson'
+            }
           },
           {
             path: 'pets',
-            component: () => import('../pages/account/PetsPage.vue')
+            components: {
+              default: () => import('../pages/account/PetsPage/PetsPage.vue'),
+              fabs: () => import('../pages/account/PetsPage/PetsPageFabs.vue')
+            },
+            meta: {
+              lang: 'pet'
+            }
           },
           {
             path: 'bookings',
-            component: () => import('../pages/account/BookingsPage.vue')
+            components: {
+              default: () =>
+                import('../pages/account/BookingsPage/BookingsPage.vue'),
+              fabs: () =>
+                import('../pages/account/BookingsPage/BookingsPageFabs.vue')
+            },
+            meta: {
+              lang: 'booking'
+            }
           },
           {
             path: 'daycare',
-            component: () => import('../pages/account/DaycarePage.vue')
+            components: {
+              default: () =>
+                import('../pages/account/DaycarePage/DaycarePage.vue'),
+              fabs: () =>
+                import('../pages/account/DaycarePage/DaycarePageFabs.vue')
+            },
+            meta: {
+              lang: 'daycare'
+            }
           }
         ]
       },
+      // Always leave this as last one,
+      // but you can also remove it
       {
         path: '/:catchAll(.*)*',
         component: () => import('../pages/Error404Page.vue')
@@ -262,11 +404,31 @@ const routes: RouteRecordRaw[] = [
             }
           }
         }
+      },
+      {
+        path: 'pets/:ids*',
+        component: () => import('../pages/print/PetLabelsPage.vue')
+      },
+      {
+        path: 'bookings/:ids*',
+        component: () => import('../pages/print/BookingLabelsPage.vue')
+      },
+      {
+        path: 'overview/:date',
+        component: () => import('../pages/print/OverviewPage.vue')
+      },
+      {
+        path: 'termsandconditions',
+        component: () => import('../pages/TermsAndConditions.vue'),
+        alias: ['algemenevoorwaarden']
+      },
+      {
+        path: 'privacypolicy',
+        component: () => import('../pages/PrivacyPolicy.vue'),
+        alias: ['privacyverklaring']
       }
     ]
   }
-  // Always leave this as last one,
-  // but you can also remove it
 ]
 
 export default routes

@@ -17,7 +17,7 @@ import {
   type RawInvoiceDiscount,
   type RawInvoiceLine,
   type RawInvoiceSurcharge,
-  computeInvoiceCosts
+  type computeInvoiceCosts
 } from '@modular-api/fastify-checkout'
 import { eachDayOfInterval } from './tools.js'
 

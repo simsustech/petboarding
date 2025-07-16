@@ -46,7 +46,7 @@
         </q-badge>
         <q-badge
           v-if="modelValue.isDoubleBooked"
-          :color="AGENDA_CHIP_BADGE_ICONS.isDoubleBooked"
+          :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
           rounded
         >
           <q-icon
@@ -122,8 +122,8 @@ const petIds = computed(
 )
 
 const icons = ref({
-  arrival: 'add',
-  departure: 'cancel',
+  arrival: 'i-mdi-add',
+  departure: 'i-mdi-cancel',
   stay: undefined,
   daycare: undefined
 })

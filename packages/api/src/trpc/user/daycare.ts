@@ -85,6 +85,7 @@ export const userDaycareRoutes = ({
   cancelDaycareDates: procedure
     .input(z.number().array())
     .mutation(async ({ input, ctx }) => {
+      console.log(ctx)
       if (input.length && ctx.account?.id) {
         const customer = await findCustomer({
           criteria: {

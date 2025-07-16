@@ -1,12 +1,20 @@
 <template>
   <q-styled-card>
     <template #title>
-      <div class="row justify-end">
-        <q-btn outline rounded icon="edit" @click="update">
-          <q-tooltip>
-            {{ lang.update }}
-          </q-tooltip></q-btn
-        >
+      <div class="row justify-between">
+        <div class="col text-right">
+          <q-btn
+            outline
+            rounded
+            icon="i-mdi-edit"
+            data-testid="edit-button"
+            @click="update"
+          >
+            <q-tooltip>
+              {{ lang.update }}
+            </q-tooltip>
+          </q-btn>
+        </div>
       </div>
     </template>
     <q-list>
@@ -17,12 +25,6 @@
         :model-value="modelValue.telephoneNumber"
       />
     </q-list>
-
-    <template #actions>
-      <!-- <div class="row full-width justify-center">
-        <q-btn icon="edit" label="Update" @click="update" />
-      </div> -->
-    </template>
   </q-styled-card>
 </template>
 

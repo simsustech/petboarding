@@ -44,9 +44,9 @@ import {
   type RawInvoiceDiscount,
   type RawInvoiceSurcharge,
   computeInvoiceCosts,
-  type Invoice,
-  InvoiceStatus
+  type Invoice
 } from '@modular-api/fastify-checkout'
+import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
 import { FastifyInstance } from 'fastify'
 import { bookingEmailTemplates } from '../templates/email/bookings/index.js'
@@ -98,7 +98,7 @@ export interface BookingService {
   comments: string | null
   price: number | null
   listPrice: number | null
-  service: Service | null
+  service: Service
 }
 
 export type BookingPets = Pick<ParsedPet, 'id' | 'name' | 'categoryId'>[]
@@ -470,7 +470,7 @@ function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
           `.as('days')
       ])
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
-      .orderBy('bookingStatus.modifiedAt desc')
+      .orderBy('bookingStatus.modifiedAt', 'desc')
   ).as('statuses')
 }
 
@@ -832,7 +832,7 @@ export async function findBookings({
     query = query.limit(limit)
   }
 
-  const results = await query.orderBy('id desc').execute()
+  const results = await query.orderBy('id', 'desc').execute()
 
   const categories = await findCategories({
     criteria: {}
@@ -1049,7 +1049,7 @@ export async function updateBooking(
         .selectAll()
         .where('bookingId', '=', criteria.id)
         .where('status', '=', BOOKING_STATUS.APPROVED)
-        .orderBy('modifiedAt desc')
+        .orderBy('modifiedAt', 'desc')
         .limit(1)
         .executeTakeFirst()
 
@@ -1170,7 +1170,7 @@ export async function updateBookingService(
 }
 
 export async function getBookingsCount(status: BOOKING_STATUS) {
-  const count = (
+  let count = (
     await db
       .selectFrom('bookings')
       .where(({ eb, selectFrom }) =>
@@ -1192,6 +1192,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
       .executeTakeFirst()
   )?.count
 
+  if (typeof count === 'string') count = Number(count)
   return count
 }
 

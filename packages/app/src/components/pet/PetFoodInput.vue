@@ -1,18 +1,27 @@
 <template>
   <q-field :label="lang.pet.fields.food" stack-label>
     <template #control>
-      <div class="row">
+      <div
+        class="row"
+        :style="{
+          'margin-top': '-1.75em',
+          'margin-bottom': '-0.5em',
+          background: 'transparent',
+          border: 0
+        }"
+      >
         <q-input
           :model-value="modelValue.timesADay"
+          borderless
+          :filled="false"
+          :outlined="false"
+          :standout="false"
+          :rounded="false"
           type="number"
           step="1"
           inputmode="numeric"
-          class="col-1 q-mr-sm"
+          class="!col-1 q-mr-sm"
           :placeholder="lang.pet.food.fields.timesADay"
-          :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
-          }"
           input-class="text-right"
           suffix="x"
           @update:model-value="
@@ -25,12 +34,8 @@
           type="number"
           step="0.1"
           inputmode="numeric"
-          class="col-2 q-mr-sm"
+          class="!col-2 q-mr-sm"
           :placeholder="lang.pet.food.fields.amount"
-          :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
-          }"
           input-class="text-right"
           @update:model-value="
             updateKey('amount', Math.round(Number($event) * 100) / 100)
@@ -39,24 +44,16 @@
         <q-select
           :model-value="modelValue.amountUnit"
           :placeholder="lang.pet.food.fields.amountUnit"
-          class="col-2"
+          class="!col-2"
           map-options
           emit-value
           :options="amountUnitOptions"
-          :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
-          }"
           @update:model-value="updateKey('amountUnit', $event)"
         />
         <q-input
           :model-value="modelValue.kind"
-          class="col-6"
+          class="!col-auto"
           :placeholder="lang.pet.food.fields.kind"
-          :style="{
-            'margin-top': '-2em',
-            'margin-bottom': '-0.5em'
-          }"
           @update:model-value="updateKey('kind', $event)"
         />
       </div>

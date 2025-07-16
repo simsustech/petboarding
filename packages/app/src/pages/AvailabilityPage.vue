@@ -13,12 +13,11 @@ export default {
 </scirpt>
 
 <script setup lang="ts">
-import { createUseTrpc } from '../trpc.js'
 import { onMounted } from 'vue'
 import AvailabilityCard from '../components/AvailabilityCard.vue'
-const { useQuery } = await createUseTrpc()
+import { usePublicGetPeriodsQuery } from 'src/queries/public.js'
 
-const { data: periods, execute: executePeriods } = useQuery('public.getPeriods')
+const { periods, refetch: executePeriods } = usePublicGetPeriodsQuery()
 
 onMounted(async () => {
   executePeriods()

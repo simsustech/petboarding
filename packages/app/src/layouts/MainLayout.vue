@@ -1,85 +1,108 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <div v-show="ready">
-      <q-header elevated>
-        <q-toolbar>
-          <q-btn flat dense round aria-label="Menu" @click="toggleLeftDrawer">
-            <q-icon :name="matMenu" />
-          </q-btn>
+  <md3-layout :ready="ready">
+    <template #header-toolbar>
+      <q-toolbar-title> {{ title }} </q-toolbar-title>
 
-          <q-toolbar-title> {{ title }} </q-toolbar-title>
-          <q-btn icon="help" flat>
-            <q-menu>
-              <q-list>
-                <q-item
-                  :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
-                  target="_blank"
-                >
-                  <q-item-section avatar>
-                    <q-icon name="link" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ lang.documentation }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="configuration.SUPPORT_EMAIL">
-                  <q-item-section avatar>
-                    <q-icon name="email" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      {{ configuration.SUPPORT_EMAIL }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-          <q-language-select
-            v-model="language"
-            :language-imports="languageImports"
-            :locales="languageLocales"
-            is-item
-          />
+      <user-menu-button
+        v-if="user"
+        color="accent"
+        :user-route="userRoute"
+        :icons="{ person: 'i-mdi-person' }"
+        @sign-out="logout"
+      />
+      <login-button v-else color="accent" @click="login" />
+      <q-btn icon="i-mdi-more-vert" flat>
+        <q-menu>
+          <q-list>
+            <q-item clickable href="/print/privacypolicy" target="_blank">
+              <q-item-section avatar>
+                <q-icon name="i-mdi-document" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.privacyPolicy }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
 
-          <user-menu-button
-            v-if="user"
-            color="accent"
-            :user-route="userRoute"
-            @sign-out="logout"
-          />
-          <login-button v-else color="accent" @click="login" />
-          <q-btn icon="more_vert" flat>
-            <q-menu>
-              <q-list>
-                <q-item clickable href="/privacypolicy.pdf" target="_blank">
-                  <q-item-section>
-                    <q-item-label>
-                      {{ lang.privacyPolicy }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-        </q-toolbar>
-      </q-header>
+            <q-item
+              :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
+              target="_blank"
+            >
+              <q-item-section avatar>
+                <q-icon name="i-mdi-link" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ lang.documentation }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="configuration.SUPPORT_EMAIL">
+              <q-item-section avatar>
+                <q-icon name="i-mdi-email" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ configuration.SUPPORT_EMAIL }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
 
-      <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-        <q-scroll-area
-          style="height: calc(100% - 60px); border-right: 1px solid #ddd"
-        >
+            <q-language-select
+              v-model="language"
+              :language-imports="languageImports"
+              :locales="languageLocales"
+              is-item
+            />
+            <q-item>
+              <q-item-section label>
+                {{ lang.darkMode }}
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle
+                  :model-value="$q.dark.isActive"
+                  checked-icon="i-mdi-moon-and-stars"
+                  unchecked-icon="i-mdi-brightness-7"
+                  size="2em"
+                  @update:model-value="$q.dark.set"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </template>
+
+    <template #drawer-mini-navigation>
+      <div class="col">
+        <navigation-tabs vertical dense />
+      </div>
+    </template>
+
+    <template #drawer>
+      <q-scroll-area class="fit">
+        <div class="q-px-md">
+          <div class="text-overline">{{ title }}</div>
+          <q-list>
+            <q-item to="/" exact>
+              <q-item-section avatar>
+                <q-icon color="primary" name="i-mdi-home" />
+              </q-item-section>
+
+              <q-item-section>Home</q-item-section>
+            </q-item>
+          </q-list>
           <div v-if="user">
             <q-list>
               <q-expansion-item
                 ref="accountExpansionItemRef"
+                :content-inset-level="1"
                 :header-class="
                   route.path.includes('/account/') ? 'text-primary' : undefined
                 "
               >
                 <template #header>
                   <q-item-section avatar>
-                    <q-icon name="person" />
+                    <q-icon name="i-mdi-person" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-section>
@@ -87,29 +110,34 @@
                     </q-item-section>
                   </q-item-section>
                 </template>
-                <q-item :inset-level="1" to="/account/customer">
+                <q-item to="/account" exact>
+                  <q-item-section>
+                    <q-item-label> {{ lang.overview }} </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item to="/account/customer">
                   <q-item-section>
                     <q-item-label> {{ lang.customer.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/contactpeople">
+                <q-item to="/account/contactpeople">
                   <q-item-section>
                     <q-item-label>
                       {{ lang.contactPerson.title }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/pets">
+                <q-item to="/account/pets">
                   <q-item-section>
                     <q-item-label> {{ lang.pet.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/account/bookings">
+                <q-item to="/account/bookings">
                   <q-item-section>
-                    <q-item-label> {{ lang.bookings }} </q-item-label>
+                    <q-item-label> {{ lang.bookings.title }} </q-item-label>
                   </q-item-section></q-item
                 >
-                <q-item :inset-level="1" to="/account/daycare">
+                <q-item to="/account/daycare">
                   <q-item-section>
                     <q-item-label> {{ lang.daycare.title }} </q-item-label>
                   </q-item-section>
@@ -122,34 +150,48 @@
             <q-list>
               <q-expansion-item
                 ref="employeeExpansionItemRef"
-                :label="lang.employee"
                 :header-class="
                   route.path.includes('/employee/') ? 'text-primary' : undefined
                 "
+                :content-inset-level="1"
               >
-                <q-item :inset-level="1" to="/employee/overview">
+                <template #header>
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-person-star" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-section>
+                      <q-item-label> {{ lang.employee }} </q-item-label>
+                    </q-item-section>
+                  </q-item-section>
+                </template>
+                <q-item to="/employee/overview">
                   <q-item-section>
                     <q-item-label> {{ lang.dayOverview }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/agenda">
+                <q-item to="/employee/agenda">
                   <q-item-section>
                     <q-item-label> {{ lang.agenda.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/kennellayout">
+                <q-item
+                  to="/employee/kennellayout"
+                  :active="route.path.includes('/employee/kennellayout')"
+                >
                   <q-item-section>
-                    <q-item-label> {{ lang.kennellayout.title }} </q-item-label>
+                    <q-item-label>
+                      {{ lang.kennellayout.title }}
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/employee/customers">
+                <q-item to="/employee/customers">
                   <q-item-section>
                     <q-item-label> {{ lang.customers }} </q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-expansion-item
-                  :header-inset-level="1"
-                  :content-inset-level="2"
+                  :content-inset-level="1"
                   to="/employee/pets"
                   :label="lang.pet.title"
                 >
@@ -159,7 +201,7 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <!-- <q-item :inset-level="1" to="/employee/bookings">
+                <!-- <q-item  to="/employee/bookings">
                   <q-item-section>
                     <q-item-label> {{ lang.booking.title }} </q-item-label>
                   </q-item-section>
@@ -172,11 +214,15 @@
               <q-expansion-item
                 ref="adminExpansionItemRef"
                 :label="lang.administrator"
+                :content-inset-level="1"
                 :header-class="
                   route.path.includes('/admin/') ? 'text-primary' : undefined
                 "
               >
                 <template #header>
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-account-cog" />
+                  </q-item-section>
                   <q-item-section>
                     <q-item-label>
                       {{ lang.administrator }}
@@ -189,13 +235,12 @@
                         numberOfPendingDaycareDates > 0
                       "
                       color="red"
-                      name="priority_high"
+                      name="i-mdi-exclamation"
                     />
                   </q-item-section>
                 </template>
                 <q-expansion-item
-                  :header-inset-level="1"
-                  :content-inset-level="2"
+                  :content-inset-level="1"
                   :label="lang.financial.title"
                 >
                   <q-item to="/admin/financial/overview">
@@ -209,12 +254,12 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <q-item :inset-level="1" to="/admin/accounts">
+                <q-item to="/admin/accounts">
                   <q-item-section>
                     <q-item-label> Accounts </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/bookings">
+                <q-item to="/admin/bookings">
                   <q-item-section>
                     <q-item-label>
                       {{ lang.booking.title }}
@@ -226,7 +271,7 @@
                     >
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/daycare">
+                <q-item to="/admin/daycare">
                   <q-item-section>
                     <q-item-label> {{ lang.daycare.title }} </q-item-label>
                   </q-item-section>
@@ -236,17 +281,19 @@
                     >
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/occupancy">
+                <q-item to="/admin/occupancy">
                   <q-item-section>
                     <q-item-label> {{ lang.occupancy.title }} </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/announcements">
+                <q-item to="/admin/announcements">
                   <q-item-section>
-                    <q-item-label> {{ lang.announcement.title }} </q-item-label>
+                    <q-item-label>
+                      {{ lang.announcement.title }}
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item :inset-level="1" to="/admin/periods">
+                <q-item to="/admin/periods">
                   <q-item-section>
                     <q-item-label> {{ lang.period.title }} </q-item-label>
                   </q-item-section>
@@ -297,6 +344,13 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item> -->
+                  <q-item to="/admin/configuration/documents">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ lang.configuration.documents }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <q-item to="/admin/configuration/integrations">
                     <q-item-section>
                       <q-item-label>
@@ -307,70 +361,65 @@
                 </q-expansion-item>
               </q-expansion-item>
             </q-list>
+            <q-separator />
           </div>
-          <q-separator />
-          <q-list>
-            <q-item to="/" exact>
-              <q-item-section avatar>
-                <q-icon color="primary" name="home" />
-              </q-item-section>
+        </div>
+      </q-scroll-area>
+      <q-list
+        v-if="!configuration.HIDE_BRANDING"
+        class="items-end justify-end self-end"
+      >
+        <q-item>
+          <q-item-section avatar>
+            <petboarding-icon size="lg" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label> Petboarding </q-item-label>
+            <q-item-label caption> © simsustech </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </template>
 
-              <q-item-section>Home</q-item-section>
-            </q-item>
-          </q-list>
-        </q-scroll-area>
-        <q-space />
-        <q-list v-if="!configuration.HIDE_BRANDING">
-          <q-item>
-            <q-item-section avatar>
-              <petboarding-icon size="lg" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label> Petboarding </q-item-label>
-              <q-item-label caption> © simsustech </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-drawer>
+    <template #footer>
+      <div class="column fit items-center justify-center">
+        <navigation-tabs dense class="col-12 lt-md" />
+      </div>
+    </template>
 
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </div>
-  </q-layout>
+    <template #fabs="{ showSticky }">
+      <router-view name="fabs" :show-sticky="showSticky" />
+    </template>
+  </md3-layout>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import { matMenu } from '@quasar/extras/material-icons'
 import {
   LoginButton,
   UserMenuButton
 } from '@simsustech/quasar-components/authentication'
 import { QLanguageSelect } from '@simsustech/quasar-components'
+import { Md3Layout } from '@simsustech/quasar-components/md3'
 import { useOAuthClient, userRouteKey, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'
 import { useConfiguration, loadConfiguration } from '../configuration'
 import PetboardingIcon from '../components/PetboardingIcon.vue'
-import { createUseTrpc } from '../trpc.js'
-
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
-const configuration = useConfiguration()
+import NavigationTabs from './NavigationTabs.vue'
+import { initializeTRPCClient } from 'src/trpc.js'
+
+import { useAdminGetBookingsCount } from '../queries/admin/booking.js'
+import { useAdminGetDaycareCount } from '../queries/admin/daycare.js'
 
 const router = useRouter()
 const route = useRoute()
 const lang = useLang()
 
 const $q = useQuasar()
-const leftDrawerOpen = ref(false)
-
-const toggleLeftDrawer = () => {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
 
 const login = () => {
   if (oAuthClient.value) oAuthClient.value.signIn({})
@@ -384,7 +433,12 @@ const userRoute = {
   name: userRouteKey
 }
 
-const title = computed(() => configuration.value.TITLE)
+const title = computed(() => {
+  let title = configuration.value.TITLE
+  // @ts-expect-error key might not exist
+  if (lang.value[route.meta?.lang]) title = lang.value[route.meta.lang].title
+  return title
+})
 const language = ref($q.lang.isoName)
 
 const languageLocales = ref([
@@ -398,59 +452,38 @@ const languageLocales = ref([
   }
 ])
 
-// prettier-ignore
 const languageImports = ref({
-  nl: () => import(`../../node_modules/quasar/lang/nl.js`),
-  'en-US': () => import(`../../node_modules/quasar/lang/en-US.js`)
+  nl: () => import(`quasar/lang/nl.js`),
+  'en-US': () => import(`quasar/lang/en-US.js`)
 })
 
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-  loadComponentsFormLang($q.lang.isoName)
-  loadModularApiQuasarComponentsCheckoutLang($q.lang.isoName)
+watch(language, (newVal) => {
+  loadLang(newVal)
+  loadComponentsFormLang(newVal)
+  loadModularApiQuasarComponentsCheckoutLang(newVal)
 })
 
-watch(route, (val) => {
-  if (val.path.includes('account')) accountExpansionItemRef.value.show()
-  if (val.path.includes('employee')) employeeExpansionItemRef.value.show()
-  if (val.path.includes('admin')) adminExpansionItemRef.value.show()
-})
+await loadConfiguration(language)
+const configuration = useConfiguration()
+await initializeTRPCClient(configuration.value.API_HOST)
+
 const accountExpansionItemRef = ref()
 const employeeExpansionItemRef = ref()
 const adminExpansionItemRef = ref()
 
-const numberOfPendingBookings = ref<number>(0)
-const numberOfPendingDaycareDates = ref<number>(0)
+const {
+  bookingsCount: numberOfPendingBookings,
+  refetch: refetchBookingsCount
+} = useAdminGetBookingsCount()
+const {
+  daycareCount: numberOfPendingDaycareDates,
+  refetch: refetchDaycareCount
+} = useAdminGetDaycareCount()
 
 watch(user, async () => {
   if (user.value?.roles?.includes('administrator')) {
-    const { useQuery } = await createUseTrpc()
-    const {
-      data: bookingsCount,
-      immediatePromise: immediaPromiseBookingsCount
-    } = useQuery('admin.getBookingsCount', {
-      args: {
-        status: BOOKING_STATUS.PENDING
-      },
-      immediate: true
-    })
-    await immediaPromiseBookingsCount
-    if (bookingsCount.value !== void 0)
-      numberOfPendingBookings.value = bookingsCount.value
-
-    const {
-      data: daycareDatesCount,
-      immediatePromise: immediatePromiseDaycareDatesCount
-    } = useQuery('admin.getDaycareCount', {
-      args: {
-        status: DAYCARE_DATE_STATUS.PENDING
-      },
-      immediate: true
-    })
-    await immediatePromiseDaycareDatesCount
-    if (daycareDatesCount.value !== void 0)
-      numberOfPendingDaycareDates.value = daycareDatesCount.value
+    await refetchBookingsCount()
+    await refetchDaycareCount()
   }
 })
 

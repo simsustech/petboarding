@@ -29,7 +29,9 @@ test.beforeAll(async ({ browser }) => {
 
   await page.waitForURL(/.*user/)
   await expect(
-    page.getByText('Employee').locator(':scope.q-item__label')
+    page
+      .getByRole('tab', { name: 'Employee' })
+      .or(page.getByText('Employee').locator(':scope.q-item__label'))
   ).toBeVisible()
 })
 
@@ -40,7 +42,10 @@ test.describe('Employee', async () => {
 
     await expect(page.getByText('name2').first()).toBeVisible()
 
-    await page.getByLabel('event').fill('2024-01-12')
+    const [YYYY, MM, DD] = '2024-01-12'.split('-')
+    await page.getByPlaceholder('DD').first().fill(DD)
+    await page.getByPlaceholder('MM').first().fill(MM)
+    await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
     await expect(page.getByText('name2').first()).toBeVisible()
   })
@@ -51,7 +56,11 @@ test.describe('Employee', async () => {
     await page.getByText('name2').first().waitFor()
     await expect(page.getByText('name2')).toHaveCount(6)
 
-    await page.getByLabel('event').fill('2024-01-12')
+    const [YYYY, MM, DD] = '2024-01-12'.split('-')
+    await page.getByPlaceholder('DD').first().fill(DD)
+    await page.getByPlaceholder('MM').first().fill(MM)
+    await page.getByPlaceholder('YYYY').first().fill(YYYY)
+
     await page.getByText('name2').first().waitFor()
     await expect(page.getByText('name2')).toHaveCount(5)
   })
