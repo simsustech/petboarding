@@ -56,6 +56,7 @@ onMounted(() => {
   @page {
     height: v-bind('LABEL_HEIGHT');
     width: v-bind('LABEL_WIDTH');
+    margin: 0;
   }
   .label {
     break-after: page;
