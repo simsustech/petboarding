@@ -186,6 +186,10 @@ onMounted(async () => {
     padding: 0;
   }
 }
+body {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact; /* For Firefox */
+}
 .q-card {
   --at-apply: bg-transparent outline-solid outline-black outline-1px;
 }

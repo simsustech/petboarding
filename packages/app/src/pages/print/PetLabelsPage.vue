@@ -71,4 +71,8 @@ onMounted(() => {
     break-after: page;
   }
 }
+body {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact; /* For Firefox */
+}
 </style>
