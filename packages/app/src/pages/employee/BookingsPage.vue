@@ -284,6 +284,9 @@ const updateBookingService: InstanceType<
 }
 
 onMounted(async () => {
+  if (data.value?.[0]) {
+    customerId.value = data.value[0].customerId
+  }
   await executeServices()
   await executePets()
   if (route.params.ids) await execute()

@@ -32,7 +32,7 @@ export const useEmployeeCancelBookingMutation = () => {
 
 export const useEmployeeUpdateBookingInvoiceMutation = () => {
   const { ...rest } = useMutation({
-    mutation: (id: number) => trpc.employee.updateBookingInvoice.mutate(id)
+    mutation: (id: number) => trpc.employee.updateBookingInvoice.mutate({ id })
   })
   return {
     ...rest

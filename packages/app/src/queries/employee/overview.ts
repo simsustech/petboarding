@@ -4,7 +4,7 @@ import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
 import { ref } from 'vue'
 
 export const useEmployeeGetOverviewQuery = defineQuery(() => {
-  const selectedDate = ref('')
+  const selectedDate = ref(new Date().toISOString().slice(0, 10))
   const bookingStatuses = ref<BOOKING_STATUS[]>([
     BOOKING_STATUS.APPROVED,
     BOOKING_STATUS.AWAITING_DOWNPAYMENT

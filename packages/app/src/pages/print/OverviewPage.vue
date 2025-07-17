@@ -113,17 +113,18 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted } from 'vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
 import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS, Pet } from '@petboarding/api/zod'
-import { useRouter, onBeforeRouteUpdate } from 'vue-router'
+import { useRouter, onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { useLang } from '../../lang/index.js'
 import { formatDate } from '../../tools.js'
 import { useEmployeeGetOverviewQuery } from 'src/queries/employee/overview.js'
 import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
-
+import { date as dateUtil } from 'quasar'
 const lang = useLang()
 const router = useRouter()
+const route = useRoute()
 
 const { openingTimes: openingTimesData, refetch: executeOpeningTimes } =
   usePublicGetOpeningTimesQuery()
@@ -140,16 +141,19 @@ onBeforeRouteUpdate((to) => {
     selectedDate.value = to.params.date.replaceAll('-', '/')
   }
 })
+selectedDate.value = !Array.isArray(route.params.date)
+  ? (route.params.date as string)
+  : dateUtil.formatDate(new Date(), 'YYYY-MM-DD')
 // const parsedDate = computed(() => selectedDate.value.replaceAll('/', '-'))
-const dateInputRef = ref<QInput>()
-const dateError = computed(() => dateInputRef.value?.hasError)
+// const dateInputRef = ref<QInput>()
+// const dateError = computed(() => dateInputRef.value?.hasError)
 
-watch(selectedDate, async () => {
-  await dateInputRef.value?.validate()
-  if (!dateError.value) {
-    await refetch()
-  }
-})
+// watch(selectedDate, async () => {
+//   await dateInputRef.value?.validate()
+//   if (!dateError.value) {
+//     await refetch()
+//   }
+// })
 
 const sortedOpeningTimes = computed(() => {
   if (openingTimesData.value) {
@@ -165,10 +169,10 @@ const getPetsFromDaycareDate = (pets: Pet[]) =>
 
 onMounted(async () => {
   await executeOpeningTimes()
-  await dateInputRef.value?.validate()
-  if (!dateError.value) {
-    await refetch()
-  }
+  // await dateInputRef.value?.validate()
+  // if (!dateError.value) {
+  await refetch()
+  // }
 })
 </script>
 
