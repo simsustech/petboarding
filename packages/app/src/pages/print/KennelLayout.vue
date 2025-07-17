@@ -3,7 +3,7 @@
     <div class="row justify-center text-h6">
       {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
-    <div class="row">
+    <div class="row pt-0px mt-0px">
       <pet-chip
         v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
         :id="`pet${pet.id}`"
@@ -11,7 +11,8 @@
         :class="{
           'col-auto': true,
           'bg-blue-2': pet.bookingId,
-          'bg-yellow-2': pet.daycareDateId
+          'bg-yellow-2': pet.daycareDateId,
+          'py-0px': true
         }"
         :model-value="pet"
         show-last-name
@@ -21,11 +22,15 @@
       </pet-chip>
     </div>
     <div class="q-col-gutter-md row">
-      <div v-for="building in buildings" :key="building.id" class="col-12">
+      <div
+        v-for="building in buildings"
+        :key="building.id"
+        class="col-12 pt-0px mt-0px"
+      >
         <div class="col-12 row justify-center text-h6 q-mb-none">
           {{ building.name }}
         </div>
-        <div class="grid grid-cols-12 gap-3">
+        <div class="grid grid-cols-12 gap-1">
           <q-card
             v-for="kennel in building.kennels"
             :key="kennel.id"
@@ -36,7 +41,10 @@
               'min-width': '75px'
             }"
           >
-            <q-card-section header class="text-h6 text-center p-0px m-0px">
+            <q-card-section
+              header
+              class="text-h6 text-center p-0px m-0px line-height-1.2em"
+            >
               {{ kennel.name }}
             </q-card-section>
             <q-card-section
