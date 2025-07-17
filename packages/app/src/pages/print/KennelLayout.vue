@@ -29,17 +29,14 @@
           <q-card
             v-for="kennel in building.kennels"
             :key="kennel.id"
-            class="col-span-3"
+            class="col-span-3 p-0px"
             bordered
             :style="{
               'border-width': '3px',
               'min-width': '75px'
             }"
           >
-            <q-card-section
-              header
-              class="text-h6 text-center q-pt-xs q-pb-none"
-            >
+            <q-card-section header class="text-h6 text-center p-0px m-0px">
               {{ kennel.name }}
             </q-card-section>
             <q-card-section
@@ -61,7 +58,8 @@
                   :id="`pet${pet.id}`"
                   :class="{
                     'bg-blue-2': pet.bookingId,
-                    'bg-yellow-2': pet.daycareDateId
+                    'bg-yellow-2': pet.daycareDateId,
+                    'py-0px': true
                   }"
                   :model-value="pet"
                   show-badge
