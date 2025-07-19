@@ -34,7 +34,7 @@
           <q-card
             v-for="kennel in building.kennels"
             :key="kennel.id"
-            class="col-span-3 p-0px"
+            class="col-span-3 p-0px bg-white"
             bordered
             :style="{
               'border-width': '3px',
