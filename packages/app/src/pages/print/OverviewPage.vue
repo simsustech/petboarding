@@ -1,5 +1,5 @@
 <template>
-  <div class="p-1em print:p-0">
+  <div class="p-1em print:p-0 inline-block">
     <div class="row justify-center text-h6">
       {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
