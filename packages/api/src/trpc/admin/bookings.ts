@@ -774,7 +774,6 @@ export const adminBookingRoutes = ({
           from: subDays(new Date(), days).toISOString().slice(0, 10),
           statuses: [
             BOOKING_STATUS.APPROVED,
-            BOOKING_STATUS.CANCELED,
             BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
           ]
         }
