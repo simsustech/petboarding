@@ -779,31 +779,49 @@ export const adminBookingRoutes = ({
           ]
         }
       })
-      console.log(bookings)
+
       const unpaidBookingUuids = bookings
         .map((booking) => booking.invoiceUuid)
         .filter((uuid): uuid is string => !!uuid)
       if (fastify.slimfact && unpaidBookingUuids?.length) {
-        const unpaidBills = await fastify.slimfact.admin.getInvoices.query({
-          uuids: unpaidBookingUuids,
-          status: InvoiceStatus.BILL,
-          paid: false
-        })
+        const chunkSize = 10
+        const unpaidBillUuids: string[] = []
+        for (let i = 0; i < unpaidBookingUuids.length; i += chunkSize) {
+          const chunk = unpaidBookingUuids.slice(i, i + chunkSize)
 
-        const unpaidBillUuids = unpaidBills?.map((bill) => bill.uuid)
+          const unpaidBills = await fastify.slimfact.admin.getInvoices.query({
+            uuids: chunk,
+            status: InvoiceStatus.BILL,
+            paid: false
+          })
 
-        return findBookings({
-          criteria: {
-            ids: bookings
-              .filter(
-                (booking) =>
-                  booking.invoiceUuid &&
-                  unpaidBillUuids?.includes(booking.invoiceUuid)
-              )
-              .map((booking) => booking.id)
-          },
-          fastify
-        })
+          if (unpaidBills)
+            unpaidBillUuids.push(...unpaidBills?.map((bill) => bill.uuid))
+        }
+
+        const ids = bookings
+          .filter(
+            (booking) =>
+              booking.invoiceUuid &&
+              unpaidBillUuids?.includes(booking.invoiceUuid)
+          )
+          .map((booking) => booking.id)
+
+        if (ids.length) {
+          return findBookings({
+            criteria: {
+              ids: bookings
+                .filter(
+                  (booking) =>
+                    booking.invoiceUuid &&
+                    unpaidBillUuids?.includes(booking.invoiceUuid)
+                )
+                .map((booking) => booking.id)
+            },
+            fastify
+          })
+        }
+        return []
       }
     }),
   getBookingInvoices: procedure

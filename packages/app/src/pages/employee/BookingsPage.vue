@@ -286,6 +286,8 @@ const updateBookingService: InstanceType<
 onMounted(async () => {
   if (data.value?.[0]) {
     customerId.value = data.value[0].customerId
+  } else {
+    customerId.value = NaN
   }
   await executeServices()
   await executePets()

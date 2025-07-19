@@ -63,8 +63,6 @@ const employeeRouter = (fastify: FastifyInstance) =>
   })
 
 export const createRouter = (fastify: FastifyInstance) => {
-  const t = initTRPC.create()
-
   const router = t.router({
     user: userRouter(fastify),
     configuration: configurationRouter(fastify),
