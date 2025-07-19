@@ -14,7 +14,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
   const daycareDatesStatus = ref(DAYCARE_DATE_STATUS.APPROVED)
 
   const { data: customer, ...restCustomer } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => ['employeeGetCustomer', customerId.value],
     query: () =>
       trpc.employee.getCustomer.query({
@@ -23,7 +23,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
   })
 
   const { data: contactPeople, ...restContactPeople } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => ['employeeGetContactPeople', customerId.value],
     query: () =>
       trpc.employee.getContactPeopleByCustomerId.query({
@@ -32,7 +32,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
   })
 
   const { data: pets, ...restPets } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => ['employeeGetPets', customerId.value],
     query: () =>
       trpc.employee.getPetsByCustomerId.query({
@@ -41,7 +41,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
   })
 
   const { data: bookings, ...restBookings } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => ['employeeGetBookings', customerId.value],
     query: () =>
       trpc.employee.getBookings.query({
@@ -61,7 +61,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
     data: customerDaycareSubscriptions,
     ...restCustomerDaycareSubscriptions
   } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => ['employeeGetCustomerDaycareSubscriptions', customerId.value],
     query: () =>
       trpc.employee.getCustomerDaycareSubscriptions.query({
@@ -82,7 +82,7 @@ export const useEmployeeGetCustomerQuery = defineQuery(() => {
   })
 
   const { data: daycareDates, ...restDaycareDates } = useQuery({
-    enabled: !import.meta.env.SSR && !!customerId.value,
+    enabled: !import.meta.env.SSR,
     key: () => [
       'employeeGetDaycareDates',
       customerId.value,

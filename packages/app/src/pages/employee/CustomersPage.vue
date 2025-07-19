@@ -265,6 +265,7 @@ const $q = useQuasar()
 onBeforeRouteUpdate((to) => {
   if (to.params.id) {
     id.value = Number(to.params.id)
+    execute()
   }
 })
 
@@ -630,7 +631,7 @@ const createDaycare: InstanceType<
 
 onMounted(async () => {
   await executeCategories()
-  if (route.params.id) {
+  if (id.value) {
     await Promise.all([
       execute(),
       // executeContactPeople(),
