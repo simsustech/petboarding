@@ -7,7 +7,7 @@ export const useAccountGetOpeningTimesQuery = defineQuery(() => {
 
   const { data: openingTimes, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
-    key: () => ['accountGetOpeningTimes'],
+    key: () => ['accountGetOpeningTimes', date.value],
     query: () =>
       trpc.user.getOpeningTimes.query({
         date: date.value
