@@ -63,7 +63,7 @@
         </q-card-section>
       </q-card>
 
-      <q-card v-show="id" class="col-span-12 md:col-span-6">
+      <q-card v-if="id" class="col-span-12 md:col-span-6">
         <q-card-section class="text-right q-gutter-x-md">
           <q-btn
             :label="lang.booking.labels.addBooking"
@@ -127,7 +127,7 @@
       </q-card-actions> -->
       </q-card>
 
-      <q-card v-show="id" class="col-span-12 md:col-span-6 q-pa-md">
+      <q-card v-if="id" class="col-span-12 md:col-span-6 q-pa-md">
         <q-card-section class="text-right">
           <q-btn
             :label="lang.daycare.labels.addDaycare"
@@ -376,21 +376,25 @@ if (route.params.id) id.value = Number(route.params.id)
 //   useQuery('public.getServices')
 
 const upcomingBookings = computed(() =>
-  bookings.value?.filter(
-    (booking) =>
-      (booking.status?.status === BOOKING_STATUS.APPROVED ||
-        booking.status?.status === BOOKING_STATUS.PENDING ||
-        booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT) &&
-      booking.endDate >= new Date().toISOString().slice(0, 10)
-  )
+  bookings.value
+    ?.filter(
+      (booking) =>
+        (booking.status?.status === BOOKING_STATUS.APPROVED ||
+          booking.status?.status === BOOKING_STATUS.PENDING ||
+          booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT) &&
+        booking.endDate >= new Date().toISOString().slice(0, 10)
+    )
+    .sort((a, b) => (a.startDate > b.startDate ? -1 : 1))
 )
 const otherBookings = computed(() =>
-  bookings.value?.filter(
-    (booking) =>
-      !upcomingBookings.value
-        ?.map((upcomingBooking) => upcomingBooking.id)
-        .includes(booking.id)
-  )
+  bookings.value
+    ?.filter(
+      (booking) =>
+        !upcomingBookings.value
+          ?.map((upcomingBooking) => upcomingBooking.id)
+          .includes(booking.id)
+    )
+    .sort((a, b) => (a.startDate > b.startDate ? -1 : 1))
 )
 
 // const daycareDatesFrom = ref('')
@@ -506,7 +510,8 @@ const openPets = () =>
 const {
   customers: filteredCustomers,
   searchPhrase: customerSearchPhrase,
-  customerIds
+  customerIds,
+  refetch: refetchSearchCustomers
 } = useEmployeeSearchCustomersQuery()
 
 const { mutateAsync: createBookingMutation } =
@@ -642,5 +647,6 @@ onMounted(async () => {
       // executeCustomerDaycareSubscriptions()
     ])
   }
+  await refetchSearchCustomers()
 })
 </script>
