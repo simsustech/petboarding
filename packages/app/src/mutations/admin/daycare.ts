@@ -14,7 +14,7 @@ export const useAdminApproveDaycareDateMutation = () => {
 export const useAdminRejectDaycareDateMutation = () => {
   const { ...rest } = useMutation({
     mutation: ({ ids }: { ids: number[] }) =>
-      trpc.admin.approveDaycareDateIds.mutate(ids)
+      trpc.admin.rejectDaycareDateIds.mutate(ids)
   })
   return {
     ...rest
@@ -24,7 +24,7 @@ export const useAdminRejectDaycareDateMutation = () => {
 export const useAdminStandbyDaycareDateMutation = () => {
   const { ...rest } = useMutation({
     mutation: ({ ids }: { ids: number[] }) =>
-      trpc.admin.approveDaycareDateIds.mutate(ids)
+      trpc.admin.standbyDaycareDateIds.mutate(ids)
   })
   return {
     ...rest
