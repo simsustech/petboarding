@@ -22,9 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import lang from 'src/lang/en-US.js'
+import { useLang } from '../../lang/index.js'
 import {
   PET_CHIP_BADGE_COLORS,
   PET_CHIP_BADGE_ICONS
 } from '../../configuration.js'
+
+const lang = useLang()
 </script>
