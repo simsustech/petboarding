@@ -10,8 +10,9 @@
         :key="pet.id"
         :class="{
           'col-auto': true,
-          'bg-blue-2': pet.bookingId,
-          'bg-yellow-2': pet.daycareDateId,
+          'bg-white': true,
+          // 'bg-blue-2': pet.bookingId,
+          // 'bg-yellow-2': pet.daycareDateId,
           'py-0px': true
         }"
         :model-value="pet"
@@ -65,8 +66,10 @@
                 <pet-chip
                   :id="`pet${pet.id}`"
                   :class="{
-                    'bg-blue-2': pet.bookingId,
-                    'bg-yellow-2': pet.daycareDateId,
+                    'bg-white': true,
+                    'text-italic': pet.daycareDateId,
+                    // 'bg-blue-2': pet.bookingId,
+                    // 'bg-yellow-2': pet.daycareDateId,
                     'py-0px': true
                   }"
                   :model-value="pet"
