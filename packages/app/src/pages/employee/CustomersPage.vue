@@ -63,7 +63,7 @@
         </q-card-section>
       </q-card>
 
-      <q-card v-if="id" class="col-span-12 md:col-span-6">
+      <q-card v-if="id" class="col-span-12">
         <q-card-section class="text-right q-gutter-x-md">
           <q-btn
             :label="lang.booking.labels.addBooking"
@@ -127,7 +127,7 @@
       </q-card-actions> -->
       </q-card>
 
-      <q-card v-if="id" class="col-span-12 md:col-span-6 q-pa-md">
+      <q-card v-if="id" class="col-span-12 q-pa-md">
         <q-card-section class="text-right">
           <q-btn
             :label="lang.daycare.labels.addDaycare"
