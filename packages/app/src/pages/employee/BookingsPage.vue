@@ -215,7 +215,10 @@ const cancelBooking: InstanceType<
 >['$props']['onCancel'] = async ({ data: { booking, reason }, done }) => {
   if (booking.id) {
     try {
-      await cancelBookingMutation(booking.id)
+      await cancelBookingMutation({
+        id: booking.id,
+        reason
+      })
       done(true)
       await execute()
     } catch (e) {
