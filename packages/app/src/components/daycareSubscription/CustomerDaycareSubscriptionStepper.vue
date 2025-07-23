@@ -78,7 +78,7 @@
     <template #navigation>
       <q-stepper-navigation class="text-right">
         <q-btn
-          v-if="step === 2"
+          v-if="step !== 1"
           flat
           color="primary"
           :label="lang.previous"

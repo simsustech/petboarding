@@ -211,7 +211,8 @@ function withDaycareDates(
 
 function find({
   criteria,
-  select
+  select,
+  trx
 }: {
   criteria: Partial<CustomerDaycareSubscription> & {
     statuses?: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS[]
@@ -220,11 +221,12 @@ function find({
     until?: string
   }
   select?: (keyof CustomerDaycareSubscription)[]
+  trx?: Transaction<DB>
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
 
-  let query = db.selectFrom('customerDaycareSubscriptions')
+  let query = (trx ?? db).selectFrom('customerDaycareSubscriptions')
 
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
@@ -303,7 +305,8 @@ function find({
 export async function findCustomerDaycareSubscription({
   criteria,
   select,
-  fastify
+  fastify,
+  trx
 }: {
   criteria: Partial<CustomerDaycareSubscription> & {
     statuses?: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS[]
@@ -311,8 +314,9 @@ export async function findCustomerDaycareSubscription({
   }
   select?: (keyof CustomerDaycareSubscription)[]
   fastify?: FastifyInstance
+  trx?: Transaction<DB>
 }): Promise<ParsedCustomerDaycareSubscription | undefined> {
-  const query = find({ criteria, select })
+  const query = find({ criteria, select, trx })
 
   const result = await query.executeTakeFirst()
   if (result) {

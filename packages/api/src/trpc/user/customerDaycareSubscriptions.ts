@@ -181,33 +181,37 @@ export const userCustomerDaycareSubscriptionRoutes = ({
             id: input.daycareSubscriptionId
           }
         })
+        let customerDaycareSubscription:
+          | ParsedCustomerDaycareSubscription
+          | undefined
+
         if (customer?.id && daycareSubscription) {
           if (input.effectiveDate < new Date().toISOString().slice(0, 10))
             throw new Error('Effective date cannot be in the past')
 
-          let customerDaycareSubscription =
-            await findCustomerDaycareSubscription({
-              criteria: {
-                status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN,
-                effectiveDate: input.effectiveDate,
-                expirationDate: add(
-                  new Date(
-                    input.effectiveDate || new Date().toISOString().slice(0, 10)
-                  ),
-                  {
-                    ...daycareSubscription.validityPeriod
-                  }
-                )
-                  .toISOString()
-                  .slice(0, 10),
-                customerId: customer.id,
-                daycareSubscriptionId: input.daycareSubscriptionId
-              }
-            })
+          customerDaycareSubscription = await findCustomerDaycareSubscription({
+            criteria: {
+              status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN,
+              effectiveDate: input.effectiveDate,
+              expirationDate: add(
+                new Date(
+                  input.effectiveDate || new Date().toISOString().slice(0, 10)
+                ),
+                {
+                  ...daycareSubscription.validityPeriod
+                }
+              )
+                .toISOString()
+                .slice(0, 10),
+              customerId: customer.id,
+              daycareSubscriptionId: input.daycareSubscriptionId
+            }
+          })
 
-          try {
-            const trxResult = await db.transaction().execute(async (trx) => {
-              if (!customerDaycareSubscription) {
+          if (!customerDaycareSubscription) {
+            customerDaycareSubscription = await db
+              .transaction()
+              .execute(async (trx) => {
                 const newCustomerDaycareSubscription =
                   await createCustomerDaycareSubscription(
                     {
@@ -231,60 +235,56 @@ export const userCustomerDaycareSubscriptionRoutes = ({
                     },
                     trx
                   )
-                customerDaycareSubscription =
-                  await findCustomerDaycareSubscription({
-                    criteria: {
-                      id: newCustomerDaycareSubscription.id
-                    }
-                  })
-              }
-              let invoice: Invoice | null = null
-              if (customerDaycareSubscription && fastify.slimfact) {
-                if (!customerDaycareSubscription.invoiceUuid) {
-                  const result =
-                    await createOrUpdateSlimfactDaycareSubscription({
-                      fastify,
-                      customerDaycareSubscription,
-                      customer
-                    })
-                  if (result.success) {
-                    invoice = result.invoice
-                    await updateCustomerDaycareSubscription(
-                      { id: customerDaycareSubscription.id },
-                      {
-                        invoiceUuid: invoice.uuid
-                      }
-                    )
-                  } else {
-                    throw new Error(result.errorMessage)
+
+                return findCustomerDaycareSubscription({
+                  criteria: {
+                    id: newCustomerDaycareSubscription.id
+                  },
+                  trx
+                })
+              })
+          }
+
+          try {
+            let invoice: Invoice | null = null
+            if (customerDaycareSubscription?.invoiceUuid && fastify.slimfact) {
+              invoice = await fastify.slimfact.admin.getInvoice.query({
+                uuid: customerDaycareSubscription.invoiceUuid
+              })
+            } else if (customerDaycareSubscription) {
+              const result = await createOrUpdateSlimfactDaycareSubscription({
+                fastify,
+                customerDaycareSubscription,
+                customer
+              })
+              if (result.success) {
+                invoice = result.invoice
+                await updateCustomerDaycareSubscription(
+                  { id: customerDaycareSubscription.id },
+                  {
+                    invoiceUuid: invoice.uuid
                   }
-                } else {
-                  const result = await fastify.slimfact.admin.getInvoice.query({
-                    uuid: customerDaycareSubscription.invoiceUuid
-                  })
-                  if (result) {
-                    invoice = result
+                )
+              } else {
+                throw new Error(result.errorMessage)
+              }
+            }
+            if (invoice) {
+              const payment =
+                await fastify.slimfact.admin.addPaymentToInvoice.mutate({
+                  id: invoice.id,
+                  payment: {
+                    currency,
+                    amount: invoice.totalIncludingTax,
+                    method: PaymentMethod.ideal,
+                    redirectUrl: `https://${host}/account/daycare`
                   }
-                }
+                })
+              return {
+                customerDaycareSubscription,
+                checkoutUrl: payment.checkoutUrl
               }
-              if (invoice) {
-                const payment =
-                  await fastify.slimfact.admin.addPaymentToInvoice.mutate({
-                    id: invoice.id,
-                    payment: {
-                      currency,
-                      amount: invoice.totalIncludingTax,
-                      method: PaymentMethod.ideal,
-                      redirectUrl: `https://${host}/account/daycare`
-                    }
-                  })
-                return {
-                  customerDaycareSubscription,
-                  checkoutUrl: payment.checkoutUrl
-                }
-              }
-            })
-            return trxResult
+            }
           } catch (e) {
             throw new TRPCError({
               code: 'INTERNAL_SERVER_ERROR',
