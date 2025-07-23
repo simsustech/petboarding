@@ -18,8 +18,8 @@ import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '../../kysely/types.js'
 import env from '@vitrify/tools/env'
 import { Customer } from '../../zod/customer.js'
 import {
+  PaymentMethod,
   type Invoice,
-  type PaymentMethod,
   type RawInvoiceDiscount,
   type RawInvoiceLine,
   type RawInvoiceSurcharge
