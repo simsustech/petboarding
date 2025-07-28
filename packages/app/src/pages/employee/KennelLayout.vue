@@ -128,6 +128,13 @@
                     @dragstart="onDragStart"
                     @open-pet="openPet"
                   >
+                    <template #menu-items>
+                      <pet-kennel-context-menu-items
+                        :pet-kennel="pet"
+                        :buildings="buildings"
+                        @set-pet-kennel="setPetKennel"
+                      />
+                    </template>
                   </pet-chip>
                 </div>
               </q-card-section>
