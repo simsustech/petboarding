@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@quasar/extras": "1.17.0",
-    "@simsustech/quasar-components": "^0.11.19",
+    "@simsustech/quasar-components": "^0.11.20",
     "@typescript-eslint/eslint-plugin": "8.36.0",
     "@typescript-eslint/parser": "8.36.0",
     "@vitejs/plugin-vue": "6.0.0",

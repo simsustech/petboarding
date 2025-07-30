@@ -123,7 +123,8 @@ const validations = computed<
   pets: [(val) => !!val.length || lang.value.booking.validations.fieldRequired]
 }))
 
-const { pets, customerDaycareSubscriptions } = toRefs(props)
+const { pets, customerDaycareSubscriptions, useCustomerDaycareSubscriptions } =
+  toRefs(props)
 const selectedDates = ref<string[]>([])
 const modelValue = ref({
   petIds: []
@@ -161,12 +162,15 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
 }
 
 const maxNumberOfSelectedDates = computed(() => {
-  return Math.floor(
-    customerDaycareSubscriptions.value?.reduce((acc, cur) => {
-      acc += (cur.numberOfDaysRemaining || 0) / modelValue.value.petIds.length
+  if (useCustomerDaycareSubscriptions.value) {
+    return customerDaycareSubscriptions.value?.reduce((acc, cur) => {
+      acc += Math.floor(
+        (cur.numberOfDaysRemaining || 0) / modelValue.value.petIds.length
+      )
       return acc
-    }, 0) || 0
-  )
+    }, 0)
+  }
+  return NaN
 })
 
 const remainingDays = computed(() => {

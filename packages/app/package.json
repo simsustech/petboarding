@@ -55,7 +55,7 @@
     "@quasar/extras": "1.17.0",
     "@quasar/quasar-ui-qcalendar": "4.1.2",
     "@quasar/quasar-ui-qmarkdown": "^2.0.5",
-    "@simsustech/quasar-components": "0.11.19",
+    "@simsustech/quasar-components": "0.11.20",
     "@trpc/client": "^11.4.3",
     "@trpc/server": "^11.4.3",
     "@typescript-eslint/eslint-plugin": "8.36.0",
