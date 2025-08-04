@@ -49,7 +49,8 @@ export const useEmployeeSearchPetsQuery = defineQuery(() => {
   const { data: pets, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
     key: () => ['employeeSearchPets', searchPhrase.value],
-    query: () => trpc.employee.searchPets.query(searchPhrase.value)
+    query: () => trpc.employee.searchPets.query(searchPhrase.value),
+    placeholderData: () => []
   })
 
   return {

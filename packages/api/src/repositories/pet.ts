@@ -247,7 +247,8 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
 export async function searchPets(searchPhrase: string) {
   const searchTerms = searchPhrase.split(' ')
 
-  const query = sql<ParsedPet[]>`
+  try {
+    const query = sql<ParsedPet[]>`
   with main as (
     select 
       p.id,
@@ -314,8 +315,11 @@ export async function searchPets(searchPhrase: string) {
   select distinct on (id) * from main union select * from relation;
   `
 
-  const results = await query.execute(db)
-  return results.rows
+    const results = await query.execute(db)
+    return results.rows
+  } catch (e) {
+    return []
+  }
 }
 
 export async function deletePet(id: number) {

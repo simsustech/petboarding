@@ -175,7 +175,8 @@ export async function updateCustomer(
 export async function searchCustomers(searchPhrase: string) {
   const searchTerms = searchPhrase.split(' ')
 
-  const query = sql<Customer[]>`
+  try {
+    const query = sql<Customer[]>`
     with main as (
       select 
         c.id,
@@ -235,6 +236,9 @@ export async function searchCustomers(searchPhrase: string) {
     )
     select distinct on (id) * from main union select * from relation;`
 
-  const results = await query.execute(db)
-  return results.rows
+    const results = await query.execute(db)
+    return results.rows
+  } catch (e) {
+    return []
+  }
 }
