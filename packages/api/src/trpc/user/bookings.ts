@@ -3,7 +3,6 @@ import { t } from '../index.js'
 import { booking, BOOKING_STATUS } from '../../zod/booking.js'
 import * as z from 'zod'
 import type { FastifyInstance } from 'fastify'
-import { findOpeningTimes } from '../../repositories/openingTime'
 import {
   cancelBooking,
   createBooking,
@@ -57,23 +56,6 @@ export const userBookingRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getOpeningTimes: procedure
-    .input(
-      z.object({
-        date: z.string()
-      })
-    )
-    .query(async ({ input }) => {
-      const date = input.date
-      if (date) {
-        const openingTimes = await findOpeningTimes({
-          criteria: {},
-          availableOnDate: date
-        })
-        return openingTimes
-      }
-      return []
-    }),
   getBookings: procedure.query(async ({ ctx }) => {
     if (ctx.account?.id) {
       const customer = await findCustomer({

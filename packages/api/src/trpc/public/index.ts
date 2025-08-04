@@ -13,6 +13,7 @@ import Holidays from 'date-holidays'
 import { PERIOD_TYPE } from '../../kysely/types.js'
 import { eachDayOfInterval } from '../../tools.js'
 import { findDocument } from 'src/repositories/document.js'
+import * as z from 'zod'
 
 export const publicRoutes = ({
   // fastify,
@@ -156,5 +157,22 @@ export const publicRoutes = ({
     if (termsAndConditions) return termsAndConditions.content
 
     throw new TRPCError({ code: 'BAD_REQUEST' })
-  })
+  }),
+  getOpeningTimesByDate: procedure
+    .input(
+      z.object({
+        date: z.string()
+      })
+    )
+    .query(async ({ input }) => {
+      const date = input.date
+      if (date) {
+        const openingTimes = await findOpeningTimes({
+          criteria: {},
+          availableOnDate: date
+        })
+        return openingTimes
+      }
+      return []
+    })
 })

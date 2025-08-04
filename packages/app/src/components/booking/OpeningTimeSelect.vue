@@ -27,39 +27,26 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { watch, useAttrs, ref, toRefs, computed } from 'vue'
-import { QSelect, useQuasar, ValidationRule } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
-import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
-import { useAccountGetOpeningTimesQuery } from 'src/queries/account/openingTime.js'
+import { useAttrs, ref, toRefs, computed } from 'vue'
+import { QSelect, ValidationRule } from 'quasar'
+import { useLang } from '../../lang/index.js'
+import { OpeningTime } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue?: string | number
   required?: boolean
   label: string
-  date: string
-  type?: OPENING_TIME_TYPE
+  options: OpeningTime[]
 }
 const props = defineProps<Props>()
 
-const { date, type } = toRefs(props)
-
-const { openingTimes: data, date: openingTimesDate } =
-  useAccountGetOpeningTimesQuery()
-
-watch(date, (newVal) => (openingTimesDate.value = newVal))
+const { options } = toRefs(props)
 
 const attrs = useAttrs()
 defineEmits<{
   (e: 'update:modelValue', value: string | number): void
 }>()
 const lang = useLang()
-
-const $q = useQuasar()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
 
 const validations = ref<ValidationRule[]>([])
 
@@ -70,16 +57,10 @@ if (props.required)
 
 const openingTimeOptions = computed(() => {
   return (
-    data.value
-      ?.filter(
-        (openingTime) =>
-          openingTime.type === OPENING_TIME_TYPE.ALL ||
-          openingTime.type === type.value
-      )
-      .map((openingTime) => ({
-        label: openingTime.name,
-        value: openingTime.id
-      })) || []
+    options.value.map((openingTime) => ({
+      label: openingTime.name,
+      value: openingTime.id
+    })) || []
   )
 })
 </script>

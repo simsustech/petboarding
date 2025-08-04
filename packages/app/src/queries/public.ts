@@ -1,5 +1,6 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../trpc.js'
+import { ref } from 'vue'
 
 export const usePublicGetCategories = defineQuery(() => {
   const { data: categories, ...rest } = useQuery({
@@ -129,6 +130,46 @@ export const usePublicGetTermsAndConditionsQuery = defineQuery(() => {
 
   return {
     termsAndConditions,
+    ...rest
+  }
+})
+
+export const usePublicGetStartDateOpeningTimesQuery = defineQuery(() => {
+  const date = ref<string>(new Date().toISOString().slice(0, 10))
+
+  const { data: openingTimes, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetStartDateOpeningTimesQuery', date.value],
+    query: () =>
+      trpc.public.getOpeningTimesByDate.query({
+        date: date.value
+      }),
+    placeholderData: () => []
+  })
+
+  return {
+    openingTimes,
+    date,
+    ...rest
+  }
+})
+
+export const usePublicGetEndDateOpeningTimesQuery = defineQuery(() => {
+  const date = ref<string>(new Date().toISOString().slice(0, 10))
+
+  const { data: openingTimes, ...rest } = useQuery({
+    enabled: !import.meta.env.SSR,
+    key: () => ['publicGetEndDateOpenimgTimesQuery', date.value],
+    query: () =>
+      trpc.public.getOpeningTimesByDate.query({
+        date: date.value
+      }),
+    placeholderData: () => []
+  })
+
+  return {
+    openingTimes,
+    date,
     ...rest
   }
 })

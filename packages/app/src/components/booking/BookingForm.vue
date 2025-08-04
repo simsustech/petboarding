@@ -24,7 +24,7 @@
           multiple
         />
 
-        <opening-time-select
+        <start-date-opening-time-select
           v-model="modelValue.startTimeId"
           :label="lang.booking.fields.startTime"
           :date="modelValue.startDate"
@@ -33,7 +33,7 @@
           required
         />
 
-        <opening-time-select
+        <end-date-opening-time-select
           v-model="modelValue.endTimeId"
           :label="lang.booking.fields.endTime"
           :date="modelValue.endDate"
@@ -96,10 +96,11 @@ import {
 } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import OpeningTimeSelect from './OpeningTimeSelect.vue'
 import BookingServicesSelect from './BookingServicesSelect.vue'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
 import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
+import StartDateOpeningTimeSelect from './StartDateOpeningTimeSelect.vue'
+import EndDateOpeningTimeSelect from './EndDateOpeningTimeSelect.vue'
 
 import type { Booking, Pet, Service } from '@petboarding/api/zod'
 export interface Props {
