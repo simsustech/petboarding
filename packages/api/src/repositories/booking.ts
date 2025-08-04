@@ -331,7 +331,7 @@ async function getBookingInvoice({
     const invoice = await fastify.slimfact.admin.getInvoice.query({
       uuid: booking.invoiceUuid
     })
-    return invoice
+    if (invoice?.status !== InvoiceStatus.CANCELED) return invoice
   } catch (e) {
     fastify?.log.debug(e)
     return null
