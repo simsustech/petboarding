@@ -15,6 +15,7 @@ import { type Invoice } from '@modular-api/fastify-checkout'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import { DaycareSubscription } from './daycareSubscription.js'
 import { subDays, subMonths } from 'date-fns'
+import { updateDaycareDate } from './daycare.js'
 export type CustomerDaycareSubscription =
   Selectable<CustomerDaycareSubscriptions>
 type NewCustomerDaycareSubscription = Insertable<CustomerDaycareSubscriptions>
@@ -451,13 +452,16 @@ export async function setCustomerDaycareSubscriptionStatus({
       .then((result) => result.map(({ id }) => id))
 
     if (existingDaycareDateIds.length) {
-      await db
-        .updateTable('daycareDates')
-        .where('daycareDates.id', 'in', existingDaycareDateIds)
-        .set({
-          customerDaycareSubscriptionId: customerDaycareSubscription.id
-        })
-        .execute()
+      updateDaycareDate(
+        {
+          ids: existingDaycareDateIds
+        },
+        {
+          daycareDate: {
+            customerDaycareSubscriptionId: customerDaycareSubscription.id
+          }
+        }
+      )
     }
   }
   return customerDaycareSubscription
