@@ -45,10 +45,13 @@
       </q-btn>
     </q-toolbar>
     <q-table
+      v-if="data"
+      v-model:pagination="pagination"
       :title="lang.bookings.title"
       :rows="data"
       :columns="columns"
       row-key="name"
+      @request="onRequest"
     >
       <template #bottom-row>
         <q-tr>
@@ -100,7 +103,7 @@ import { useLang } from '../../../lang/index.js'
 import { Booking } from '@petboarding/api/zod'
 import { DateInput } from '@simsustech/quasar-components/form'
 import CustomerSelect from '../../../components/employee/CustomerSelect.vue'
-import { type QTableColumn, useQuasar } from 'quasar'
+import { QTable, type QTableColumn, useQuasar } from 'quasar'
 import { computed } from 'vue'
 import { useAdminFinancialGetBookingsQuery } from 'src/queries/admin/financial.js'
 import { useEmployeeSearchCustomersQuery } from 'src/queries/employee/customer.js'
@@ -122,8 +125,33 @@ const {
   refetch: executeBookings,
   customerId,
   from,
-  until
+  until,
+  page,
+  rowsPerPage,
+  sortBy,
+  descending
 } = useAdminFinancialGetBookingsQuery()
+
+const pagination = computed({
+  // getter
+  get() {
+    return {
+      sortBy: sortBy.value,
+      descending: descending.value,
+      page: page.value,
+      rowsPerPage: rowsPerPage.value,
+      rowsNumber: data.value?.at(0)?.total || 0
+    }
+  },
+  // setter
+  set(newValue) {
+    sortBy.value = newValue.sortBy
+    descending.value = newValue.descending
+    page.value = newValue.page
+    rowsPerPage.value = newValue.rowsPerPage
+  }
+})
+
 // const { data, execute: executeBookings } = useQuery('admin.getBookings', {
 //   args: reactive({
 //     customerId,
@@ -285,6 +313,11 @@ const formatPrice = ({
     style: 'currency',
     currency: currency
   }).format(value / 100)
+
+const onRequest: QTable['$props']['onRequest'] = (onRequestProps) => {
+  pagination.value = onRequestProps.pagination
+  return
+}
 
 onMounted(async () => {
   await executeBookings()

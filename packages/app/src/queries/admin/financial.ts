@@ -3,6 +3,7 @@ import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+import { computed } from 'vue'
 
 export const useAdminFinancialGetBookingsQuery = defineQuery(() => {
   const customerId = ref()
@@ -15,6 +16,23 @@ export const useAdminFinancialGetBookingsQuery = defineQuery(() => {
   const until = ref(
     dateUtil.addToDate(new Date(), { years: 1 }).toISOString().slice(0, 10)
   )
+  const page = ref(1)
+
+  const rowsPerPage = ref(5)
+  const sortBy = ref<'startDate' | 'endDate'>('startDate')
+  const descending = ref(false)
+
+  const pagination = computed<{
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'endDate'
+    descending: boolean
+  }>(() => ({
+    limit: rowsPerPage.value,
+    offset: (page.value - 1) * rowsPerPage.value,
+    sortBy: sortBy.value,
+    descending: descending.value
+  }))
 
   const { data: bookings, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
@@ -22,7 +40,8 @@ export const useAdminFinancialGetBookingsQuery = defineQuery(() => {
       'adminFinancialBookings',
       customerId.value,
       from.value,
-      until.value
+      until.value,
+      pagination.value
     ],
     query: () =>
       trpc.admin.getBookings.query({
@@ -30,10 +49,15 @@ export const useAdminFinancialGetBookingsQuery = defineQuery(() => {
         from: from.value,
         until: until.value,
         invoice: {
-          status: InvoiceStatus.BILL
-        }
-      }),
-    placeholderData: () => []
+          statuses: [
+            InvoiceStatus.OPEN,
+            InvoiceStatus.PAID,
+            InvoiceStatus.RECEIPT,
+            InvoiceStatus.BILL
+          ]
+        },
+        pagination: pagination.value
+      })
   })
 
   return {
@@ -41,6 +65,10 @@ export const useAdminFinancialGetBookingsQuery = defineQuery(() => {
     customerId,
     from,
     until,
+    page,
+    rowsPerPage,
+    sortBy,
+    descending,
     ...rest
   }
 })

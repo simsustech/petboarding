@@ -638,7 +638,8 @@ function withOverlapsWithUnavailablePeriod(
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Booking> & {
     status?: BOOKING_STATUS
@@ -648,6 +649,12 @@ function find({
     until?: string
   }
   select?: (keyof Booking)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'endDate' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -725,7 +732,21 @@ function find({
   }
 
   if (criteria.invoiceUuid) {
-    query = query.where('invoiceUuid', '=', criteria.invoiceUuid)
+    if (criteria.invoiceUuid === '*') {
+      query = query.where('invoiceUuid', 'is not', null)
+    } else {
+      query = query.where('invoiceUuid', '=', criteria.invoiceUuid)
+    }
+  }
+
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
   }
 
   return query
@@ -754,6 +775,11 @@ function find({
       + (select "opening_times"."end_day_counted" from "opening_times" where "bookings"."end_time_id" = "opening_times"."id")
       `.as('days')
     ])
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
     .orderBy('startDate', 'asc')
 }
 
@@ -809,7 +835,7 @@ export async function findBooking({
 export async function findBookings({
   criteria,
   select,
-  limit,
+  pagination,
   fastify
 }: {
   criteria: Partial<Booking> & {
@@ -820,17 +846,19 @@ export async function findBookings({
     until?: string
   }
   select?: (keyof Booking)[]
-  limit?: number
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'endDate' | null
+    descending: boolean
+  }
   fastify?: FastifyInstance
 }): Promise<ParsedBooking[]> {
-  let query = find({
+  const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
-
-  if (limit) {
-    query = query.limit(limit)
-  }
 
   const results = await query.orderBy('id', 'desc').execute()
 
