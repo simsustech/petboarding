@@ -6,11 +6,13 @@
       :model-value="pet"
       :show-last-name="showLastName"
       :selected="selectedPets?.includes(pet.id!)"
-      class="q-mt-none q-mb-xs q-pr-sm"
       :class="{
         'text-strike':
           modelValue.status?.status === 'canceled' ||
-          modelValue.status === 'canceled'
+          modelValue.status === 'canceled',
+        'q-mt-none': true,
+        'q-mb-xs': modelValue.pets.length === 1,
+        'q-pr-sm': true
       }"
       dense
       show-badge
