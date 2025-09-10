@@ -68,6 +68,7 @@
               'bg-yellow-2': pet.daycareDateId
             }"
             :draggable="true"
+            :overline="getOverline(pet)"
             show-image
             show-last-name
             @dragstart="onDragStart"
@@ -125,6 +126,7 @@
                     show-badge
                     show-last-name
                     show-image
+                    :overline="getOverline(pet)"
                     @dragstart="onDragStart"
                     @open-pet="openPet"
                   >
@@ -162,6 +164,7 @@ import {
 } from '../../mutations/employee/petKennel.js'
 import type { PetKennel } from '../../configuration.js'
 import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
+import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
 
 const lang = useLang()
 
@@ -185,6 +188,7 @@ const {
 selectedDate.value = !Array.isArray(route.params.date)
   ? route.params.date
   : new Date().toISOString().slice(0, 10)
+const { openingTimes } = usePublicGetOpeningTimesQuery()
 
 const { mutateAsync: setBookingPetKennelMutation } =
   useEmployeeSetBookingPetKennelMutation()
@@ -304,6 +308,16 @@ const openPet = (id: number) =>
   router.push({
     path: `/employee/pets/${id}`
   })
+
+const getOverline = (pet: PetKennel) => {
+  if (pet.arrivalTimeId)
+    return `+ ${openingTimes.value?.find((openingTime) => openingTime.id === pet.arrivalTimeId)?.name}`
+
+  if (pet.departureTimeId)
+    return `- ${openingTimes.value?.find((openingTime) => openingTime.id === pet.departureTimeId)?.name}`
+
+  return ''
+}
 
 onMounted(async () => {
   await executeBuildings()

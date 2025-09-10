@@ -13,7 +13,10 @@
         'white-space': 'normal !important'
       }"
     >
-      {{ label }}
+      <div v-if="overline" class="text-overline">{{ overline }}</div>
+      <div>{{ label }}</div>
+      <div class="text-caption">{{ food }}</div>
+      <div v-if="caption" class="text-caption">{{ caption }}</div>
     </div>
     <q-icon
       v-if="showImage && modelValue.image"
@@ -147,6 +150,9 @@ interface Props {
   showLastName?: boolean
   onOpenPet?: unknown
   showBadge?: boolean
+  showFood?: boolean
+  overline?: string
+  caption?: string
 }
 
 const props = defineProps<Props>()
@@ -170,5 +176,10 @@ const truncateLastName = (lastName: string) => {
 const label = computed(
   () =>
     `${modelValue.value.name} ${showLastName.value ? truncateLastName(modelValue.value.customer?.lastName || '') : ''}`
+)
+
+const food = computed(
+  () => `${modelValue.value.food?.timesADay ?? ''}x ${modelValue.value.food.amount || ''} 
+                    ${lang.value.pet.food.unit[modelValue.value.food?.amountUnit] ?? ''} ${modelValue.value.food?.kind}`
 )
 </script>

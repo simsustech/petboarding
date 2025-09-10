@@ -13,6 +13,8 @@ export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
   kennelId: number | null
   bookingId?: number
   daycareDateId?: number
+  arrivalTimeId?: number
+  departureTimeId?: number
 }
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
@@ -108,7 +110,7 @@ export const PET_CHIP_BADGE_ICONS = {
 export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
   LANG: import.meta.env.VITE_LANG || 'en-US',
   COUNTRY: import.meta.env.VITE_COUNTRY || 'NL',
-  TITLE: import.meta.env.VITE_TITLE || 'Petboarding',
+  TITLE: import.meta.env.VITE_TITLE,
   CURRENCY: 'EUR',
   HIDE_BRANDING: false
 })

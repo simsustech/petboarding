@@ -157,6 +157,30 @@ export async function getBookingPetKennels(date: string) {
       'pets.name as name',
       'pets.medicines as medicines',
       'pets.food as food',
+      seb
+        .case()
+        .when('bookings.startDate', '=', date)
+        .then(
+          seb
+            .selectFrom('bookings')
+            .whereRef('bookings.id', '=', 'bookingPetKennel.bookingId')
+            .select('bookings.startTimeId')
+        )
+        .else(undefined)
+        .end()
+        .as('arrivalTimeId'),
+      seb
+        .case()
+        .when('bookings.endDate', '=', date)
+        .then(
+          seb
+            .selectFrom('bookings')
+            .whereRef('bookings.id', '=', 'bookingPetKennel.bookingId')
+            .select('bookings.endTimeId')
+        )
+        .else(undefined)
+        .end()
+        .as('departureTimeId'),
       convertImageSql.as('image'),
       'bookingPetKennel.kennelId as kennelId',
       'bookingPetKennel.bookingId as bookingId',
