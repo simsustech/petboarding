@@ -361,14 +361,13 @@ export const adminBookingRoutes = ({
           until: until ? until : undefined,
           status,
           customerId: customerId ? customerId : undefined,
-          invoiceUuid: '*'
+          invoiceUuid: invoice ? '*' : undefined
         },
         pagination,
         fastify
       })
 
       if (invoice && fastify.slimfact && bookings?.length) {
-        console.log(bookings.map((booking) => booking.invoiceUuid))
         const bookingBillUuids = bookings
           .map((booking) => booking.invoiceUuid)
           .filter((uuid): uuid is string => !!uuid)
