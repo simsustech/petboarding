@@ -16,8 +16,8 @@
           {{ modelValue.birthDate }}</span
         >
       </div>
-      <div class="col-span-15 grid grid-cols-subgrid">
-        <div class="col-span-15">
+      <div class="col-span-24 grid grid-cols-subgrid">
+        <div class="col-span-16 text-h5">
           {{
             truncate(`${modelValue.name} ${modelValue.customer?.lastName}`, 12)
           }}
@@ -40,11 +40,42 @@
         </q-field>
 
         <q-field
+          :label="lang.pet.fields.breed"
+          :filled="false"
+          class="col-span-17"
+          stack-label
+        >
+          <template #control>
+            <div
+              class="self-center text text-h6 full-width no-outline q-ma-none"
+              tabindex="0"
+            >
+              {{ modelValue.breed }}
+            </div>
+          </template>
+        </q-field>
+
+        <q-field
+          :label="lang.pet.fields.color"
+          stack-label
+          :filled="false"
+          class="col-span-6"
+        >
+          <template #control>
+            <div
+              class="self-center full-width no-outline q-ma-none"
+              tabindex="0"
+            >
+              {{ modelValue.color }}
+            </div>
+          </template>
+        </q-field>
+
+        <!-- <q-field
           :label="lang.pet.fields.sterilized"
           :filled="false"
           stack-label
-          dense
-          class="col-span-7"
+          class="col-span-4"
         >
           <template #control>
             <div
@@ -68,12 +99,12 @@
               />
             </div>
           </template>
-        </q-field>
+        </q-field> -->
       </div>
-      <div class="col-span-0 grid grid-cols-subgrid">
+      <!-- <div class="col-span-0 grid grid-cols-subgrid">
         <div id="qrcode" style="width: 2cm; height: 2cm" v-html="qrSvg"></div>
-      </div>
-      <q-field
+      </div> -->
+      <!-- <q-field
         :label="lang.pet.fields.breed"
         :filled="false"
         class="col-span-10"
@@ -88,17 +119,16 @@
             {{ modelValue.breed }}
           </div>
         </template>
-      </q-field>
+      </q-field> -->
       <q-field
         :label="lang.pet.fields.food"
         stack-label
-        dense
         :filled="false"
-        class="col-span-14"
+        class="col-span-17"
       >
         <template #control>
           <div
-            class="self-center text-subtitle2 text-truncate full-width no-outline q-ma-none"
+            class="self-center text-h5 full-width no-outline q-ma-none"
             tabindex="0"
           >
             {{
@@ -127,7 +157,7 @@
         </template>
       </q-field> -->
 
-      <q-field
+      <!-- <q-field
         :label="lang.pet.fields.color"
         stack-label
         dense
@@ -139,20 +169,23 @@
             {{ modelValue.color }}
           </div>
         </template>
-      </q-field>
+      </q-field> -->
       <q-field
         :label="lang.pet.fields.medicines"
         stack-label
-        dense
         :filled="false"
-        class="col-span-12"
+        class="col-span-7"
       >
         <template #control>
           <div
-            class="self-center text-subtitle2 text-truncate full-width no-outline q-ma-none"
+            class="self-center text-h5 full-width no-outline q-ma-none"
             tabindex="0"
           >
-            {{ modelValue.medicines }}
+            <q-icon
+              size="sm"
+              :color="modelValue.medicines ? 'green' : 'red'"
+              :name="modelValue.medicines ? 'i-mdi-check' : 'i-mdi-close'"
+            />
           </div>
         </template>
       </q-field>
@@ -160,13 +193,12 @@
       <q-field
         :label="lang.pet.fields.particularities"
         stack-label
-        dense
         :filled="false"
         class="col-span-24"
       >
         <template #control>
           <div
-            class="self-center text-subtitle1 full-width no-outline q-ma-none"
+            class="self-center text-h5 full-width no-outline q-ma-none"
             style="line-height: 80%"
             tabindex="0"
           >
@@ -174,6 +206,13 @@
           </div>
         </template>
       </q-field>
+    </div>
+    <div class="col-span-24 align-center">
+      <div
+        id="qrcode"
+        style="width: 3cm; height: 3cm; margin: auto"
+        v-html="qrSvg"
+      ></div>
     </div>
   </div>
 </template>
@@ -185,18 +224,21 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, toRefs, computed } from 'vue'
-import { date as dateUtil } from 'quasar'
+import { ref, toRefs } from 'vue'
+// import { date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Pet } from '@petboarding/api/zod'
 import { renderSVG } from 'uqr'
 
 export interface Props {
   modelValue: Pet
-  width: number
-  height: number
+  width?: number
+  height?: number
 }
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  width: import.meta.env.VITE_LABEL_WIDTH || 62,
+  height: import.meta.env.VITE_LABEL_HEIGHT || 124
+})
 const lang = useLang()
 
 const { modelValue } = toRefs(props)
@@ -219,12 +261,12 @@ const qrSvg = ref(
   renderSVG(`${window.location.origin}/employee/pets/${modelValue.value.id}`)
 )
 
-const dateSixMonthsAgo = computed(() =>
-  dateUtil.formatDate(
-    dateUtil.subtractFromDate(new Date(), {
-      months: 6
-    }),
-    'YYYY-MM-DD'
-  )
-)
+// const dateSixMonthsAgo = computed(() =>
+//   dateUtil.formatDate(
+//     dateUtil.subtractFromDate(new Date(), {
+//       months: 6
+//     }),
+//     'YYYY-MM-DD'
+//   )
+// )
 </script>

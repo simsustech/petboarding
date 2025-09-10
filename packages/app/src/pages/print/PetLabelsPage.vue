@@ -1,13 +1,7 @@
 <template>
   <div class="p-1em print:p-0">
     <div ref="labelsRef" class="">
-      <pet-label
-        v-for="pet in data"
-        :key="pet.id"
-        :model-value="pet"
-        :width="LABEL_WIDTH"
-        :height="LABEL_HEIGHT"
-      />
+      <pet-label v-for="pet in data" :key="pet.id" :model-value="pet" />
     </div>
   </div>
 </template>
@@ -23,9 +17,6 @@ import { ref, onMounted } from 'vue'
 import PetLabel from '../../components/pet/PetLabel.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { useEmployeeGetPetLabelsQuery } from 'src/queries/employee/labels/pet'
-
-const LABEL_WIDTH = (import.meta.env.VITE_LABEL_WIDTH || 62) - 4
-const LABEL_HEIGHT = (import.meta.env.VITE_LABEL_HEIGHT || 62) - 4
 
 const route = useRoute()
 const labelsRef = ref()
