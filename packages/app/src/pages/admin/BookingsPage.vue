@@ -7,6 +7,7 @@
           <booking-status-select v-model="status" />
 
           <customer-select
+            v-if="filteredCustomers"
             v-model="customerId"
             :label="lang.customer.customer"
             :filtered-options="filteredCustomers"
@@ -67,6 +68,16 @@
         @open-customer="openCustomer"
       ></booking-expansion-item>
     </q-list>
+
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <!-- 
   <responsive-dialog
@@ -170,7 +181,9 @@ const {
   customerId,
   from,
   until,
-  bookingStatus: status
+  bookingStatus: status,
+  page,
+  rowsPerPage
 } = useAdminGetBookingsQuery()
 
 const {
@@ -203,6 +216,7 @@ const { mutateAsync: rejectBookingMutation } = useAdminRejectBookingMutation()
 const { mutateAsync: replyBookingMutation } = useAdminReplyBookingMutation()
 const { mutateAsync: standbyBookingMutation } = useAdminStandbyBookingMutation()
 
+const total = computed(() => data.value?.at(0)?.total || 0)
 // const { pet, id: petId, refetch: refetchPet } = useEmployeeGetPetQuery()
 
 // const status = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)

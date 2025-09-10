@@ -3,6 +3,7 @@ import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { BOOKING_STATUS } from '@petboarding/api/zod'
+import { computed } from 'vue'
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
 export const useAdminGetBookingsQuery = defineQuery(() => {
@@ -18,6 +19,24 @@ export const useAdminGetBookingsQuery = defineQuery(() => {
   )
   const bookingStatus = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
 
+  const page = ref(1)
+
+  const rowsPerPage = ref(5)
+  const sortBy = ref<'startDate' | 'endDate'>('startDate')
+  const descending = ref(false)
+
+  const pagination = computed<{
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'endDate'
+    descending: boolean
+  }>(() => ({
+    limit: rowsPerPage.value,
+    offset: (page.value - 1) * rowsPerPage.value,
+    sortBy: sortBy.value,
+    descending: descending.value
+  }))
+
   const { data: bookings, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
     key: () => [
@@ -25,14 +44,16 @@ export const useAdminGetBookingsQuery = defineQuery(() => {
       customerId.value,
       from.value,
       until.value,
-      bookingStatus.value
+      bookingStatus.value,
+      pagination.value
     ],
     query: () =>
       trpc.admin.getBookings.query({
-        customerId: customerId.value,
+        // customerId: customerId.value,
         from: from.value,
         until: until.value,
-        status: bookingStatus.value
+        status: bookingStatus.value,
+        pagination: pagination.value
       })
   })
 
@@ -42,6 +63,10 @@ export const useAdminGetBookingsQuery = defineQuery(() => {
     from,
     until,
     bookingStatus,
+    page,
+    rowsPerPage,
+    sortBy,
+    descending,
     ...rest
   }
 })
