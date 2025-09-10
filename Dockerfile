@@ -23,10 +23,6 @@ ARG VITE_ALLOWED_SPECIES
 ARG SASS_VARIABLE_PRIMARY
 
 RUN pnpm run build
-WORKDIR /build/packages/app
-RUN pnpm exec vitrify build -m ssr --debug
-WORKDIR /build
-
 
 FROM build-stage AS api-deploy
 # Remove circular dependency
