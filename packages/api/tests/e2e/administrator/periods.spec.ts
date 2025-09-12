@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { initializeAndLogin } from '../setup'
 
 // import { format } from 'date-fns'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -19,22 +20,8 @@ const period = {
 test.describe.configure({ mode: 'serial' })
 
 test.beforeAll(async ({ browser }) => {
-  page = await browser.newPage()
+  page = await initializeAndLogin({ browser, email, password })
 
-  await page.goto('/')
-
-  await page.click('text=Login')
-
-  await page.waitForLoadState('networkidle')
-
-  await expect(page).toHaveURL(/.*login/)
-
-  await page.locator('text="Email"').fill(email)
-  await page.locator('text="Password"').fill(password)
-
-  await page.locator('button >> text=Login').click()
-
-  await page.waitForURL(/.*user/)
   await expect(
     page
       .getByRole('tab', { name: 'Administrator' })
