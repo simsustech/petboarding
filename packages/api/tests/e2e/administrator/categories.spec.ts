@@ -43,7 +43,7 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    await page.getByRole('list').locator('button').last().click()
+    await page.getByTestId('item-menu-button').last().click()
     // await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
 
@@ -62,7 +62,7 @@ test.describe('Categories', async () => {
     //   .getByRole('button')
     //   .last()
     //   .click()
-    await page.getByRole('list').locator('button').last().click()
+    await page.getByTestId('item-menu-button').last().click()
     await page.getByText('Add price').click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
@@ -76,7 +76,7 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
-    await page.getByRole('list').locator('button').last().click()
+    await page.getByTestId('item-menu-button').last().click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()

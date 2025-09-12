@@ -14,7 +14,7 @@
         </q-item-label> -->
         </q-item-section>
         <q-item-section side>
-          <q-btn flat icon="i-mdi-more-vert">
+          <q-btn flat icon="i-mdi-more-vert" data-testid="item-menu-button">
             <q-menu>
               <q-list>
                 <q-item
