@@ -123,7 +123,7 @@ const lang = useLang()
 const icon = {
   general: 'i-mdi-info',
   important: 'i-mdi-warning',
-  priority: 'i-mdi-priorityhigh',
+  priority: 'i-mdi-exclamation-thick',
   urgent: 'i-mdi-alert'
 }
 const iconColor = {
