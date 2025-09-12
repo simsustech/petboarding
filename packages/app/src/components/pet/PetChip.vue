@@ -178,8 +178,10 @@ const label = computed(
     `${modelValue.value.name} ${showLastName.value ? truncateLastName(modelValue.value.customer?.lastName || '') : ''}`
 )
 
-const food = computed(
-  () => `${modelValue.value.food?.timesADay ?? ''}x ${modelValue.value.food.amount || ''} 
+const food = computed(() =>
+  modelValue.value.food
+    ? `${modelValue.value.food?.timesADay ?? ''}x ${modelValue.value.food?.amount || ''} 
                     ${lang.value.pet.food.unit[modelValue.value.food?.amountUnit] ?? ''} ${modelValue.value.food?.kind}`
+    : ''
 )
 </script>
