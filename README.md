@@ -1,6 +1,6 @@
 # Petboarding
 
-> Ease the administration of your pet boarding business
+> Easy, fast and reliable pet boarding software.
 
 ## Website
 
