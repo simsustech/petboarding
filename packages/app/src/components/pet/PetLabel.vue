@@ -17,7 +17,7 @@
         >
       </div>
       <div class="col-span-24 grid grid-cols-subgrid">
-        <div class="col-span-16 text-h5">
+        <div class="col-span-18 text-h6">
           {{
             truncate(`${modelValue.name} ${modelValue.customer?.lastName}`, 12)
           }}
@@ -27,7 +27,7 @@
           :filled="false"
           stack-label
           dense
-          class="col-span-8"
+          class="col-span-6"
         >
           <template #control>
             <div
@@ -42,12 +42,13 @@
         <q-field
           :label="lang.pet.fields.breed"
           :filled="false"
-          class="col-span-17"
+          class="col-span-13"
           stack-label
+          dense
         >
           <template #control>
             <div
-              class="self-center text text-h6 full-width no-outline q-ma-none"
+              class="self-center text text-trucate text-h6 full-width no-outline q-ma-none"
               tabindex="0"
             >
               {{ modelValue.breed }}
@@ -60,6 +61,7 @@
           stack-label
           :filled="false"
           class="col-span-6"
+          dense
         >
           <template #control>
             <div
@@ -67,6 +69,27 @@
               tabindex="0"
             >
               {{ modelValue.color }}
+            </div>
+          </template>
+        </q-field>
+
+        <q-field
+          :label="lang.pet.fields.medicines"
+          stack-label
+          :filled="false"
+          class="col-span-4"
+          dense
+        >
+          <template #control>
+            <div
+              class="self-center text-h5 full-width no-outline q-ma-none"
+              tabindex="0"
+            >
+              <q-icon
+                size="sm"
+                :color="modelValue.medicines ? 'green' : 'red'"
+                :name="modelValue.medicines ? 'i-mdi-check' : 'i-mdi-close'"
+              />
             </div>
           </template>
         </q-field>
@@ -124,11 +147,11 @@
         :label="lang.pet.fields.food"
         stack-label
         :filled="false"
-        class="col-span-17"
+        class="col-span-24"
       >
         <template #control>
           <div
-            class="self-center text-h5 full-width no-outline q-ma-none"
+            class="self-center text-h6 full-width no-outline q-ma-none"
             tabindex="0"
           >
             {{
@@ -170,25 +193,6 @@
           </div>
         </template>
       </q-field> -->
-      <q-field
-        :label="lang.pet.fields.medicines"
-        stack-label
-        :filled="false"
-        class="col-span-7"
-      >
-        <template #control>
-          <div
-            class="self-center text-h5 full-width no-outline q-ma-none"
-            tabindex="0"
-          >
-            <q-icon
-              size="sm"
-              :color="modelValue.medicines ? 'green' : 'red'"
-              :name="modelValue.medicines ? 'i-mdi-check' : 'i-mdi-close'"
-            />
-          </div>
-        </template>
-      </q-field>
 
       <q-field
         :label="lang.pet.fields.particularities"
@@ -198,7 +202,7 @@
       >
         <template #control>
           <div
-            class="self-center text-h5 full-width no-outline q-ma-none"
+            class="self-center text-h6 full-width no-outline q-ma-none"
             style="line-height: 80%"
             tabindex="0"
           >
@@ -237,7 +241,7 @@ export interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   width: import.meta.env.VITE_LABEL_WIDTH || 62,
-  height: import.meta.env.VITE_LABEL_HEIGHT || 124
+  height: import.meta.env.VITE_LABEL_HEIGHT || 100
 })
 const lang = useLang()
 

@@ -18,6 +18,9 @@ import PetLabel from '../../components/pet/PetLabel.vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { useEmployeeGetPetLabelsQuery } from 'src/queries/employee/labels/pet'
 
+const LABEL_WIDTH = (import.meta.env.VITE_LABEL_WIDTH || 62) - 1
+const LABEL_HEIGHT = (import.meta.env.VITE_LABEL_HEIGHT || 100) - 1
+
 const route = useRoute()
 const labelsRef = ref()
 // const selectedPetIds = ref<number[]>([])
