@@ -48,7 +48,7 @@
         >
           <template #control>
             <div
-              class="self-center text text-trucate text-h6 full-width no-outline q-ma-none"
+              class="self-center text text-truncate text-h6 full-width no-outline q-ma-none"
               tabindex="0"
             >
               {{ modelValue.breed }}
@@ -211,10 +211,10 @@
         </template>
       </q-field>
     </div>
-    <div class="col-span-24 align-center">
+    <div class="col-span-12 align-center">
       <div
         id="qrcode"
-        style="width: 3cm; height: 3cm; margin: auto"
+        style="width: 2.5cm; height: 2.5cm; margin: auto"
         v-html="qrSvg"
       ></div>
     </div>
@@ -240,8 +240,8 @@ export interface Props {
   height?: number
 }
 const props = withDefaults(defineProps<Props>(), {
-  width: import.meta.env.VITE_LABEL_WIDTH || 62,
-  height: import.meta.env.VITE_LABEL_HEIGHT || 100
+  width: (import.meta.env.VITE_LABEL_WIDTH || 62) - 4,
+  height: (import.meta.env.VITE_LABEL_HEIGHT || 100) - 4
 })
 const lang = useLang()
 
