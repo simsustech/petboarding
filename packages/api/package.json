@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "serve": "node ./dist/server/server.mjs",
-    "dev": "vitrify dev -m fastify",
+    "dev": "run-s  start:dev-server ",
     "build": "run-s build:api build:migrations seed:fake:generate minify:fastify",
     "build:migrations": "tsc -p tsconfig.migrations.json",
     "build:api": "vitrify build -m fastify",
@@ -44,7 +44,9 @@
     "seed:fake": "node ./dist/seeds/fake.js",
     "seed:test": "node ./dist/seeds/test.js",
     "seed:data": "node ./dist/seeds/data.js",
-    "start": "run-s migrate:latest serve"
+    "start": "run-s migrate:latest serve",
+    "start:dev-server": "NODE_TLS_REJECT_UNAUTHORIZED=0 vitrify dev -m fastify --port 3000",
+    "docker-compose": "node ./docker-compose.dev.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
@@ -87,6 +89,7 @@
     "@vitejs/plugin-vue": "6.0.1",
     "beasties": "^0.3.5",
     "devcert": "1.2.2",
+    "docker-compose": "^1.3.0",
     "eslint": "9.35.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
