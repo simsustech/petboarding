@@ -1,14 +1,21 @@
+import eslintConfigPrettier from 'eslint-config-prettier'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import pluginVue from 'eslint-plugin-vue'
 import typescriptEslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default typescriptEslint.config(
-  {
-    ignores: ['src/slimfact/slimfact.d.ts']
-  },
+export default defineConfig([
   ...typescriptEslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
+  globalIgnores(['**/slimfact.d.ts']),
+  {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname
+      }
+    }
+  },
 
   {
     files: ['**/*.vue'],
@@ -35,5 +42,6 @@ export default typescriptEslint.config(
   /**
    * end
    */
+  eslintConfigPrettier,
   eslintPluginPrettierRecommended
-)
+])
