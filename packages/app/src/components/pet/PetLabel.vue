@@ -65,7 +65,7 @@
         >
           <template #control>
             <div
-              class="self-center full-width no-outline q-ma-none"
+              class="self-center text-truncate full-width no-outline q-ma-none"
               tabindex="0"
             >
               {{ modelValue.color }}
