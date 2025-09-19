@@ -44,7 +44,7 @@
           >
             <q-card-section
               header
-              class="text-h6 text-center p-0px m-0px line-height-1.2em"
+              class="text-h6 text-center p-0 m-0 line-height-1.2em"
             >
               {{ kennel.name }}
             </q-card-section>
@@ -174,7 +174,7 @@ onMounted(async () => {
 @media print {
   @page {
     size: auto;
-    margin: 15mm;
+    margin: 10mm;
   }
 }
 body {
