@@ -27,6 +27,11 @@ await loadConfiguration()
 const configuration = useConfiguration()
 await initializeTRPCClient(configuration.value.API_HOST)
 
+const languageImports = ref({
+  nl: () => import(`quasar/lang/nl.js`),
+  'en-US': () => import(`quasar/lang/en-US.js`)
+})
+
 watch(language, (newVal) => {
   loadLang(newVal)
   loadComponentsFormLang(newVal)
