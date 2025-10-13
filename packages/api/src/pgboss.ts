@@ -31,16 +31,6 @@ export const initialize = async ({ fastify }: { fastify: FastifyInstance }) => {
 
   const schedules = await boss.getSchedules()
 
-  await boss.work(
-    'checkDownPayments',
-    { batchSize: 1, includeMetadata: true },
-    downPaymentWorker
-  )
-  await boss.work(
-    'createReceipts',
-    { batchSize: 1, includeMetadata: true },
-    receiptsWorker
-  )
   if (!schedules.some((schedule) => schedule.name === 'checkDownPayments')) {
     const queueName = `checkDownPayments`
 
@@ -58,6 +48,17 @@ export const initialize = async ({ fastify }: { fastify: FastifyInstance }) => {
     }
     await boss.schedule(queueName, '0 0 * * *', {}, {})
   }
+
+  await boss.work(
+    'checkDownPayments',
+    { batchSize: 1, includeMetadata: true },
+    downPaymentWorker
+  )
+  await boss.work(
+    'createReceipts',
+    { batchSize: 1, includeMetadata: true },
+    receiptsWorker
+  )
 
   return boss
 }
