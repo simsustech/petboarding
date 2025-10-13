@@ -11,7 +11,7 @@ export const daycareDateValidation = {
   pets: pet.array().optional(),
   comments: z.string().optional(),
   customerId: z.number().optional(),
-  status: z.nativeEnum(DAYCARE_DATE_STATUS).optional(),
+  status: z.enum(DAYCARE_DATE_STATUS).optional(),
   customerDaycareSubscriptionId: z.number().optional().nullable(),
   customerDaycareSubscription: customerDaycareSubscription.optional()
 }

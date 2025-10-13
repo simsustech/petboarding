@@ -20,7 +20,7 @@ export const adminOccupancyRoutes = ({
     .input(
       z.object({
         date: z.string(),
-        status: z.nativeEnum(BOOKING_STATUS)
+        status: z.enum(BOOKING_STATUS)
       })
     )
     .query(async ({ input }) => {
@@ -60,7 +60,7 @@ export const adminOccupancyRoutes = ({
     .input(
       z.object({
         date: z.string(),
-        status: z.nativeEnum(DAYCARE_DATE_STATUS)
+        status: z.enum(DAYCARE_DATE_STATUS)
       })
     )
     .query(async ({ input }) => {

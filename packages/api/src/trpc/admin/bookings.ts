@@ -671,7 +671,7 @@ export const adminBookingRoutes = ({
   //   .input(
   //     z.object({
   //       date: z.string(),
-  //       status: z.nativeEnum(BOOKING_STATUS)
+  //       status: z.enum(BOOKING_STATUS)
   //     })
   //   )
   //   .query(async ({ input }) => {
@@ -747,7 +747,7 @@ export const adminBookingRoutes = ({
   getBookingsCount: procedure
     .input(
       z.object({
-        status: z.nativeEnum(BOOKING_STATUS)
+        status: z.enum(BOOKING_STATUS)
       })
     )
     .query(async ({ input }) => {

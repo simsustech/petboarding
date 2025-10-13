@@ -36,7 +36,7 @@ export const employeeDaycareRoutes = ({
         customerId: z.number().optional(),
         from: z.string(),
         until: z.string(),
-        status: z.nativeEnum(DAYCARE_DATE_STATUS)
+        status: z.enum(DAYCARE_DATE_STATUS)
       })
     )
     .query(async ({ input }) => {
@@ -75,7 +75,7 @@ export const employeeDaycareRoutes = ({
       z.object({
         from: z.string(),
         until: z.string(),
-        status: z.nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
+        status: z.enum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
         statuses: z
           .nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS)
           .array()

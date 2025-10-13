@@ -11,7 +11,7 @@ export const announcementValidation = {
   id: z.number().optional(),
   title: z.string(),
   message: z.string(),
-  type: z.nativeEnum(ANNOUNCEMENT_TYPE),
+  type: z.enum(ANNOUNCEMENT_TYPE),
   expirationDate: z.string()
 }
 

@@ -6,7 +6,7 @@ export const serviceValidation = {
   id: z.number().optional(),
   name: z.string(),
   description: z.string().optional(),
-  type: z.nativeEnum(SERVICE_TYPE),
+  type: z.enum(SERVICE_TYPE),
   listPrice: z.number().nullable(),
   hidden: z.boolean().optional(),
   disabled: z.boolean().optional()

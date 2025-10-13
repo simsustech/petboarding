@@ -42,7 +42,7 @@ export const adminAccountRoutes = ({
           .object({
             name: z.string().optional(),
             email: z.string().optional(),
-            roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)).optional()
+            roles: z.array(z.enum(PETBOARDING_ACCOUNT_ROLES)).optional()
           })
           .optional(),
         pagination: z
@@ -74,7 +74,7 @@ export const adminAccountRoutes = ({
             .object({
               name: z.string().optional(),
               email: z.string().optional(),
-              roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)).optional()
+              roles: z.array(z.enum(PETBOARDING_ACCOUNT_ROLES)).optional()
             })
             .optional()
         })
@@ -120,7 +120,7 @@ export const adminAccountRoutes = ({
     .input(
       z.object({
         id: z.number(),
-        role: z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)
+        role: z.enum(PETBOARDING_ACCOUNT_ROLES)
       })
     )
     .mutation(async ({ input }) => {
@@ -151,7 +151,7 @@ export const adminAccountRoutes = ({
     .input(
       z.object({
         id: z.number(),
-        role: z.nativeEnum(PETBOARDING_ACCOUNT_ROLES)
+        role: z.enum(PETBOARDING_ACCOUNT_ROLES)
       })
     )
     .mutation(async ({ input }) => {

@@ -13,7 +13,7 @@ export const accountValidation = {
   email: z.string(),
   verified: z.boolean(),
   customFields: z.unknown().optional(),
-  roles: z.array(z.nativeEnum(PETBOARDING_ACCOUNT_ROLES))
+  roles: z.array(z.enum(PETBOARDING_ACCOUNT_ROLES))
 }
 
 export const account = z.object(accountValidation)

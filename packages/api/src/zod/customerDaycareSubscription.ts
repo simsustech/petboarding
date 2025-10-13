@@ -6,7 +6,7 @@ export { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS }
 
 export const customerDaycareSubscriptionValidation = {
   id: z.number().optional(),
-  status: z.nativeEnum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
+  status: z.enum(CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS).optional(),
   effectiveDate: z.string(),
   expirationDate: z.string().optional(),
   invoiceUuid: z.string().optional().nullable(),

@@ -6,7 +6,7 @@ export const periodValidation = {
   id: z.number().optional(),
   startDate: z.string(),
   endDate: z.string(),
-  type: z.nativeEnum(PERIOD_TYPE),
+  type: z.enum(PERIOD_TYPE),
   comments: z.string(),
   minimumRatingForException: z.number().optional().nullable()
 }

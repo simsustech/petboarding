@@ -28,7 +28,7 @@ export const bookingService = z.object(bookingServiceValidation).omit({})
 
 export const bookingStatusValidation = {
   bookingId: z.number(),
-  status: z.nativeEnum(BOOKING_STATUS),
+  status: z.enum(BOOKING_STATUS),
   startDate: z.string(),
   endDate: z.string(),
   startTimeId: z.number(),

@@ -28,7 +28,7 @@ export const adminDaycareRoutes = ({
           z.object({
             from: z.string(),
             until: z.string(),
-            status: z.nativeEnum(DAYCARE_DATE_STATUS)
+            status: z.enum(DAYCARE_DATE_STATUS)
           })
         )
     )
@@ -140,7 +140,7 @@ export const adminDaycareRoutes = ({
   getDaycareCount: procedure
     .input(
       z.object({
-        status: z.nativeEnum(DAYCARE_DATE_STATUS)
+        status: z.enum(DAYCARE_DATE_STATUS)
       })
     )
     .query(async ({ input }) => {

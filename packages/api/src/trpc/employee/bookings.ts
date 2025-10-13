@@ -99,8 +99,8 @@ export const employeeBookingRoutes = ({
         until: z.string(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
-        status: z.nativeEnum(BOOKING_STATUS).optional(),
-        statuses: z.nativeEnum(BOOKING_STATUS).array().optional(),
+        status: z.enum(BOOKING_STATUS).optional(),
+        statuses: z.enum(BOOKING_STATUS).array().optional(),
         customerId: z.number().optional()
       })
     )

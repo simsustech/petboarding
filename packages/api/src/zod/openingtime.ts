@@ -12,7 +12,7 @@ export const openingTimeValidation = {
   startTime: z.string(),
   endTime: z.string(),
   disabled: z.boolean(),
-  type: z.nativeEnum(OPENING_TIME_TYPE)
+  type: z.enum(OPENING_TIME_TYPE)
 }
 
 export const openingTime = z.object(openingTimeValidation)
