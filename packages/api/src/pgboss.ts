@@ -22,7 +22,10 @@ const createReceiptsWorker = ({ fastify }: { fastify: FastifyInstance }) =>
   }
 
 export const initialize = async ({ fastify }: { fastify: FastifyInstance }) => {
-  boss = new PgBoss(postgresConnectionString)
+  boss = new PgBoss({
+    connectionString: postgresConnectionString,
+    schema: 'pgboss_v11'
+  })
 
   await boss.start()
 
