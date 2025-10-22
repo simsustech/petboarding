@@ -14,6 +14,16 @@
       <q-btn icon="i-mdi-more-vert" flat>
         <q-menu>
           <q-list>
+            <q-item clickable href="/print/termsandconditions" target="_blank">
+              <q-item-section avatar>
+                <q-icon name="i-mdi-document" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.termsAndConditions }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item clickable href="/print/privacypolicy" target="_blank">
               <q-item-section avatar>
                 <q-icon name="i-mdi-document" />
