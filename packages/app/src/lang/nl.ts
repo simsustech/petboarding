@@ -254,6 +254,8 @@ const lang: Language = {
       bookingModified: 'Reservering is gewijzigd.',
       changeDaycareToBooking:
         'Als u een dagopvang afspraak wenst te veranderen in een overnachting, annuleer dan eerst de dagopvang afspraak en plaats dan een reservering.',
+      editBooking:
+        'Klik op de menu knop van een reservering om deze te wijzigen.',
       upcomingBookings: 'Komende reserveringen',
       otherBookings: 'Overige reserveringen',
       overlapsWithUnavailablePeriod:
@@ -593,8 +595,10 @@ const lang: Language = {
         editCustomer: 'Ik wil mijn persoonlijke gegevens wijzigen.',
         editContactPeople: 'Ik wil mijn contactpersonen wijzigen.',
         editPets: 'Ik wil de informatie van mijn huisdier(en) wijzigen.',
-        addOrViewBooking: 'Ik wil een reservering toevoegen of bekijken.',
-        addOrViewDaycareDates: 'Ik wil dagopvang datums toevoegen of bekijken.'
+        addOrViewBooking:
+          'Ik wil een reservering toevoegen, wijzigen of bekijken.',
+        addOrViewDaycareDates:
+          'Ik wil dagopvang datums toevoegen, annuleren of bekijken.'
       }
     }
   },

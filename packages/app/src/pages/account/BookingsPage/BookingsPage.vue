@@ -5,6 +5,8 @@
         <q-icon name="i-mdi-info" color="info" />
       </template>
       {{ lang.booking.messages.changeDaycareToBooking }}
+      <br />
+      {{ lang.booking.messages.editBooking }}
     </q-banner>
     <div v-if="ready">
       <div v-if="petsData?.length">

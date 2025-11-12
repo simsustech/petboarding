@@ -241,6 +241,7 @@ export interface Language {
       settleCancelation: string
       bookingModified: string
       changeDaycareToBooking: string
+      editBooking: string
       upcomingBookings: string
       otherBookings: string
       overlapsWithUnavailablePeriod: string

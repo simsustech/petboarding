@@ -251,6 +251,7 @@ const lang: Language = {
       bookingModified: 'Booking has been modified.',
       changeDaycareToBooking:
         'If you wish to change a daycare appointment to an overnight stay, cancel the daycare appointment first and then place a booking.',
+      editBooking: 'Click on the menu button of a booking to edit it.',
       upcomingBookings: 'Upcoming bookings',
       otherBookings: 'Other bookings',
       overlapsWithUnavailablePeriod:
@@ -581,8 +582,8 @@ const lang: Language = {
         editCustomer: 'I want to edit my personal details.',
         editContactPeople: 'I want to change my contact people.',
         editPets: 'I want to edit my pet(s) information.',
-        addOrViewBooking: 'I want to add or review a booking.',
-        addOrViewDaycareDates: 'I want to add or review daycare dates.'
+        addOrViewBooking: 'I want to add, modify or review a booking.',
+        addOrViewDaycareDates: 'I want to add, cancel or review daycare dates.'
       }
     }
   },
