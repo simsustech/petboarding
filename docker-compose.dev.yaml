@@ -39,9 +39,6 @@ services:
       - ./packages/api/dist:/app/dist
       - ./jwks:/app/dist/server/jwks
     environment:
-      POSTGRES_HOST: database
-      POSTGRES_PASSWORD: ufgouifdgjdfg
-    environment:
       # API env variables
       VITE_API_HOST: ${HOST}.local
       VITE_LICENSE_KEY: undefined
