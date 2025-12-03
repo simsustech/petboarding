@@ -437,6 +437,7 @@ export interface Language {
       openingTimes: string
       petHealth: string
       vaccinations: string
+      missingVaccinations: string
     }
   }
   daycareSubscription: {

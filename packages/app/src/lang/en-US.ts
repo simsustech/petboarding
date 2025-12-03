@@ -460,7 +460,9 @@ const lang: Language = {
         'Please arrive at the time as is shown in your booking. If you are unable to make it, let us know in time.',
       petHealth:
         'Make sure your pet is in good health, dewormed and treated for fleas and has all mandatory vaccinations.',
-      vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`
+      vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`,
+      missingVaccinations:
+        'Our data shows that your pet(s) does not have all mandatory vaccinations or that they will expire soon. We would kindly ask you to vaccinate your pet(s) before their stay.'
     }
   },
   daycareSubscription: {

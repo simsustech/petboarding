@@ -32,7 +32,8 @@ export const vaccinationValidation = {
   image: z.string(),
   types: z.enum(VACCINATION_TYPES_DOG).array(),
   petId: z.number(),
-  expirationDate: z.string()
+  expirationDate: z.string(),
+  hasExpired: z.boolean().optional()
 }
 
 export const vaccination = z.object(vaccinationValidation)
