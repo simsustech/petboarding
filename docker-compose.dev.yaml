@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ufgouifdgjdfg
       POSTGRES_DB: petboarding
     volumes:
-      - ./devdatabase:/var/lib/postgresql/data
+      - petboarding-db-data:/var/lib/postgresql
     networks:
       dev:
         aliases:
@@ -31,13 +31,14 @@ services:
         - SIMSUSTECH_NPM_TOKEN
       dockerfile: Dockerfile
       target: api
+    restart: unless-stopped
     labels:
       caddy: ${HOST}.local
       caddy.reverse_proxy: "{{upstreams 80}}"
     volumes:
       - ./packages/app/dist:/packages/app/dist
       - ./packages/api/dist:/app/dist
-      - ./jwks:/app/dist/server/jwks
+      - petboarding-jwks:/app/dist/server/jwks
     environment:
       # API env variables
       VITE_API_HOST: ${HOST}.local
@@ -61,7 +62,7 @@ services:
     networks:
       dev:
         aliases:
-          - database
+          - dev
       web:
 
 secrets:
@@ -72,3 +73,7 @@ networks:
   dev:
   web:
     external: true
+
+volumes:
+  petboarding-db-data:
+  petboarding-jwks:
