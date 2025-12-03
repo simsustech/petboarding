@@ -90,7 +90,7 @@
     "typescript": "5.9.3",
     "typescript-eslint": "^8.46.2",
     "unocss": "^66.5.4",
-    "unocss-preset-quasar": "^0.2.10",
+    "unocss-preset-quasar": "^0.2.11",
     "vite": "^7.1.11",
     "vite-plugin-pwa": "^1.1.0",
     "vitrify": "^0.25.3",

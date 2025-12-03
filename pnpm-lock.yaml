@@ -195,7 +195,7 @@ importers:
         version: 66.5.4(postcss@8.5.6)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
       unocss-preset-quasar:
         specifier: ^0.2.10
-        version: 0.2.10(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
+        version: 0.2.11(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
       vite:
         specifier: 7.1.11
         version: 7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1)
@@ -357,11 +357,8 @@ importers:
         specifier: ^66.5.4
         version: 66.5.4(postcss@8.5.6)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
       unocss-preset-quasar:
-        specifier: ^0.2.10
-        version: 0.2.10(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
-      use-trpc:
-        specifier: 2.0.0-beta.1
-        version: 2.0.0-beta.1(vue@3.5.22(typescript@5.9.3))
+        specifier: ^0.2.11
+        version: 0.2.11(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1))
       vite:
         specifier: ^7.1.11
         version: 7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1)
@@ -2074,19 +2071,11 @@ packages:
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
 
-  '@trpc/client@10.45.2':
-    resolution: {integrity: sha512-ykALM5kYWTLn1zYuUOZ2cPWlVfrXhc18HzBDyRhoPYN0jey4iQHEFSEowfnhg1RvYnrAVjNBgHNeSAXjrDbGwg==}
-    peerDependencies:
-      '@trpc/server': 10.45.2
-
   '@trpc/client@11.6.0':
     resolution: {integrity: sha512-DyWbYk2hd50BaVrXWVkaUnaSwgAF5g/lfBkXtkF1Aqlk6BtSzGUo3owPkgqQO2I5LwWy1+ra9TsSfBBvIZpTwg==}
     peerDependencies:
       '@trpc/server': 11.6.0
       typescript: '>=5.7.2'
-
-  '@trpc/server@10.45.2':
-    resolution: {integrity: sha512-wOrSThNNE4HUnuhJG6PfDRp4L2009KDVxsd+2VYH8ro6o/7/jwYZ8Uu5j+VaW+mOmc8EHerHzGcdbGNQSAUPgg==}
 
   '@trpc/server@11.6.0':
     resolution: {integrity: sha512-skTso0AWbOZck40jwNeYv++AMZXNWLUWdyk+pB5iVaYmEKTuEeMoPrEudR12VafbEU6tZa8HK3QhBfTYYHDCdg==}
@@ -5631,8 +5620,8 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  unocss-preset-quasar@0.2.10:
-    resolution: {integrity: sha512-BzUSXWHb69rvI82hT6hU7KC/tyJsNNumjWz3f6LjRElziXeu9Sex4Nbxz/iYlpPXdI3BlzRDmTGfcZkzJZdt8g==}
+  unocss-preset-quasar@0.2.11:
+    resolution: {integrity: sha512-iyqMJ5glqkd+Uc6tH1Zm75h83REj1Msk14qMZ38/E4R5Y2UpXL98lScfoDZR5Mw9i6DKNzPyGc/apo9h0cLZpw==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       quasar: ^2.18.1
@@ -5700,9 +5689,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  use-trpc@2.0.0-beta.1:
-    resolution: {integrity: sha512-QJ9R0UsuQoO3lPEMUwWFyIjMWXf6iXTaqw8zjDcevE0f9iy4y6m6Bfxgmku0L6HaC/7nBG/WV3BCAgX3NO8boQ==}
 
   uslug@1.0.4:
     resolution: {integrity: sha512-Jrbpp/NS3TvIGNjfJT1sn3/BCeykoxR8GbNYW5lF6fUscLkbXFwj1b7m4DvIkHm8k3Qr6Co68lbTmoZTMGk/ow==}
@@ -5836,17 +5822,6 @@ packages:
 
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
-
-  vue-demi@0.14.10:
-    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
 
   vue-eslint-parser@10.2.0:
     resolution: {integrity: sha512-CydUvFOQKD928UzZhTp4pr2vWz1L+H99t7Pkln2QSPdvmURT0MoC4wUccfCnuEaihNsu9aYYyk+bep8rlfkUXw==}
@@ -7854,16 +7829,10 @@ snapshots:
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.12
 
-  '@trpc/client@10.45.2(@trpc/server@10.45.2)':
-    dependencies:
-      '@trpc/server': 10.45.2
-
   '@trpc/client@11.6.0(@trpc/server@11.6.0(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
       '@trpc/server': 11.6.0(typescript@5.9.3)
       typescript: 5.9.3
-
-  '@trpc/server@10.45.2': {}
 
   '@trpc/server@11.6.0(typescript@5.9.3)':
     dependencies:
@@ -11707,7 +11676,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-preset-quasar@0.2.10(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1)):
+  unocss-preset-quasar@0.2.11(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.5)(vite@7.1.11(@types/node@24.5.2)(jiti@2.5.1)(sass@1.89.2)(terser@5.44.0)(yaml@2.8.1)):
     dependencies:
       '@material/material-color-utilities': 0.3.0
       '@unocss/core': 66.5.4
@@ -11803,15 +11772,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-trpc@2.0.0-beta.1(vue@3.5.22(typescript@5.9.3)):
-    dependencies:
-      '@trpc/client': 10.45.2(@trpc/server@10.45.2)
-      '@trpc/server': 10.45.2
-      vue-demi: 0.14.10(vue@3.5.22(typescript@5.9.3))
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
 
   uslug@1.0.4:
     dependencies:
@@ -12142,10 +12102,6 @@ snapshots:
       - yaml
 
   vscode-uri@3.1.0: {}
-
-  vue-demi@0.14.10(vue@3.5.22(typescript@5.9.3)):
-    dependencies:
-      vue: 3.5.22(typescript@5.9.3)
 
   vue-eslint-parser@10.2.0(eslint@9.38.0(jiti@2.5.1)):
     dependencies:
