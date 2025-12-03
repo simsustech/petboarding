@@ -1,5 +1,11 @@
 <template>
   <q-page padding>
+    <q-banner v-if="missingVaccinations" rounded class="bg-warning mb-1em">
+      <template #avatar>
+        <q-icon name="i-mdi-warning text-negative" />
+      </template>
+      {{ lang.information.messages.missingVaccinations }}
+    </q-banner>
     <div v-if="ready">
       <div v-if="petsData?.length">
         <div class="grid grid-cols-12 gap-3">
@@ -247,6 +253,13 @@ const { mutateAsync: cancelDaycareDatesMutation } =
 const { mutateAsync: createCustomerDaycareSubscriptionMutation } =
   useAccountCreateCustomerDaycareSubscriptionMutation()
 
+const missingVaccinations = computed(() =>
+  petsData.value?.some(
+    (pet) =>
+      pet.hasMandatoryVaccinations === false ||
+      pet.vaccinations?.some((vaccination) => vaccination.hasExpired)
+  )
+)
 const createDaycareFormRef = ref<typeof DaycareForm>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
 

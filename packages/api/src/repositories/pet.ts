@@ -82,7 +82,13 @@ function withVaccinations(eb: ExpressionBuilder<Database, 'pets'>) {
         'vaccinations.expirationDate',
         'vaccinations.types',
         'vaccinations.petId',
-        convertImageSql.as('image')
+        convertImageSql.as('image'),
+        (seb) =>
+          seb(
+            'expirationDate',
+            '<',
+            sql<string>`CURRENT_DATE + integer '31'`
+          ).as('hasExpired')
       ])
       .orderBy('vaccinations.expirationDate', 'desc')
       .where(

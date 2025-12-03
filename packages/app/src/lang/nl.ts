@@ -473,7 +473,9 @@ const lang: Language = {
       petHealth:
         'Zorg ervoor dat uw hond in goede gezondheid verkeerd, ontwormd en ontvlooid is en alle verplichte vaccinaties heeft.',
       vaccinations:
-        'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!'
+        'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!',
+      missingVaccinations:
+        'Uit onze gegevens blijkt dat uw huisdier(en) niet alle verplichte vaccinaties heeft of dat deze binnenkort verlopen. We willen u vriendelijk verzoeken om uw huisdier(en) te vaccineren voor hun verblijf.'
     }
   },
   daycareSubscription: {

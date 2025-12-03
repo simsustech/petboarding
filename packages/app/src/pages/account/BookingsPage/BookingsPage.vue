@@ -1,6 +1,12 @@
 <template>
   <q-page padding>
-    <q-banner class="q-mt-none q-pt-none" rounded>
+    <q-banner v-if="missingVaccinations" rounded class="bg-warning mb-1em">
+      <template #avatar>
+        <q-icon name="i-mdi-warning text-negative" />
+      </template>
+      {{ lang.information.messages.missingVaccinations }}
+    </q-banner>
+    <q-banner rounded>
       <template #avatar>
         <q-icon name="i-mdi-info" color="info" />
       </template>
@@ -148,6 +154,14 @@ const { mutateAsync: cancelBookingMutation } = useAccountCancelBookingMutation()
 // const { data, execute } = useQuery('user.getBookings', {
 //   // immediate: true
 // })
+const missingVaccinations = computed(() =>
+  petsData.value?.some(
+    (pet) =>
+      pet.hasMandatoryVaccinations === false ||
+      pet.vaccinations?.some((vaccination) => vaccination.hasExpired)
+  )
+)
+
 const upcomingBookings = computed(() =>
   data.value?.filter(
     (booking) =>
