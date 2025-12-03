@@ -1,4 +1,4 @@
-import PgBoss from 'pg-boss'
+import { PgBoss } from 'pg-boss'
 import { postgresConnectionString } from '../src/kysely/index.js'
 import { FastifyInstance } from 'fastify'
 import {
