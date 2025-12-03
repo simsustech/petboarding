@@ -96,13 +96,9 @@ const routes: RouteRecordRaw[] = [
             path: 'announcements',
             components: {
               default: () =>
-                import(
-                  '../pages/admin/AnnouncementsPage/AnnouncementsPage.vue'
-                ),
+                import('../pages/admin/AnnouncementsPage/AnnouncementsPage.vue'),
               fabs: () =>
-                import(
-                  '../pages/admin/AnnouncementsPage/AnnouncementsPageFabs.vue'
-                )
+                import('../pages/admin/AnnouncementsPage/AnnouncementsPageFabs.vue')
             }
           },
           {
@@ -125,39 +121,27 @@ const routes: RouteRecordRaw[] = [
                 path: 'categories',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/CategoriesPage/CategoriesPage.vue'
-                    ),
+                    import('../pages/admin/configuration/CategoriesPage/CategoriesPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/CategoriesPage/CategoriesPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/CategoriesPage/CategoriesPageFabs.vue')
                 }
               },
               {
                 path: 'services',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/ServicesPage/ServicesPage.vue'
-                    ),
+                    import('../pages/admin/configuration/ServicesPage/ServicesPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/ServicesPage/ServicesPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/ServicesPage/ServicesPageFabs.vue')
                 }
               },
               {
                 path: 'openingtimes',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/OpeningTimesPage/OpeningTimesPage.vue'
-                    ),
+                    import('../pages/admin/configuration/OpeningTimesPage/OpeningTimesPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/OpeningTimesPage/OpeningTimesPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/OpeningTimesPage/OpeningTimesPageFabs.vue')
                 }
               },
               {
@@ -169,39 +153,27 @@ const routes: RouteRecordRaw[] = [
                 path: 'daycaresubscriptions',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPage.vue'
-                    ),
+                    import('../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPageFabs.vue')
                 }
               },
               {
                 path: 'buildings',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/BuildingsPage/BuildingsPage.vue'
-                    ),
+                    import('../pages/admin/configuration/BuildingsPage/BuildingsPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/BuildingsPage/BuildingsPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/BuildingsPage/BuildingsPageFabs.vue')
                 }
               },
               {
                 path: 'kennels',
                 components: {
                   default: () =>
-                    import(
-                      '../pages/admin/configuration/KennelsPage/KennelsPage.vue'
-                    ),
+                    import('../pages/admin/configuration/KennelsPage/KennelsPage.vue'),
                   fabs: () =>
-                    import(
-                      '../pages/admin/configuration/KennelsPage/KennelsPageFabs.vue'
-                    )
+                    import('../pages/admin/configuration/KennelsPage/KennelsPageFabs.vue')
                 }
               },
               {
@@ -333,13 +305,9 @@ const routes: RouteRecordRaw[] = [
             path: 'contactpeople',
             components: {
               default: () =>
-                import(
-                  '../pages/account/ContactPeoplePage/ContactPeoplePage.vue'
-                ),
+                import('../pages/account/ContactPeoplePage/ContactPeoplePage.vue'),
               fabs: () =>
-                import(
-                  '../pages/account/ContactPeoplePage/ContactPeoplePageFabs.vue'
-                )
+                import('../pages/account/ContactPeoplePage/ContactPeoplePageFabs.vue')
             },
             meta: {
               lang: 'contactPerson'
