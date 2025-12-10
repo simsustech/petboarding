@@ -257,7 +257,7 @@ const missingVaccinations = computed(() =>
   petsData.value?.some(
     (pet) =>
       pet.hasMandatoryVaccinations === false ||
-      pet.vaccinations?.some((vaccination) => vaccination.hasExpired)
+      pet.vaccinations?.every((vaccination) => vaccination.hasExpired)
   )
 )
 const createDaycareFormRef = ref<typeof DaycareForm>()
