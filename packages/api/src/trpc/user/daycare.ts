@@ -97,7 +97,8 @@ export const userDaycareRoutes = ({
           .filter(
             (daycareDate) =>
               daycareDate.date >
-              addDays(new Date(), 1).toISOString().slice(0, 10)
+                addDays(new Date(), 1).toISOString().slice(0, 10) ||
+              daycareDate.status === DAYCARE_DATE_STATUS.PENDING
           )
           .map((daycareDate) => daycareDate.id)
 
