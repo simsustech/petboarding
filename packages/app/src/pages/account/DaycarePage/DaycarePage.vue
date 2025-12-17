@@ -82,9 +82,9 @@
                   {{ lang.daycare.messages.addDaycareDates }}
                 </template>
               </daycare-calendar-month>
-              <div class="row justify-center">
+              <div class="row justify-center min-h-36px q-pt-md">
                 <q-btn
-                  v-if="selectedEvents.length"
+                  v-show="selectedEvents.length"
                   :label="lang.daycare.messages.cancelSelected"
                   color="red"
                   @click="cancelDaycareDates"
