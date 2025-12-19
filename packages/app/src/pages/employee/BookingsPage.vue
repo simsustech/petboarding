@@ -31,6 +31,7 @@
           show-edit-button
           show-history
           show-icon
+          show-booking-services-edit-button
           @update="openUpdateDialog"
           @cancel="cancelBooking"
           @open-customer="openCustomer"
