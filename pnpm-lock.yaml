@@ -194,8 +194,8 @@ importers:
         specifier: ^66.5.9
         version: 66.5.9(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
       unocss-preset-quasar:
-        specifier: ^0.2.10
-        version: 0.2.10(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
+        specifier: ^0.2.12
+        version: 0.2.12(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
       vite:
         specifier: 7.2.4
         version: 7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)
@@ -252,8 +252,8 @@ importers:
         specifier: 2.0.5
         version: 2.0.5
       '@simsustech/quasar-components':
-        specifier: 0.11.21
-        version: 0.11.21(quasar@2.18.6)(vue@3.5.25(typescript@5.9.3))
+        specifier: 0.11.22
+        version: 0.11.22(quasar@2.18.6)(vue@3.5.25(typescript@5.9.3))
       '@trpc/client':
         specifier: 11.7.2
         version: 11.7.2(@trpc/server@11.7.2(typescript@5.9.3))(typescript@5.9.3)
@@ -357,8 +357,8 @@ importers:
         specifier: 66.5.9
         version: 66.5.9(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
       unocss-preset-quasar:
-        specifier: 0.2.11
-        version: 0.2.11(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
+        specifier: 0.2.12
+        version: 0.2.12(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
       vite:
         specifier: 7.2.4
         version: 7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)
@@ -2292,6 +2292,11 @@ packages:
 
   '@simsustech/quasar-components@0.11.21':
     resolution: {integrity: sha512-Zt8MMGfFCg1EO27ALP0dHkesvfu1je7927X0MiuVBMdOo6bYBxSx6OTFOp8JKBFDjRgSqh7Yi7EeVT9kJEGZNg==}
+    peerDependencies:
+      quasar: ^2.18.1
+
+  '@simsustech/quasar-components@0.11.22':
+    resolution: {integrity: sha512-Htu95bRCHtXm6ZBV/25LA+17gdjjv5QN9zvllQBl5xm1byTiGMkCp40vOSsquLQqdJQv+j+0ZoNVVJubWPz/Nw==}
     peerDependencies:
       quasar: ^2.18.1
 
@@ -5991,14 +5996,8 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
-  unocss-preset-quasar@0.2.10:
-    resolution: {integrity: sha512-BzUSXWHb69rvI82hT6hU7KC/tyJsNNumjWz3f6LjRElziXeu9Sex4Nbxz/iYlpPXdI3BlzRDmTGfcZkzJZdt8g==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      quasar: ^2.18.1
-
-  unocss-preset-quasar@0.2.11:
-    resolution: {integrity: sha512-iyqMJ5glqkd+Uc6tH1Zm75h83REj1Msk14qMZ38/E4R5Y2UpXL98lScfoDZR5Mw9i6DKNzPyGc/apo9h0cLZpw==}
+  unocss-preset-quasar@0.2.12:
+    resolution: {integrity: sha512-55M3+n2H6floE56atq9Shn+Umy8Pum8Iod5MwT48aN4RNrV9ipjAOv8L+fQj06v2wH3yoeH/4V6cqZUQOzCl5A==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       quasar: ^2.18.1
@@ -8312,6 +8311,14 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
+  '@simsustech/quasar-components@0.11.22(quasar@2.18.6)(vue@3.5.25(typescript@5.9.3))':
+    dependencies:
+      '@vueuse/core': 13.9.0(vue@3.5.25(typescript@5.9.3))
+      quasar: 2.18.6
+      validator: 13.15.15
+    transitivePeerDependencies:
+      - vue
+
   '@standard-schema/spec@1.0.0': {}
 
   '@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))':
@@ -8850,8 +8857,8 @@ snapshots:
 
   '@unocss/rule-utils@66.5.4':
     dependencies:
-      '@unocss/core': 66.5.4
-      magic-string: 0.30.19
+      '@unocss/core': 66.5.9
+      magic-string: 0.30.21
 
   '@unocss/rule-utils@66.5.9':
     dependencies:
@@ -12420,24 +12427,7 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-preset-quasar@0.2.10(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)):
-    dependencies:
-      '@material/material-color-utilities': 0.3.0
-      '@unocss/core': 66.5.4
-      '@unocss/preset-uno': 66.5.4
-      '@unocss/preset-web-fonts': 66.5.4
-      '@unocss/preset-wind': 66.5.4
-      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.5.4(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)))
-      quasar: 2.18.6
-      unocss: 66.5.4(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))
-    transitivePeerDependencies:
-      - '@unocss/webpack'
-      - animate.css
-      - postcss
-      - supports-color
-      - vite
-
-  unocss-preset-quasar@0.2.11(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)):
+  unocss-preset-quasar@0.2.12(animate.css@4.1.1)(postcss@8.5.6)(quasar@2.18.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)):
     dependencies:
       '@material/material-color-utilities': 0.3.0
       '@unocss/core': 66.5.9

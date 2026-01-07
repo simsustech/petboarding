@@ -46,13 +46,14 @@
               "
               :class="{
                 'q-mb-sm': true,
-                'q-mt-sm': true
+                'q-mt-sm': true,
+                ...getButtonBgClasses(scope.timestamp.date),
+                ...getButtonOutlineClasses(scope.timestamp.date)
               }"
               size="md"
-              :outline="!getButtonColor(scope.timestamp.date)"
+              :outline="!getButtonBgClasses(scope.timestamp.date)"
               rounded
               :label="scope.dayLabel"
-              :color="getButtonColor(scope.timestamp.date)"
               @click="onClickDate({ scope })"
             >
               <q-tooltip v-if="$slots['head-day-button-tooltip']">
@@ -137,7 +138,10 @@ import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useQuasar } from 'quasar'
 import { DaycareDate } from '@petboarding/api/zod'
-import { DAYCARE_DATE_COLORS } from 'src/configuration.js'
+import {
+  DAYCARE_DATE_BUTTON_BG_CLASSES,
+  DAYCARE_DATE_BUTTON_OUTLINE_CLASSES
+} from '../../configuration.js'
 
 export interface QCalendarEvent {
   id: number
@@ -299,14 +303,41 @@ const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
   contentSize.value.height = `${size.height}px`
 }
 
-const getButtonColor = (date: string) => {
+// const getButtonColor = (date: string) => {
+//   const existingDaycareDate = currentDaycareDates.value?.find(
+//     (daycareDate) => daycareDate.date === date
+//   )
+//   if (existingDaycareDate?.status) {
+//     return DAYCARE_DATE_COLORS[existingDaycareDate.status]
+//   } else if (date === new Date().toISOString().slice(0, 10)) {
+//     return DAYCARE_DATE_COLORS.default
+//   }
+// }
+
+const getButtonBgClasses = (date: string) => {
   const existingDaycareDate = currentDaycareDates.value?.find(
     (daycareDate) => daycareDate.date === date
   )
   if (existingDaycareDate?.status) {
-    return DAYCARE_DATE_COLORS[existingDaycareDate.status]
-  } else if (date === new Date().toISOString().slice(0, 10)) {
-    return 'blue-3'
+    return DAYCARE_DATE_BUTTON_BG_CLASSES[existingDaycareDate.status].reduce(
+      (acc, cur) => {
+        acc[cur] = true
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
+  }
+}
+
+const getButtonOutlineClasses = (date: string) => {
+  if (date === new Date().toISOString().slice(0, 10)) {
+    return DAYCARE_DATE_BUTTON_OUTLINE_CLASSES.default.reduce(
+      (acc, cur) => {
+        acc[cur] = true
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
   }
 }
 </script>

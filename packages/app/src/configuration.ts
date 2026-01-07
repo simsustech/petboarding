@@ -74,7 +74,21 @@ export const DAYCARE_DATE_COLORS = {
   rejected: 'red',
   canceled: 'red',
   pending: 'grey',
-  standby: 'yellow'
+  standby: 'yellow',
+  default: 'red-5'
+} as const
+
+export const DAYCARE_DATE_BUTTON_BG_CLASSES = {
+  approved: ['bg-green'],
+  rejected: ['bg-red'],
+  canceled: ['bg-red'],
+  pending: ['bg-grey'],
+  standby: ['bg-yellow'],
+  default: ['bg-blue-5']
+} as const
+
+export const DAYCARE_DATE_BUTTON_OUTLINE_CLASSES = {
+  default: ['!border-blue-5 border-2px']
 } as const
 
 export const DAYCARE_DATE_ICONS = {

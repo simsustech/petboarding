@@ -3,5 +3,6 @@ packages:
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - "@vitrify/*"
-  - "vitrify"
-  - "unocss-preset-quasar"
+  - vitrify
+  - unocss-preset-quasar
+  - "@simsustech/*"

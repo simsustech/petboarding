@@ -418,7 +418,7 @@ onMounted(async () => {
   await executeDaycareSubscriptions()
   await executeCustomerDaycareSubscriptions()
   await executeDisabledDates()
-  // await execute()
+  await execute()
   ready.value = true
 })
 </script>
