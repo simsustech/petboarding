@@ -66,6 +66,7 @@
         @settle-cancelation="settleCancelation"
         @update-booking-service="openUpdateBookingServiceDialog"
         @open-customer="openCustomer"
+        @update-booking-invoice="updateBookingInvoice"
       ></booking-expansion-item>
     </q-list>
 
@@ -157,17 +158,18 @@ import CustomerSelect from '../../components/employee/CustomerSelect.vue'
 import {
   useAdminGetBookingEmailQuery,
   useAdminGetBookingsQuery
-} from 'src/queries/admin/booking.js'
-import { useEmployeeGetBookingServiceQuery } from 'src/queries/employee/bookingService.js'
-import { useAdminUpdateBookingServiceMutation } from 'src/mutations/admin/bookingService.js'
+} from '../../queries/admin/booking.js'
+import { useEmployeeGetBookingServiceQuery } from '../../queries/employee/bookingService.js'
+import { useAdminUpdateBookingServiceMutation } from '../../mutations/admin/bookingService.js'
 import {
   useAdminApproveBookingMutation,
   useAdminBookingSettleCancellationMutation,
   useAdminRejectBookingMutation,
   useAdminReplyBookingMutation,
   useAdminStandbyBookingMutation
-} from 'src/mutations/admin/booking.js'
-import { useEmployeeSearchCustomersQuery } from 'src/queries/employee/customer.js'
+} from '../../mutations/admin/booking.js'
+import { useEmployeeSearchCustomersQuery } from '../../queries/employee/customer.js'
+import { useEmployeeUpdateBookingInvoiceMutation } from '../../mutations/employee/booking.js'
 
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
@@ -215,6 +217,9 @@ const { mutateAsync: approveBookingMutation } = useAdminApproveBookingMutation()
 const { mutateAsync: rejectBookingMutation } = useAdminRejectBookingMutation()
 const { mutateAsync: replyBookingMutation } = useAdminReplyBookingMutation()
 const { mutateAsync: standbyBookingMutation } = useAdminStandbyBookingMutation()
+
+const { mutateAsync: updateBookingInvoiceMutation } =
+  useEmployeeUpdateBookingInvoiceMutation()
 
 const total = computed(() => data.value?.at(0)?.total || 0)
 // const { pet, id: petId, refetch: refetchPet } = useEmployeeGetPetQuery()
@@ -567,6 +572,24 @@ const settleCancelation: InstanceType<
 
 // const filteredCustomers = ref<Customer[]>([])
 
+const updateBookingInvoice: InstanceType<
+  typeof BookingExpansionItem
+>['$props']['onUpdateBookingInvoice'] = async ({ data, done }) => {
+  if (data.id) {
+    try {
+      await updateBookingInvoiceMutation(data.id)
+      done(true)
+      $q.notify({
+        icon: 'i-mdi-check-circle',
+        color: 'positive',
+        message: lang.value.booking.messages.invoiceSynchronized
+      })
+      await executeBookings()
+    } catch (e) {
+      done(false)
+    }
+  }
+}
 const onFilterCustomers: InstanceType<
   typeof CustomerSelect
 >['$props']['onFilter'] = async ({ searchPhrase, ids, done }) => {
