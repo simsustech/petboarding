@@ -105,7 +105,7 @@ const formRef = ref<QForm>()
 const initialValue = {
   title: '',
   message: '',
-  expirationDate: '',
+  expirationDate: null,
   type: ANNOUNCEMENT_TYPE.GENERAL,
   comments: ''
 }

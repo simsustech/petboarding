@@ -73,7 +73,7 @@ const lang = useLang()
 const species = ref<(typeof PET_SPECIES)[number]>('dog')
 const initialValue: Vaccination = {
   petId: 0,
-  expirationDate: '',
+  expirationDate: null,
   types: []
 }
 const modelValue = ref<Vaccination>(initialValue)

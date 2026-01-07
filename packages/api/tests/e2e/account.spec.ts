@@ -34,11 +34,11 @@ const pet = {
 const newPetName = faker.person.firstName()
 
 const startDate = faker.date
-  .soon({ days: 90 }, new Date())
+  .soon({ days: 90, refDate: new Date() })
   .toISOString()
   .split('T')[0]
 const endDate = faker.date
-  .soon({ days: 30 }, startDate)
+  .soon({ days: 30, refDate: startDate })
   .toISOString()
   .split('T')[0]
 const booking = {

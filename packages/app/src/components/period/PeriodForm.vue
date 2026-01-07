@@ -102,8 +102,8 @@ const formRef = ref<QForm>()
 
 const initialValue = {
   name: '',
-  startDate: '',
-  endDate: '',
+  startDate: null,
+  endDate: null,
   type: PERIOD_TYPE.UNAVAILABLE_FOR_ALL,
   comments: '',
   minimumRatingForException: null

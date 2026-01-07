@@ -14,7 +14,9 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       ssr: {
         fastify: {
           bodyLimit: 10e6,
-          maxParamLength: 5000
+          routerOptions: {
+            maxParamLength: 5000
+          }
         },
         serverModules: [
           '@petboarding/app',

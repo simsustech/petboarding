@@ -282,7 +282,7 @@ const initialValue: Pet = {
   gender: null,
   sterilized: null,
   chemicalSterilizationDate: null,
-  birthDate: '',
+  birthDate: null,
   color: '',
   medicines: '',
   food: {

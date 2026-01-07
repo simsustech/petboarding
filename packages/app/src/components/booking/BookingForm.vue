@@ -149,8 +149,8 @@ const validations = computed<
 }))
 
 const initialValue: Booking = {
-  startDate: '',
-  endDate: '',
+  startDate: null,
+  endDate: null,
   startTimeId: null,
   endTimeId: null,
   petIds: [],
