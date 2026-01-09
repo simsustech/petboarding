@@ -51,7 +51,7 @@
     "@modular-api/fastify-checkout": "0.5.4",
     "@modular-api/quasar-components": "0.3.29",
     "@petboarding/api": "workspace:*",
-    "@pinia/colada": "npm:@stefanvh/colada@^0.17.0",
+    "@pinia/colada": "0.21.0",
     "@quasar/extras": "1.17.0",
     "@quasar/quasar-ui-qcalendar": "4.1.2",
     "@quasar/quasar-ui-qmarkdown": "2.0.5",

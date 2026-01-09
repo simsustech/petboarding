@@ -240,8 +240,8 @@ importers:
         specifier: workspace:*
         version: link:../api
       '@pinia/colada':
-        specifier: npm:@stefanvh/colada@^0.17.0
-        version: '@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))'
+        specifier: 0.21.0
+        version: 0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
       '@quasar/extras':
         specifier: 1.17.0
         version: 1.17.0
@@ -367,7 +367,7 @@ importers:
         version: 1.2.0(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.4.0)
       vitrify:
         specifier: 0.25.4
-        version: 0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(postcss@8.5.6)(quasar@2.18.6)(rollup@2.79.2)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1)
+        version: 0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(postcss@8.5.6)(quasar@2.18.6)(rollup@2.79.2)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1)
       vue:
         specifier: 3.5.25
         version: 3.5.25(typescript@5.9.3)
@@ -479,7 +479,7 @@ importers:
         version: 1.2.0(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.4.0)
       vitrify:
         specifier: 0.25.4
-        version: 0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.17.9(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(quasar@2.18.6)(rollup@4.51.0)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1)
+        version: 0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(quasar@2.18.6)(rollup@4.51.0)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1)
       vue:
         specifier: 3.5.25
         version: 3.5.25(typescript@5.9.3)
@@ -2085,6 +2085,12 @@ packages:
       pinia: ^2.2.6 || ^3.0.0
       vue: ^3.5.17
 
+  '@pinia/colada@0.21.0':
+    resolution: {integrity: sha512-Y7c4gRsZcZCOyxKFbvSadC55sHKJJqKjD3KC1wiOBFl9ubqBlzqOPZl7fj0LkoqbsZYGqAdA0FtNfe9cvgQOXA==}
+    peerDependencies:
+      pinia: ^2.2.6 || ^3.0.0
+      vue: ^3.5.17
+
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
@@ -2302,11 +2308,6 @@ packages:
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
-
-  '@stefanvh/colada@0.17.0':
-    resolution: {integrity: sha512-DWItHQ3GCO90UlKUKbtiHz2Jzoc/NR2QAm1Adz/9L+eI45H/GzxfvL45FzvXm/05UuWeWUZAFmz9jshy9GWdLA==}
-    peerDependencies:
-      pinia: ^2.2.6 || ^3.0.0
 
   '@stefanvh/lionel-oauth-client@0.7.0':
     resolution: {integrity: sha512-DV+jiJkzxPjqXpE4ctVVT4QeQcUsFbje+jLDNHd9Uhkbx2ARXjmkTou5SqMgnyMS2UV+o/E3Sl1Thc9k1/iEqw==}
@@ -8159,6 +8160,11 @@ snapshots:
       pinia: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
       vue: 3.5.25(typescript@5.9.3)
 
+  '@pinia/colada@0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))':
+    dependencies:
+      pinia: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
+      vue: 3.5.25(typescript@5.9.3)
+
   '@pinojs/redact@0.4.0': {}
 
   '@pkgr/core@0.1.2': {}
@@ -8320,11 +8326,6 @@ snapshots:
       - vue
 
   '@standard-schema/spec@1.0.0': {}
-
-  '@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))':
-    dependencies:
-      '@vue/devtools-api': 7.7.7
-      pinia: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
 
   '@stefanvh/lionel-oauth-client@0.7.0':
     dependencies:
@@ -12709,19 +12710,19 @@ snapshots:
       - workbox-build
       - yaml
 
-  vitrify@0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.17.9(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(quasar@2.18.6)(rollup@4.51.0)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1):
+  vitrify@0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(postcss@8.5.6)(quasar@2.18.6)(rollup@2.79.2)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1):
     dependencies:
       '@fastify/middie': 9.0.3
       '@fastify/one-line-logger': 2.0.2
       '@fastify/static': 8.3.0
-      '@pinia/colada': 0.17.9(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
+      '@pinia/colada': 0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
       '@unocss/core': 66.5.9
       '@unocss/preset-uno': 66.5.9
       '@unocss/preset-web-fonts': 66.5.9
       '@unocss/preset-wind': 66.5.9
       '@vitejs/plugin-vue': 6.0.2(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))(vue@3.5.25(typescript@5.9.3))
       ajv: 8.17.1
-      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.5.9(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)))
+      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.5.9(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)))
       cac: 6.7.14
       chalk: 5.6.2
       cross-env: 10.1.0
@@ -12736,7 +12737,7 @@ snapshots:
       pinia: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
       quasar: 2.18.6
       readline: 1.3.0
-      rollup-plugin-visualizer: 6.0.5(rollup@4.51.0)
+      rollup-plugin-visualizer: 6.0.5(rollup@2.79.2)
       sass: 1.94.2
       stringify-object: 6.0.0
       ts-node: 10.9.2(@types/node@24.5.2)(typescript@5.9.3)
@@ -12782,19 +12783,19 @@ snapshots:
       - workbox-build
       - yaml
 
-  vitrify@0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(postcss@8.5.6)(quasar@2.18.6)(rollup@2.79.2)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1):
+  vitrify@0.25.4(@babel/parser@7.28.5)(@fastify/static@8.3.0)(@pinia/colada@0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)))(@types/node@24.5.2)(animate.css@4.1.1)(fastify@5.6.2)(jiti@2.6.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(quasar@2.18.6)(rollup@4.51.0)(terser@5.44.0)(typescript@5.9.3)(vue-router@4.6.3(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))(workbox-build@7.3.0)(yaml@2.8.1):
     dependencies:
       '@fastify/middie': 9.0.3
       '@fastify/one-line-logger': 2.0.2
       '@fastify/static': 8.3.0
-      '@pinia/colada': '@stefanvh/colada@0.17.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))'
+      '@pinia/colada': 0.21.0(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
       '@unocss/core': 66.5.9
       '@unocss/preset-uno': 66.5.9
       '@unocss/preset-web-fonts': 66.5.9
       '@unocss/preset-wind': 66.5.9
       '@vitejs/plugin-vue': 6.0.2(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1))(vue@3.5.25(typescript@5.9.3))
       ajv: 8.17.1
-      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.5.9(postcss@8.5.6)(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)))
+      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.5.9(vite@7.2.4(@types/node@24.5.2)(jiti@2.6.1)(sass@1.94.2)(terser@5.44.0)(yaml@2.8.1)))
       cac: 6.7.14
       chalk: 5.6.2
       cross-env: 10.1.0
@@ -12809,7 +12810,7 @@ snapshots:
       pinia: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
       quasar: 2.18.6
       readline: 1.3.0
-      rollup-plugin-visualizer: 6.0.5(rollup@2.79.2)
+      rollup-plugin-visualizer: 6.0.5(rollup@4.51.0)
       sass: 1.94.2
       stringify-object: 6.0.0
       ts-node: 10.9.2(@types/node@24.5.2)(typescript@5.9.3)
