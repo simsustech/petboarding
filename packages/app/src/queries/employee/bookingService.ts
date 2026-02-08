@@ -6,7 +6,7 @@ export const useEmployeeGetBookingServiceQuery = defineQuery(() => {
   const id = ref(NaN)
 
   const { data: bookingService, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR,
+    enabled: !import.meta.env.SSR && !!id.value && !Number.isNaN(id.value),
     key: () => ['employeeGetBookingService', id.value],
     query: () =>
       trpc.employee.getBookingService.query({

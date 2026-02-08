@@ -76,7 +76,7 @@ export const useAdminGetBookingEmailQuery = defineQuery(() => {
   const type = ref<REPLY_TYPES[number]>('approve')
 
   const { data: email, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR,
+    enabled: !import.meta.env.SSR && !!id.value && !Number.isNaN(id.value),
     key: () => ['adminGetBookingEmail', id.value, type.value],
     query: () =>
       trpc.admin.getBookingEmail.query({
