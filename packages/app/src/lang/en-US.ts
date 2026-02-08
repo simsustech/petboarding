@@ -462,7 +462,7 @@ const lang: Language = {
         'Make sure your pet is in good health, dewormed and treated for fleas and has all mandatory vaccinations.',
       vaccinations: `Do not forget to bring proof of vaccination (the pet's passport)!`,
       missingVaccinations:
-        'Our data shows that your pet(s) does not have all mandatory vaccinations or that they will expire soon. We would kindly ask you to vaccinate your pet(s) before their stay.'
+        'Our data shows that your pet(s) does not have all mandatory vaccinations or that they will expire soon. We would kindly ask you to check this and make sure it is in order before the next booking.'
     }
   },
   daycareSubscription: {

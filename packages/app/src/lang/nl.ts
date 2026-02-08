@@ -475,7 +475,7 @@ const lang: Language = {
       vaccinations:
         'Vergeet niet om het vaccinatie bewijs mee te nemen (het paspoort van uw huisdier)!',
       missingVaccinations:
-        'Uit onze gegevens blijkt dat uw huisdier(en) niet alle verplichte vaccinaties heeft of dat deze binnenkort verlopen. We willen u vriendelijk verzoeken om uw huisdier(en) te vaccineren voor hun verblijf.'
+        'Uit onze gegevens blijkt dat uw huisdier(en) niet alle verplichte vaccinaties heeft of dat deze binnenkort verlopen. We willen u vriendelijk verzoeken dit te controleren en te zorgen dat het in orde is voor de volgende reservering.'
     }
   },
   daycareSubscription: {
