@@ -8,6 +8,8 @@ import {
   SERVICE_TYPE
 } from '../types.js'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 const seed = async () => {
   const accounts = [1, 2, 3, 4, 5].map((nr) => ({
     email: `test${nr}@petboarding.app`
@@ -49,11 +51,22 @@ const seed = async () => {
     endTimeId: 1,
     customerId: nr
   }))
+  bookings.push({
+    startDate: `${CURRENT_YEAR}-01-01`,
+    endDate: `${CURRENT_YEAR}-01-11`,
+    startTimeId: 1,
+    endTimeId: 1,
+    customerId: 5
+  })
 
   const bookingPet = [1, 2, 3, 4, 5].map((nr) => ({
     bookingId: nr,
     petId: nr
   }))
+  bookingPet.push({
+    bookingId: 6,
+    petId: 5
+  })
 
   const bookingStatuseEnum = [
     BOOKING_STATUS.PENDING,
@@ -74,10 +87,18 @@ const seed = async () => {
     ...bookings[nr - 1],
     bookingId: nr,
     status: bookingStatuseEnum[nr - 1],
-    petIds: `[${nr}]`,
+    petIds: `[${nr - 1}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
   }))
+  bookingStatuses.push({
+    ...bookings[5],
+    bookingId: 6,
+    status: bookingStatuseEnum[0],
+    petIds: `[${5}]`,
+    modifiedAt: new Date().toISOString(),
+    customerId: undefined
+  })
 
   const daycareDates = [1, 2, 3, 4, 5].map((nr) => ({
     date: `2024-02-0${nr}`,

@@ -4,6 +4,7 @@ import { initializeAndLogin } from '../setup'
 
 // import { format } from 'date-fns'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const CURRENT_YEAR = new Date().getFullYear()
 
 const email = 'admin@petboarding.app'
 const password = 'qjiNWdT8L'
@@ -41,15 +42,15 @@ test.describe('Bookings', async () => {
     await page.goto('admin/bookings')
     await page.waitForLoadState('networkidle')
 
-    await expect(page.getByText('name1 lastName1')).toBeVisible()
+    await expect(page.getByText('name5 lastName5')).toBeVisible()
   })
 })
 test.describe('Occupancy', async () => {
   test('Check booking occupancy', async () => {
-    await page.goto('admin/occupancy/2024-01-01')
+    await page.goto(`admin/occupancy/2024-01-01`)
     await page.waitForLoadState('networkidle')
 
-    await page.getByText('2024/01/01').isVisible()
+    await page.getByText(`2024/01/01`).isVisible()
     await expect(
       page
         .locator('div:nth-child(2) > .q-calendar-month__day--content > .column')
@@ -58,10 +59,10 @@ test.describe('Occupancy', async () => {
   })
 
   test('Check daycare occupancy', async () => {
-    await page.goto('admin/occupancy/2024-02-01')
+    await page.goto(`admin/occupancy/2024-02-01`)
     await page.waitForLoadState('networkidle')
 
-    await page.getByText('2024/02/01').isVisible()
+    await page.getByText(`2024/02/01`).isVisible()
     await expect(
       page
         .locator('div:nth-child(5) > .q-calendar-month__day--content > .column')
