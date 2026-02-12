@@ -400,6 +400,7 @@ export async function createOrUpdateDaycareDates(
   options?: {
     useCustomerDaycareSubscription?: boolean
     ignoreCustomerDaycareSubscriptionErrors?: boolean
+    updateRejectedDaycareDates?: boolean
   }
 ) {
   const customerId = daycareDates[0].customerId
@@ -423,7 +424,10 @@ export async function createOrUpdateDaycareDates(
         [
           DAYCARE_DATE_STATUS.CANCELED,
           DAYCARE_DATE_STATUS.APPROVED,
-          DAYCARE_DATE_STATUS.PENDING
+          DAYCARE_DATE_STATUS.PENDING,
+          options?.updateRejectedDaycareDates
+            ? DAYCARE_DATE_STATUS.REJECTED
+            : undefined
         ].includes(daycareDate.status)
       )
       .map((daycareDate) => {

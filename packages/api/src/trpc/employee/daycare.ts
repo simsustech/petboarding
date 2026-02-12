@@ -57,14 +57,16 @@ export const employeeDaycareRoutes = ({
     }),
   createDaycareDates: procedure
     .input(employeeDaycareValidation.array())
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
+        const isAdmin = ctx.account?.roles?.includes('administrator')
         const daycareSubscriptions = await findDaycareSubscriptions({
           criteria: {}
         })
         await createOrUpdateDaycareDates(input, {
           useCustomerDaycareSubscription: !!daycareSubscriptions.length,
-          ignoreCustomerDaycareSubscriptionErrors: true
+          ignoreCustomerDaycareSubscriptionErrors: true,
+          updateRejectedDaycareDates: isAdmin
         })
       } catch (e) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
