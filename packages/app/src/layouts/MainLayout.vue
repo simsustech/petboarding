@@ -36,7 +36,7 @@
             </q-item>
 
             <q-item
-              :href="`https://www.petboarding.app/documentation/users?lang=${$q.lang.isoName}`"
+              :href="`https://www.petboarding.app/${$q.lang.isoName === 'en-US' ? '' : $q.lang.isoName.slice(0, 2)}/documentation`"
               target="_blank"
             >
               <q-item-section avatar>

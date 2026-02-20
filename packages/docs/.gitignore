@@ -1,4 +1,2 @@
-node_modules
-dist
-*.local
-components.d.ts
+.vitepress/dist
+.vitepress/cache
