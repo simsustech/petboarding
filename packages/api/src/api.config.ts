@@ -11,131 +11,6 @@ import type {
 const vacations = [
   {
     name: 'Herfstvakantie',
-    startDate: '2019-10-12',
-    endDate: '2019-10-20'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2019-12-21',
-    endDate: '2020-01-05'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2020-02-22',
-    endDate: '2020-03-01'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2020-04-25',
-    endDate: '2020-05-03'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2020-07-01',
-    endDate: '2020-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2020-10-17',
-    endDate: '2020-10-25'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2020-12-19',
-    endDate: '2021-01-03'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2021-02-13',
-    endDate: '2021-02-21'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2021-05-01',
-    endDate: '2021-05-09'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2021-07-01',
-    endDate: '2021-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2021-10-23',
-    endDate: '2021-10-31'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2021-12-25',
-    endDate: '2022-01-09'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2022-02-26',
-    endDate: '2022-03-06'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2022-04-30',
-    endDate: '2022-05-08'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2022-07-01',
-    endDate: '2022-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2022-10-22',
-    endDate: '2022-10-30'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2022-12-24',
-    endDate: '2023-01-08'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2023-02-18',
-    endDate: '2023-02-26'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2023-04-29',
-    endDate: '2023-05-07'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2023-07-01',
-    endDate: '2023-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2023-10-14',
-    endDate: '2023-10-22'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2023-12-23',
-    endDate: '2024-01-07'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2024-02-10',
-    endDate: '2024-02-18'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2024-04-27',
-    endDate: '2024-05-05'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2024-07-01',
-    endDate: '2024-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
     startDate: '2024-10-19',
     endDate: '2024-10-27'
   },
@@ -183,6 +58,106 @@ const vacations = [
     name: 'Zomervakantie',
     startDate: '2026-07-01',
     endDate: '2026-08-31'
+  },
+  {
+    name: 'Herfstvakantie',
+    startDate: '2026-10-17',
+    endDate: '2026-10-25'
+  },
+  {
+    name: 'Kerstvakantie',
+    startDate: '2026-12-19',
+    endDate: '2027-01-03'
+  },
+  {
+    name: 'Voorjaarsvakantie',
+    startDate: '2027-02-13',
+    endDate: '2027-02-21'
+  },
+  {
+    name: 'Meivakantie',
+    startDate: '2027-04-24',
+    endDate: '2027-05-02'
+  },
+  {
+    name: 'Zomervakantie',
+    startDate: '2027-07-01',
+    endDate: '2027-08-31'
+  },
+  {
+    name: 'Herfstvakantie',
+    startDate: '2027-10-23',
+    endDate: '2027-10-31'
+  },
+  {
+    name: 'Kerstvakantie',
+    startDate: '2027-12-25',
+    endDate: '2028-01-09'
+  },
+  {
+    name: 'Voorjaarsvakantie',
+    startDate: '2028-02-26',
+    endDate: '2028-03-05'
+  },
+  {
+    name: 'Meivakantie',
+    startDate: '2028-04-29',
+    endDate: '2028-05-07'
+  },
+  {
+    name: 'Zomervakantie',
+    startDate: '2028-07-01',
+    endDate: '2028-08-31'
+  },
+  {
+    name: 'Herfstvakantie',
+    startDate: '2028-10-21',
+    endDate: '2028-10-29'
+  },
+  {
+    name: 'Kerstvakantie',
+    startDate: '2028-12-23',
+    endDate: '2029-01-07'
+  },
+  {
+    name: 'Voorjaarsvakantie',
+    startDate: '2029-02-10',
+    endDate: '2029-02-18'
+  },
+  {
+    name: 'Meivakantie',
+    startDate: '2029-04-28',
+    endDate: '2029-05-06'
+  },
+  {
+    name: 'Zomervakantie',
+    startDate: '2029-07-01',
+    endDate: '2029-08-31'
+  },
+  {
+    name: 'Herfstvakantie',
+    startDate: '2029-10-13',
+    endDate: '2029-10-21'
+  },
+  {
+    name: 'Kerstvakantie',
+    startDate: '2029-12-22',
+    endDate: '2030-01-06'
+  },
+  {
+    name: 'Voorjaarsvakantie',
+    startDate: '2030-02-23',
+    endDate: '2030-03-03'
+  },
+  {
+    name: 'Meivakantie',
+    startDate: '2030-04-27',
+    endDate: '2030-05-05'
+  },
+  {
+    name: 'Zomervakantie',
+    startDate: '2030-07-01',
+    endDate: '2030-08-31'
   }
 ]
 

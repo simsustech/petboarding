@@ -244,6 +244,7 @@ export async function calculateBookingCosts({
         }))
       } catch (e) {
         console.error('Unable to load API config')
+        console.error(e)
 
         const findActualPrice = ({
           prices,
@@ -1156,6 +1157,8 @@ export async function cancelBooking(
       }
     } catch (e) {
       console.error('Unable to load API config')
+      console.error(e)
+
       const maxCancelationDate = subMonths(
         parseISO(booking.startDate),
         env.read('CANCELATION_PERIOD_MONTHS') ||
