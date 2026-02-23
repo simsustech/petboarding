@@ -69,7 +69,7 @@
   >
     <booking-form
       ref="updateBookingFormRef"
-      :pets="petsData"
+      :pets="pets"
       :services="servicesData"
       :terms-and-conditions-url="termsAndConditionsUrl"
       :hide-approved-after-down-payment="
@@ -87,7 +87,7 @@
   >
     <booking-form
       ref="createBookingFormRef"
-      :pets="petsData"
+      :pets="pets"
       :services="servicesData"
       :terms-and-conditions-url="termsAndConditionsUrl"
       :hide-approved-after-down-payment="
@@ -147,6 +147,10 @@ const { mutateAsync: createBookingMutation } = useAccountCreateBookingMutation()
 const { mutateAsync: updateBookingMutation } = useAccountUpdateBookingMutation()
 const { mutateAsync: cancelBookingMutation } = useAccountCancelBookingMutation()
 
+const pets = computed(() =>
+  petsData.value?.filter((pet) => pet.deceased === false)
+)
+
 // const { data: petsData, execute: executeCustomer } = useQuery('user.getPets', {
 //   // immediate: true
 // })
@@ -155,7 +159,7 @@ const { mutateAsync: cancelBookingMutation } = useAccountCancelBookingMutation()
 //   // immediate: true
 // })
 const missingVaccinations = computed(() =>
-  petsData.value?.some(
+  pets.value?.some(
     (pet) =>
       pet.hasMandatoryVaccinations === false ||
       pet.vaccinations?.every((vaccination) => vaccination.hasExpired)
