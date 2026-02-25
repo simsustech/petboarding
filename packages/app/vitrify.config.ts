@@ -217,7 +217,6 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
           })
         ],
         theme: {},
-        safelist: ['text-light-primary', 'text-dark-primary'],
         content: {
           pipeline: {
             include: [
