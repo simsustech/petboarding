@@ -6,7 +6,7 @@
       height: height + 'mm'
     }"
   >
-    <div class="grid grid-cols-24 gap-x-1 p-0.25em">
+    <div class="grid grid-cols-24 gap-x-1 p-0.25em mt-0.25em">
       <div class="col-span-24 text-0.75em line-height-1em">
         {{ formatDate(modelValue.startDate, modelValue.startTime?.name) }}
         <br />

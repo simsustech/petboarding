@@ -22,14 +22,11 @@
 import { useLang } from '../../lang/index.js'
 
 interface Props {
-  modelValue?: number | string | null
+  modelValue: number | string | null
   unit?: 'kg' | 'lbs'
 }
 
-withDefaults(defineProps<Props>(), {
-  modelValue: undefined,
-  unit: 'kg'
-})
+const { modelValue, unit = 'kg' } = defineProps<Props>()
 
 defineEmits<{
   (e: 'update:model-value', value: number | string): void

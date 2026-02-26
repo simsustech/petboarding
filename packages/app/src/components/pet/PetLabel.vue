@@ -239,13 +239,15 @@ export interface Props {
   width?: number
   height?: number
 }
-const props = withDefaults(defineProps<Props>(), {
-  width: (import.meta.env.VITE_LABEL_WIDTH || 62) - 4,
-  height: (import.meta.env.VITE_LABEL_HEIGHT || 100) - 4
-})
+
+const {
+  modelValue,
+  width = (import.meta.env.VITE_LABEL_WIDTH || 62) - 4,
+  height = (import.meta.env.VITE_LABEL_HEIGHT || 100) - 4
+} = defineProps<Props>()
+
 const lang = useLang()
 
-const { modelValue } = toRefs(props)
 function truncate(str: string, n: number) {
   return str.length > n ? str.slice(0, n - 1) + '...' : str
 }
@@ -262,7 +264,7 @@ defineExpose({
 })
 
 const qrSvg = ref(
-  renderSVG(`${window.location.origin}/employee/pets/${modelValue.value.id}`)
+  renderSVG(`${window.location.origin}/employee/pets/${modelValue.id}`)
 )
 
 // const dateSixMonthsAgo = computed(() =>
