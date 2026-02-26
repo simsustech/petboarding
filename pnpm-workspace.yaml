@@ -8,3 +8,8 @@ minimumReleaseAgeExclude:
   - vitrify
   - unocss-preset-quasar
   - "@simsustech/*"
+  - "@modular-api/*"
+  - unocss
+  - "@unocss/*"
+  - "@pinia/colada"
+  - "pg*"

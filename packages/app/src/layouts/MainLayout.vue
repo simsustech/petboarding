@@ -58,7 +58,7 @@
             </q-item>
 
             <q-language-select
-              v-model="language"
+              v-model="locale"
               :language-imports="languageImports"
               :locales="languageLocales"
               is-item
@@ -415,9 +415,17 @@ import { Md3Layout } from '@simsustech/quasar-components/md3'
 import { useOAuthClient, userRouteKey, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { useLang, loadLang } from '../lang/index.js'
-import { useConfiguration, loadConfiguration } from '../configuration'
+import {
+  useConfiguration,
+  loadConfiguration,
+  languageImports,
+  languageLocales
+} from '../configuration.js'
 import PetboardingIcon from '../components/PetboardingIcon.vue'
-import { loadLang as loadComponentsFormLang } from '@simsustech/quasar-components/form'
+import {
+  loadLang as loadComponentsFormLang,
+  type Locales
+} from '@simsustech/quasar-components/form'
 import { loadLang as loadModularApiQuasarComponentsCheckoutLang } from '@modular-api/quasar-components/checkout'
 import NavigationTabs from './NavigationTabs.vue'
 import { initializeTRPCClient } from 'src/trpc.js'
@@ -448,36 +456,28 @@ const title = computed(() => {
   if (lang.value[route.meta?.lang]) return lang.value[route.meta.lang].title
   return configuration.value.TITLE
 })
-const language = ref<string>('en-US')
 
-const languageLocales = ref([
-  {
-    icon: 'i-flagpack-nl',
-    isoName: 'nl'
-  },
-  {
-    icon: 'i-flagpack-us',
-    isoName: 'en-US'
+const quasarLanguageMap: Partial<Record<Locales, string>> = {
+  'en-US': 'en-US',
+  'nl-NL': 'nl'
+}
+const locale = ref<Locales>('en-US')
+
+watch(locale, (newVal) => {
+  const quasarLang = quasarLanguageMap[newVal]
+  if (quasarLang) {
+    loadLang(quasarLang)
+    loadComponentsFormLang(quasarLang)
+    loadModularApiQuasarComponentsCheckoutLang(quasarLang)
+
+    // @ts-expect-error string
+    languageImports.value[quasarLang]().then((lang) => {
+      $q.lang.set(lang.default)
+    })
   }
-])
-
-const languageImports = ref({
-  nl: () => import(`quasar/lang/nl.js`),
-  'en-US': () => import(`quasar/lang/en-US.js`)
 })
 
-watch(language, (newVal) => {
-  loadLang(newVal)
-  loadComponentsFormLang(newVal)
-  loadModularApiQuasarComponentsCheckoutLang(newVal)
-
-  // @ts-expect-error string
-  languageImports.value[newVal]().then((lang) => {
-    $q.lang.set(lang.default)
-  })
-})
-
-await loadConfiguration()
+await loadConfiguration(locale)
 const configuration = useConfiguration()
 await initializeTRPCClient(configuration.value.API_HOST)
 
@@ -513,7 +513,6 @@ onMounted(async () => {
   if (__IS_PWA__) {
     await import('../pwa.js')
   }
-  language.value = configuration.value.LANG
   await useOAuthClient()
   await oAuthClient.value?.getUserInfo()
 
