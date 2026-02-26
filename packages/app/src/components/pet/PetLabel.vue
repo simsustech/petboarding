@@ -228,7 +228,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref } from 'vue'
 // import { date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { Pet } from '@petboarding/api/zod'

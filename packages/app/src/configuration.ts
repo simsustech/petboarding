@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { Loading, setCssVar } from 'quasar'
+import { Loading } from 'quasar'
 import { useLang } from './lang/index.js'
 import { Pet, PET_SPECIES } from '@petboarding/api/zod'
 import { QuasarTheme } from 'unocss-preset-quasar/theme'
