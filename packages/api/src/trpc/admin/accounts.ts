@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { t } from '../index.js'
 import * as z from 'zod'
-import { PETBOARDING_ACCOUNT_ROLES } from '../../zod/account.js'
+import { PETBOARDING_ACCOUNT_ROLES } from '../../kysely/types.js'
 import {
   findAccount,
   findAccounts,

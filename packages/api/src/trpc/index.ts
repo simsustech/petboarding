@@ -4,7 +4,7 @@ import type { FastifyInstance } from 'fastify'
 import { userRoutes } from './user/index.js'
 import { configurationRoutes } from './configuration/index.js'
 import { publicRoutes } from './public/index.js'
-import { PETBOARDING_ACCOUNT_ROLES } from '../zod/account.js'
+import { PETBOARDING_ACCOUNT_ROLES } from '../kysely/types.js'
 import { adminRoutes } from './admin/index.js'
 import { employeeRoutes } from './employee/index.js'
 export const t = initTRPC.context<Context>().create()
