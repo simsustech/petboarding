@@ -32,6 +32,7 @@ const lang: Language = {
   darkMode: 'Donkere modus',
   language: 'Taal',
   termsAndConditions: 'Algemene voorwaarden',
+  redirecting: 'Omleiden',
   account: {
     title: 'Account',
     fields: {

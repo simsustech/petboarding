@@ -432,6 +432,7 @@ import { initializeTRPCClient } from 'src/trpc.js'
 
 import { useAdminGetBookingsCount } from '../queries/admin/booking.js'
 import { useAdminGetDaycareCount } from '../queries/admin/daycare.js'
+import { useAdminSlimfactHealthCheckQuery } from 'src/queries/admin/slimfact.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -493,6 +494,11 @@ const {
   daycareCount: numberOfPendingDaycareDates,
   refetch: refetchDaycareCount
 } = useAdminGetDaycareCount()
+const {
+  data: slimfactData,
+  error: slimfactError,
+  refetch: refetchSlimfactHealthCheck
+} = useAdminSlimfactHealthCheckQuery()
 
 watch(user, async () => {
   if (user.value?.roles?.includes('administrator')) {
@@ -513,8 +519,16 @@ onMounted(async () => {
   if (__IS_PWA__) {
     await import('../pwa.js')
   }
-  await useOAuthClient()
-  await oAuthClient.value?.getUserInfo()
+
+  if (!import.meta.env.SSR) {
+    await useOAuthClient()
+    console.log(oAuthClient)
+    await oAuthClient.value?.getUserInfo()
+    try {
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   if (oAuthClient.value?.getAccessToken()) {
     user.value = await oAuthClient.value?.getUser()
@@ -522,6 +536,28 @@ onMounted(async () => {
       router.push({ path: '/' })
   } else if (isAuthenticatedRoute(route.path)) {
     router.push({ path: '/' })
+  }
+
+  if (user.value?.roles.includes('administrator')) {
+    if (configuration.value.INTEGRATIONS?.slimfact?.host) {
+      await refetchSlimfactHealthCheck()
+      if (
+        slimfactError.value ||
+        slimfactData?.value.exp - new Date().getTime() / 1000 < 604800
+
+        // slimfactError.value?.message === 'UNAUTHORIZED'
+      ) {
+        $q.loading.show({
+          message: `${lang.value.redirecting}...`,
+          boxClass: 'bg-grey-2 text-grey-9',
+          spinnerColor: 'primary'
+        })
+        setTimeout(() => {
+          $q.loading.hide()
+          router.push({ name: 'integrations' })
+        }, 1000)
+      }
+    }
   }
 
   ready.value = true

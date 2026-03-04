@@ -12,7 +12,10 @@
             color="red"
           />
           <q-form
-            v-else-if="slimfactError?.message === 'UNAUTHORIZED'"
+            v-else-if="
+              slimfactError?.message === 'UNAUTHORIZED' ||
+              slimfactData?.exp - new Date().getTime() / 1000 < 604800
+            "
             id="slimFactForm"
             action="/federated/slimfact"
             method="post"
@@ -33,8 +36,11 @@ import { LoginButton } from '@simsustech/quasar-components/authentication'
 import { onMounted } from 'vue'
 import { useAdminSlimfactHealthCheckQuery } from 'src/queries/admin/slimfact.js'
 
-const { error: slimfactError, refetch: refetchSlimfactHealthCheck } =
-  useAdminSlimfactHealthCheckQuery()
+const {
+  data: slimfactData,
+  error: slimfactError,
+  refetch: refetchSlimfactHealthCheck
+} = useAdminSlimfactHealthCheckQuery()
 
 onMounted(async () => {
   await refetchSlimfactHealthCheck()

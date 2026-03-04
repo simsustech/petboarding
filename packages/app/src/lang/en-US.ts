@@ -32,6 +32,7 @@ const lang: Language = {
   darkMode: 'Dark mode',
   language: 'Language',
   termsAndConditions: 'Terms and conditions',
+  redirecting: 'Redirecting',
   account: {
     title: 'Account',
     fields: {

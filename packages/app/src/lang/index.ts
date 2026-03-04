@@ -30,6 +30,7 @@ export interface Language {
   darkMode: string
   language: string
   termsAndConditions: string
+  redirecting: string
   account: {
     title: string
     fields: {

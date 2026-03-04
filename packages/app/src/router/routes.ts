@@ -146,6 +146,7 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'integrations',
+                name: 'integrations',
                 component: () =>
                   import('../pages/admin/configuration/IntegrationsPage.vue')
               },
