@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { OpeningTime } from '@petboarding/api/zod'
+import type { OpeningTime } from '@petboarding/api/zod'
 
 export const useConfigurationCreateOpeningTimeMutation = () => {
   const { ...rest } = useMutation({

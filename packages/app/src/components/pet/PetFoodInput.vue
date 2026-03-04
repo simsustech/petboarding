@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { Pet } from '@petboarding/api/zod'
+import type { Pet } from '@petboarding/api/zod'
 import { computed, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { extend } from 'quasar'

@@ -5,6 +5,49 @@ import type {
   AuthenticationMethodsTable
 } from '@modular-api/fastify-oidc/kysely'
 
+export enum ANNOUNCEMENT_TYPE {
+  GENERAL = 'general',
+  IMPORTANT = 'important',
+  PRIORITY = 'priority',
+  URGENT = 'urgent'
+}
+
+export const VACCINATION_IMAGE_SIZE = {
+  width: 1024,
+  height: 768
+}
+
+export const VACCINATION_TYPES_DOG = [
+  'kennelcough',
+  'parvo',
+  'hepatitis',
+  'distemper',
+  'leptospirosis',
+  'rabies'
+] as const
+
+export const VACCINATION_TYPES_CAT = [
+  'panleukopenia',
+  'rhinotracheitis',
+  'caliciviruses',
+  'rabies',
+  'leukemia'
+] as const
+
+export const VACCINATION_TYPES = {
+  dog: VACCINATION_TYPES_DOG,
+  cat: VACCINATION_TYPES_CAT
+}
+
+export const PET_SPECIES = ['dog', 'cat'] as const
+
+export enum PETBOARDING_ACCOUNT_ROLES {
+  ADMINISTRATOR = 'administrator',
+  MANAGER = 'manager',
+  EMPLOYEE = 'employee',
+  INTERN = 'intern'
+}
+
 export enum BOOKING_STATUS {
   PENDING = 'pending',
   APPROVED = 'approved',

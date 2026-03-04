@@ -231,7 +231,7 @@ export default {
 import { ref } from 'vue'
 // import { date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { Pet } from '@petboarding/api/zod'
+import type { Pet } from '@petboarding/api/zod'
 import { renderSVG } from 'uqr'
 
 export interface Props {

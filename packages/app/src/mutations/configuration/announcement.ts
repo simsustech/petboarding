@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { Announcement } from '@petboarding/api/zod'
+import type { Announcement } from '@petboarding/api/zod'
 
 export const useConfigurationCreateAnnouncementMutation = () => {
   const { ...rest } = useMutation({

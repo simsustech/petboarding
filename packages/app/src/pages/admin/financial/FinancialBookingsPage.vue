@@ -100,7 +100,7 @@ export default {
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useLang } from '../../../lang/index.js'
-import { Booking } from '@petboarding/api/zod'
+import type { Booking } from '@petboarding/api/zod'
 import { DateInput } from '@simsustech/quasar-components/form'
 import CustomerSelect from '../../../components/employee/CustomerSelect.vue'
 import { QTable, type QTableColumn, useQuasar } from 'quasar'

@@ -48,14 +48,14 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Period } from '@petboarding/api/zod'
+import type { Period } from '@petboarding/api/zod'
+import { PERIOD_TYPE } from '@petboarding/api/types'
 import { watch, computed, ref, toRefs } from 'vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DatePicker } from '@simsustech/quasar-components/form'
 import { useLang } from '../lang/index.js'
 import { useConfiguration } from '../configuration.js'
 import { date as dateUtil } from 'quasar'
-import { PERIOD_TYPE } from '@petboarding/api/zod'
 
 const props = defineProps<{
   periods: Period[]

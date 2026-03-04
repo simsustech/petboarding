@@ -45,7 +45,7 @@ export default {
 import { inject, nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Announcement } from '@petboarding/api/zod'
+import type { Announcement } from '@petboarding/api/zod'
 import AnnouncementForm from '../../../components/announcement/AnnouncementForm.vue'
 import AnnouncementsList from '../../../components/announcement/AnnouncementsList.vue'
 import { useQuasar } from 'quasar'

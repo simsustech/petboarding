@@ -137,7 +137,7 @@ import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useQuasar } from 'quasar'
-import { DaycareDate } from '@petboarding/api/zod'
+import type { DaycareDate } from '@petboarding/api/zod'
 import {
   DAYCARE_DATE_BUTTON_BG_CLASSES,
   DAYCARE_DATE_BUTTON_OUTLINE_CLASSES

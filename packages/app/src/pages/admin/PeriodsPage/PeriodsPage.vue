@@ -39,7 +39,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Period } from '@petboarding/api/zod'
+import type { Period } from '@petboarding/api/zod'
 import PeriodForm from '../../../components/period/PeriodForm.vue'
 import PeriodsList from '../../../components/period/PeriodsList.vue'
 import { useQuasar } from 'quasar'

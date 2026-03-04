@@ -30,7 +30,7 @@ export default {
 import { useAttrs, ref, toRefs, computed } from 'vue'
 import { QSelect, ValidationRule } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { OpeningTime } from '@petboarding/api/zod'
+import type { OpeningTime } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue?: string | number

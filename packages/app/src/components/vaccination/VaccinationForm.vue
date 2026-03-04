@@ -44,10 +44,8 @@ import { QForm, extend, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
-import {
-  Vaccination as VaccinationType,
-  PET_SPECIES
-} from '@petboarding/api/zod'
+import type { Vaccination as VaccinationType } from '@petboarding/api/zod'
+import { PET_SPECIES } from '@petboarding/api/types'
 import VaccinationTypesSelect from './VaccinationTypesSelect.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 

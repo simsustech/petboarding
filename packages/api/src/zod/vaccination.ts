@@ -1,31 +1,6 @@
 import * as z from 'zod'
 
-export const VACCINATION_IMAGE_SIZE = {
-  width: 1024,
-  height: 768
-}
-
-export const VACCINATION_TYPES_DOG = [
-  'kennelcough',
-  'parvo',
-  'hepatitis',
-  'distemper',
-  'leptospirosis',
-  'rabies'
-] as const
-
-export const VACCINATION_TYPES_CAT = [
-  'panleukopenia',
-  'rhinotracheitis',
-  'caliciviruses',
-  'rabies',
-  'leukemia'
-] as const
-
-export const VACCINATION_TYPES = {
-  dog: VACCINATION_TYPES_DOG,
-  cat: VACCINATION_TYPES_CAT
-}
+import { VACCINATION_TYPES_DOG } from '../kysely/types.js'
 
 export const vaccinationValidation = {
   id: z.number().optional(),

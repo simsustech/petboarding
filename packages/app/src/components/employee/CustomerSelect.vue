@@ -42,7 +42,7 @@ export default {
 import { FilteredModelSelect } from '@simsustech/quasar-components/form'
 import { ref, useAttrs } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { Customer } from '@petboarding/api/zod'
+import type { Customer } from '@petboarding/api/zod'
 
 export interface Props {
   filteredOptions: { id: number; [key: string]: unknown }[]

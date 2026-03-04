@@ -53,7 +53,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Category, CategoryPrice } from '@petboarding/api/zod'
+import type { Category, CategoryPrice } from '@petboarding/api/zod'
 import CategoryForm from '../../../../components/category/CategoryForm.vue'
 import CategoryPriceForm from '../../../../components/category/CategoryPriceForm.vue'
 import CategoriesList from '../../../../components/category/CategoriesList.vue'

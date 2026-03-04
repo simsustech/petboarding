@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { Building } from '@petboarding/api/zod'
+import type { Building } from '@petboarding/api/zod'
 
 export const useConfigurationCreateBuildingMutation = () => {
   const { ...rest } = useMutation({

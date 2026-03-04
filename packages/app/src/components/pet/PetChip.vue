@@ -119,7 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { Pet as PetType, Customer as CustomerType } from '@petboarding/api/zod'
+import type {
+  Pet as PetType,
+  Customer as CustomerType
+} from '@petboarding/api/zod'
 import { useLang } from '../../lang/index.js'
 import Base64Image from '../Base64Image.vue'
 import { computed, toRefs } from 'vue'

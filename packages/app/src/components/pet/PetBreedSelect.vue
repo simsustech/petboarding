@@ -24,7 +24,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { PET_SPECIES } from '@petboarding/api/zod'
+import { PET_SPECIES } from '@petboarding/api/types'
 import speciesList from '../../assets/breeds.js'
 import { ref, toRefs, useAttrs, watch } from 'vue'
 import { QSelect, ValidationRule, useQuasar } from 'quasar'

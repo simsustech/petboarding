@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { Service } from '@petboarding/api/zod'
+import type { Service } from '@petboarding/api/zod'
 
 export const useConfigurationCreateServiceMutation = () => {
   const { ...rest } = useMutation({

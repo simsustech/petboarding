@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContactPerson } from '@petboarding/api/zod'
+import type { ContactPerson } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue: ContactPerson

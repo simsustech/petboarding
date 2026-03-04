@@ -82,7 +82,7 @@ export default {
 import { ref, toRefs } from 'vue'
 import { QItem } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { Pet as PetType } from '@petboarding/api/zod'
+import type { Pet as PetType } from '@petboarding/api/zod'
 import ImageAvatar from '../ImageAvatar.vue'
 
 export interface Pet extends PetType {

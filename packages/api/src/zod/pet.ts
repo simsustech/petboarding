@@ -1,8 +1,7 @@
 import * as z from 'zod'
 import { customer } from './customer.js'
 import { vaccination } from './vaccination.js'
-
-export const PET_SPECIES = ['dog', 'cat'] as const
+import { PET_SPECIES } from '../kysely/types.js'
 
 export const PET_IMAGE_SIZE = {
   width: 1024,

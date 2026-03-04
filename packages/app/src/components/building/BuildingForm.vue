@@ -64,7 +64,7 @@ import { extend, QForm } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { FormInput } from '@simsustech/quasar-components/form'
-import { Building } from '@petboarding/api/zod'
+import type { Building } from '@petboarding/api/zod'
 import type { QFormProps, QInputProps } from 'quasar'
 
 export interface Props {

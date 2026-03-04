@@ -58,7 +58,9 @@ import DaycareStatusSelect from '../../components/daycare/DaycareStatusSelect.vu
 import type { QCalendarEvent } from '../../components/daycare/DaycareCalendarMonth.vue'
 import { useRouter } from 'vue-router'
 import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
-import { Customer, DAYCARE_DATE_STATUS } from '@petboarding/api/zod'
+import type { Customer } from '@petboarding/api/zod'
+import { DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+
 import {
   useAdminGetDaycareDatesByIdQuery,
   useAdminGetDaycareDatesQuery

@@ -67,7 +67,7 @@ export default {
 import { watch, toRefs } from 'vue'
 import { QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
-import { Booking } from '@petboarding/api/zod'
+import type { Booking } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
 
 export interface Props {

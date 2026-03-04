@@ -83,7 +83,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Booking, DaycareDate } from '@petboarding/api/zod'
+import type { Booking, DaycareDate } from '@petboarding/api/zod'
 import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
 import {

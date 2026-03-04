@@ -47,7 +47,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Kennel } from '@petboarding/api/zod'
+import type { Kennel } from '@petboarding/api/zod'
 import KennelForm from '../../../../components/kennel/KennelForm.vue'
 import KennelsList from '../../../../components/kennel/KennelsList.vue'
 import { useQuasar } from 'quasar'

@@ -18,7 +18,7 @@ import { ref } from 'vue'
 import { extend, QForm } from 'quasar'
 import { EmailInput } from '@simsustech/quasar-components/form'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { EmailTemplate } from '@petboarding/api/zod'
+import type { EmailTemplate } from '@petboarding/api/zod'
 
 const emit = defineEmits<{
   (

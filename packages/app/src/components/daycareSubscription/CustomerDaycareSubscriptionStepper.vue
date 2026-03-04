@@ -108,7 +108,7 @@
 
 <script setup lang="ts">
 import { ref, computed, toRefs } from 'vue'
-import {
+import type {
   DaycareSubscription,
   CustomerDaycareSubscription
 } from '@petboarding/api/zod'

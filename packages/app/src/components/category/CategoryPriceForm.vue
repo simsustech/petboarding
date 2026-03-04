@@ -45,7 +45,7 @@ import { extend, QForm, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
-import { CategoryPrice } from '@petboarding/api/zod'
+import type { CategoryPrice } from '@petboarding/api/zod'
 import { useConfiguration } from '../../configuration.js'
 import type { QFormProps, QInputProps } from 'quasar'
 

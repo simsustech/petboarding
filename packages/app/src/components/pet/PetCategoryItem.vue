@@ -21,7 +21,7 @@ export default {
 import { watch, useAttrs } from 'vue'
 import { QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
-import { Category, Pet } from '@petboarding/api/zod'
+import type { Category, Pet } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue?: number

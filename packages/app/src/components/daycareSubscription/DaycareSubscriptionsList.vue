@@ -93,7 +93,7 @@ export default {
 
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'
-import { DaycareSubscription } from '@petboarding/api/zod'
+import type { DaycareSubscription } from '@petboarding/api/zod'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
 

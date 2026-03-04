@@ -16,7 +16,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { BOOKING_STATUS } from '@petboarding/api/zod'
+import { BOOKING_STATUS } from '@petboarding/api/types'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { computed } from 'vue'

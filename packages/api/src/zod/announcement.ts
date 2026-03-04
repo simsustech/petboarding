@@ -1,11 +1,6 @@
 import * as z from 'zod'
 
-export enum ANNOUNCEMENT_TYPE {
-  GENERAL = 'general',
-  IMPORTANT = 'important',
-  PRIORITY = 'priority',
-  URGENT = 'urgent'
-}
+import { ANNOUNCEMENT_TYPE } from '../kysely/types.js'
 
 export const announcementValidation = {
   id: z.number().optional(),

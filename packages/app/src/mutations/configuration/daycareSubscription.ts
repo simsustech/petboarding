@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { DaycareSubscription } from '@petboarding/api/zod'
+import type { DaycareSubscription } from '@petboarding/api/zod'
 
 export const useConfigurationCreateDaycareSubscriptionMutation = () => {
   const { ...rest } = useMutation({

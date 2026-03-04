@@ -15,7 +15,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { PERIOD_TYPE } from '@petboarding/api/zod'
+import { PERIOD_TYPE } from '@petboarding/api/types'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'
 

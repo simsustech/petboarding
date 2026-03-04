@@ -26,7 +26,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { BOOKING_STATUS } from '@petboarding/api/zod'
+import { BOOKING_STATUS } from '@petboarding/api/types'
 import AgendaComponent from '../../components/AgendaComponent.vue'
 import { onMounted, ref } from 'vue'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'

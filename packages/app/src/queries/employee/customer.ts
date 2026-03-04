@@ -5,7 +5,7 @@ import { date as dateUtil } from 'quasar'
 import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   DAYCARE_DATE_STATUS
-} from '@petboarding/api/zod'
+} from '@petboarding/api/types'
 
 export const useEmployeeGetCustomerQuery = defineQuery(() => {
   const customerId = ref(NaN)

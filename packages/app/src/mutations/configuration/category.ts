@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { Category, CategoryPrice } from '@petboarding/api/zod'
+import type { Category, CategoryPrice } from '@petboarding/api/zod'
 
 export const useConfigurationCreateCategoryMutation = () => {
   const { ...rest } = useMutation({

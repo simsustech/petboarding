@@ -51,7 +51,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { DaycareSubscription } from '@petboarding/api/zod'
+import type { DaycareSubscription } from '@petboarding/api/zod'
 import DaycareSubscriptionForm from '../../../../components/daycareSubscription/DaycareSubscriptionForm.vue'
 import DaycareSubscriptionsList from '../../../../components/daycareSubscription/DaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'

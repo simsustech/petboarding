@@ -41,7 +41,7 @@ export default {
 import { computed, toRefs } from 'vue'
 import { date as dateUtil, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { Vaccination as VaccinationType } from '@petboarding/api/zod'
+import type { Vaccination as VaccinationType } from '@petboarding/api/zod'
 import ImageAvatar from '../ImageAvatar.vue'
 
 export interface Vaccination extends VaccinationType {

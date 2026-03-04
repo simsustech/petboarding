@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
+import { OPENING_TIME_TYPE } from '@petboarding/api/types'
 import { QSelect } from 'quasar'
 import { computed } from 'vue'
 import { useLang } from '../../lang/index.js'

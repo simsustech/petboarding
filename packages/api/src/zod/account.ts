@@ -1,11 +1,5 @@
 import * as z from 'zod'
-
-export enum PETBOARDING_ACCOUNT_ROLES {
-  ADMINISTRATOR = 'administrator',
-  MANAGER = 'manager',
-  EMPLOYEE = 'employee',
-  INTERN = 'intern'
-}
+import { PETBOARDING_ACCOUNT_ROLES } from '../kysely/types.js'
 
 export const accountValidation = {
   id: z.number().optional(),

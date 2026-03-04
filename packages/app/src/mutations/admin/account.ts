@@ -1,4 +1,4 @@
-import type { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/zod'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/types'
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
 

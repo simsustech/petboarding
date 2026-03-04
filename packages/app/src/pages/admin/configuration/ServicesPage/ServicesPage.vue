@@ -39,7 +39,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Service } from '@petboarding/api/zod'
+import type { Service } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
 import ServicesList from '../../../../components/service/ServicesList.vue'
 import ServiceForm from '../../../../components/service/ServiceForm.vue'

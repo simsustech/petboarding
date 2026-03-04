@@ -18,7 +18,7 @@ export default {
 <script setup lang="ts">
 import { toRefs, watch } from 'vue'
 import OpeningTimeSelect from './OpeningTimeSelect.vue'
-import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
+import { OPENING_TIME_TYPE } from '@petboarding/api/types'
 import { usePublicGetEndDateOpeningTimesQuery } from 'src/queries/public'
 
 export interface Props {

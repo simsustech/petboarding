@@ -39,7 +39,7 @@ export default {
 import { nextTick, onMounted, ref } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
-import { Building } from '@petboarding/api/zod'
+import type { Building } from '@petboarding/api/zod'
 import BuildingForm from '../../../../components/building/BuildingForm.vue'
 import BuildingsList from '../../../../components/building/BuildingsList.vue'
 import { useQuasar } from 'quasar'

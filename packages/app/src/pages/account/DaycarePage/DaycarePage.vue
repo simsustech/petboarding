@@ -160,10 +160,8 @@ import {
   DAYCARE_DATE_ICONS,
   useConfiguration
 } from '../../../configuration.js'
-import {
-  type CustomerDaycareSubscription,
-  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
-} from '@petboarding/api/zod'
+import type { CustomerDaycareSubscription } from '@petboarding/api/zod'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/api/types'
 import customerDaycareSubscriptionStepper from '../../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
 import customerDaycareSubscriptionsList from '../../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 

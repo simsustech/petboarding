@@ -42,7 +42,7 @@ export default {
 <script setup lang="ts">
 import { date as dateUtil } from 'quasar'
 import { useLang } from '..//../lang/index.js'
-import { BookingStatus, Pet } from '@petboarding/api/zod'
+import type { BookingStatus, Pet } from '@petboarding/api/zod'
 import { computed } from 'vue'
 import { toRefs } from 'vue'
 import { formatBookingDates } from './BookingItemContent.vue'

@@ -141,7 +141,7 @@ export default {
 import { ref, useAttrs } from 'vue'
 import { QExpansionItem, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { Booking, BookingService } from '@petboarding/api/zod'
+import type { Booking, BookingService } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
 import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'

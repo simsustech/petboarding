@@ -47,7 +47,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { BookingService } from '@petboarding/api/zod'
+import type { BookingService } from '@petboarding/api/zod'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
 import { useLang } from '../../lang/index.js'

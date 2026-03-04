@@ -1,6 +1,6 @@
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { Period } from '@petboarding/api/zod'
+import type { Period } from '@petboarding/api/zod'
 
 export const useConfigurationCreatePeriodMutation = () => {
   const { ...rest } = useMutation({

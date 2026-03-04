@@ -56,8 +56,8 @@ export default {
 <script setup lang="ts">
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Account } from '@petboarding/api/zod'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/types'
 import { useLang } from '../../lang/index.js'
-import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/zod'
 import { useQuasar } from 'quasar'
 import { toRefs } from 'vue'
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }

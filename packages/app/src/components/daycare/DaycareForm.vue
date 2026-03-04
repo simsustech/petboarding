@@ -59,7 +59,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import {
+import type {
   Pet,
   DaycareDate,
   CustomerDaycareSubscription

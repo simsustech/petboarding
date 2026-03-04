@@ -21,7 +21,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { Booking } from '@petboarding/api/zod'
+import type { Booking } from '@petboarding/api/zod'
 import { QChip } from 'quasar'
 import { ref } from 'vue'
 

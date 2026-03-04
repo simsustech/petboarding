@@ -39,7 +39,7 @@ export default {
 import { watch, useAttrs, ref, toRefs } from 'vue'
 import { useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
-import { Service } from '@petboarding/api/zod'
+import type { Service } from '@petboarding/api/zod'
 import { useConfiguration } from '../../configuration.js'
 
 export interface Props {

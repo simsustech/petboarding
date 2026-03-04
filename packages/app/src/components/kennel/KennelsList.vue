@@ -78,7 +78,7 @@ export default {
 
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'
-import { type Kennel } from '@petboarding/api/zod'
+import type { Kennel } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue: Kennel[]

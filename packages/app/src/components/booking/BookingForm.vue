@@ -98,11 +98,11 @@ import { useLang, loadLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingServicesSelect from './BookingServicesSelect.vue'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
-import { OPENING_TIME_TYPE } from '@petboarding/api/zod'
+import type { Booking, Pet, Service } from '@petboarding/api/zod'
+import { OPENING_TIME_TYPE } from '@petboarding/api/types'
 import StartDateOpeningTimeSelect from './StartDateOpeningTimeSelect.vue'
 import EndDateOpeningTimeSelect from './EndDateOpeningTimeSelect.vue'
 
-import type { Booking, Pet, Service } from '@petboarding/api/zod'
 export interface Props {
   form?: QFormProps & Partial<HTMLFormElement> & Partial<HTMLDivElement>
   input?: Omit<

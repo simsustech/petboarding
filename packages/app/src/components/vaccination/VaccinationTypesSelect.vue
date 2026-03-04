@@ -44,11 +44,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { VACCINATION_TYPES } from '@petboarding/api/zod'
+import type { PET_SPECIES } from '@petboarding/api/types'
+import { VACCINATION_TYPES } from '@petboarding/api/types'
 import { toRefs, useAttrs } from 'vue'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'
-import { PET_SPECIES } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue: string[]

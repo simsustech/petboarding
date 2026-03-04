@@ -78,7 +78,7 @@ export default {
 
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'
-import { type Building } from '@petboarding/api/zod'
+import type { Building } from '@petboarding/api/zod'
 
 export interface Props {
   modelValue: Building[]

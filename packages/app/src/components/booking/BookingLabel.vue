@@ -84,8 +84,8 @@ export default {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { Pet } from '@petboarding/api/zod'
-import type { ParsedBooking, BookingService } from '@petboarding/api'
+import type { Pet, BookingService } from '@petboarding/api/zod'
+import type { ParsedBooking } from '@petboarding/api'
 import { useQuasar } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 
