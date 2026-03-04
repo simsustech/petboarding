@@ -142,7 +142,11 @@ test.describe('Account', async () => {
 
     await page.locator('#gender').click()
     await page.getByRole('option', { name: 'Female' }).click()
-    await page.getByLabel('Sterilized').first().click()
+    await page
+      .locator('div')
+      .filter({ hasText: /^Sterilized\*$/ })
+      .first()
+      .click()
     await page.getByRole('option', { name: 'Yes' }).click()
     await page.locator('text=Submit').click()
 
@@ -169,12 +173,24 @@ test.describe('Account', async () => {
     // await page.locator('div:nth-child(3) > .q-btn').first().click()
     await page.locator('.q-date__calendar-item--in').first().click()
 
-    await page.getByLabel('Pets').click()
+    await page
+      .locator('div')
+      .filter({ hasText: /^Pets$/ })
+      .first()
+      .click()
     await page.getByRole('option', { name: newPetName }).click()
 
-    await page.getByLabel('Start time').click()
+    await page
+      .locator('div')
+      .filter({ hasText: /^Start time\*$/ })
+      .first()
+      .click()
     await page.getByRole('option', { name: booking.startTime }).click()
-    await page.getByLabel('End time').click()
+    await page
+      .locator('div')
+      .filter({ hasText: /^End time\*$/ })
+      .first()
+      .click()
     await page.getByRole('option', { name: booking.endTime }).click()
 
     await page
@@ -194,7 +210,7 @@ test.describe('Account', async () => {
       .getByRole('button')
       .click()
     await page.getByText('Edit', { exact: true }).click()
-    await page.getByLabel('Start time').click()
+    await page.getByText('Start time*Morning').first().click()
     await page.getByRole('option', { name: 'Evening' }).click()
     await page
       .getByRole('checkbox', { name: 'I agree to the terms and conditions.' })
