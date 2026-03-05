@@ -60,10 +60,13 @@ export const compileEmail = async ({
 }) => {
   let locale
   try {
-    locale = (await import(`date-fns/locale/${localeCode}`)).default
+    locale = (await import(`date-fns/locale/${localeCode?.slice(0, 2)}`))
+      .default
   } catch {
     locale = (
-      await import(`date-fns/locale/${process.env.VITE_LANG || 'en-US'}`)
+      await import(
+        `date-fns/locale/${process.env.VITE_LANG?.slice(0, 2) || 'en-US'}`
+      )
     ).default
   }
 
