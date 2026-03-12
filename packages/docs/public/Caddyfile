@@ -13,3 +13,7 @@ www.petboarding.app {
     file_server
   }
 }
+
+petboarding.app {
+  redir https://www.petboarding.app
+}
