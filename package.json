@@ -8,7 +8,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "run-s build:app build:api",
+    "build": "run-s build:tools build:app build:api",
+    "build:tools": "cd packages/tools && pnpm run build",
     "build:app": "cd packages/app && pnpm run build",
     "build:api": "cd packages/api && pnpm run build",
     "format:check:api": "cd packages/api && pnpm run format:check",
