@@ -30,11 +30,9 @@ FROM build-stage AS api-deploy
 # RUN pnpm prune --prod
 RUN pnpm --filter @petboarding/api deploy api --prod
 RUN pnpm --filter @petboarding/app deploy app --prod --no-optional
-RUN gzip -k -r /build/api/dist/server/*
-RUN gzip -k -r /build/app/dist/ssr/client/*
-RUN rm /build/app/dist/ssr/client/termsandconditions.pdf.gz
-RUN rm /build/app/dist/ssr/client/privacypolicy.pdf.gz
-RUN rm /build/app/dist/ssr/client/logo.svg.gz
+
+WORKDIR "/build/app/dist/ssr/client"
+RUN find . ! -name 'logo.svg' -type f -exec gzip {} +
 
 FROM node:lts-slim AS api
 LABEL "io.petboarding.vendor"="simsustech"
