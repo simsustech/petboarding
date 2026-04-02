@@ -19,8 +19,8 @@
       "types": "./src/trpc/index.ts"
     },
     "./types": {
-      "import": "./src/kysely/types.ts",
-      "types": "./src/kysely/types.ts"
+      "import": "./dist/types.js",
+      "types": "./dist/types/types.d.ts"
     }
   },
   "files": [
@@ -62,6 +62,7 @@
     "@modular-api/fastify-checkout": "^0.5.6",
     "@modular-api/fastify-oidc": "^0.9.15",
     "@petboarding/app": "workspace:*",
+    "@petboarding/tools": "workspace:*",
     "@pinia/colada": "0.21.7",
     "@trpc/client": "^11.11.0",
     "@trpc/server": "^11.11.0",
