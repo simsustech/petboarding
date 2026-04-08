@@ -21,9 +21,9 @@ export const sendNotification = async ({
   topic: string
   title?: string
   message: string
-  tags: string
+  tags?: string
   click?: string
-  priority: 'urgent' | 'high' | 'default' | 'low' | 'min'
+  priority?: 'urgent' | 'high' | 'default' | 'low' | 'min'
   icon?: string
   client?: {
     host: string
@@ -42,12 +42,15 @@ export const sendNotification = async ({
   }
   if (tags) headers.Tags = tags
 
-  const response = await fetch(`https://${NTFY_HOST}/${topic}`, {
+  return fetch(`https://${NTFY_HOST}/${topic}`, {
     method: 'POST',
     body: `${message}`,
     headers
-  }).catch((e) => {
-    return { success: false, errorMessage: e as string }
   })
-  return { success: true, response }
+    .then(() => {
+      return { success: true }
+    })
+    .catch((e) => {
+      return { success: false, errorMessage: e as string }
+    })
 }

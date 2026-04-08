@@ -52,6 +52,8 @@ const createSlimfactHealthCheckWorker = ({
               NTFY_ACCESS_TOKEN
             }
           })
+          if ('errorMessage' in response)
+            fastify.log.debug(response.errorMessage)
         }
       }
     : async () => false
@@ -67,7 +69,6 @@ export const initialize = async ({ fastify }: { fastify: FastifyInstance }) => {
   const downPaymentWorker = createDownPaymentWorker({ fastify })
   const receiptsWorker = createReceiptsWorker({ fastify })
   const slimfactHealthCheckWorker = createSlimfactHealthCheckWorker({ fastify })
-
   const schedules = await boss.getSchedules()
 
   if (!schedules.some((schedule) => schedule.name === 'checkDownPayments')) {
