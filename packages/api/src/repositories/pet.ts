@@ -155,7 +155,7 @@ function find({
     query = query.where('customerId', '=', criteria.customerId)
   }
 
-  if (criteria.deceased) {
+  if (criteria.deceased != void 0) {
     query = query.where('deceased', '=', criteria.deceased)
   }
 
@@ -204,6 +204,7 @@ export async function findPets({
     vaccinations?: boolean
   }
 }) {
+  console.log(criteria)
   const query = find({
     criteria,
     select,
