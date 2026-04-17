@@ -1,7 +1,7 @@
 import * as z from 'zod'
 import { customer } from './customer.js'
 import { vaccination } from './vaccination.js'
-import { PET_SPECIES } from '../kysely/types.js'
+import { PET_SPECIES } from '@petboarding/tools/constants'
 
 export const PET_IMAGE_SIZE = {
   width: 1024,

@@ -1,5 +1,5 @@
 import { db } from '../kysely/index.js'
-import type { DaycareSubscriptions } from '../kysely/types.d.ts'
+import type { DaycareSubscriptions } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 export type DaycareSubscription = Selectable<DaycareSubscriptions>

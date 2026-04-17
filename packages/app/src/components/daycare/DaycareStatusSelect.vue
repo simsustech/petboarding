@@ -18,7 +18,7 @@ export default {
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 
 export interface Props {
   modelValue: string

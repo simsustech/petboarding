@@ -1,6 +1,6 @@
 import { jsonObjectFrom, jsonArrayFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
-import type { Customers } from '../kysely/types.d.ts'
+import type { Customers } from '../kysely/types.ts'
 
 import {
   sql,

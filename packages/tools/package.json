@@ -16,6 +16,10 @@
     "./ntfy": {
       "types": "./dist/types/ntfy/index.d.ts",
       "import": "./dist/ntfy/index.js"
+    },
+    "./constants": {
+      "types": "./dist/types/constants/index.d.ts",
+      "import": "./dist/constants/index.js"
     }
   },
   "scripts": {

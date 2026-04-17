@@ -83,7 +83,7 @@ export default {
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'
 import type { CustomerDaycareSubscription } from '@petboarding/api/zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/api/types'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
 // import { useConfiguration } from '../../configuration.js'
 import { useQuasar } from 'quasar'
 import InvoiceButton from '../InvoiceButton.vue'

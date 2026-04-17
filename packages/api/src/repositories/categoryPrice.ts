@@ -1,5 +1,5 @@
 import { db } from '../kysely/index.js'
-import type { CategoryPrices } from '../kysely/types.d.ts'
+import type { CategoryPrices } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 export type CategoryPrice = Selectable<CategoryPrices>

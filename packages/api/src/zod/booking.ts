@@ -3,7 +3,7 @@ import { pet } from './pet.js'
 import { customer } from './customer.js'
 import { openingTime } from './openingtime.js'
 import { service } from './service.js'
-import { BOOKING_STATUS } from '../kysely/types.js'
+import { BOOKING_STATUS } from '@petboarding/tools/constants'
 
 export { BOOKING_STATUS }
 export const bookingServiceValidation = {

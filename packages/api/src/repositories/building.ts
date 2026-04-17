@@ -1,6 +1,6 @@
 import { type ExpressionBuilder } from 'kysely'
 import { Database, db } from '../kysely/index.js'
-import type { Buildings } from '../kysely/types.d.ts'
+import type { Buildings } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonArrayFrom } from 'kysely/helpers/postgres'

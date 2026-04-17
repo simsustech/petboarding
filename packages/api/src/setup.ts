@@ -19,7 +19,7 @@ import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import {
   BOOKING_STATUS,
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
-} from './kysely/types.js'
+} from '@petboarding/tools/constants'
 import { createBookingStatus, findBooking } from './repositories/booking.js'
 import { generateTheme } from 'unocss-preset-quasar/theme'
 

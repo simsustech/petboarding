@@ -3,7 +3,7 @@ import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import { sql } from 'kysely'
 import { readFileSync } from 'fs'
-import { OPENING_TIME_TYPE, SERVICE_TYPE } from '../types.js'
+import { OPENING_TIME_TYPE, SERVICE_TYPE } from '@petboarding/tools/constants'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chunk = (arr: any[], size: number) =>

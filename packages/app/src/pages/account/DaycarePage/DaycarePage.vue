@@ -161,7 +161,7 @@ import {
   useConfiguration
 } from '../../../configuration.js'
 import type { CustomerDaycareSubscription } from '@petboarding/api/zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/api/types'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
 import customerDaycareSubscriptionStepper from '../../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
 import customerDaycareSubscriptionsList from '../../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 

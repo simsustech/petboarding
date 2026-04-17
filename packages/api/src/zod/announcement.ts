@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { ANNOUNCEMENT_TYPE } from '../kysely/types.js'
+import { ANNOUNCEMENT_TYPE } from '@petboarding/tools/constants'
 
 export const announcementValidation = {
   id: z.number().optional(),

@@ -1,6 +1,6 @@
 import Holidays from 'date-holidays'
 import { db } from '../kysely/index.js'
-import type { OpeningTimes } from '../kysely/types.d.ts'
+import type { OpeningTimes } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 export type OpeningTime = Selectable<OpeningTimes>

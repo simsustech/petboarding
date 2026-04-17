@@ -1,7 +1,7 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
-import { DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 
 export const useAdminGetDaycareDatesQuery = defineQuery(() => {
   const from = ref('')

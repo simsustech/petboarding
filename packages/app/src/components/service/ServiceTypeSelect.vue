@@ -16,7 +16,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { SERVICE_TYPE } from '@petboarding/api/types'
+import { SERVICE_TYPE } from '@petboarding/tools/constants'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'
 

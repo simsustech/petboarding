@@ -28,7 +28,7 @@ export default {
 import { AccountsTable } from '@simsustech/quasar-components/authentication'
 import { computed, onMounted } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/types'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/tools/constants'
 import { useAdminGetAccountsQuery } from 'src/queries/admin/account.js'
 import {
   useAdminAccountAddRoleMutation,

@@ -38,7 +38,7 @@ import type { Service } from './service.js'
 import type {
   Bookings,
   BookingStatus as BookingStatusDb
-} from '../kysely/types.d.ts'
+} from '../kysely/types.ts'
 import {
   type RawInvoiceLine,
   type RawInvoiceDiscount,

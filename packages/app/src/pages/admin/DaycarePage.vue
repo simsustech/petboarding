@@ -59,7 +59,7 @@ import type { QCalendarEvent } from '../../components/daycare/DaycareCalendarMon
 import { useRouter } from 'vue-router'
 import DaycareLegend from '../../components/daycare/DaycareLegend.vue'
 import type { Customer } from '@petboarding/api/zod'
-import { DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 
 import {
   useAdminGetDaycareDatesByIdQuery,

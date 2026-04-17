@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { SERVICE_TYPE } from '../kysely/types.js'
+import { SERVICE_TYPE } from '@petboarding/tools/constants'
 
 export const serviceValidation = {
   id: z.number().optional(),

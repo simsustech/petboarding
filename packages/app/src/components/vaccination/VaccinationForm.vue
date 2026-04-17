@@ -45,7 +45,7 @@ import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DateInput } from '@simsustech/quasar-components/form'
 import type { Vaccination as VaccinationType } from '@petboarding/api/zod'
-import { PET_SPECIES } from '@petboarding/api/types'
+import { PET_SPECIES } from '@petboarding/tools/constants'
 import VaccinationTypesSelect from './VaccinationTypesSelect.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 

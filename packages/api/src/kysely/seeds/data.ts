@@ -1,7 +1,7 @@
 import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import env from '@vitrify/tools/env'
-import { OPENING_TIME_TYPE, SERVICE_TYPE } from '../types.js'
+import { OPENING_TIME_TYPE, SERVICE_TYPE } from '@petboarding/tools/constants'
 
 const ADMIN_PASSWORD = env.read('PETBOARDING_ADMIN_PASSWORD')
 if (!ADMIN_PASSWORD)

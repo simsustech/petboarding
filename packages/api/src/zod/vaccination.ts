@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { VACCINATION_TYPES_DOG } from '../kysely/types.js'
+import { VACCINATION_TYPES_DOG } from '@petboarding/tools/constants'
 
 export const vaccinationValidation = {
   id: z.number().optional(),

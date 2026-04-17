@@ -99,7 +99,7 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingServicesSelect from './BookingServicesSelect.vue'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
 import type { Booking, Pet, Service } from '@petboarding/api/zod'
-import { OPENING_TIME_TYPE } from '@petboarding/api/types'
+import { OPENING_TIME_TYPE } from '@petboarding/tools/constants'
 import StartDateOpeningTimeSelect from './StartDateOpeningTimeSelect.vue'
 import EndDateOpeningTimeSelect from './EndDateOpeningTimeSelect.vue'
 

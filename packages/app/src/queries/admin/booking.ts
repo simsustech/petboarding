@@ -2,7 +2,7 @@ import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
-import { BOOKING_STATUS } from '@petboarding/api/types'
+import { BOOKING_STATUS } from '@petboarding/tools/constants'
 import { computed } from 'vue'
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 

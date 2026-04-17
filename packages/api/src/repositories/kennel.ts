@@ -1,10 +1,10 @@
 import { ExpressionBuilder, sql } from 'kysely'
 import { Database, db } from '../kysely/index.js'
+import type { Kennels } from '../kysely/types.js'
 import {
   BOOKING_STATUS,
-  DAYCARE_DATE_STATUS,
-  type Kennels
-} from '../kysely/types.js'
+  DAYCARE_DATE_STATUS
+} from '@petboarding/tools/constants'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'

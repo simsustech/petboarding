@@ -85,7 +85,7 @@ export default {
 import { ref } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useQuasar } from 'quasar'
-import { PERIOD_TYPE } from '@petboarding/api/types'
+import { PERIOD_TYPE } from '@petboarding/tools/constants'
 export interface Period {
   startDate: string
   endDate: string

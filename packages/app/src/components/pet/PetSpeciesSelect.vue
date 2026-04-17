@@ -17,7 +17,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { PET_SPECIES } from '@petboarding/api/types'
+import { PET_SPECIES } from '@petboarding/tools/constants'
 import { useAttrs } from 'vue'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'

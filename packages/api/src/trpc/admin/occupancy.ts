@@ -6,7 +6,7 @@ import { parseISO, startOfMonth, endOfMonth } from 'date-fns'
 import { findBookings } from '../../repositories/booking.js'
 import { findDaycareDates } from '../../repositories/daycare.js'
 import type { FastifyInstance } from 'fastify'
-import { DAYCARE_DATE_STATUS } from '../../kysely/types.js'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 import { eachDayOfInterval } from '../../tools.js'
 
 export const adminOccupancyRoutes = ({

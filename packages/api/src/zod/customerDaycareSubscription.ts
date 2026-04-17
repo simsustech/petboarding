@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '../kysely/types.js'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
 import { daycareSubscription } from './daycareSubscription.js'
 
 export { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS }

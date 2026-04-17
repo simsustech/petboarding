@@ -1,5 +1,5 @@
 import { db } from '../kysely/index.js'
-import type { Documents } from '../kysely/types.d.ts'
+import type { Documents } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 type Document = Selectable<Documents>

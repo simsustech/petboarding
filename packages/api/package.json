@@ -19,8 +19,8 @@
       "types": "./src/trpc/index.ts"
     },
     "./types": {
-      "import": "./dist/types.js",
-      "types": "./dist/types/types.d.ts"
+      "import": "./src/kysely/types.ts",
+      "types": "./src/kysely/types.ts"
     }
   },
   "files": [

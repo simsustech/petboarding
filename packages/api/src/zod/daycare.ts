@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { pet } from './pet.js'
-import { DAYCARE_DATE_STATUS } from '../kysely/types.js'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 import { customerDaycareSubscription } from './customerDaycareSubscription.js'
 export { DAYCARE_DATE_STATUS }
 

@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { PETBOARDING_ACCOUNT_ROLES } from '../kysely/types.js'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/tools/constants'
 
 export const accountValidation = {
   id: z.number().optional(),

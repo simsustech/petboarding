@@ -49,7 +49,7 @@ export default {
 
 <script setup lang="ts">
 import type { Period } from '@petboarding/api/zod'
-import { PERIOD_TYPE } from '@petboarding/api/types'
+import { PERIOD_TYPE } from '@petboarding/tools/constants'
 import { watch, computed, ref, toRefs } from 'vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DatePicker } from '@simsustech/quasar-components/form'

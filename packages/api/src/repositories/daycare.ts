@@ -1,7 +1,7 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import { withValidVaccinations, checkVaccinations } from './pet.js'
-import type { DaycareDates } from '../kysely/types.d.ts'
+import type { DaycareDates } from '../kysely/types.ts'
 
 import type {
   ExpressionBuilder,
@@ -233,6 +233,7 @@ export async function createDaycareDate({
         }
       }
     )
+    console.log(customerDaycareSubscriptions)
     const customerDaycareSubscription = customerDaycareSubscriptions.find(
       (customerDaycareSubscription) =>
         (customerDaycareSubscription.numberOfDaysRemaining || 0) > 0

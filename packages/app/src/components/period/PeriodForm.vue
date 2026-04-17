@@ -63,7 +63,7 @@ import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { FormInput } from '@simsustech/quasar-components/form'
 import type { Period } from '@petboarding/api/zod'
-import { PERIOD_TYPE } from '@petboarding/api/types'
+import { PERIOD_TYPE } from '@petboarding/tools/constants'
 import PeriodTypeSelect from './PeriodTypeSelect.vue'
 import type { QFormProps, QInputProps } from 'quasar'
 

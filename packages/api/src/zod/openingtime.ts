@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { OPENING_TIME_TYPE } from '../kysely/types.js'
+import { OPENING_TIME_TYPE } from '@petboarding/tools/constants'
 export { OPENING_TIME_TYPE }
 
 export const openingTimeValidation = {

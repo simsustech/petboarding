@@ -116,7 +116,7 @@ export default {
 import { computed, onMounted } from 'vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
 import type { Pet } from '@petboarding/api/zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/api/types'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
 import { useRouter, onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { useLang } from '../../lang/index.js'
 import { formatDate } from '../../tools.js'

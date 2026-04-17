@@ -44,8 +44,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import type { PET_SPECIES } from '@petboarding/api/types'
-import { VACCINATION_TYPES } from '@petboarding/api/types'
+import type { PET_SPECIES } from '@petboarding/tools/constants'
+import { VACCINATION_TYPES } from '@petboarding/tools/constants'
 import { toRefs, useAttrs } from 'vue'
 import { QSelect } from 'quasar'
 import { useLang } from '../../lang/index.js'

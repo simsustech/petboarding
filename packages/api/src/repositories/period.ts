@@ -1,5 +1,6 @@
 import { db } from '../kysely/index.js'
-import type { PERIOD_TYPE, Periods } from '../kysely/types.d.ts'
+import type { Periods } from '../kysely/types.ts'
+import type { PERIOD_TYPE } from '@petboarding/tools/constants'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 type Period = Selectable<Periods>

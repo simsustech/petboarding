@@ -1,6 +1,9 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS
+} from '@petboarding/tools/constants'
 import { ref } from 'vue'
 
 export const useEmployeeGetAgendaQuery = defineQuery(() => {

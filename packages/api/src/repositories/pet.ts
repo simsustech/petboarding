@@ -1,7 +1,7 @@
 import { Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
-import type { Pets } from '../kysely/types.d.ts'
+import type { Pets } from '../kysely/types.ts'
 import env from '@vitrify/tools/env'
 import {
   type Insertable,

@@ -6,7 +6,7 @@ import {
   DAYCARE_DATE_STATUS,
   OPENING_TIME_TYPE,
   SERVICE_TYPE
-} from '../types.js'
+} from '@petboarding/tools/constants'
 
 const CURRENT_YEAR = new Date().getFullYear()
 

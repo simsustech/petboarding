@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely'
-import { OPENING_TIME_TYPE } from '../types.js'
+import { OPENING_TIME_TYPE } from '@petboarding/tools/constants'
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema

@@ -1,7 +1,10 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
-import { BOOKING_STATUS, DAYCARE_DATE_STATUS } from '@petboarding/api/types'
+import {
+  BOOKING_STATUS,
+  DAYCARE_DATE_STATUS
+} from '@petboarding/tools/constants'
 
 export const useAdminGetOccupancyQuery = defineQuery(() => {
   const date = ref(new Date().toISOString().slice(0, 10))

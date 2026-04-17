@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { PERIOD_TYPE } from '../kysely/types'
+import { PERIOD_TYPE } from '@petboarding/tools/constants'
 export { PERIOD_TYPE }
 
 export const periodValidation = {

@@ -1,11 +1,10 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
+import { DB, type CustomerDaycareSubscriptions } from '../kysely/types.js'
 import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
-  DAYCARE_DATE_STATUS,
-  DB,
-  type CustomerDaycareSubscriptions
-} from '../kysely/types.js'
+  DAYCARE_DATE_STATUS
+} from '@petboarding/tools/constants'
 
 import type { Insertable, Selectable, Transaction, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'

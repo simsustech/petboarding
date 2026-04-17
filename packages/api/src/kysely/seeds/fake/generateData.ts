@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
-import { DAYCARE_DATE_STATUS } from '../../types.js'
+import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 
 const NUMBER_OF_CUSTOMERS = 200
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2

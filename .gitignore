@@ -9,3 +9,4 @@ TODO
 clients
 .pnpm-debug.log
 **/stats.html
+**/components.d.ts

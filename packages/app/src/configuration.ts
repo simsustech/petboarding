@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { Loading } from 'quasar'
 import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
-import { PET_SPECIES } from '@petboarding/api/types'
+import { PET_SPECIES } from '@petboarding/tools/constants'
 import { QuasarTheme } from 'unocss-preset-quasar/theme'
 
 const lang = useLang()

@@ -56,7 +56,7 @@ export default {
 <script setup lang="ts">
 import { QStyledCard } from '@simsustech/quasar-components'
 import type { Account } from '@petboarding/api/zod'
-import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/api/types'
+import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/tools/constants'
 import { useLang } from '../../lang/index.js'
 import { useQuasar } from 'quasar'
 import { toRefs } from 'vue'

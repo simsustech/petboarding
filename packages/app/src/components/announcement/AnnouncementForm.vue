@@ -65,7 +65,7 @@ import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { DateInput, FormInput } from '@simsustech/quasar-components/form'
 import type { Announcement } from '@petboarding/api/zod'
-import { ANNOUNCEMENT_TYPE } from '@petboarding/api/types'
+import { ANNOUNCEMENT_TYPE } from '@petboarding/tools/constants'
 import AnnouncementTypeSelect from './AnnouncementTypeSelect.vue'
 import type { QFormProps, QInputProps } from 'quasar'
 

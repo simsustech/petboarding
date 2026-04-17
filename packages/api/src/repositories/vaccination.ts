@@ -1,6 +1,6 @@
 import { convertImageSql } from './index.js'
 import { db } from '../kysely/index.js'
-import type { Vaccinations } from '../kysely/types.d.ts'
+import type { Vaccinations } from '../kysely/types.ts'
 
 import type { Insertable, Selectable, Updateable } from 'kysely'
 type Vaccination = Selectable<Vaccinations>

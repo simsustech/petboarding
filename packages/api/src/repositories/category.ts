@@ -1,6 +1,6 @@
 import { jsonArrayFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
-import type { Categories } from '../kysely/types.d.ts'
+import type { Categories } from '../kysely/types.ts'
 
 import type {
   ExpressionBuilder,

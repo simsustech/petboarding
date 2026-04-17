@@ -14,7 +14,7 @@ import {
 import { findCustomer } from '../../repositories/customer'
 import { findDaycareSubscription } from '../../repositories/daycareSubscription.js'
 import { add } from 'date-fns'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '../../kysely/types.js'
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
 import env from '@vitrify/tools/env'
 import { Customer } from '../../zod/customer.js'
 import {
