@@ -233,11 +233,11 @@ export async function createDaycareDate({
         }
       }
     )
-    console.log(customerDaycareSubscriptions)
     const customerDaycareSubscription = customerDaycareSubscriptions.find(
       (customerDaycareSubscription) =>
         (customerDaycareSubscription.numberOfDaysRemaining || 0) > 0
     )
+
     if (
       customerDaycareSubscription &&
       customerDaycareSubscription.numberOfDaysRemaining &&

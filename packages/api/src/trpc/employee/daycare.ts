@@ -24,7 +24,7 @@ export const employeeDaycareValidation = daycareDate
   })
 
 export const employeeDaycareRoutes = ({
-  // fastify,
+  fastify,
   procedure
 }: {
   fastify?: FastifyInstance
@@ -96,7 +96,8 @@ export const employeeDaycareRoutes = ({
               statuses,
               effectiveDate: until,
               expirationDate: from
-            }
+            },
+            fastify
           })
         return customerDaycareSubscriptions
       }
