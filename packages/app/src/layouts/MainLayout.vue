@@ -522,7 +522,6 @@ onMounted(async () => {
 
   if (!import.meta.env.SSR) {
     await useOAuthClient()
-    console.log(oAuthClient)
     await oAuthClient.value?.getUserInfo()
     try {
     } catch (e) {

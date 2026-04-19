@@ -204,7 +204,6 @@ export async function findPets({
     vaccinations?: boolean
   }
 }) {
-  console.log(criteria)
   const query = find({
     criteria,
     select,
