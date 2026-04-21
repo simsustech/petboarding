@@ -50,16 +50,26 @@ const sassVariables = {
     env.read('SASS_VARIABLE_WARNING') || env.read('VITE_SASS_VARIABLE_WARNING')
 }
 
+function isBase32(input: string) {
+  const regex = /^([A-Z2-7=]{8})+$/
+  return regex.test(input)
+}
+
 /**
  * Only used in SSR/SSG
  */
 export default async function (fastify: FastifyInstance) {
   const host = env.read('API_HOST') || env.read('VITE_API_HOST')
+  const OTP_SECRET = env.read('OTP_SECRET') || env.read('VITE_OTP_SECRET')
 
   if (!host)
     throw new Error(
       'Please define a API_HOST or VITE_API_HOST environment variable'
     )
+
+  if (!isBase32(OTP_SECRET)) {
+    throw new Error('OTP_SECRET is not a valid Base32 encoded string.')
+  }
 
   const corsOrigin = [`https://${host}`]
 
@@ -68,7 +78,7 @@ export default async function (fastify: FastifyInstance) {
     fastify,
     kysely,
     {
-      OTP_SECRET: env.read('OTP_SECRET') || env.read('VITE_OTP_SECRET'),
+      OTP_SECRET,
       OTP_VALIDITY_SECONDS:
         env.read('OTP_VALIDITY_SECONDS') ||
         env.read('VITE_OTP_VALIDITY_SECONDS'),
