@@ -7,7 +7,6 @@
     "dist",
     "templates"
   ],
-  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
