@@ -39,7 +39,7 @@ LABEL "io.petboarding.vendor"="simsustech"
 RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 COPY --from=api-deploy /build/api /app
-COPY --from=api-deploy /build/app /packages/app
+# COPY --from=api-deploy /build/app /packages/app
 ENV HOST=0.0.0.0
 ENV PORT=80
 EXPOSE 80

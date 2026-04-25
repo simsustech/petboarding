@@ -44,7 +44,7 @@
     "vue-eslint-parser": "^10.4.0"
   },
   "dependencies": {
-    "@modular-api/fastify-checkout": "^0.5.10",
+    "@modular-api/fastify-checkout": "^0.5.12",
     "@myriaddreamin/typst-ts-renderer": "0.7.0-rc2",
     "@rgrove/parse-xml": "^4.2.0",
     "export-to-csv": "^1.4.0",

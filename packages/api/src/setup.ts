@@ -4,7 +4,7 @@ import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
 import env from '@vitrify/tools/env'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
-import { onAppRendered as appOnAppRendered } from '@petboarding/app/hooks'
+import { hooks } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
 import { oidcClientPlugin } from '@modular-api/api'
 import { createSlimfactTrpcClient } from './slimfact/index.js'
@@ -306,7 +306,7 @@ export default async function (fastify: FastifyInstance) {
 
   await fastify.register(appSsrPlugin, {
     host,
-    onAppRendered: appOnAppRendered
+    onAppRendered: hooks.appOnAppRendered
   })
 
   const boss = await initialize({ fastify })

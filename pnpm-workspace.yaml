@@ -13,3 +13,6 @@ minimumReleaseAgeExclude:
   - "@unocss/*"
   - "@pinia/colada"
   - pg*
+  - nodemailer
+  - vitrify
+  - ajv
