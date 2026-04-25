@@ -105,7 +105,9 @@
 
         .q-calendar__button {
           color: var(--calendar-mini-range-firstlast-label-color) !important;
-          background: var(--calendar-mini-range-firstlast-label-background) !important;
+          background: var(
+            --calendar-mini-range-firstlast-label-background
+          ) !important;
         }
       }
 
@@ -157,8 +159,12 @@
         &.q-range-last {
           .q-calendar-month__day--label__wrapper {
             .q-calendar__button {
-              color: var(--calendar-mini-range-firstlast-label-color) !important;
-              background: var(--calendar-mini-range-firstlast-label-background) !important;
+              color: var(
+                --calendar-mini-range-firstlast-label-color
+              ) !important;
+              background: var(
+                --calendar-mini-range-firstlast-label-background
+              ) !important;
               border-radius: 50%;
             }
           }
@@ -284,7 +290,9 @@
 
           .q-calendar__button {
             color: var(--calendar-mini-selected-label-color-dark) !important;
-            background: var(--calendar-mini-selected-label-background-dark) !important;
+            background: var(
+              --calendar-mini-selected-label-background-dark
+            ) !important;
           }
         }
 
@@ -319,8 +327,12 @@
               &:before {
                 color: var(--calendar-color-dark);
                 background: var(--calendar-background-dark);
-                border-top: var(--calendar-mini-range-connector-hover-border-dark);
-                border-bottom: var(--calendar-mini-range-connector-hover-border-dark);
+                border-top: var(
+                  --calendar-mini-range-connector-hover-border-dark
+                );
+                border-bottom: var(
+                  --calendar-mini-range-connector-hover-border-dark
+                );
               }
             }
           }
