@@ -14,6 +14,7 @@ import {
   DAYCARE_DATE_STATUS
 } from '../zod/index.js'
 import { findCustomerDaycareSubscriptions } from './customerDaycareSubscription.js'
+import { subMonths, formatDate, parseISO, addMonths } from 'date-fns'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>
@@ -228,7 +229,15 @@ export async function createDaycareDate({
       {
         criteria: {
           customerId: daycareDate.customerId,
-          date: daycareDate.date,
+          expirationDate: formatDate(
+            subMonths(parseISO(daycareDate.date), 1),
+            'yyyy-MM-dd'
+          ),
+          effectiveDate: formatDate(
+            addMonths(parseISO(daycareDate.date), 1),
+            'yyyy-MM-dd'
+          ),
+          // date: daycareDate.date,
           status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
         }
       }
