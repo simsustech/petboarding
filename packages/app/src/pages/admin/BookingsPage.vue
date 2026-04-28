@@ -543,8 +543,8 @@ const settleCancelation: InstanceType<
       message: `${lang.value.booking.messages.settleCancelation}<br />
       ${data.pets?.map((pet) => pet.name).join(', ')}<br />
       ${data.startDate} ${data.startTime.name} - ${data.endDate} ${
-        data.endTime.name
-      }`,
+              data.endTime.name
+            }`,
       html: true
     }).onOk(async () => {
       try {

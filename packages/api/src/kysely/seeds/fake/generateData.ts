@@ -184,7 +184,10 @@ export default () => {
       }
       if (getRandomInt(100) < 50) {
         for (let j = 1; j <= getRandomInt(MAX_BOOKINGS_PER_CUSTOMER); j++) {
-          booking = createBooking({ startDate: booking.endDate, customerId: i })
+          booking = createBooking({
+            startDate: booking.endDate,
+            customerId: i
+          })
           const bookingStatus = {
             startDate: booking.startDate,
             endDate: booking.endDate,

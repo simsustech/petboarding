@@ -68,7 +68,9 @@ export const initialize = async ({ fastify }: { fastify: FastifyInstance }) => {
 
   const downPaymentWorker = createDownPaymentWorker({ fastify })
   const receiptsWorker = createReceiptsWorker({ fastify })
-  const slimfactHealthCheckWorker = createSlimfactHealthCheckWorker({ fastify })
+  const slimfactHealthCheckWorker = createSlimfactHealthCheckWorker({
+    fastify
+  })
   const schedules = await boss.getSchedules()
 
   if (!schedules.some((schedule) => schedule.name === 'checkDownPayments')) {

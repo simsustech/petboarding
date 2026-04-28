@@ -12,7 +12,5 @@ minimumReleaseAgeExclude:
   - unocss
   - "@unocss/*"
   - "@pinia/colada"
-  - pg*
-  - nodemailer
-  - vitrify
-  - ajv
+  - openid-client
+  - oidc-provider
