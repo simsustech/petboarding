@@ -65,7 +65,7 @@
             {{
               customerDaycareSubscription.daycareDates
                 ?.map((daycareDate) => formatDate(daycareDate.date))
-                .join(', ')
+                .join(", ")
             }}
           </q-item-label>
         </q-item-section>
@@ -76,41 +76,41 @@
 
 <script lang="ts">
 export default {
-  name: 'CustomerDaycareSubscriptionsList'
-}
+  name: "CustomerDaycareSubscriptionsList",
+};
 </script>
 
 <script setup lang="ts">
-import { useLang } from '../../lang/index.js'
-import type { CustomerDaycareSubscription } from '@petboarding/api/zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
+import { useLang } from "../../lang/index.js";
+import type { CustomerDaycareSubscription } from "@petboarding/api/zod";
+import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from "@petboarding/tools/constants";
 // import { useConfiguration } from '../../configuration.js'
-import { useQuasar } from 'quasar'
-import InvoiceButton from '../InvoiceButton.vue'
-import { computed, ref, toRefs } from 'vue'
+import { useQuasar } from "quasar";
+import InvoiceButton from "../InvoiceButton.vue";
+import { computed, ref, toRefs } from "vue";
 
 export interface Props {
-  modelValue: CustomerDaycareSubscription[]
+  modelValue: CustomerDaycareSubscription[];
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const { modelValue } = toRefs(props)
+const { modelValue } = toRefs(props);
 
-const lang = useLang()
+const lang = useLang();
 // const configuration = useConfiguration()
-const $q = useQuasar()
+const $q = useQuasar();
 
 const dateFormatter = (date: Date, locale: string) =>
   new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeZone: 'UTC'
-  }).format(date)
+    dateStyle: "medium",
+    timeZone: "UTC",
+  }).format(date);
 
 const formatDate = (date: string) => {
-  return `${dateFormatter(new Date(date), $q.lang.isoName)}`
-}
+  return `${dateFormatter(new Date(date), $q.lang.isoName)}`;
+};
 
-const showAll = ref(false)
+const showAll = ref(false);
 const filteredCustomerDaycareSubscriptions = computed(() =>
   modelValue.value.filter((customerDaycareSubscription) => {
     if (showAll.value === false) {
@@ -118,10 +118,10 @@ const filteredCustomerDaycareSubscriptions = computed(() =>
         customerDaycareSubscription.expirationDate &&
         customerDaycareSubscription.expirationDate >
           new Date().toISOString().slice(0, 10) &&
-        customerDaycareSubscription.numberOfDaysRemaining
-      )
+        (customerDaycareSubscription.numberOfDaysRemaining ?? 0) > 0
+      );
     }
-    return true
-  })
-)
+    return true;
+  }),
+);
 </script>
