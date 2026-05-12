@@ -12,5 +12,18 @@ minimumReleaseAgeExclude:
   - unocss
   - "@unocss/*"
   - "@pinia/colada"
-  - openid-client
-  - oidc-provider
+  - pg*
+  - vite
+  - vite
+  - oxfmt
+  - "@oxfmt/*"
+  - oxlint
+  - "@oxlint/*"
+  - fast-xml-parser
+  - playwright
+  - playwright-core
+  - "@playwright/*"
+  - "@types/node"
+  - content-type
+  - vitest
+  - "@vitest/*"
