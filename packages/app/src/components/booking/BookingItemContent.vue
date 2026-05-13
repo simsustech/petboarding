@@ -98,13 +98,12 @@
       </div>
       <div class="col-span-12 md:col-span-6 text-center">
         <q-btn
-          v-if="
-            showApprovalButtons || showEditButton || showHandleCancelationButton
-          "
+          v-if="showApprovalButtons || showHandleCancelationButton"
           icon="i-mdi-approve"
           flat
           dense
           @click.stop
+          data-testid="booking-approval-button"
         >
           <q-menu>
             <q-list>
