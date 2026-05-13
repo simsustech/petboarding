@@ -99,12 +99,27 @@
       <div class="col-span-12 md:col-span-6 text-center">
         <q-btn
           v-if="showApprovalButtons || showHandleCancelationButton"
-          icon="i-mdi-approve"
-          flat
           dense
+          flat
+          :rounded="false"
           @click.stop
           data-testid="booking-approval-button"
         >
+          <q-avatar class="col-12">
+            <q-icon name="i-mdi-more-horiz" :class="classes" size="md" />
+          </q-avatar>
+          <q-icon
+            style="
+              position: absolute;
+              right: 0.5em;
+              bottom: 0.8em;
+              font-size: 1em;
+            "
+            name="i-mdi-approve"
+            :class="{
+              'text-green': true
+            }"
+          />
           <q-menu>
             <q-list>
               <q-item
