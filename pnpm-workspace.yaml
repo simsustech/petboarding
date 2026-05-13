@@ -1,3 +1,5 @@
+injectWorkspacePackages: true
+
 packages:
   - packages/*
 
@@ -27,3 +29,10 @@ minimumReleaseAgeExclude:
   - content-type
   - vitest
   - "@vitest/*"
+
+allowBuilds:
+  "@parcel/watcher": true
+  core-js: true
+  esbuild: true
+  sharp: true
+  simple-git-hooks: true
