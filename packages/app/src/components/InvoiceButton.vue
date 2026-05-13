@@ -55,7 +55,7 @@
 import { computed, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
 import { useQuasar } from 'quasar'
-import { type Invoice } from '@modular-api/fastify-checkout'
+import { type Invoice } from '@modular-api/fastify-checkout/types'
 import { useConfiguration } from '../configuration.js'
 interface Props {
   modelValue: Invoice

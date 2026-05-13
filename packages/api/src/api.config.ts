@@ -2,7 +2,7 @@ import type {
   RawInvoiceDiscount,
   RawInvoiceLine,
   RawInvoiceSurcharge
-} from '@modular-api/fastify-checkout'
+} from '@modular-api/fastify-checkout/types'
 import type {
   BookingCancelationHandler,
   BookingCostsHandler
