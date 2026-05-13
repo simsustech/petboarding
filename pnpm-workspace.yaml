@@ -36,9 +36,3 @@ allowBuilds:
   esbuild: true
   sharp: true
   simple-git-hooks: true
-
-overrides:
-  '@modular-api/api': link:../modular-api/packages/api
-  '@modular-api/fastify-checkout': link:../modular-api/packages/fastify-checkout
-  '@modular-api/fastify-oidc': link:../modular-api/packages/fastify-oidc
-  '@modular-api/oidc-interactions': link:../modular-api/packages/oidc-interactions
