@@ -26,7 +26,6 @@
               :key="booking.id"
               :model-value="booking"
               show-icon
-              show-edit-button
               @update="openUpdateDialog"
               @cancel="cancelBooking"
             />

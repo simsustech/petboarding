@@ -204,11 +204,15 @@ test.describe('Account', async () => {
 
     // await page.locator('button >> text=edit').click()
     // await page.getByText('Edit', { exact: true }).click()
-    await page
-      .getByRole('main')
-      .getByLabel('Expand')
-      .getByRole('button')
-      .click()
+    // await page
+    //   .getByRole('main')
+    //   .getByLabel('Expand')
+    //   .getByRole('button')
+    //   .click()
+
+    await page.getByRole('button', { name: 'Expand' }).first().click()
+    await page.getByTestId('booking-dates-edit-button').first().click()
+
     await page.getByText('Edit', { exact: true }).click()
     await page.getByText('Start time*Morning').first().click()
     await page.getByRole('option', { name: 'Evening' }).click()

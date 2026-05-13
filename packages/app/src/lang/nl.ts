@@ -256,7 +256,7 @@ const lang: Language = {
       changeDaycareToBooking:
         'Als u een dagopvang afspraak wenst te veranderen in een overnachting, annuleer dan eerst de dagopvang afspraak en plaats dan een reservering.',
       editBooking:
-        'Klik op de menu knop van een reservering om deze te wijzigen.',
+        'Klik op een reservering om deze uit te klappen en de datums te wijzigen.',
       upcomingBookings: 'Komende reserveringen',
       otherBookings: 'Overige reserveringen',
       overlapsWithUnavailablePeriod:

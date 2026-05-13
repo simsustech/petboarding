@@ -101,7 +101,7 @@
           v-if="
             showApprovalButtons || showEditButton || showHandleCancelationButton
           "
-          icon="i-mdi-more-vert"
+          icon="i-mdi-approve"
           flat
           dense
           @click.stop

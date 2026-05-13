@@ -27,6 +27,59 @@
     </template>
 
     <q-list>
+      <q-item :inset-level="1">
+        <q-item-section>
+          <q-item-label>
+            <a
+              >{{
+                formatDates(
+                  modelValue.startDate,
+                  modelValue.startTime!.name,
+                  modelValue.endDate,
+                  modelValue.endTime!.name
+                )
+              }}
+            </a>
+            -
+            <a class="text-italic">
+              {{ `${modelValue.days} ${lang.booking.days}` }}
+            </a>
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            icon="i-mdi-edit"
+            flat
+            @click.stop
+            data-testid="booking-dates-edit-button"
+          >
+            <q-menu>
+              <q-list>
+                <q-item v-close-popup clickable @click="update(modelValue)">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.edit }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item
+                  v-close-popup
+                  class="text-red"
+                  clickable
+                  @click="cancel(modelValue)"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ lang.cancel }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </q-item-section>
+      </q-item>
       <div v-if="modelValue.pets">
         <pet-item
           v-for="pet in modelValue.pets"
@@ -139,10 +192,12 @@ export default {
 
 <script setup lang="ts">
 import { ref, useAttrs } from 'vue'
-import { QExpansionItem, date as dateUtil } from 'quasar'
+import { QExpansionItem, date as dateUtil, useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import type { Booking, BookingService } from '@petboarding/api/zod'
-import BookingItemContent from './BookingItemContent.vue'
+import BookingItemContent, {
+  formatBookingDates
+} from './BookingItemContent.vue'
 import PetItem from '../pet/PetItem.vue'
 import BookingStatusItem from './BookingStatusItem.vue'
 import { useConfiguration } from '../../configuration.js'
@@ -189,10 +244,34 @@ const emit = defineEmits<{
     }
   ): void
   (e: 'openCustomer', { id }: { id: number }): void
+  (
+    e: 'update',
+    {
+      data,
+      done
+    }: {
+      data: Booking
+      done: (success?: boolean) => void
+    }
+  ): void
+  (
+    e: 'cancel',
+    {
+      data,
+      done
+    }: {
+      data: {
+        booking: Booking
+        reason: string
+      }
+      done: (success?: boolean) => void
+    }
+  ): void
 }>()
 
 const lang = useLang()
 const configuration = useConfiguration()
+const $q = useQuasar()
 
 const updateBookingService: InstanceType<
   typeof BookingServicesList
@@ -210,6 +289,47 @@ const twoWeeksInThePast = ref(
     'YYYY-MM-DD'
   )
 )
+
+const formatDates = (
+  startDate: string,
+  startTime: string,
+  endDate: string,
+  endTime: string
+) => {
+  return formatBookingDates({
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    lang: lang.value,
+    locale: $q.lang.isoName
+  })
+}
+
+const update = (booking: Booking) => {
+  const done = () => {
+    //
+  }
+  emit('update', { data: booking, done })
+}
+
+const cancel = (booking: Booking) => {
+  const done = () => {
+    //
+  }
+  $q.dialog({
+    message: lang.value.booking.messages.cancelationReason,
+    cancel: true,
+    prompt: {
+      model: '',
+      isValid: (val) => !!val,
+      type: 'text'
+    }
+  }).onOk((input) => {
+    emit('cancel', { data: { booking, reason: input }, done })
+  })
+}
+
 const variables = ref({})
 const functions = ref({})
 defineExpose({
