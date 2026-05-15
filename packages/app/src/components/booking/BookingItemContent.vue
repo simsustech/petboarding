@@ -106,9 +106,9 @@
           data-testid="booking-approval-button"
         >
           <q-avatar class="col-12">
-            <q-icon name="i-mdi-more-horiz" :class="classes" size="md" />
+            <q-icon name="i-mdi-more-horiz" size="md" />
           </q-avatar>
-          <q-icon
+          <!-- <q-icon
             style="
               position: absolute;
               right: 0.5em;
@@ -119,7 +119,7 @@
             :class="{
               'text-green': true
             }"
-          />
+          /> -->
           <q-menu>
             <q-list>
               <q-item
