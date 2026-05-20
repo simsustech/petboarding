@@ -13,7 +13,7 @@
         <template #prepend> <q-icon name="i-mdi-search" /> </template>
       </pet-select>
     </q-toolbar>
-    <div class="row">
+    <div class="row q-col-gutter-md">
       <pet-card
         v-for="pet in data"
         :key="pet.id"
