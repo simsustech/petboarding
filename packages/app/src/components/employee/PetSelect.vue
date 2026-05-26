@@ -25,8 +25,10 @@
           </q-item-label>
         </q-item-section>
         <q-item-section side>
+          <slot name="side" v-bind="{ itemProps, opt }" />
+
           <q-rating
-            v-if="opt.rating"
+            v-if="opt.rating && !slots.side"
             :model-value="opt.rating"
             icon="i-mdi-star-border"
             icon-selected="i-mdi-star"
@@ -46,13 +48,14 @@ export default {
 
 <script setup lang="ts">
 import { QSelect } from 'quasar'
-import { ref, toRefs, useAttrs } from 'vue'
+import { ref, toRefs, useAttrs, useSlots } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useEmployeeSearchPetsQuery } from 'src/queries/employee/pet.js'
 
 export interface Props {
   modelValue?: number | number[]
 }
+const slots = useSlots()
 const props = defineProps<Props>()
 const attrs = useAttrs()
 

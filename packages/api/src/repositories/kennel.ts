@@ -9,7 +9,7 @@ import {
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
-import { withValidVaccinations } from './pet.js'
+import { withRelations, withValidVaccinations } from './pet.js'
 type Kennel = Selectable<Kennels>
 type NewKennel = Insertable<Kennels>
 type KennelUpdate = Updateable<Kennels>
@@ -190,7 +190,8 @@ export async function getBookingPetKennels(date: string) {
           .select('customers.lastName')
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
-      withValidVaccinations
+      withValidVaccinations,
+      withRelations
     ])
     .execute()
 }
@@ -221,7 +222,8 @@ export async function getDaycareDatePetKennels(date: string) {
           .select('customers.lastName')
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
-      withValidVaccinations
+      withValidVaccinations,
+      withRelations
     ])
     .execute()
 }

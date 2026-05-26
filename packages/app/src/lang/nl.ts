@@ -194,6 +194,9 @@ const lang: Language = {
         gram: 'gr',
         pieces: 'st.'
       }
+    },
+    relations: {
+      relations: 'Relaties met andere dieren'
     }
   },
   booking: {

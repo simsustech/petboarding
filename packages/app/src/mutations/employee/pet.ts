@@ -10,3 +10,20 @@ export const useEmployeeUpdatePetMutation = () => {
     ...rest
   }
 }
+
+export const useEmployeeSetPetRelation = () => {
+  const { ...rest } = useMutation({
+    mutation: ({
+      petId1,
+      petId2,
+      rating
+    }: {
+      petId1: number
+      petId2: number
+      rating: number
+    }) => trpc.employee.setPetRelation.mutate({ petId1, petId2, rating })
+  })
+  return {
+    ...rest
+  }
+}

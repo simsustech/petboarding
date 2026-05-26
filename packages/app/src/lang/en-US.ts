@@ -193,6 +193,9 @@ const lang: Language = {
         gram: 'gr.',
         pieces: 'pcs'
       }
+    },
+    relations: {
+      relations: 'Relations with other pets'
     }
   },
   booking: {

@@ -63,10 +63,7 @@
             :id="`pet${pet.id}`"
             :key="pet.id"
             :model-value="pet"
-            :class="{
-              'bg-blue-2': pet.bookingId,
-              'bg-yellow-2': pet.daycareDateId
-            }"
+            :class="getPetChipClasses(pet)"
             :draggable="true"
             :overline="getOverline(pet)"
             show-image
@@ -118,10 +115,7 @@
                   <pet-chip
                     :id="`pet${pet.id}`"
                     :model-value="pet"
-                    :class="{
-                      'bg-blue-2': pet.bookingId,
-                      'bg-yellow-2': pet.daycareDateId
-                    }"
+                    :class="getPetChipClasses(pet)"
                     :draggable="true"
                     show-badge
                     show-last-name
@@ -165,6 +159,7 @@ import {
 import type { PetKennel } from '../../configuration.js'
 import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
 import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
+import { computed } from 'vue'
 
 const lang = useLang()
 
@@ -203,8 +198,17 @@ watch(
   }
 )
 
+const draggedPetId = ref<number | null>(null)
+const draggedPetRelations = computed(() => {
+  return (
+    internalPetKennels.value.find(
+      (petKennel) => petKennel.id === draggedPetId.value
+    )?.relations ?? {}
+  )
+})
 // store the id of the draggable element
 function onDragStart(e) {
+  draggedPetId.value = Number(e.target.id.match(/pet(.*)/).at(1))
   e.dataTransfer.setData('text', e.target.id)
   e.dataTransfer.dropEffect = 'move'
 }
@@ -229,7 +233,7 @@ function onDragOver(e) {
 
 function onDrop(e) {
   e.preventDefault()
-
+  draggedPetId.value = null
   // don't drop on other draggables
   if (e.target.draggable === true) {
     return
@@ -317,6 +321,41 @@ const getOverline = (pet: PetKennel) => {
     return `- ${openingTimes.value?.find((openingTime) => openingTime.id === pet.departureTimeId)?.name}`
 
   return ''
+}
+
+const getPetChipClasses = (petKennel: PetKennel) => {
+  if (petKennel.id && draggedPetRelations.value[petKennel.id]) {
+    switch (draggedPetRelations.value[petKennel.id].rating) {
+      case 1:
+        return 'bg-red-600'
+      case 2:
+        return 'bg-red-500'
+      case 3:
+        return 'bg-orange-500'
+      case 4:
+        return 'bg-orange-400'
+      case 5:
+        return 'bg-yellow-500'
+      case 6:
+        return 'bg-yellow-400'
+      case 7:
+        return 'bg-lime-400'
+      case 8:
+        return 'bg-green-400'
+      case 9:
+        return 'bg-green-500'
+      case 10:
+        return 'bg-emerald-600'
+      default:
+        break
+    }
+  } else if (draggedPetId.value) {
+    return 'bg-grey-2'
+  } else if (petKennel.bookingId) {
+    return 'bg-blue-2'
+  } else if (petKennel.daycareDateId) {
+    return 'bg-yellow-2'
+  }
 }
 
 onMounted(async () => {

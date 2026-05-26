@@ -10,6 +10,7 @@ import {
   findPet,
   findPets,
   searchPets,
+  setPetRelation,
   updatePet
 } from '../../repositories/pet.js'
 import {
@@ -90,7 +91,8 @@ export const employeePetRoutes = ({
           },
           select: ['rating', 'comments'],
           relations: {
-            vaccinations: true
+            vaccinations: true,
+            relations: true
           }
         })
         return pets
@@ -114,7 +116,8 @@ export const employeePetRoutes = ({
           },
           select: ['rating', 'comments'],
           relations: {
-            vaccinations: true
+            vaccinations: true,
+            relations: true
           }
         })
         return pets
@@ -244,5 +247,17 @@ export const employeePetRoutes = ({
 
       if (vaccinations) return vaccinations
       throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  setPetRelation: procedure
+    .input(
+      z.object({
+        petId1: z.number(),
+        petId2: z.number(),
+        rating: z.number()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { petId1, petId2, rating } = input
+      return setPetRelation({ petId1, petId2, rating })
     })
 })
