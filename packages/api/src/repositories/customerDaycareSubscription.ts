@@ -451,7 +451,7 @@ export async function setCustomerDaycareSubscriptionStatus({
       .then((result) => result.map(({ id }) => id))
 
     if (existingDaycareDateIds.length) {
-      updateDaycareDate(
+      await updateDaycareDate(
         {
           ids: existingDaycareDateIds
         },
