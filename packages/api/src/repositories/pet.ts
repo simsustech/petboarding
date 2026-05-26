@@ -280,7 +280,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       p.fulltext @@ to_tsquery(
-        'english', ${sql.lit(
+        'english', ${sql.val(
           searchTerms
             .map((term) => term + (term.length > 3 ? ':*' : ':'))
             .join(' | ')
@@ -311,7 +311,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       c.fulltext @@ to_tsquery(
-        'english', ${sql.lit(
+        'english', ${sql.val(
           searchTerms
             .map((term) => term + (term.length > 3 ? ':*' : ':'))
             .join(' | ')
