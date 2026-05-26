@@ -1023,20 +1023,22 @@ export async function updateBooking(
       .executeTakeFirstOrThrow()
 
     if (Array.isArray(updateWith.petIds)) {
-      await db
-        .deleteFrom('bookingPetKennel')
-        .where('bookingId', '=', updatedBooking.id)
-        .executeTakeFirstOrThrow()
+      await db.transaction().execute(async (trx) => {
+        await trx
+          .deleteFrom('bookingPetKennel')
+          .where('bookingId', '=', updatedBooking.id)
+          .executeTakeFirstOrThrow()
 
-      await db
-        .insertInto('bookingPetKennel')
-        .values(
-          updateWith.petIds.map((petId) => ({
-            petId,
-            bookingId: updatedBooking.id
-          }))
-        )
-        .executeTakeFirstOrThrow()
+        await trx
+          .insertInto('bookingPetKennel')
+          .values(
+            updateWith.petIds.map((petId) => ({
+              petId,
+              bookingId: updatedBooking.id
+            }))
+          )
+          .executeTakeFirstOrThrow()
+      })
     }
 
     if (Array.isArray(updateWith.serviceIds)) {
