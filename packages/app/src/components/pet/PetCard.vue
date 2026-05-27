@@ -156,8 +156,87 @@
         :show-edit-button="showAddVaccination"
         @update="updateVaccination"
       />
+      <q-item v-if="showRelations">
+        <q-item-section>
+          <q-item-label>
+            {{ lang.pet.relations.relations }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            outline
+            icon="i-mdi-edit"
+            @click="petRelationsDialogRef?.functions.open()"
+          />
+        </q-item-section>
+      </q-item>
     </q-list>
   </q-styled-card>
+
+  <responsive-dialog
+    ref="petRelationsDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    display
+  >
+    <pet-select multiple clearable :filled="false" rounded standout>
+      <template #prepend> <q-icon name="i-mdi-search" /> </template>
+      <template #side="{ itemProps, opt }">
+        <q-rating
+          v-if="modelValue.relations?.[opt.value] !== void 0"
+          :model-value="modelValue.relations?.[opt.value]?.rating / 2 || 0"
+          size="3em"
+          icon="i-mdi-star-border"
+          icon-selected="i-mdi-star"
+          icon-half="i-mdi-star-half"
+          @update:model-value="
+            ($event) =>
+              updatePetRelation({
+                petId1: modelValue.id!,
+                petId2: opt.value,
+                rating: $event * 2
+              })
+          "
+        />
+      </template>
+    </pet-select>
+    <q-list>
+      <div
+        v-for="rating in Array.from(
+          { length: 10 },
+          (_, index) => index + 1
+        ).reverse()"
+      >
+        <q-item
+          v-if="
+            modelValue.relations &&
+            Object.values(modelValue.relations).some(
+              (relation) => relation.rating === rating
+            )
+          "
+        >
+          <q-item-section>
+            <q-item-label overline>
+              <q-rating
+                :model-value="rating / 2"
+                icon="i-mdi-star-border"
+                icon-selected="i-mdi-star"
+                icon-half="i-mdi-star-half"
+              />
+            </q-item-label>
+            <q-item-label>
+              {{
+                Object.values(modelValue.relations)
+                  .filter((relation) => relation.rating === rating)
+                  .map((relation) => relation.name)
+                  .join(', ')
+              }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </div>
+    </q-list>
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -183,6 +262,10 @@ import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
 import { useConfiguration } from '../../configuration.js'
 import type { Vaccination } from '../vaccination/VaccinationItem.vue'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
+import { ref } from 'vue'
+import PetSelect from '../employee/PetSelect.vue'
+import { useEmployeeSetPetRelation } from '../../mutations/employee/pet.js'
 
 export interface Pet extends PetType {
   image?: string
@@ -196,6 +279,7 @@ export interface Props {
   allowDelete?: boolean
   onOpenCustomer?: unknown
   onDelete?: unknown
+  showRelations?: boolean
 }
 const props = defineProps<Props>()
 
@@ -248,6 +332,7 @@ const emit = defineEmits<{
       done: (success?: boolean) => void
     }
   ): void
+  (e: 'update:modelValue', value: Pet): void
 }>()
 
 const attrs = useAttrs()
@@ -255,6 +340,8 @@ const lang = useLang()
 const $q = useQuasar()
 
 const { modelValue } = toRefs(props)
+
+const { mutateAsync: setPetRelation } = useEmployeeSetPetRelation()
 
 const update = (pet: Pet) => {
   function done() {
@@ -303,4 +390,28 @@ const deletePet = (pet: Pet) => {
 }
 
 const configuration = useConfiguration()
+
+const petRelationsDialogRef = ref<typeof ResponsiveDialog>()
+
+const updatePetRelation = async ({
+  petId1,
+  petId2,
+  rating
+}: {
+  petId1: number
+  petId2: number
+  rating: number
+}) => {
+  await setPetRelation({
+    petId1,
+    petId2,
+    rating
+  })
+  emit('update:modelValue', {
+    ...modelValue.value,
+    relations: {
+      ...modelValue.value.relations
+    }
+  })
+}
 </script>

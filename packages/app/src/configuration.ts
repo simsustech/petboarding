@@ -16,6 +16,7 @@ export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
   daycareDateId?: number
   arrivalTimeId?: number
   departureTimeId?: number
+  relations?: Record<number, { rating: number; name: string; comment?: string }>
 }
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {

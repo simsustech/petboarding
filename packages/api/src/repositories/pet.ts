@@ -125,6 +125,50 @@ function withCustomer(eb: ExpressionBuilder<Database, 'pets'>) {
   ).as('customer')
 }
 
+export function withRelations(eb: ExpressionBuilder<Database, 'pets'>) {
+  return eb
+    .selectFrom((subEb) =>
+      subEb
+        .selectFrom('petRelations')
+        .select(['petId2 as petId', 'rating'])
+        .whereRef('petId1', '=', 'pets.id')
+        .union(
+          subEb
+            .selectFrom('petRelations')
+            .select(['petId1 as petId', 'rating'])
+            .whereRef('petId2', '=', 'pets.id')
+        )
+        .as('unioned_relations')
+    )
+    .innerJoin(
+      'pets as relatedPets',
+      'relatedPets.id',
+      'unioned_relations.petId'
+    )
+    .innerJoin(
+      'customers as relatedCustomers',
+      'relatedCustomers.id',
+      'relatedPets.customerId'
+    )
+    .select((subEb) =>
+      subEb
+        .fn('jsonb_object_agg', [
+          // The object key must be a text/column reference
+          subEb.ref('unioned_relations.petId'),
+          // Build the nested object values explicitly
+          subEb.fn('jsonb_build_object', [
+            sql.lit('rating'),
+            subEb.ref('unioned_relations.rating'),
+            sql.lit('name'),
+            sql<string>`concat(${subEb.ref('relatedPets.name')}, ' ', ${subEb.ref('relatedCustomers.lastName')})`
+            // subEb.ref('relatedPets.name')
+          ])
+        ])
+        .as('relations_obj')
+    )
+    .as('relations')
+}
+
 function find({
   criteria,
   select,
@@ -134,6 +178,7 @@ function find({
   select?: (keyof Pet)[]
   relations?: {
     vaccinations?: boolean
+    relations?: boolean
   }
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -161,6 +206,10 @@ function find({
 
   if (relations?.vaccinations) {
     query = query.select([withVaccinations, withValidVaccinations])
+  }
+
+  if (relations?.relations) {
+    query = query.select([withRelations])
   }
 
   return query
@@ -202,6 +251,7 @@ export async function findPets({
   select?: (keyof Pet)[]
   relations?: {
     vaccinations?: boolean
+    relations?: boolean
   }
 }) {
   const query = find({
@@ -330,4 +380,28 @@ export async function searchPets(searchPhrase: string) {
 
 export async function deletePet(id: number) {
   return db.deleteFrom('pets').where('id', '=', id).executeTakeFirst()
+}
+
+export async function setPetRelation({
+  petId1,
+  petId2,
+  rating
+}: {
+  petId1: number
+  petId2: number
+  rating: number
+}) {
+  return db
+    .insertInto('petRelations')
+    .values({
+      petId1: petId1 < petId2 ? petId1 : petId2,
+      petId2: petId1 < petId2 ? petId2 : petId1,
+      rating
+    })
+    .onConflict((oc) =>
+      oc.columns(['petId1', 'petId2']).doUpdateSet({
+        rating: (eb) => eb.ref('excluded.rating')
+      })
+    )
+    .execute()
 }

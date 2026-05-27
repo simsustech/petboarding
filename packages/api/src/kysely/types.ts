@@ -380,6 +380,14 @@ export interface Documents {
   content: string
 }
 
+export interface PetRelations {
+  id: Generated<number>
+  petId1: number
+  petId2: number
+  rating: number
+  comment: string | null
+}
+
 export interface DB {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
@@ -409,4 +417,5 @@ export interface DB {
   services: Services
   vaccinations: Vaccinations
   documents: Documents
+  petRelations: PetRelations
 }

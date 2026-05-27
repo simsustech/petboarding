@@ -188,6 +188,9 @@ export interface Language {
         pieces: string
       }
     }
+    relations: {
+      relations: string
+    }
   }
   booking: {
     title: string

@@ -37,7 +37,17 @@ export const petValidation = {
   customer: customer.optional(),
   vaccinations: vaccination.array().optional(),
   hasMandatoryVaccinations: z.boolean().optional(),
-  insured: z.boolean().nullable().optional()
+  insured: z.boolean().nullable().optional(),
+  relations: z
+    .record(
+      z.number(),
+      z.object({
+        rating: z.number(),
+        name: z.string(),
+        comment: z.string().optional()
+      })
+    )
+    .optional()
 }
 // yo
 

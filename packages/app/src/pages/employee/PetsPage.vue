@@ -22,7 +22,9 @@
         use-rating
         use-comments
         show-add-vaccination
+        show-relations
         :allow-delete="user?.roles.includes('administrator')"
+        @update:model-value="(pet) => execute()"
         @add:vaccination="openCreateVaccinationDialog"
         @update:vaccination="openUpdateVaccinationDialog"
         @update="openUpdatePetDialog"
@@ -103,6 +105,7 @@ import {
   useEmployeeCreateVaccinationMutation,
   useEmployeeUpdateVaccinationMutation
 } from 'src/mutations/employee/vaccination.js'
+import { Pet } from '@petboarding/api/zod'
 
 export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 

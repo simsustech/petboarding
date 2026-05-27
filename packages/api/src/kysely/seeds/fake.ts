@@ -278,6 +278,28 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
       }
     ])
     .execute()
+
+  const petRelations: {
+    petId1: number
+    petId2: number
+    rating: number
+  }[] = []
+
+  for (let i = 0; i < pets.length; i++) {
+    for (let j = i + 1; j < pets.length; j++) {
+      // Generates a random integer from 1 to 10
+      const randomRating = Math.floor(Math.random() * 10) + 1
+
+      petRelations.push({
+        petId1: pets[i].id, // Or just pets[i] if your array is a flat list of strings/IDs
+        petId2: pets[j].id,
+        rating: randomRating
+      })
+    }
+  }
+  for (const insertPetRelations of chunk(petRelations, 1000)) {
+    await db.insertInto('petRelations').values(insertPetRelations).execute()
+  }
 }
 
 seed()
