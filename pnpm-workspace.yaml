@@ -11,24 +11,8 @@ minimumReleaseAgeExclude:
   - unocss-preset-quasar
   - "@simsustech/*"
   - "@modular-api/*"
-  - unocss
-  - "@unocss/*"
-  - "@pinia/colada"
-  - pg*
-  - vite
-  - vite
-  - oxfmt
-  - "@oxfmt/*"
-  - oxlint
-  - "@oxlint/*"
-  - fast-xml-parser
-  - playwright
-  - playwright-core
-  - "@playwright/*"
-  - "@types/node"
-  - content-type
-  - vitest
-  - "@vitest/*"
+  - date-holidays
+  - nodemailer
 
 allowBuilds:
   "@parcel/watcher": true
