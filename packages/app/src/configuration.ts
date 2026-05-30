@@ -4,6 +4,7 @@ import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
 import { PET_SPECIES } from '@petboarding/tools/constants'
 import { QuasarTheme } from 'unocss-preset-quasar/theme'
+import { Locales } from '@simsustech/quasar-components/form'
 
 const lang = useLang()
 
@@ -182,3 +183,8 @@ export const languageImports = ref({
   nl: () => import(`quasar/lang/nl.js`),
   'en-US': () => import(`quasar/lang/en-US.js`)
 })
+
+export const quasarLanguageMap: Partial<Record<Locales, string>> = {
+  'en-US': 'en-US',
+  'nl-NL': 'nl'
+}

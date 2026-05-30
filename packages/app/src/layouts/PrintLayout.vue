@@ -10,7 +10,11 @@ import { useQuasar } from 'quasar'
 import { useOAuthClient, user, oAuthClient } from '../oauth.js'
 import { useRoute, useRouter } from 'vue-router'
 import { loadLang } from '../lang/index.js'
-import { loadConfiguration, useConfiguration } from '../configuration.js'
+import {
+  loadConfiguration,
+  useConfiguration,
+  quasarLanguageMap
+} from '../configuration.js'
 
 import {
   loadLang as loadComponentsFormLang,
@@ -24,15 +28,15 @@ const route = useRoute()
 
 const $q = useQuasar()
 
-const quasarLanguageMap: Partial<Record<Locales, string>> = {
-  'en-US': 'en-US',
-  'nl-NL': 'nl'
+const locale = ref<Locales>($q.lang.isoName as Locales)
+const updateLocale = (val: Locales) => {
+  locale.value = val
+  $q.localStorage.set('locale', val)
 }
-const locale = ref<Locales>('en-US')
 
-watch(locale, (newVal) => {
+watch(locale, (newVal, oldVal) => {
   const quasarLang = quasarLanguageMap[newVal]
-  if (quasarLang) {
+  if (quasarLang && newVal !== oldVal) {
     loadLang(quasarLang)
     loadComponentsFormLang(quasarLang)
     loadModularApiQuasarComponentsCheckoutLang(quasarLang)
@@ -60,6 +64,10 @@ onMounted(async () => {
   if (__IS_PWA__) {
     await import('../pwa.js')
   }
+
+  if ($q.localStorage.getItem('locale'))
+    locale.value = $q.localStorage.getItem('locale') as Locales
+
   await useOAuthClient()
   await oAuthClient.value?.getUserInfo()
 
