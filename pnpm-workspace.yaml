@@ -11,8 +11,11 @@ minimumReleaseAgeExclude:
   - unocss-preset-quasar
   - "@simsustech/*"
   - "@modular-api/*"
-  - date-holidays
-  - nodemailer
+  - otplib
+  - "@otplib/*"
+  - "@vue/*"
+  - vue-tsc
+  - date-fns
 
 allowBuilds:
   "@parcel/watcher": true

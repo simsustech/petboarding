@@ -245,6 +245,14 @@ export default async function (fastify: FastifyInstance) {
           email: ['email', 'email_verified'],
           api: ['roles']
         }
+      },
+      defaultCredentials: {
+        email:
+          env.read('MODULARAPI_DEFAULT_EMAIL') ||
+          env.read('VITE_MODULARAPI_DEFAULT_EMAIL'),
+        password:
+          env.read('MODULARAPI_DEFAULT_PASSWORD') ||
+          env.read('VITE_MODULARAPI_DEFAULT_PASSWORD')
       }
     },
     nodemailer: {
