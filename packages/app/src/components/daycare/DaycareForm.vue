@@ -127,14 +127,20 @@ const { pets, customerDaycareSubscriptions, useCustomerDaycareSubscriptions } =
   toRefs(props)
 const selectedDates = ref<string[]>([])
 const modelValue = ref({
-  petIds: []
+  petIds: [] as number[]
 })
 
 const petOptions = computed(() =>
-  pets.value.map((pet) => ({
-    label: pet.name,
-    value: pet.id
-  }))
+  pets.value
+    .filter(
+      (pet) =>
+        pet.deceased === false ||
+        (pet.id && modelValue.value.petIds.includes(pet.id))
+    )
+    .map((pet) => ({
+      label: pet.name,
+      value: pet.id
+    }))
 )
 
 const termsAndConditions = ref(false)

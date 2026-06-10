@@ -265,10 +265,16 @@ const removeDates: InstanceType<
 }
 
 const petOptions = computed(() =>
-  pets.value.map((pet) => ({
-    label: pet.name,
-    value: pet.id
-  }))
+  pets.value
+    .filter(
+      (pet) =>
+        pet.deceased === false ||
+        (pet.id && modelValue.value.petIds.includes(pet.id))
+    )
+    .map((pet) => ({
+      label: pet.name,
+      value: pet.id
+    }))
 )
 
 const variables = ref({
