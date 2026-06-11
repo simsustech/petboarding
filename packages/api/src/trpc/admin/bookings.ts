@@ -27,7 +27,7 @@ import {
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer.js'
-import env from '@vitrify/tools/env'
+import { config } from '../../env.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import {
@@ -40,10 +40,7 @@ import {
 
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
-const downPaymentPaymentTermDays =
-  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  5
+const downPaymentPaymentTermDays = config.downPaymentPaymentTermDays
 
 export const compileEmail = async ({
   booking,
@@ -96,7 +93,7 @@ export const compileEmail = async ({
   }
 }
 
-const slimfactHost = env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
+const slimfactHost = config.slimfactHost
 export const createOrUpdateSlimfactInvoice = async ({
   fastify,
   booking,
@@ -122,7 +119,7 @@ export const createOrUpdateSlimfactInvoice = async ({
   if (!fastify.slimfact) throw new Error('SlimFact not configured')
   if (!customer.account) throw new Error('Customer is not linked to an account')
 
-  if (!locale) locale = env.read('VITE_LANG') || 'en-US'
+  if (!locale) locale = config.lang
 
   const dateFormatter = (date: Date) =>
     new Intl.DateTimeFormat(locale, {
@@ -136,7 +133,7 @@ export const createOrUpdateSlimfactInvoice = async ({
 
     companyDetails = await fastify.slimfact.admin.getCompany.query({
       id: Number(
-        env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
+        config.slimfactCompanyId
       )
     })
   } catch (e) {
@@ -209,7 +206,7 @@ export const createOrUpdateSlimfactInvoice = async ({
   →
   ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
 
-  const host = env.read('API_HOST') || env.read('VITE_API_HOST')
+  const host = config.apiHost
 
   let computedCancelationCosts
   let cancelationSurcharge: RawInvoiceSurcharge
@@ -248,7 +245,7 @@ export const createOrUpdateSlimfactInvoice = async ({
         numberPrefixTemplate:
           companyDetails.defaultNumberPrefixTemplate ||
           numberPrefixes.at(0)?.template,
-        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        currency: config.currency || 'EUR',
         lines,
         discounts,
         surcharges,
@@ -276,7 +273,7 @@ export const createOrUpdateSlimfactInvoice = async ({
         numberPrefixTemplate:
           companyDetails.defaultNumberPrefixTemplate ||
           numberPrefixes.at(0)?.template,
-        currency: env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR',
+        currency: config.currency || 'EUR',
         lines,
         discounts,
         surcharges,
@@ -410,7 +407,7 @@ export const adminBookingRoutes = ({
       })
     )
     .query(async ({ input }) => {
-      const { id, type, localeCode = env.read('VITE_LANG') } = input
+      const { id, type, localeCode = config.lang } = input
       const booking = await findBooking({
         criteria: {
           id
@@ -526,7 +523,7 @@ export const adminBookingRoutes = ({
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
                 replyTo:
-                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+                  config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -570,7 +567,7 @@ export const adminBookingRoutes = ({
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
                 replyTo:
-                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+                  config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -616,7 +613,7 @@ export const adminBookingRoutes = ({
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
                 replyTo:
-                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+                  config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -657,7 +654,7 @@ export const adminBookingRoutes = ({
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
                 replyTo:
-                  env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+                  config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText

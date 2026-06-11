@@ -7,12 +7,11 @@ import {
 } from './repositories/booking.js'
 import { createReceiptsForCustomerDaycareSubscriptions } from './repositories/customerDaycareSubscription.js'
 import { sendNotification } from '@petboarding/tools/ntfy'
-import env from '@vitrify/tools/env'
+import { appConfig } from './config/env.js'
 
-const NTFY_HOST = env.read('NTFY_HOST') || env.read('VITE_NTFY_HOST')
-const NTFY_ACCESS_TOKEN =
-  env.read('NTFY_ACCESS_TOKEN') || env.read('VITE_NTFY_ACCESS_TOKEN')
-const HOST = env.read('VITE_API_HOST') || env.read('API_HOST')
+const NTFY_HOST = appConfig.ntfyHost
+const NTFY_ACCESS_TOKEN = appConfig.ntfyAccessToken
+const HOST = appConfig.apiHost
 
 let boss: PgBoss
 const createDownPaymentWorker = ({ fastify }: { fastify: FastifyInstance }) =>

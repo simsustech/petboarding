@@ -11,12 +11,12 @@ import {
   updateBooking
 } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer'
-import env from '@vitrify/tools/env'
+import { config } from '../../env.js'
 import { compileEmail } from '../admin/bookings'
 import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
-const MAIL_BCC = env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC')
+const MAIL_BCC = config.mailBcc
 
 export const findIds = ({
   currentIds,
@@ -147,7 +147,7 @@ export const userBookingRoutes = ({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.id && ctx.account?.id) {
-        const { id, reason, localeCode = env.read('VITE_LANG') } = input
+        const { id, reason, localeCode = config.lang } = input
         const customer = await findCustomer({
           criteria: {
             accountId: Number(ctx.account.id)
@@ -207,9 +207,7 @@ export const userBookingRoutes = ({
 
                   await fastify.mailer.sendMail({
                     from: `Petboarding <noreply@petboarding.app>`,
-                    replyTo:
-                      env.read('MAIL_REPLY_TO') ||
-                      env.read('VITE_MAIL_REPLY_TO'),
+                    replyTo: config.mailReplyTo,
                     to: customer.account?.email,
                     bcc: MAIL_BCC,
                     subject,

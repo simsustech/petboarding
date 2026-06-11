@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import modularapiPlugin from '@modular-api/api'
 import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
-import env from '@vitrify/tools/env'
+import { config } from './env.js'
 import { fastifySsrPlugin as appSsrPlugin } from '@petboarding/app/fastify-ssr-plugin'
 import { hooks } from '@petboarding/app/hooks'
 import { db as kysely } from '../src/kysely/index.js'
@@ -23,32 +23,7 @@ import {
 import { createBookingStatus, findBooking } from './repositories/booking.js'
 import { generateTheme } from 'unocss-preset-quasar/theme'
 
-// const getString = (str: string) => str
-// const host = getString(__HOST__)
-
-const theme = generateTheme(
-  env.read('SOURCE_COLOR') || env.read('VITE_SOURCE_COLOR')
-)
-
-const sassVariables = {
-  $primary:
-    env.read('SASS_VARIABLE_PRIMARY') || env.read('VITE_SASS_VARIABLE_PRIMARY'),
-  $secondary:
-    env.read('SASS_VARIABLE_SECONDARY') ||
-    env.read('VITE_SASS_VARIABLE_SECONDARY'),
-  $accent:
-    env.read('SASS_VARIABLE_ACCENT') || env.read('VITE_SASS_VARIABLE_ACCENT'),
-  $dark: env.read('SASS_VARIABLE_DARK') || env.read('VITE_SASS_VARIABLE_DARK'),
-  $positive:
-    env.read('SASS_VARIABLE_POSITIVE') ||
-    env.read('VITE_SASS_VARIABLE_POSITIVE'),
-  $negative:
-    env.read('SASS_VARIABLE_NEGATIVE') ||
-    env.read('VITE_SASS_VARIABLE_NEGATIVE'),
-  $info: env.read('SASS_VARIABLE_INFO') || env.read('VITE_SASS_VARIABLE_INFO'),
-  $warning:
-    env.read('SASS_VARIABLE_WARNING') || env.read('VITE_SASS_VARIABLE_WARNING')
-}
+const theme = generateTheme(config.sourceColor)
 
 function isBase32(input: string) {
   const regex = /^([A-Z2-7=]{8})+$/
@@ -59,13 +34,8 @@ function isBase32(input: string) {
  * Only used in SSR/SSG
  */
 export default async function (fastify: FastifyInstance) {
-  const host = env.read('API_HOST') || env.read('VITE_API_HOST')
-  const OTP_SECRET = env.read('OTP_SECRET') || env.read('VITE_OTP_SECRET')
-
-  if (!host)
-    throw new Error(
-      'Please define a API_HOST or VITE_API_HOST environment variable'
-    )
+  const host = config.apiHost
+  const OTP_SECRET = config.otpSecret
 
   if (!isBase32(OTP_SECRET)) {
     throw new Error('OTP_SECRET is not a valid Base32 encoded string.')
@@ -79,16 +49,13 @@ export default async function (fastify: FastifyInstance) {
     kysely,
     {
       OTP_SECRET,
-      OTP_VALIDITY_SECONDS:
-        env.read('OTP_VALIDITY_SECONDS') ||
-        env.read('VITE_OTP_VALIDITY_SECONDS'),
-      EMAIL_FOOTER: env.read('EMAIL_FOOTER') || env.read('VITE_EMAIL_FOOTER')
+      OTP_VALIDITY_SECONDS: config.otpValiditySeconds,
+      EMAIL_FOOTER: config.emailFooter
     },
-    env.read('VITE_LANG') || 'en-US'
+    config.lang
   )
 
-  const slimfactHost =
-    env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
+  const slimfactHost = config.slimfactHost
 
   if (slimfactHost) {
     corsOrigin.push(`https://${slimfactHost}`)
@@ -189,11 +156,9 @@ export default async function (fastify: FastifyInstance) {
       createContext
     },
     oidc: {
-      issuerName:
-        env.read('OIDC_ISSUER_NAME') || env.read('VITE_OIDC_ISSUER_NAME'),
-      locale: env.read('VITE_LANG') || 'en-US',
+      issuerName: config.oidcIssuerName,
+      locale: config.lang,
       themeColors: theme['colors'],
-      sassVariables,
       issuer: `https://${host}`,
       accountMethods,
       firstPartyClients: ['petboarding'],
@@ -207,9 +172,7 @@ export default async function (fastify: FastifyInstance) {
       configuration: {
         cookies: {
           // https://github.com/panva/node-oidc-provider/blob/main/docs/README.md#cookieskeys
-          keys: (
-            env.read('OIDC_COOKIES_KEYS') || env.read('VITE_OIDC_COOKIES_KEYS')
-          ).split(',')
+          keys: config.oidcCookiesKeys.split(',')
         },
         routes: {
           authorization: '/authorize',
@@ -220,15 +183,12 @@ export default async function (fastify: FastifyInstance) {
         // },
         clients: [
           {
-            client_id:
-              env.read('OIDC_CLIENT_ID') ||
-              env.read('VITE_OIDC_CLIENT_ID') ||
-              'petboarding',
+            client_id: config.oidcClientId,
             client_name: 'Petboarding webapp',
             logo_uri: 'https://www.petboarding.app/logo.png',
             grant_types: ['authorization_code', 'refresh_token'],
             scope: 'openid offline_access profile email api',
-            client_secret: 'secret',
+            client_secret: config.oidcClientSecret,
             redirect_uris: [`https://${host}/redirect`],
             token_endpoint_auth_method: 'none',
             'urn:custom:client:allowed-cors-origins': [`https://${host}`]
@@ -247,67 +207,44 @@ export default async function (fastify: FastifyInstance) {
         }
       },
       defaultCredentials: {
-        email:
-          env.read('MODULARAPI_DEFAULT_EMAIL') ||
-          env.read('VITE_MODULARAPI_DEFAULT_EMAIL'),
-        password:
-          env.read('MODULARAPI_DEFAULT_PASSWORD') ||
-          env.read('VITE_MODULARAPI_DEFAULT_PASSWORD')
+        email: config.modularapiDefaultEmail,
+        password: config.modularapiDefaultPassword
       }
     },
     nodemailer: {
-      defaults: { from: env.read('MAIL_FROM') || env.read('VITE_MAIL_FROM') },
+      defaults: { from: config.mailFrom },
       transport: {
-        host: env.read('MAIL_HOST') || env.read('VITE_MAIL_HOST'),
-        port: Number(env.read('MAIL_PORT') || env.read('VITE_MAIL_PORT')),
-        secure:
-          (env.read('MAIL_SECURE') || env.read('VITE_MAIL_SECURE')) === 'false'
-            ? false
-            : true,
+        host: config.mailHost,
+        port: config.mailPort,
+        secure: config.mailSecure,
         auth:
-          (env.read('MAIL_USER') || env.read('VITE_MAIL_USER')) &&
-          (env.read('MAIL_PASS') || env.read('VITE_MAIL_PASS'))
+          config.mailUser && config.mailPass
             ? {
-                user: env.read('MAIL_USER') || env.read('VITE_MAIL_USER'),
-                pass: env.read('MAIL_PASS') || env.read('VITE_MAIL_PASS')
+                user: config.mailUser,
+                pass: config.mailPass
               }
             : {}
       }
     },
     configuration: () => ({
       API_HOST: host,
-      LICENSE_KEY: env.read('VITE_LICENSE_KEY'),
-      LANG: env.read('VITE_LANG') || 'en-US',
-      COUNTRY: env.read('VITE_COUNTRY') || 'NL',
-      TITLE: env.read('VITE_TITLE') || 'Petboarding',
-      ALLOWED_SPECIES: (
-        env.read('ALLOWED_SPECIES') || env.read('VITE_ALLOWED_SPECIES')
-      )?.split(','),
-      DAYCARE_DISABLED_WEEKDAYS: (
-        env.read('DAYCARE_DISABLED_WEEKDAYS') ||
-        env.read('VITE_DAYCARE_DISABLED_WEEKDAYS')
-      )
-        ?.split(',')
-        .map(Number),
-      MANDATORY_VACCINATIONS_DOG: (
-        env.read('MANDATORY_VACCINATIONS_DOG') ||
-        env.read('VITE_MANDATORY_VACCINATIONS_DOG')
-      )?.split(','),
-      MANDATORY_VACCINATIONS_CAT: (
-        env.read('MANDATORY_VACCINATIONS_CAT') ||
-        env.read('VITE_MANDATORY_VACCINATIONS_CAT')
-      )?.split(','),
-      TERMS_AND_CONDITIONS_URL: env.read('VITE_TERMS_AND_CONDITIONS_URL'),
-      SASS_VARIABLES: sassVariables,
-      UNIT_OF_MASS: env.read('UNIT_OF_MASS') || env.read('VITE_UNIT_OF_MASS'),
-      CURRENCY: env.read('CURRENCY') || env.read('VITE_CURRENCY'),
+      LICENSE_KEY: config.licenseKey,
+      LANG: config.lang,
+      COUNTRY: config.country,
+      TITLE: config.title,
+      ALLOWED_SPECIES: config.allowedSpecies,
+      DAYCARE_DISABLED_WEEKDAYS: config.daycareDisabledWeekdays,
+      MANDATORY_VACCINATIONS_DOG: config.mandatoryVaccinationsDog,
+      MANDATORY_VACCINATIONS_CAT: config.mandatoryVaccinationsCat,
+      TERMS_AND_CONDITIONS_URL: config.termsAndConditionsUrl,
+      UNIT_OF_MASS: config.unitOfMass,
+      CURRENCY: config.currency,
       INTEGRATIONS: {
         slimfact: {
           host: slimfactHost
         }
       },
-      SUPPORT_EMAIL:
-        env.read('SUPPORT_EMAIL') || env.read('VITE_SUPPORT_EMAIL'),
+      SUPPORT_EMAIL: config.supportEmail,
       THEME_COLORS: theme['colors']
     })
   })

@@ -1,6 +1,6 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
-import env from '@vitrify/tools/env'
+import { config } from '../env.js'
 import {
   getOverlappingDaysInIntervals,
   parse,
@@ -1163,9 +1163,7 @@ export async function cancelBooking(
 
       const maxCancelationDate = subMonths(
         parseISO(booking.startDate),
-        env.read('CANCELATION_PERIOD_MONTHS') ||
-          env.read('VITE_CANCELATION_PERIOD_MONTHS') ||
-          0
+        config.cancelationPeriodMonths
       )
 
       status =
@@ -1229,10 +1227,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
   return count
 }
 
-export const downPaymentPaymentTermDays =
-  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  5
+export const downPaymentPaymentTermDays = config.downPaymentPaymentTermDays
 export async function checkDownPayments({
   fastify
 }: {
@@ -1263,7 +1258,7 @@ export async function checkDownPayments({
     .selectAll()
     .execute()
 
-  const localeCode = env.read('VITE_LANG')
+  const localeCode = config.lang
 
   let reason: string
   try {
@@ -1293,7 +1288,7 @@ export async function checkDownPayments({
     ) {
       await cancelBooking({ id: booking.id }, reason, true)
       if (fastify?.mailer) {
-        const localeCode = env.read('VITE_LANG')
+        const localeCode = config.lang
         let template: { subject: string; body: string }
         try {
           template = await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
@@ -1326,10 +1321,9 @@ export async function checkDownPayments({
 
             await fastify.mailer.sendMail({
               from: `Petboarding <noreply@petboarding.app>`,
-              replyTo:
-                env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+              replyTo: config.mailReplyTo,
               to: customer.account?.email,
-              bcc: env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC'),
+              bcc: config.mailBcc,
               subject,
               html: body
             })

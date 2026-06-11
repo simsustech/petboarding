@@ -1,6 +1,6 @@
 import { c } from 'compress-tag'
-import env from '@vitrify/tools/env'
-const host = env.read('VITE_API_HOST') || env.read('API_HOST')
+import { config } from '../../../../env.js'
+const host = config.apiHost
 
 const subject = c`\\{{#if requiredDownPaymentAmount}}Down payment required! \\{{/if}}Your booking has been approved.`
 const body = c`

@@ -2,7 +2,7 @@ import { Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
 import type { Pets } from '../kysely/types.ts'
-import env from '@vitrify/tools/env'
+import { config } from '../env.js'
 import {
   type Insertable,
   type Selectable,
@@ -24,15 +24,8 @@ export interface ParsedPet extends Omit<Pet, 'image'> {
 }
 
 const mandatoryVaccinations: Record<string, string[]> = {
-  dog: (
-    env.read('MANDATORY_VACCINATIONS_DOG') ||
-    env.read('VITE_MANDATORY_VACCINATIONS_DOG')
-  )?.split(',') || ['parvo', 'distemper', 'hepatitis'],
-  cat:
-    (
-      env.read('MANDATORY_VACCINATIONS_CAT') ||
-      env.read('VITE_MANDATORY_VACCINATIONS_CAT')
-    )?.split(',') || []
+  dog: config.mandatoryVaccinationsDog || ['parvo', 'distemper', 'hepatitis'],
+  cat: config.mandatoryVaccinationsCat || []
 }
 export const checkVaccinations = ({
   species,
