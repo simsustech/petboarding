@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
 import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
+import { getRandomInt } from './index.js'
 
 const NUMBER_OF_CUSTOMERS = 200
 const MAX_CONTACT_PEOPLE_PER_CUSTOMER = 2
@@ -32,7 +33,13 @@ const createContactPerson = (customerId: number) => ({
 })
 
 let petId = 0
-const createPet = (customerId: number) => {
+export const createPet = ({
+  name,
+  customerId
+}: {
+  name?: string
+  customerId: number
+}) => {
   const rating =
     faker.number.int({
       min: 0,
@@ -44,14 +51,14 @@ const createPet = (customerId: number) => {
   return {
     rating,
     species: 'dog',
-    name: faker.person.firstName(),
+    name: name ?? faker.person.firstName(),
     breed: faker.animal.dog(),
     birthDate: faker.date.past({ years: 10 }).toISOString().split('T')[0],
     color: faker.color.human(),
     food: {
       timesADay: 2,
       amount: getRandomInt(300),
-      amountUnit: 'gram',
+      amountUnit: 'gram' as const,
       kind: 'Generic'
     },
     gender: getRandomInt(2) > 1 ? 'male' : 'female',
@@ -64,10 +71,6 @@ const createPet = (customerId: number) => {
     id: petId,
     categoryId: 1
   }
-}
-
-const getRandomInt = (max: number) => {
-  return Math.floor(Math.random() * max) + 1
 }
 
 let bookingId = 0
@@ -170,7 +173,7 @@ export default () => {
       }
       const ownedPets = []
       for (let j = 1; j <= getRandomInt(MAX_PETS_PER_CUSTOMER); j++) {
-        const pet = createPet(i)
+        const pet = createPet({ customerId: i })
         pets.push(pet)
         ownedPets.push(pet)
       }

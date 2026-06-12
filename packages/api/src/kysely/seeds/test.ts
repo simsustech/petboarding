@@ -7,6 +7,7 @@ import {
   OPENING_TIME_TYPE,
   SERVICE_TYPE
 } from '@petboarding/tools/constants'
+import { getRandomInt } from './fake/index.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -41,7 +42,13 @@ const seed = async () => {
     birthDate: '2020-02-02',
     gender: 'male',
     sterilized: true,
-    customerId: nr
+    customerId: nr,
+    food: {
+      timesADay: 2,
+      amount: getRandomInt(300),
+      amountUnit: 'gram' as const,
+      kind: 'Generic'
+    }
   }))
 
   const bookings = [1, 2, 3, 4, 5].map((nr) => ({
