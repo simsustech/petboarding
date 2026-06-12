@@ -2,6 +2,7 @@ import { t } from '../index.js'
 import { configurationEmailRoutes } from './emails.js'
 import { configurationOpeningTimeRoutes } from './openingTimes.js'
 import { configurationPeriodRoutes } from './periods.js'
+import { configurationVacationRoutes } from './vacations.js'
 import { configurationAnnouncementRoutes } from './announcements'
 import { configurationCategoryRoutes } from './categories.js'
 import type { FastifyInstance } from 'fastify'
@@ -21,6 +22,7 @@ export const configurationRoutes = ({
   ...configurationEmailRoutes({ procedure, fastify }),
   ...configurationOpeningTimeRoutes({ procedure, fastify }),
   ...configurationPeriodRoutes({ procedure, fastify }),
+  ...configurationVacationRoutes({ procedure, fastify }),
   ...configurationAnnouncementRoutes({ procedure, fastify }),
   ...configurationCategoryRoutes({ procedure, fastify }),
   ...configurationServiceRoutes({ procedure, fastify }),

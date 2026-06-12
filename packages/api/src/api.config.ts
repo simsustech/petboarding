@@ -8,159 +8,6 @@ import type {
   BookingCostsHandler
 } from './petboarding.d.ts'
 
-const vacations = [
-  {
-    name: 'Herfstvakantie',
-    startDate: '2024-10-19',
-    endDate: '2024-10-27'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2024-12-21',
-    endDate: '2025-01-05'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2025-02-22',
-    endDate: '2025-03-02'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2025-04-26',
-    endDate: '2025-05-04'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2025-07-01',
-    endDate: '2025-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2025-10-11',
-    endDate: '2025-10-19'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2025-12-20',
-    endDate: '2026-01-04'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2026-02-14',
-    endDate: '2026-02-22'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2026-04-25',
-    endDate: '2026-05-03'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2026-07-01',
-    endDate: '2026-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2026-10-17',
-    endDate: '2026-10-25'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2026-12-19',
-    endDate: '2027-01-03'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2027-02-13',
-    endDate: '2027-02-21'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2027-04-24',
-    endDate: '2027-05-02'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2027-07-01',
-    endDate: '2027-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2027-10-23',
-    endDate: '2027-10-31'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2027-12-25',
-    endDate: '2028-01-09'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2028-02-26',
-    endDate: '2028-03-05'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2028-04-29',
-    endDate: '2028-05-07'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2028-07-01',
-    endDate: '2028-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2028-10-21',
-    endDate: '2028-10-29'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2028-12-23',
-    endDate: '2029-01-07'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2029-02-10',
-    endDate: '2029-02-18'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2029-04-28',
-    endDate: '2029-05-06'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2029-07-01',
-    endDate: '2029-08-31'
-  },
-  {
-    name: 'Herfstvakantie',
-    startDate: '2029-10-13',
-    endDate: '2029-10-21'
-  },
-  {
-    name: 'Kerstvakantie',
-    startDate: '2029-12-22',
-    endDate: '2030-01-06'
-  },
-  {
-    name: 'Voorjaarsvakantie',
-    startDate: '2030-02-23',
-    endDate: '2030-03-03'
-  },
-  {
-    name: 'Meivakantie',
-    startDate: '2030-04-27',
-    endDate: '2030-05-05'
-  },
-  {
-    name: 'Zomervakantie',
-    startDate: '2030-07-01',
-    endDate: '2030-08-31'
-  }
-]
-
 const findActualPrice = ({
   prices,
   date
@@ -185,7 +32,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
   withServices,
   dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
   dateHolidays,
-  computeInvoiceCosts
+  computeInvoiceCosts,
+  vacations
 }) => {
   let lines: RawInvoiceLine[] = []
   const discounts: RawInvoiceDiscount[] = []
@@ -260,34 +108,29 @@ const bookingCostsHandler: BookingCostsHandler = ({
     }
   }
 
-  const vacationDays = vacations
-    .map((vacation) =>
-      getOverlappingDaysInIntervals(
-        {
-          start: parse(startDate, 'yyyy-MM-dd', new Date()),
-          end: parse(endDate, 'yyyy-MM-dd', new Date())
-        },
-        {
-          start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
-          end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
-        }
-      )
+  for (const vacation of vacations) {
+    const overlapDays = getOverlappingDaysInIntervals(
+      {
+        start: parse(startDate, 'yyyy-MM-dd', new Date()),
+        end: parse(endDate, 'yyyy-MM-dd', new Date())
+      },
+      {
+        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+      }
     )
-    .reduce((acc, cur) => {
-      if (cur > 0) acc += cur + 1
-      return acc
-    }, 0)
 
-  if (vacationDays - holidayDays > 0) {
-    lines.push({
-      description: 'Vacation surcharge',
-      listPrice: 100,
-      listPriceIncludesTax: true,
-      quantity: pets.length * (vacationDays - holidayDays),
-      quantityPerMille: false,
-      discount: 0,
-      taxRate: 21
-    })
+    if (overlapDays > 0) {
+      lines.push({
+        description: vacation.name,
+        listPrice: vacation.surchargePerDay ?? 100,
+        listPriceIncludesTax: true,
+        quantity: pets.length * (overlapDays + 1),
+        quantityPerMille: false,
+        discount: 0,
+        taxRate: 21
+      })
+    }
   }
 
   let computedInvoiceCosts
@@ -330,7 +173,8 @@ const bookingCancelationHandler: BookingCancelationHandler = ({
   period: { startDate, endDate },
   dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
   booking,
-  BOOKING_STATUS
+  BOOKING_STATUS,
+  vacations
 }) => {
   const start = parse(startDate, 'yyyy-MM-dd', new Date())
   const end = parse(endDate, 'yyyy-MM-dd', new Date())

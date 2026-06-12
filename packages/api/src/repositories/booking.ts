@@ -54,6 +54,7 @@ import { compileEmail } from '../trpc/admin/bookings.js'
 import { findCustomer } from './customer.js'
 import { bookingTemplates } from '../templates/booking/index.js'
 import { eachDayOfInterval } from '../tools.js'
+import { findVacations } from './vacation.js'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
@@ -219,6 +220,12 @@ export async function calculateBookingCosts({
       let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
+
+        const vacations = await findVacations({
+          from: booking.startDate,
+          until: booking.endDate
+        })
+
         ;({
           lines,
           discounts,
@@ -234,6 +241,7 @@ export async function calculateBookingCosts({
           pets: booking.pets,
           categories,
           withServices,
+          vacations,
           dateFns: {
             eachDayOfInterval,
             getOverlappingDaysInIntervals,
@@ -1115,6 +1123,11 @@ export async function cancelBooking(
   ignoreCancelationPeriod?: boolean
 ) {
   const booking = await findBooking({ criteria })
+  const vacations = await findVacations({
+    from: booking?.startDate,
+    until: booking?.endDate
+  })
+
   if (
     booking?.startDate &&
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
@@ -1154,7 +1167,8 @@ export async function cancelBooking(
             differenceInDays
           },
           booking: lastApprovedBooking,
-          BOOKING_STATUS
+          BOOKING_STATUS,
+          vacations
         }))
       }
     } catch (e) {

@@ -408,6 +408,18 @@ const lang: Language = {
       verifyDeletion: 'Are you sure you want to delete the following period?'
     }
   },
+  vacation: {
+    title: 'Vacations',
+    fields: {
+      name: 'Name',
+      startDate: 'Start date',
+      endDate: 'End date',
+      surchargePerDay: 'Surcharge per day'
+    },
+    messages: {
+      verifyDeletion: 'Are you sure you want to delete the following vacation?'
+    }
+  },
   announcement: {
     title: 'Announcements',
     fields: {

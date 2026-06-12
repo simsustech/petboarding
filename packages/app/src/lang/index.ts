@@ -388,6 +388,18 @@ export interface Language {
       verifyDeletion: string
     }
   }
+  vacation: {
+    title: string
+    fields: {
+      name: string
+      startDate: string
+      endDate: string
+      surchargePerDay: string
+    }
+    messages: {
+      verifyDeletion: string
+    }
+  }
   announcement: {
     title: string
     fields: {

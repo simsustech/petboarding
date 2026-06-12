@@ -2,6 +2,7 @@ import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import env from '@vitrify/tools/env'
 import { OPENING_TIME_TYPE, SERVICE_TYPE } from '@petboarding/tools/constants'
+import { getAllVacations } from './vacations/index.js'
 
 const ADMIN_PASSWORD = env.read('PETBOARDING_ADMIN_PASSWORD')
 if (!ADMIN_PASSWORD)
@@ -225,6 +226,9 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   await db.insertInto('services').values(services).execute()
   await db.insertInto('documents').values(documents).execute()
   // await db.insertInto('emailTemplates').values(emailTemplates).execute()
+
+  const vacations = getAllVacations()
+  await db.insertInto('vacations').values(vacations).execute()
 
   const adminAccounts = await db
     .insertInto('accounts')

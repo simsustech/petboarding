@@ -388,6 +388,14 @@ export interface PetRelations {
   comment: string | null
 }
 
+export interface Vacations {
+  id: Generated<number>
+  name: string
+  startDate: string
+  endDate: string
+  surchargePerDay: number
+}
+
 export interface DB {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
@@ -418,4 +426,5 @@ export interface DB {
   vaccinations: Vaccinations
   documents: Documents
   petRelations: PetRelations
+  vacations: Vacations
 }
