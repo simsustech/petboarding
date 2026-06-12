@@ -10,3 +10,5 @@ clients
 .pnpm-debug.log
 **/stats.html
 **/components.d.ts
+test-results.json
+docker-compose.*.override.yaml

@@ -16,6 +16,10 @@ minimumReleaseAgeExclude:
   - "@vue/*"
   - vue-tsc
   - date-fns
+  - unocss
+  - "@unocss/*"
+  - "@quasar/*"
+  - sass
 
 allowBuilds:
   "@parcel/watcher": true
