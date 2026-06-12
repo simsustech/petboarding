@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import rateLimit from '@fastify/rate-limit'
 import modularapiPlugin from '@modular-api/api'
 import { createAccountMethods } from '@modular-api/fastify-oidc/kysely'
 import { createRouter, createContext } from './trpc/index.js'
@@ -27,8 +28,12 @@ import { generateTheme } from 'unocss-preset-quasar/theme'
 const theme = generateTheme(config.sourceColor)
 
 function isBase32(input: string) {
-  const regex = /^([A-Z2-7=]{8})+$/
-  return regex.test(input)
+  // Base32 regex: A-Z, 2-7, and padding character =
+  // Valid Base32 can be any length that's a multiple of 8 (including 0)
+  // or any non-zero length when unpadded
+  if (!input || input.length === 0) return false
+  const regex = /^[A-Z2-7]+=*$/
+  return regex.test(input) && (input.length % 8 === 0 || !input.includes('='))
 }
 
 /**
@@ -43,6 +48,14 @@ export default async function (fastify: FastifyInstance) {
   }
 
   const corsOrigin = [`https://${host}`]
+
+  await fastify.register(rateLimit, {
+    max: config.rateLimitPerMinute ?? 1e6,
+    timeWindow: '1 minute',
+    keyGenerator: (request) => {
+      return request.ip
+    }
+  })
 
   await registerHealthRoutes(fastify)
 
