@@ -29,7 +29,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      staging:
+      test:
         aliases:
           - database
 
@@ -41,14 +41,16 @@ services:
       - "8025:8025"
       - "1025:1025"
     networks:
-      staging:
+      test:
         aliases:
           - mailhog
 
   app:
-    # image: "ghcr.io/simsustech/petboarding:staging"
+    # image: "ghcr.io/simsustech/petboarding:test"
     build:
       context: .
+      args:
+        DEBUG: "true"
       secrets:
         - SIMSUSTECH_NPM_TOKEN
       dockerfile: Dockerfile
@@ -82,12 +84,7 @@ services:
       OTP_SECRET: NNXHQ5TPNF2WK53POJUWU53MMVXHE===
       OTP_VALIDITY_SECONDS: 3600
       EMAIL_FOOTER: "Petboarding <info@petboarding.app>"
-    command:
-      [
-        "sh",
-        "-c",
-        "npm run migrate:latest && npm run seed:test && npm run start",
-      ]
+    command: ["sh", "-c", "npm run migrate:latest && npm run seed:test && npm run start"]
     healthcheck:
       test: curl --fail --insecure http://localhost || exit 1
       interval: 5s
@@ -95,15 +92,14 @@ services:
       start_period: 15s
       timeout: 10s
     networks:
-      staging:
+      test:
       web:
 
 secrets:
   SIMSUSTECH_NPM_TOKEN:
-    environment: "SIMSUSTECH_NPM_TOKEN"
-    # file: ./env/SIMSUSTECH_NPM_TOKEN
+    environment: "SIMSUSTECH_NPM_TOKEN" # Local: export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN)
 
 networks:
-  staging:
+  test:
   web:
     external: true

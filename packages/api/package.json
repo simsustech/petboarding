@@ -32,6 +32,8 @@
     "build": "run-s build:api build:migrations seed:fake:generate minify:fastify",
     "build:migrations": "tsc -p tsconfig.migrations.json",
     "build:api": "vitrify build -m fastify",
+    "build:debug": "run-s build:api:debug build:migrations seed:fake:generate",
+    "build:api:debug": "vitrify build -m fastify --debug",
     "minify:csr": "vitrify minify ./dist/csr",
     "minify:ssr:server": "vitrify minify ./dist/ssr/server",
     "minify:ssr:client": "vitrify minify ./dist/ssr/client",
@@ -48,6 +50,7 @@
     "seed:fake": "node ./dist/kysely/seeds/fake.js",
     "seed:test": "node ./dist/kysely/seeds/test.js",
     "seed:data": "node ./dist/kysely/seeds/data.js",
+    "seed:vacations": "node ./dist/kysely/seeds/vacations.js",
     "start": "run-s migrate:latest serve",
     "start:dev-server": "NODE_TLS_REJECT_UNAUTHORIZED=0 vitrify dev -m fastify --port 3000",
     "docker-compose": "node ./docker-compose.dev.mjs"

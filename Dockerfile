@@ -21,8 +21,9 @@ ARG VITE_OIDC_PASSWORD_CHANGE_URl
 ARG VITE_TITLE
 ARG VITE_ALLOWED_SPECIES
 ARG SASS_VARIABLE_PRIMARY
+ARG DEBUG=false
 
-RUN pnpm run build
+RUN if [ "$DEBUG" = "true" ]; then pnpm run build:debug; else pnpm run build; fi
 
 FROM build-stage AS api-deploy
 # Remove circular dependency
