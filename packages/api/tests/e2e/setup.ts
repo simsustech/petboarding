@@ -43,6 +43,25 @@ export const initializePage = async ({ browser }: { browser: Browser }) => {
     console.log(`Uncaught exception: "${exception}"`)
   })
 
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.log(`Console error: "${msg.text()}"`)
+    }
+  })
+
+  page.on('response', async (response) => {
+    if (!response.ok() && response.request().resourceType() === 'xhr') {
+      try {
+        const body = await response.text()
+        console.log(
+          `Network error: ${response.status()} ${response.url()} — "${body.slice(0, 500)}"`
+        )
+      } catch {
+        // ignore if body can't be read
+      }
+    }
+  })
+
   return page
 }
 
