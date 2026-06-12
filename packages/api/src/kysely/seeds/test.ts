@@ -309,6 +309,19 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   //   }
   // ]
 
+  const buildings = [
+    {
+      name: 'Main building',
+      location: 'A',
+      description: 'The main building'
+    }
+  ]
+
+  const kennels = Array.from({ length: 10 }, (_, i) => ({
+    name: (i + 1).toString(),
+    buildingId: 1
+  }))
+
   const announcements = [
     {
       title: 'This is a public demo',
@@ -319,6 +332,8 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     }
   ]
 
+  await db.insertInto('buildings').values(buildings).execute()
+  await db.insertInto('kennels').values(kennels).execute()
   await db.insertInto('announcements').values(announcements).execute()
   await db.insertInto('categories').values(categories).execute()
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
