@@ -47,7 +47,7 @@ import { ref, watch } from 'vue'
 import { QForm, QFormProps, QInputProps, useQuasar } from 'quasar'
 import { useLang, loadLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { useConfiguration } from '../../configuration.js'
+import { useConfiguration, currencySymbols } from '../../configuration.js'
 import type { BookingService } from '@petboarding/api/zod'
 export interface Props {
   form?: QFormProps & Partial<HTMLFormElement> & Partial<HTMLDivElement>
@@ -64,11 +64,6 @@ export interface Props {
     | ('label' & { style?: Partial<CSSStyleDeclaration> })
   >
 }
-
-const currencySymbols = ref({
-  EUR: '€',
-  USD: '$'
-})
 
 const configuration = useConfiguration()
 defineProps<Props>()

@@ -132,6 +132,11 @@ export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
   HIDE_BRANDING: false
 })
 
+export const currencySymbols: Record<string, string> = {
+  EUR: '€',
+  USD: '$'
+}
+
 export const useConfiguration = () => configuration
 
 export const loadConfiguration = async (locale: Ref<string>) => {

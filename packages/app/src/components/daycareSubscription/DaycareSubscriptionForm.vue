@@ -81,7 +81,7 @@ import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { FormInput } from '@simsustech/quasar-components/form'
 import type { DaycareSubscription } from '@petboarding/api/zod'
-import { useConfiguration } from '../../configuration.js'
+import { useConfiguration, currencySymbols } from '../../configuration.js'
 import type { QFormProps, QInputProps } from 'quasar'
 
 export interface Props {
@@ -116,11 +116,6 @@ const emit = defineEmits<{
 
 const lang = useLang()
 const configuration = useConfiguration()
-
-const currencySymbols = ref({
-  EUR: '€',
-  USD: '$'
-})
 
 const formRef = ref<QForm>()
 
