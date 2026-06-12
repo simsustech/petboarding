@@ -5,6 +5,7 @@ import { userRoutes } from './user/index.js'
 import { configurationRoutes } from './configuration/index.js'
 import { publicRoutes } from './public/index.js'
 import { PETBOARDING_ACCOUNT_ROLES } from '@petboarding/tools/constants'
+import { createAuditLog } from '../repositories/auditLog.js'
 import { adminRoutes } from './admin/index.js'
 import { employeeRoutes } from './employee/index.js'
 export const t = initTRPC.context<Context>().create()
@@ -33,9 +34,26 @@ const isEmployee = t.middleware(({ next, ctx }) => {
     ctx
   })
 })
-export const userProcedure = t.procedure.use(isLoggedIn)
-export const adminProcedure = t.procedure.use(isAdministrator)
-export const employeeProcedure = t.procedure.use(isEmployee)
+
+const auditAction = t.middleware(async ({ next, ctx, path, type }) => {
+  const result = await next()
+
+  if (ctx.account && type === 'mutation') {
+    const resource = path.split('.')[0] || 'unknown'
+    createAuditLog({
+      accountId: parseInt(ctx.account.id, 10),
+      action: path,
+      resource,
+      ipAddress: ctx.ip
+    }).catch(() => {})
+  }
+
+  return result
+})
+
+export const userProcedure = t.procedure.use(isLoggedIn).use(auditAction)
+export const adminProcedure = t.procedure.use(isAdministrator).use(auditAction)
+export const employeeProcedure = t.procedure.use(isEmployee).use(auditAction)
 
 const userRouter = (fastify: FastifyInstance) =>
   t.router({
@@ -75,8 +93,8 @@ export const createRouter = (fastify: FastifyInstance) => {
 }
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export const createContext = (fastify?: FastifyInstance) =>
-  function ({ req, res }: CreateFastifyContextOptions) {
-    return {}
+  function ({ req }: CreateFastifyContextOptions) {
+    return { ip: req.ip }
   }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 

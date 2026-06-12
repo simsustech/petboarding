@@ -396,6 +396,17 @@ export interface Vacations {
   surchargePerDay: number
 }
 
+export interface AuditLogs {
+  id: Generated<number>
+  accountId: number
+  action: string
+  resource: string
+  resourceId: string | null
+  details: Json | null
+  ipAddress: string | null
+  createdAt: Generated<string>
+}
+
 export interface DB {
   // accounts: Accounts
   // authenticationMethods: AuthenticationMethods
@@ -427,4 +438,5 @@ export interface DB {
   documents: Documents
   petRelations: PetRelations
   vacations: Vacations
+  auditLogs: AuditLogs
 }
