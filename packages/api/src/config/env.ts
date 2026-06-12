@@ -37,7 +37,7 @@ export const appConfig = {
   mandatoryVaccinationsCat: read('MANDATORY_VACCINATIONS_CAT')?.split(','),
   termsAndConditionsUrl: read('TERMS_AND_CONDITIONS_URL'),
   unitOfMass: read('UNIT_OF_MASS'),
-  currency: read('CURRENCY'),
+  currency: read('CURRENCY') || 'EUR',
   supportEmail: read('SUPPORT_EMAIL'),
   slimfactHost: read('SLIMFACT_HOST'),
   slimfactCompanyId: read('SLIMFACT_COMPANY_ID'),
