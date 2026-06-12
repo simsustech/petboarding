@@ -21,6 +21,7 @@ import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 } from '@petboarding/tools/constants'
 import { createBookingStatus, findBooking } from './repositories/booking.js'
+import { registerHealthRoutes } from './routes/health.js'
 import { generateTheme } from 'unocss-preset-quasar/theme'
 
 const theme = generateTheme(config.sourceColor)
@@ -42,6 +43,8 @@ export default async function (fastify: FastifyInstance) {
   }
 
   const corsOrigin = [`https://${host}`]
+
+  await registerHealthRoutes(fastify)
 
   console.log('Running setup function....')
   const accountMethods = await createAccountMethods(
