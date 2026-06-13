@@ -173,7 +173,38 @@ export async function updateCustomer(
 }
 
 export async function searchCustomers(searchPhrase: string) {
-  const searchTerms = searchPhrase.split(' ')
+  // Sanitize and validate input
+  if (!searchPhrase || typeof searchPhrase !== 'string') {
+    return []
+  }
+
+  const sanitizedPhrase = searchPhrase.replace(/[^\w\s-]/g, '').trim()
+  if (!sanitizedPhrase) {
+    return []
+  }
+
+  const searchTerms = sanitizedPhrase
+    .split(/\s+/)
+    .filter((term) => term.length > 0)
+  if (searchTerms.length === 0) {
+    return []
+  }
+
+  // Build safe tsquery string - each term is validated
+  const tsQueryString = searchTerms
+    .map((term) => {
+      // Only allow alphanumeric characters and basic wildcards
+      const safeTerm = term.replace(/[^a-zA-Z0-9]/g, '')
+      return safeTerm.length > 0
+        ? `${safeTerm}${safeTerm.length > 3 ? ':*' : ''}`
+        : null
+    })
+    .filter(Boolean)
+    .join(' | ')
+
+  if (!tsQueryString) {
+    return []
+  }
 
   try {
     const query = sql<Customer[]>`
@@ -198,13 +229,7 @@ export async function searchCustomers(searchPhrase: string) {
         customers c 
         inner join pets p on c.id = p.customer_id
       where 
-        c.fulltext @@ to_tsquery(
-          'english', ${sql.val(
-            searchTerms
-              .map((term) => term + (term.length > 3 ? ':*' : ':'))
-              .join(' | ')
-          )}
-          )
+        c.fulltext @@ to_tsquery('english', ${sql.val(tsQueryString)})
     ), relation as (
       select 
         c.id,
@@ -226,19 +251,14 @@ export async function searchCustomers(searchPhrase: string) {
         customers c 
         inner join pets p on c.id = p.customer_id
       where 
-        p.fulltext @@ to_tsquery(
-          'english', ${sql.val(
-            searchTerms
-              .map((term) => term + (term.length > 3 ? ':*' : ':'))
-              .join(' | ')
-          )}
-        )
+        p.fulltext @@ to_tsquery('english', ${sql.val(tsQueryString)})
     )
     select distinct on (id) * from main union select * from relation;`
 
     const results = await query.execute(db)
     return results.rows
   } catch (e) {
+    console.error('Search customers error:', e)
     return []
   }
 }

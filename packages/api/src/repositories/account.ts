@@ -16,6 +16,40 @@ const defaultSelect = [
   'customFields'
 ] as (keyof Account)[]
 
+function whereEmail(
+  query: ReturnType<typeof db.selectFrom<'accounts'>>,
+  email?: string | null
+) {
+  if (!email) return query
+  return query.where((web) =>
+    web(web.fn('lower', ['email']), 'like', `%${email.toLowerCase()}%`)
+  )
+}
+
+function whereName(
+  query: ReturnType<typeof db.selectFrom<'accounts'>>,
+  name?: string | null
+) {
+  if (!name) return query
+  return query.where((web) =>
+    web(web.fn('lower', ['name']), 'like', `%${name.toLowerCase()}%`)
+  )
+}
+
+function whereRoles(
+  query: ReturnType<typeof db.selectFrom<'accounts'>>,
+  roles?: string[] | null
+) {
+  if (!roles?.length) return query
+  return query.where((web) =>
+    web(
+      sql`CAST(roles AS JSONB)`,
+      '@>',
+      `[${roles.map((role) => `"${role}"`).join(', ')}]`
+    )
+  )
+}
+
 function find({
   criteria,
   select,
@@ -41,25 +75,8 @@ function find({
     query = query.where('id', 'in', criteria.ids.length ? criteria.ids : [null])
   }
 
-  if (criteria.email) {
-    query = query.where((web) =>
-      web(
-        web.fn('lower', ['email']),
-        'like',
-        `%${criteria.email?.toLowerCase()}%`
-      )
-    )
-  }
-
-  if (criteria.name) {
-    query = query.where((web) =>
-      web(
-        web.fn('lower', ['name']),
-        'like',
-        `%${criteria.name?.toLowerCase()}%`
-      )
-    )
-  }
+  query = whereEmail(query, criteria.email)
+  query = whereName(query, criteria.name)
 
   if (criteria.searchPhrase) {
     query = query.where((web) =>
@@ -70,15 +87,7 @@ function find({
     )
   }
 
-  if (criteria.roles?.length) {
-    query = query.where((web) =>
-      web(
-        sql`CAST(roles AS JSONB)`,
-        '@>',
-        `[${criteria.roles?.map((role) => `"${role}"`).join(', ')}]`
-      )
-    )
-  }
+  query = whereRoles(query, criteria.roles)
 
   if (pagination) {
     if (pagination.sortBy)
@@ -136,35 +145,10 @@ export async function getAccountsCount({
   criteria: Partial<Account> & { roles?: string[] }
 }) {
   let query = db.selectFrom('accounts')
-  if (criteria.email) {
-    query = query.where((web) =>
-      web(
-        web.fn('lower', ['email']),
-        'like',
-        `%${criteria.email?.toLowerCase()}%`
-      )
-    )
-  }
 
-  if (criteria.name) {
-    query = query.where((web) =>
-      web(
-        web.fn('lower', ['name']),
-        'like',
-        `%${criteria.name?.toLowerCase()}%`
-      )
-    )
-  }
-
-  if (criteria.roles?.length) {
-    query = query.where((web) =>
-      web(
-        sql`CAST(roles AS JSONB)`,
-        '@>',
-        `[${criteria.roles?.map((role) => `"${role}"`).join(', ')}]`
-      )
-    )
-  }
+  query = whereEmail(query, criteria.email)
+  query = whereName(query, criteria.name)
+  query = whereRoles(query, criteria.roles)
 
   return query
     .select(({ fn }) => [fn.count<number>('accounts.id').as('accountCount')])

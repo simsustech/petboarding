@@ -132,9 +132,7 @@ export const createOrUpdateSlimfactInvoice = async ({
     numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
 
     companyDetails = await fastify.slimfact.admin.getCompany.query({
-      id: Number(
-        config.slimfactCompanyId
-      )
+      id: Number(config.slimfactCompanyId)
     })
   } catch (e) {
     throw new Error('SlimFact not authorized.')
@@ -522,8 +520,7 @@ export const adminBookingRoutes = ({
               })
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
-                replyTo:
-                  config.mailReplyTo,
+                replyTo: config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -566,8 +563,7 @@ export const adminBookingRoutes = ({
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
-                replyTo:
-                  config.mailReplyTo,
+                replyTo: config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -612,8 +608,7 @@ export const adminBookingRoutes = ({
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
-                replyTo:
-                  config.mailReplyTo,
+                replyTo: config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
@@ -653,8 +648,7 @@ export const adminBookingRoutes = ({
             if (fastify?.mailer) {
               await fastify.mailer.sendMail({
                 from: `Petboarding <noreply@petboarding.app>`,
-                replyTo:
-                  config.mailReplyTo,
+                replyTo: config.mailReplyTo,
                 to: customer.account.email,
                 subject: emailSubject,
                 html: emailText
