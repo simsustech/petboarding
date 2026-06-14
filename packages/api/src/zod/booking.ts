@@ -15,7 +15,7 @@ export const bookingServiceValidation = {
   service: service.optional(),
   listPrice: z.number().nullable().optional()
 }
-export const bookingService = z.object(bookingServiceValidation).omit({})
+export const bookingService = z.object(bookingServiceValidation)
 
 // export enum BOOKING_STATUS {
 //   PENDING = 'pending',

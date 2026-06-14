@@ -49,7 +49,6 @@ export const petValidation = {
     )
     .optional()
 }
-// yo
 
 export const pet = z.object(petValidation)
 
