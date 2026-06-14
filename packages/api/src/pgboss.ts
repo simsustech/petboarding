@@ -1,5 +1,5 @@
 import { PgBoss } from 'pg-boss'
-import { postgresConnectionString } from '../src/kysely/index.js'
+import { postgresConnectionString } from './kysely/index.js'
 import { FastifyInstance } from 'fastify'
 import {
   checkDownPayments,

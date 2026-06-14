@@ -12,83 +12,6 @@ import {
   SERVICE_TYPE,
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
 } from '@petboarding/tools/constants'
-// export enum ANNOUNCEMENT_TYPE {
-//   GENERAL = 'general',
-//   IMPORTANT = 'important',
-//   PRIORITY = 'priority',
-//   URGENT = 'urgent'
-// }
-
-// export const VACCINATION_IMAGE_SIZE = {
-//   width: 1024,
-//   height: 768
-// }
-
-// export const VACCINATION_TYPES_DOG = [
-//   'kennelcough',
-//   'parvo',
-//   'hepatitis',
-//   'distemper',
-//   'leptospirosis',
-//   'rabies'
-// ] as const
-
-// export const VACCINATION_TYPES_CAT = [
-//   'panleukopenia',
-//   'rhinotracheitis',
-//   'caliciviruses',
-//   'rabies',
-//   'leukemia'
-// ] as const
-
-// export const VACCINATION_TYPES = {
-//   dog: VACCINATION_TYPES_DOG,
-//   cat: VACCINATION_TYPES_CAT
-// }
-
-// export const PET_SPECIES = ['dog', 'cat'] as const
-
-// export enum PETBOARDING_ACCOUNT_ROLES {
-//   ADMINISTRATOR = 'administrator',
-//   MANAGER = 'manager',
-//   EMPLOYEE = 'employee',
-//   INTERN = 'intern'
-// }
-
-// export enum BOOKING_STATUS {
-//   PENDING = 'pending',
-//   APPROVED = 'approved',
-//   REJECTED = 'rejected',
-//   STANDBY = 'standby',
-//   CANCELED = 'canceled',
-//   CANCELED_OUTSIDE_PERIOD = 'canceledoutsideperiod',
-//   AWAITING_DOWNPAYMENT = 'awaitingdownpayment'
-// }
-
-// export enum OPENING_TIME_TYPE {
-//   ALL = 'all',
-//   ARRIVAL = 'arrival',
-//   DEPARTURE = 'departure'
-// }
-
-// export enum DAYCARE_DATE_STATUS {
-//   PENDING = 'pending',
-//   APPROVED = 'approved',
-//   REJECTED = 'rejected',
-//   CANCELED = 'canceled',
-//   STANDBY = 'standby'
-// }
-
-// export enum PERIOD_TYPE {
-//   UNAVAILABLE_FOR_ALL = 'unavailableforall',
-//   UNAVAILABLE_FOR_BOOKINGS = 'unavailableforbookings',
-//   UNAVAILABLE_FOR_DAYCARE = 'unavailablefordaycare'
-// }
-
-// export enum SERVICE_TYPE {
-//   APPOINTMENT = 'appointment',
-//   SURCHARGE = 'surcharge'
-// }
 
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>
@@ -119,17 +42,6 @@ export interface Announcements {
   expirationDate: string | null
   createdAt: Generated<string>
 }
-
-// export interface AuthenticationMethods {
-//   id: Generated<number>
-//   accountId: number
-//   provider: string | null
-//   sub: string | null
-//   password: string | null
-//   otp: string | null
-//   otpExpirationDate: Timestamp | null
-//   createdAt: Generated<string>
-// }
 
 export interface BookingPetKennel {
   bookingId: number
@@ -240,12 +152,6 @@ export interface DaycareDates {
   createdAt: Generated<string>
 }
 
-// export enum CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS {
-//   OPEN = 'open',
-//   PAID = 'paid',
-//   CANCELED = 'canceled'
-// }
-
 export interface DaycareSubscriptions {
   id: Generated<number>
   description: string
@@ -287,17 +193,6 @@ export interface Kennels {
   order: number | null
   createdAt: Generated<string>
 }
-
-// export interface OidcPayloads {
-//   id: string
-//   type: number
-//   payload: string | null
-//   grantId: string | null
-//   userCode: string | null
-//   uid: string | null
-//   expiresAt: Timestamp | null
-//   consumedAt: Timestamp | null
-// }
 
 export interface OpeningTimes {
   id: Generated<number>

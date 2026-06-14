@@ -2,9 +2,7 @@ import pg from 'pg'
 const { Pool } = pg
 import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely'
 import { postgresConfig } from '../config/postgres.js'
-// import type { Database as OidcDatabase } from '@modular-api/fastify-oidc'
 import type { DB } from './types.d.ts'
-// export interface Database extends DB {}
 export type Database = DB
 Object.defineProperty(BigInt.prototype, 'toJSON', {
   get() {
@@ -33,7 +31,7 @@ const ssl = postgresConfig.ssl
     }
   : false
 
-export const postgresConnectionString = `postgress://${user}:${password}@${host}:${port}/${database}?sslmode=${ssl ? (ssl.rejectUnauthorized ? 'prefer' : 'no-verify') : ''}&sslrootcert=${ssl ? (ssl.ca ? ssl.ca : '') : ''}`
+export const postgresConnectionString = `postgres://${user}:${password}@${host}:${port}/${database}?sslmode=${ssl ? (ssl.rejectUnauthorized ? 'prefer' : 'no-verify') : ''}&sslrootcert=${ssl ? (ssl.ca ? ssl.ca : '') : ''}`
 
 const dialect = new PostgresDialect({
   pool: new Pool({

@@ -75,7 +75,7 @@ const seed = async () => {
     petId: 5
   })
 
-  const bookingStatuseEnum = [
+  const bookingStatusesEnum = [
     BOOKING_STATUS.PENDING,
     BOOKING_STATUS.APPROVED,
     BOOKING_STATUS.REJECTED,
@@ -93,7 +93,7 @@ const seed = async () => {
   const bookingStatuses = [1, 2, 3, 4, 5].map((nr) => ({
     ...bookings[nr - 1],
     bookingId: nr,
-    status: bookingStatuseEnum[nr - 1],
+    status: bookingStatusesEnum[nr - 1],
     petIds: `[${nr - 1}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
@@ -101,7 +101,7 @@ const seed = async () => {
   bookingStatuses.push({
     ...bookings[5],
     bookingId: 6,
-    status: bookingStatuseEnum[0],
+    status: bookingStatusesEnum[0],
     petIds: `[${5}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
