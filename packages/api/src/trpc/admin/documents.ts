@@ -35,7 +35,7 @@ export const adminDocumentRoutes = ({
     )
     .mutation(async ({ input }) => {
       const { content } = input
-      updateDocument(
+      await updateDocument(
         {
           name: 'privacyPolicy'
         },

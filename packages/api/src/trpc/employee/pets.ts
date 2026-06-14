@@ -62,7 +62,7 @@ export const employeePetRoutes = ({
       const { id } = input
 
       if (id) {
-        const pet = findPet({
+        const pet = await findPet({
           criteria: {
             id
           },
@@ -215,7 +215,7 @@ export const employeePetRoutes = ({
         if (uri) {
           image = await convertVaccinationImage(uri)
 
-          const vaccination = updateVaccination(
+          const vaccination = await updateVaccination(
             { id },
             {
               expirationDate: input.expirationDate,

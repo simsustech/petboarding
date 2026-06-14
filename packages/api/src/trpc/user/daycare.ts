@@ -42,7 +42,7 @@ export const userDaycareRoutes = ({
           }
         })
         if (customer?.id) {
-          const daycareDates = findDaycareDates({
+          const daycareDates = await findDaycareDates({
             criteria: {
               customerId: customer.id,
               from,

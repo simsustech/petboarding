@@ -15,7 +15,7 @@ export const configurationEmailRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getBookingEmailReplies: procedure.query(async () => {
-    const templates = findEmailTemplates({
+    const templates = await findEmailTemplates({
       criteria: {
         names: [
           'approveBooking',
