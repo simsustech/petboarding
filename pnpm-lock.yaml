@@ -194,8 +194,8 @@ importers:
         specifier: 8.0.16
         version: 8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0)
       vitrify:
-        specifier: ^0.26.9
-        version: 0.26.9(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0)
+        specifier: ^0.26.10
+        version: 0.26.10(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0)
       vue:
         specifier: 3.5.38
         version: 3.5.38(typescript@6.0.3)
@@ -345,8 +345,8 @@ importers:
         specifier: 1.3.0
         version: 1.3.0(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(workbox-build@7.4.1)(workbox-window@7.4.1)
       vitrify:
-        specifier: 0.26.9
-        version: 0.26.9(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0)
+        specifier: 0.26.10
+        version: 0.26.10(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0)
       vue:
         specifier: 3.5.38
         version: 3.5.38(typescript@6.0.3)
@@ -6683,8 +6683,8 @@ packages:
       jsdom:
         optional: true
 
-  vitrify@0.26.9:
-    resolution: {integrity: sha512-LA6SzLqiCq9xLK2xFyp04k9+1Pe+/l6lZdZE04+qat0qz1MKiUAGisEG/wHJy0iwEJ4m3XMzSiOCPRv6XRFLjA==}
+  vitrify@0.26.10:
+    resolution: {integrity: sha512-EfPpMJH+9vEnYNU5DcpK7lhPy5NTlBp5aY8hRhnr6W0zwk3G4uUBhUlaar3pXGqfzGxfzfs5Ut+wg4czYC16hA==}
     engines: {node: '>=24.0.0'}
     hasBin: true
     peerDependencies:
@@ -13371,7 +13371,7 @@ snapshots:
     transitivePeerDependencies:
       - msw
 
-  vitrify@0.26.9(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0):
+  vitrify@0.26.10(@fastify/static@9.1.3)(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@types/node@24.13.2)(animate.css@4.1.1)(esbuild@0.27.7)(fastify@5.8.5)(jiti@2.7.0)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(quasar@2.20.0)(rollup@4.62.0)(terser@5.48.0)(typescript@6.0.3)(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3)))(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@24.13.2)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))(workbox-build@7.4.1)(yaml@2.9.0):
     dependencies:
       '@fastify/middie': 9.3.2
       '@fastify/one-line-logger': 2.1.0
