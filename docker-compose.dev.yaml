@@ -67,7 +67,7 @@ services:
 
 secrets:
   SIMSUSTECH_NPM_TOKEN:
-    file: ./env/SIMSUSTECH_NPM_TOKEN
+    environment: SIMSUSTECH_NPM_TOKEN # Local: export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN)
 
 networks:
   dev:

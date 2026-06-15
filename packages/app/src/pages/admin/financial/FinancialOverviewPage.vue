@@ -18,7 +18,9 @@
 import { useLang } from '../../../lang/index.js'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import BookingItem from '../../../components/booking/BookingItem.vue'
+import BookingItem, {
+  type OpenBookingHandler
+} from '../../../components/booking/BookingItem.vue'
 import { useAdminFinancialGetUnpaidBookingsQuery } from 'src/queries/admin/financial.js'
 
 const router = useRouter()
@@ -38,9 +40,7 @@ const {
   days
 } = useAdminFinancialGetUnpaidBookingsQuery()
 
-const onOpenBooking: InstanceType<
-  typeof BookingItem
->['$props']['onOpenBooking'] = ({ id }) =>
+const onOpenBooking: OpenBookingHandler = ({ id }) =>
   router.push(`/employee/bookings/${id}`)
 
 onMounted(async () => {

@@ -175,7 +175,9 @@ const openDeleteDaycareSubscriptionDialog = ({
     try {
       await deleteDaycareSubscriptionMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

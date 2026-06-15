@@ -168,7 +168,9 @@ const openDeleteOpeningTimeDialog = ({ data }: { data: OpeningTime }) => {
     try {
       await deleteOpeningTimeMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 onMounted(async () => {

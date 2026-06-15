@@ -57,7 +57,7 @@ const {
   ids: selectedPetIds
 } = useEmployeeGetPetLabelsQuery()
 if (Array.isArray(route.params.ids)) {
-  selectedPetIds.value = [...route.params.ids.map((id) => Number(id))]
+  selectedPetIds.value = route.params.ids.map((id) => Number(id))
 }
 // const { data, execute } = useQuery('employee.getPetsByIds', {
 //   args: reactive({ ids: selectedPetIds }),

@@ -2,11 +2,11 @@
   "name": "@petboarding/tools",
   "version": "0.1.0",
   "author": "Stefan van Herwijnen",
-  "type": "module",
   "files": [
     "dist",
     "templates"
   ],
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -28,22 +28,19 @@
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix"
   },
-  "devDependencies": {
-    "@myriaddreamin/typst-ts-node-compiler": "0.7.0-rc2",
-    "@myriaddreamin/typst.ts": "0.7.0-rc2",
-    "@types/iban": "^0.0.35",
-    "@types/node": "^25.9.1",
-    "csv-parse": "^6.2.1",
-    "kysely": "0.29.2",
-    "typescript": "^6.0.3"
-  },
   "dependencies": {
     "@modular-api/fastify-checkout": "^0.5.17",
-    "@myriaddreamin/typst-ts-renderer": "0.7.0-rc2",
     "@rgrove/parse-xml": "^4.2.0",
     "export-to-csv": "^1.4.0",
     "fast-xml-parser": "^5.8.0",
     "handlebars": "^4.7.9",
     "ibantools": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/iban": "^0.0.35",
+    "@types/node": "^25.9.3",
+    "csv-parse": "^6.2.1",
+    "kysely": "0.29.2",
+    "typescript": "^6.0.3"
   }
 }

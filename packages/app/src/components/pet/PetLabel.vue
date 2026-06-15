@@ -93,56 +93,7 @@
             </div>
           </template>
         </q-field>
-
-        <!-- <q-field
-          :label="lang.pet.fields.sterilized"
-          :filled="false"
-          stack-label
-          class="col-span-4"
-        >
-          <template #control>
-            <div
-              class="self-center full-width no-outline q-ma-none"
-              tabindex="0"
-            >
-              <q-icon
-                v-if="
-                  modelValue.chemicalSterilizationDate &&
-                  modelValue.chemicalSterilizationDate < dateSixMonthsAgo
-                "
-                size="xs"
-                color="orange"
-                name="i-mdi-warning"
-              />
-              <q-icon
-                v-else
-                size="sm"
-                :color="modelValue.sterilized ? 'green' : 'red'"
-                :name="modelValue.sterilized ? 'i-mdi-check' : 'i-mdi-close'"
-              />
-            </div>
-          </template>
-        </q-field> -->
       </div>
-      <!-- <div class="col-span-0 grid grid-cols-subgrid">
-        <div id="qrcode" style="width: 2cm; height: 2cm" v-html="qrSvg"></div>
-      </div> -->
-      <!-- <q-field
-        :label="lang.pet.fields.breed"
-        :filled="false"
-        class="col-span-10"
-        stack-label
-        dense
-      >
-        <template #control>
-          <div
-            class="self-center text-truncate text-subtitle2 full-width no-outline q-ma-none"
-            tabindex="0"
-          >
-            {{ modelValue.breed }}
-          </div>
-        </template>
-      </q-field> -->
       <q-field
         :label="lang.pet.fields.food"
         stack-label
@@ -161,38 +112,6 @@
           </div>
         </template>
       </q-field>
-
-      <!-- <q-field
-        v-if="modelValue.chemicalSterilizationDate"
-        :label="lang.pet.fields.chemicalSterilizationDate"
-        stack-label
-        dense
-        :filled="false"
-        class="col-span-4"
-      >
-        <template #control>
-          <div
-            class="self-center text-truncate text-subtitle2 full-width no-outline q-ma-none"
-            tabindex="0"
-          >
-            {{ modelValue.chemicalSterilizationDate }}
-          </div>
-        </template>
-      </q-field> -->
-
-      <!-- <q-field
-        :label="lang.pet.fields.color"
-        stack-label
-        dense
-        :filled="false"
-        class="col-span-12"
-      >
-        <template #control>
-          <div class="self-center full-width no-outline q-ma-none" tabindex="0">
-            {{ modelValue.color }}
-          </div>
-        </template>
-      </q-field> -->
 
       <q-field
         :label="lang.pet.fields.particularities"
@@ -229,7 +148,7 @@ export default {
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// import { date as dateUtil } from 'quasar'
+
 import { useLang } from '../../lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
 import { renderSVG } from 'uqr'
@@ -266,13 +185,4 @@ defineExpose({
 const qrSvg = ref(
   renderSVG(`${window.location.origin}/employee/pets/${modelValue.id}`)
 )
-
-// const dateSixMonthsAgo = computed(() =>
-//   dateUtil.formatDate(
-//     dateUtil.subtractFromDate(new Date(), {
-//       months: 6
-//     }),
-//     'YYYY-MM-DD'
-//   )
-// )
 </script>

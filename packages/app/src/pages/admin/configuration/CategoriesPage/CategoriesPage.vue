@@ -167,7 +167,9 @@ const openDeleteCategoryDialog = ({ data }: { data: Category }) => {
     try {
       await deleteCategoryMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
@@ -182,7 +184,9 @@ const openDeleteCategoryPriceDialog = ({ data }: { data: CategoryPrice }) => {
     try {
       await deleteCategoryPriceMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

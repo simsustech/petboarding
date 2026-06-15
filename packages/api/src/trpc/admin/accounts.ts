@@ -163,7 +163,10 @@ export const adminAccountRoutes = ({
       })
       if (account) {
         const roles = account.roles || []
-        roles?.splice(roles?.indexOf(role))
+        const roleIndex = roles.indexOf(role)
+        if (roleIndex !== -1) {
+          roles.splice(roleIndex, 1)
+        }
         await updateAccount(
           {
             id

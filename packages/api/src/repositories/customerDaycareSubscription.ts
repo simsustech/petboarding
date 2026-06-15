@@ -8,18 +8,24 @@ import {
 
 import type { Insertable, Selectable, Transaction, Updateable } from 'kysely'
 import { ExpressionBuilder, sql } from 'kysely'
-import { FastifyInstance } from 'fastify'
-import { type Invoice } from '@modular-api/fastify-checkout'
 
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import { DaycareSubscription } from './daycareSubscription.js'
 import { subDays, subMonths } from 'date-fns'
 import { updateDaycareDate } from './daycare.js'
+import { type FastifyInstance } from 'fastify'
+import { type Invoice } from '@modular-api/fastify-checkout'
 export type CustomerDaycareSubscription =
   Selectable<CustomerDaycareSubscriptions>
 type NewCustomerDaycareSubscription = Insertable<CustomerDaycareSubscriptions>
 type CustomerDaycareSubscriptionUpdate =
   Updateable<CustomerDaycareSubscriptions>
+
+const activeDaycareDateStatuses: DAYCARE_DATE_STATUS[] = [
+  DAYCARE_DATE_STATUS.APPROVED,
+  DAYCARE_DATE_STATUS.STANDBY,
+  DAYCARE_DATE_STATUS.PENDING
+]
 
 export type ParsedCustomerDaycareSubscription = CustomerDaycareSubscription & {
   daycareSubscription?: DaycareSubscription | null
@@ -90,11 +96,11 @@ function withNumberOfDaysUsed(
       'daycareDatePetKennel.daycareDateId'
     )
     .where((web) =>
-      web.or([
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED),
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.STANDBY),
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.PENDING)
-      ])
+      web.or(
+        activeDaycareDateStatuses.map((status) =>
+          web('daycareDates.status', '=', status)
+        )
+      )
     )
     .select((seb) =>
       seb
@@ -163,11 +169,11 @@ function withNumberOfDaysRemaining(
       'daycareDatePetKennel.daycareDateId'
     )
     .where((web) =>
-      web.or([
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.APPROVED),
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.STANDBY),
-        web('daycareDates.status', '=', DAYCARE_DATE_STATUS.PENDING)
-      ])
+      web.or(
+        activeDaycareDateStatuses.map((status) =>
+          web('daycareDates.status', '=', status)
+        )
+      )
     )
     .select((seb) =>
       seb(

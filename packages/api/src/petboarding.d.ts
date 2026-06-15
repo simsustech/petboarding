@@ -42,6 +42,12 @@ export type BookingCostsHandler = (params: {
   }
   dateHolidays?: typeof Holidays
   computeInvoiceCosts?: typeof computeInvoiceCosts
+  vacations: {
+    name: string
+    startDate: string
+    endDate: string
+    surchargePerDay: number
+  }[]
 }) => {
   lines: RawInvoiceLine[]
   discounts: RawInvoiceDiscount[]
@@ -68,6 +74,7 @@ export type BookingCancelationHandler = (params: {
   }
   booking: Booking
   BOOKING_STATUS: typeof BOOKING_STATUS
+  vacations: { name: string; startDate: string; endDate: string }[]
 }) => {
   status: BOOKING_STATUS
   cancelationCosts?: {

@@ -43,9 +43,9 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { QForm, QFormProps, QInputProps, useQuasar, extend } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { ref } from 'vue'
+import { QForm, QFormProps, QInputProps, extend } from 'quasar'
+import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import {
   FormInput,
@@ -91,12 +91,7 @@ const initialValue: ContactPerson = {
 const modelValue = ref<ContactPerson>(initialValue)
 const updateCounter = ref(1)
 
-const $q = useQuasar()
 const lang = useLang()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, (val) => {
-  loadLang($q.lang.isoName)
-})
 
 const formRef = ref<QForm>()
 

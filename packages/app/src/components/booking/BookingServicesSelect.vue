@@ -36,9 +36,8 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { watch, useAttrs, ref, toRefs } from 'vue'
-import { useQuasar } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { useAttrs, ref, toRefs } from 'vue'
+import { useLang } from '../../lang/index.js'
 import type { Service } from '@petboarding/api/zod'
 import { useConfiguration } from '../../configuration.js'
 
@@ -54,12 +53,6 @@ const attrs = useAttrs()
 
 const lang = useLang()
 const configuration = useConfiguration()
-
-const $q = useQuasar()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
 
 const { services } = toRefs(props)
 

@@ -20,13 +20,7 @@ export interface ParsedCategory extends Category {
   }[]
 }
 
-const defaultSelect = [
-  'id',
-  'name',
-  'order',
-  'species'
-  // 'price',
-] as (keyof Category)[]
+const defaultSelect = ['id', 'name', 'order', 'species'] as (keyof Category)[]
 
 function withPrices(eb: ExpressionBuilder<Database, 'categories'>) {
   return jsonArrayFrom(

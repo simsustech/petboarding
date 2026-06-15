@@ -181,6 +181,15 @@ const routes: RouteRecordRaw[] = [
                 path: 'documents',
                 component: () =>
                   import('../pages/admin/configuration/DocumentsPage.vue')
+              },
+              {
+                path: 'vacations',
+                components: {
+                  default: () =>
+                    import('../pages/admin/configuration/VacationsPage/VacationsPage.vue'),
+                  fabs: () =>
+                    import('../pages/admin/configuration/VacationsPage/VacationsPageFabs.vue')
+                }
               }
             ]
           }

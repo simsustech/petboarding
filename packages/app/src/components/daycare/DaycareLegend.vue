@@ -36,6 +36,7 @@ export default {
 
 <script setup lang="ts">
 import { ref } from 'vue'
+
 import { useLang } from '../../lang/index.js'
 import { DAYCARE_DATE_COLORS } from '../../configuration.js'
 

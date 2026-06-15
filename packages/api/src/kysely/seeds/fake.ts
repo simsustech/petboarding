@@ -4,6 +4,7 @@ import { db } from '../index.js'
 import { sql } from 'kysely'
 import { readFileSync } from 'fs'
 import { OPENING_TIME_TYPE, SERVICE_TYPE } from '@petboarding/tools/constants'
+import { getAllVacations } from './vacations/index.js'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chunk = (arr: any[], size: number) =>
@@ -200,6 +201,9 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   await db.insertInto('openingTimes').values(openingTimes).execute()
   await db.insertInto('services').values(services).execute()
   await db.insertInto('documents').values(documents).execute()
+
+  const vacations = getAllVacations()
+  await db.insertInto('vacations').values(vacations).execute()
 
   for (const insertAccounts of chunk(accounts, 1000)) {
     await db.insertInto('accounts').values(insertAccounts).execute()

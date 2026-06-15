@@ -348,6 +348,11 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
+                  <q-item to="/admin/vacations">
+                    <q-item-section>
+                      <q-item-label> {{ lang.vacation.title }} </q-item-label>
+                    </q-item-section>
+                  </q-item>
                   <!-- <q-item to="/admin/configuration/email">
                     <q-item-section>
                       <q-item-label>

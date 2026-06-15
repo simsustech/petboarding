@@ -133,7 +133,7 @@ export const employeeBookingRoutes = ({
     .query(async ({ input }) => {
       const { id } = input
       if (id) {
-        const bookingService = findBookingService({
+        const bookingService = await findBookingService({
           criteria: {
             id
           }

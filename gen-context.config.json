@@ -1,0 +1,17 @@
+{
+  "srcDirs": ["src", "lib"],
+  "exclude": ["node_modules", ".git", "dist", "build"],
+  "outputs": ["codex"],
+  "maxTokens": 8000,
+  "autoMaxTokens": false,
+  "coverageTarget": 0.95,
+  "modelContextLimit": 200000,
+  "maxTokensHeadroom": 0.3,
+  "secretScan": true,
+  "strategy": "per-module",
+  "monorepo": true,
+  "depMap": true,
+  "changes": true,
+  "changesCommits": 5,
+  "todos": true
+}

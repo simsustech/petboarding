@@ -63,7 +63,7 @@
       <template #day="{ scope: { timestamp } }">
         <q-list>
           <q-item
-            v-for="booking in getBookingDeparturesWithServices(timestamp.date)"
+            v-for="booking in agendaMaps.servicesMap[timestamp.date] || []"
             :key="booking.id"
           >
             <q-item-section>
@@ -97,7 +97,7 @@
         >
         <q-separator class="q-pt-none q-mb-md" inset />
         <div
-          v-for="booking in getBookingArrivals(timestamp.date)"
+          v-for="booking in agendaMaps.arrivalsMap[timestamp.date] || []"
           :key="booking.id"
         >
           <agenda-chip
@@ -113,7 +113,7 @@
           </agenda-chip>
         </div>
         <div
-          v-for="booking in getBookingDepartures(timestamp.date)"
+          v-for="booking in agendaMaps.departuresMap[timestamp.date] || []"
           :key="booking.id"
           class="justify-end text-right"
         >
@@ -153,7 +153,7 @@
         >
         <q-separator class="q-pt-none q-mb-md" inset />
         <div
-          v-for="daycareDate in getDaycareDates(timestamp.date)"
+          v-for="daycareDate in agendaMaps.daycareMap[timestamp.date] || []"
           :key="daycareDate.id"
           class="text-center justify-center"
         >
@@ -183,7 +183,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.scss'
 
 import AgendaChip from './AgendaChip.vue'
-import { ref, toRefs, watch } from 'vue'
+import { ref, toRefs, watch, computed } from 'vue'
 import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
 import type { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
@@ -252,44 +252,87 @@ const setDate = (newDate: string) => {
 
 const view = ref('week')
 
-const getBookingDeparturesWithServices = (date: string) =>
-  bookings?.value?.filter(
-    (booking) => booking.endDate === date && booking.services?.length
+const agendaMaps = computed(() => {
+  const servicesMap: Record<string, Booking[]> = {}
+  const arrivalsMap: Record<string, Booking[]> = {}
+  const departuresMap: Record<string, Booking[]> = {}
+  const daycareMap: Record<string, DaycareDate[]> = {}
+
+  const sorted = [...(bookings?.value || [])].sort((b) =>
+    b.services?.length ? -1 : 1
   )
+  sorted.forEach((booking) => {
+    const arrival = booking.startDate
+    const departure = booking.endDate
 
-const getBookingArrivals = (date: string) =>
-  bookings?.value?.filter((booking) => booking.startDate === date)
+    if (!arrivalsMap[arrival]) arrivalsMap[arrival] = []
+    arrivalsMap[arrival].push(booking)
 
-const getBookingDepartures = (date: string) =>
-  bookings?.value
-    ? [...bookings.value]
-        ?.sort((booking) => (booking.services?.length ? -1 : 1))
-        .filter((booking) => booking.endDate === date)
-    : []
+    if (!departuresMap[departure]) departuresMap[departure] = []
+    departuresMap[departure].push(booking)
 
-const getBookingStays = (date: string) =>
-  bookings?.value?.filter(
-    (booking) => booking.startDate < date && booking.endDate > date
-  )
+    if (booking.services?.length) {
+      if (!servicesMap[departure]) servicesMap[departure] = []
+      servicesMap[departure].push(booking)
+    }
+  })
 
-const getDaycareDates = (date: string) =>
-  daycareDates?.value?.filter((daycareDate) => daycareDate.date === date)
+  daycareDates?.value?.forEach((daycareDate) => {
+    const d = daycareDate.date
+    if (!daycareMap[d]) daycareMap[d] = []
+    daycareMap[d].push(daycareDate)
+  })
+
+  return { servicesMap, arrivalsMap, departuresMap, daycareMap }
+})
+
+const staysMap = computed(() => {
+  const map: Record<string, Booking[]> = {}
+  bookings?.value?.forEach((booking) => {
+    for (
+      let d = new Date(booking.startDate);
+      d < new Date(booking.endDate);
+      d.setDate(d.getDate() + 1)
+    ) {
+      const dateStr = d.toISOString().slice(0, 10)
+      if (dateStr !== booking.startDate && dateStr !== booking.endDate) {
+        if (!map[dateStr]) map[dateStr] = []
+        map[dateStr].push(booking)
+      }
+    }
+  })
+  return map
+})
+
+const getBookingStays = (date: string) => staysMap.value[date] || []
+
+const bookingPetCounts = computed(() => {
+  const map: Record<string, number> = {}
+  bookings?.value?.forEach((booking) => {
+    const start = new Date(booking.startDate)
+    const end = new Date(booking.endDate)
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().slice(0, 10)
+      map[dateStr] = (map[dateStr] || 0) + (booking.pets?.length || 0)
+    }
+  })
+  return map
+})
 
 const getNumberOfBookingPets = (date: string) =>
-  bookings?.value
-    ?.filter((booking) => booking.startDate <= date && booking.endDate >= date)
-    .reduce((acc, cur) => {
-      if (cur.pets?.length) acc = acc + cur.pets?.length
-      return acc
-    }, 0)
+  bookingPetCounts.value[date] || 0
+
+const daycarePetCounts = computed(() => {
+  const map: Record<string, number> = {}
+  daycareDates?.value?.forEach((daycareDate) => {
+    map[daycareDate.date] =
+      (map[daycareDate.date] || 0) + (daycareDate.pets?.length || 0)
+  })
+  return map
+})
 
 const getNumberOfDaycarePets = (date: string) =>
-  daycareDates?.value
-    ?.filter((daycareDate) => daycareDate.date === date)
-    .reduce((acc, cur) => {
-      if (cur.pets?.length) acc = acc + cur.pets?.length
-      return acc
-    }, 0)
+  daycarePetCounts.value[date] || 0
 
 const formatBooking = (booking: Booking) =>
   formatBookingDates({

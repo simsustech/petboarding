@@ -15,7 +15,7 @@ import { findCustomer } from '../../repositories/customer'
 import { findDaycareSubscription } from '../../repositories/daycareSubscription.js'
 import { add } from 'date-fns'
 import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
-import env from '@vitrify/tools/env'
+import { config } from '../../env.js'
 import { Customer } from '../../zod/customer.js'
 import {
   PaymentMethod,
@@ -26,8 +26,8 @@ import {
 } from '@modular-api/fastify-checkout'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 
-const currency = env.read('CURRENCY') || env.read('VITE_CURRENCY') || 'EUR'
-const host = env.read('API_HOST') || env.read('VITE_API_HOST')
+const currency = config.currency
+const host = config.apiHost
 // const slimfactHostname =
 //   env.read('VITE_SLIMFACT_HOST') || env.read('SLIMFACT_HOST')
 export const createOrUpdateSlimfactDaycareSubscription = async ({
@@ -53,16 +53,14 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
   if (!fastify.slimfact) throw new Error('SlimFact not configured')
   if (!customer.account) throw new Error('Customer is not linked to an account')
 
-  if (!locale) locale = env.read('VITE_LANG') || 'en-US'
+  if (!locale) locale = config.lang
 
   let numberPrefixes, companyDetails
   try {
     numberPrefixes = await fastify.slimfact.admin.getNumberPrefixes.query()
 
     companyDetails = await fastify.slimfact.admin.getCompany.query({
-      id: Number(
-        env.read('SLIMFACT_COMPANY_ID') || env.read('VITE_SLIMFACT_COMPANY_ID')
-      )
+      id: Number(config.slimfactCompanyId)
     })
   } catch (e) {
     return {

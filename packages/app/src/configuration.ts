@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { Loading } from 'quasar'
+import { Loading, Notify } from 'quasar'
 import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
 import { PET_SPECIES } from '@petboarding/tools/constants'
@@ -132,6 +132,14 @@ export const configuration = ref<PETBOARDING_CLIENT_CONFIGURATION>({
   HIDE_BRANDING: false
 })
 
+export const currencySymbols: Record<
+  PETBOARDING_CLIENT_CONFIGURATION['CURRENCY'],
+  string
+> = {
+  EUR: '€',
+  USD: '$'
+}
+
 export const useConfiguration = () => configuration
 
 export const loadConfiguration = async (locale: Ref<string>) => {
@@ -148,11 +156,11 @@ export const loadConfiguration = async (locale: Ref<string>) => {
     })
     .then(() => Loading.hide())
     .catch(() => {
-      Loading.show({
+      Loading.hide()
+      Notify.create({
         message: lang.value.configuration.errorLoading,
-        messageColor: 'red',
-        boxClass: 'bg-grey-2 text-grey-9',
-        spinner: undefined
+        type: 'negative',
+        timeout: 5000
       })
     })
 }

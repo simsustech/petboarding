@@ -417,6 +417,19 @@ const lang: Language = {
       verifyDeletion: 'Weet u zeker dat u de volgende periode wilt verwijderen?'
     }
   },
+  vacation: {
+    title: 'Vakanties',
+    fields: {
+      name: 'Naam',
+      startDate: 'Start datum',
+      endDate: 'Eind datum',
+      surchargePerDay: 'Toeslag per dag'
+    },
+    messages: {
+      verifyDeletion:
+        'Weet u zeker dat u de volgende vakantie wilt verwijderen?'
+    }
+  },
   announcement: {
     title: 'Aankondigingen',
     fields: {

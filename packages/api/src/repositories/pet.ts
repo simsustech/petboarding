@@ -2,7 +2,7 @@ import { Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
 import type { Pets } from '../kysely/types.ts'
-import env from '@vitrify/tools/env'
+import { config } from '../env.js'
 import {
   type Insertable,
   type Selectable,
@@ -24,15 +24,8 @@ export interface ParsedPet extends Omit<Pet, 'image'> {
 }
 
 const mandatoryVaccinations: Record<string, string[]> = {
-  dog: (
-    env.read('MANDATORY_VACCINATIONS_DOG') ||
-    env.read('VITE_MANDATORY_VACCINATIONS_DOG')
-  )?.split(',') || ['parvo', 'distemper', 'hepatitis'],
-  cat:
-    (
-      env.read('MANDATORY_VACCINATIONS_CAT') ||
-      env.read('VITE_MANDATORY_VACCINATIONS_CAT')
-    )?.split(',') || []
+  dog: config.mandatoryVaccinationsDog || ['parvo', 'distemper', 'hepatitis'],
+  cat: config.mandatoryVaccinationsCat || []
 }
 export const checkVaccinations = ({
   species,
@@ -301,7 +294,35 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
 }
 
 export async function searchPets(searchPhrase: string) {
-  const searchTerms = searchPhrase.split(' ')
+  if (!searchPhrase || typeof searchPhrase !== 'string') {
+    return []
+  }
+
+  const sanitizedPhrase = searchPhrase.replace(/[^\w\s-]/g, '').trim()
+  if (!sanitizedPhrase) {
+    return []
+  }
+
+  const searchTerms = sanitizedPhrase
+    .split(/\s+/)
+    .filter((term) => term.length > 0)
+  if (searchTerms.length === 0) {
+    return []
+  }
+
+  const tsQueryString = searchTerms
+    .map((term) => {
+      const safeTerm = term.replace(/[^a-zA-Z0-9]/g, '')
+      return safeTerm.length > 0
+        ? `${safeTerm}${safeTerm.length > 3 ? ':*' : ''}`
+        : null
+    })
+    .filter(Boolean)
+    .join(' | ')
+
+  if (!tsQueryString) {
+    return []
+  }
 
   try {
     const query = sql<ParsedPet[]>`
@@ -330,11 +351,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       p.fulltext @@ to_tsquery(
-        'english', ${sql.val(
-          searchTerms
-            .map((term) => term + (term.length > 3 ? ':*' : ':'))
-            .join(' | ')
-        )}
+        'english', ${sql.val(tsQueryString)}
         )
   ), relation as (
     select 
@@ -361,11 +378,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       c.fulltext @@ to_tsquery(
-        'english', ${sql.val(
-          searchTerms
-            .map((term) => term + (term.length > 3 ? ':*' : ':'))
-            .join(' | ')
-        )}
+        'english', ${sql.val(tsQueryString)}
       )
   )
   select distinct on (id) * from main union select * from relation;
@@ -374,6 +387,7 @@ export async function searchPets(searchPhrase: string) {
     const results = await query.execute(db)
     return results.rows
   } catch (e) {
+    console.error('Search pets error:', e)
     return []
   }
 }

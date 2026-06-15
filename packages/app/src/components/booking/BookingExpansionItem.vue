@@ -207,8 +207,11 @@ export interface Props {
   modelValue: Booking
   showBookingServicesEditButton?: boolean
   showHistory?: boolean
-  onOpenCustomer?: unknown
-  onUpdateBookingInvoice?: unknown
+  onOpenCustomer?: (payload: { id: number }) => void
+  onUpdateBookingInvoice?: (payload: {
+    data: Booking
+    done: (success?: boolean) => void
+  }) => void
 }
 defineProps<Props>()
 const attrs = useAttrs()

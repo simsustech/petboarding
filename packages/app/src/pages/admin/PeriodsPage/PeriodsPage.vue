@@ -145,7 +145,9 @@ const openDeletePeriodDialog = ({ data }: { data: Period }) => {
     try {
       await deletePeriodMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

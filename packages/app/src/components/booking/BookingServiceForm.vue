@@ -12,16 +12,6 @@
         ($event) => (modelValue.price = Math.round(Number($event) * 100))
       "
     />
-    <!-- <q-input
-        v-model.number="modelValue.price"
-        class="col-12"
-        :label="lang.service.fields.price"
-        :prefix="currencySymbols[configuration.CURRENCY]"
-        mask="#.##"
-        fill-mask="0"
-        unmasked-value
-        reverse-fill-mask
-      /> -->
     <q-input
       v-bind="input"
       id="comments"
@@ -43,11 +33,11 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { QForm, QFormProps, QInputProps, useQuasar } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { useConfiguration } from '../../configuration.js'
+import { useConfiguration, currencySymbols } from '../../configuration.js'
 import type { BookingService } from '@petboarding/api/zod'
 export interface Props {
   form?: QFormProps & Partial<HTMLFormElement> & Partial<HTMLDivElement>
@@ -64,11 +54,6 @@ export interface Props {
     | ('label' & { style?: Partial<CSSStyleDeclaration> })
   >
 }
-
-const currencySymbols = ref({
-  EUR: '€',
-  USD: '$'
-})
 
 const configuration = useConfiguration()
 defineProps<Props>()
@@ -97,10 +82,6 @@ const modelValue = ref<BookingService>(initialValue)
 
 const $q = useQuasar()
 const lang = useLang()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, (val) => {
-  loadLang($q.lang.isoName)
-})
 
 const formRef = ref<QForm>()
 

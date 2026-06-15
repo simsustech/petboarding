@@ -89,7 +89,10 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import PetSelect from '../../components/employee/PetSelect.vue'
-import PetCard from '../../components/pet/PetCard.vue'
+import PetCard, {
+  type OpenCustomerHandler,
+  type DeleteHandler
+} from '../../components/pet/PetCard.vue'
 import PetForm from '../../components/pet/PetForm.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { extend, useQuasar } from 'quasar'
@@ -181,7 +184,9 @@ const updatePet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 
   // const result = useMutation('employee.updatePet', {
   //   args: pet as WithRequired<typeof pet, 'id'>,
@@ -221,7 +226,9 @@ const createVaccination: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 
   // const result = useMutation('employee.createVaccination', {
   //   args: vaccination,
@@ -266,7 +273,9 @@ const updateVaccination: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
   // const result = useMutation('employee.updateVaccination', {
   //   args: vaccination,
   //   immediate: true
@@ -278,9 +287,7 @@ const updateVaccination: InstanceType<
   // done(!result.error.value)
 }
 
-const openCustomer: InstanceType<
-  typeof PetCard
->['$props']['onOpenCustomer'] = ({ id }) =>
+const openCustomer: OpenCustomerHandler = ({ id }) =>
   router.push(`/employee/customers/${id}`)
 
 const deletePet: InstanceType<typeof PetCard>['$props']['onDelete'] = ({
@@ -306,7 +313,9 @@ const deletePet: InstanceType<typeof PetCard>['$props']['onDelete'] = ({
 
         done()
         setParam(ids.value.filter((id) => id !== data.id))
-      } catch (e) {}
+      } catch (e) {
+        console.error(e)
+      }
       // const result = useMutation('admin.deletePet', {
       //   args: { id: data.id },
       //   immediate: true

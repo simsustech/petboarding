@@ -1,6 +1,6 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
-import env from '@vitrify/tools/env'
+import { config } from '../env.js'
 import {
   getOverlappingDaysInIntervals,
   parse,
@@ -54,6 +54,7 @@ import { compileEmail } from '../trpc/admin/bookings.js'
 import { findCustomer } from './customer.js'
 import { bookingTemplates } from '../templates/booking/index.js'
 import { eachDayOfInterval } from '../tools.js'
+import { findVacations } from './vacation.js'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
@@ -219,6 +220,12 @@ export async function calculateBookingCosts({
       let bookingCostsHandler: BookingCostsHandler
       try {
         ;({ bookingCostsHandler } = await import('../api.config.js'))
+
+        const vacations = await findVacations({
+          from: booking.startDate,
+          until: booking.endDate
+        })
+
         ;({
           lines,
           discounts,
@@ -234,6 +241,7 @@ export async function calculateBookingCosts({
           pets: booking.pets,
           categories,
           withServices,
+          vacations,
           dateFns: {
             eachDayOfInterval,
             getOverlappingDaysInIntervals,
@@ -387,7 +395,11 @@ function withPets(eb: ExpressionBuilder<Database, 'bookings'>) {
   ).as('pets')
 }
 
-function withStartTime(eb: ExpressionBuilder<Database, 'bookings'>) {
+function withOpeningTime(
+  eb: ExpressionBuilder<Database, 'bookings'>,
+  timeIdColumn: 'startTimeId' | 'endTimeId',
+  alias: 'startTime' | 'endTime'
+) {
   return jsonObjectFrom(
     eb
       .selectFrom('openingTimes')
@@ -399,77 +411,76 @@ function withStartTime(eb: ExpressionBuilder<Database, 'bookings'>) {
         'openingTimes.startDayCounted',
         'openingTimes.endDayCounted'
       ])
-      .whereRef('bookings.startTimeId', '=', 'openingTimes.id')
-  ).as('startTime')
+      .whereRef(`bookings.${timeIdColumn}`, '=', 'openingTimes.id')
+  ).as(alias)
+}
+
+function withStartTime(eb: ExpressionBuilder<Database, 'bookings'>) {
+  return withOpeningTime(eb, 'startTimeId', 'startTime')
 }
 
 function withEndTime(eb: ExpressionBuilder<Database, 'bookings'>) {
-  return jsonObjectFrom(
-    eb
-      .selectFrom('openingTimes')
-      .select([
-        'openingTimes.id',
-        'openingTimes.name',
-        'openingTimes.startTime',
-        'openingTimes.endTime',
-        'openingTimes.startDayCounted',
-        'openingTimes.endDayCounted'
-      ])
-      .whereRef('bookings.endTimeId', '=', 'openingTimes.id')
-  ).as('endTime')
+  return withOpeningTime(eb, 'endTimeId', 'endTime')
+}
+
+const bookingStatusBaseSelect = [
+  'bookingStatus.id',
+  'bookingStatus.status',
+  'bookingStatus.startDate',
+  'bookingStatus.endDate',
+  'bookingStatus.startTimeId',
+  'bookingStatus.endTimeId',
+  'bookingStatus.comments',
+  'bookingStatus.modifiedAt',
+  'bookingStatus.petIds',
+  'bookingStatus.createdAt',
+  'bookingStatus.bookingId'
+] as const
+
+function withBookingStatusOpeningTimes(
+  eb1: ExpressionBuilder<Database, 'bookingStatus'>
+) {
+  return [
+    jsonObjectFrom(
+      eb1
+        .selectFrom('openingTimes')
+        .select([
+          'openingTimes.id',
+          'openingTimes.name',
+          'openingTimes.startTime',
+          'openingTimes.endTime',
+          'openingTimes.startDayCounted',
+          'openingTimes.endDayCounted'
+        ])
+        .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
+    ).as('startTime'),
+    jsonObjectFrom(
+      eb1
+        .selectFrom('openingTimes')
+        .select([
+          'openingTimes.id',
+          'openingTimes.name',
+          'openingTimes.startTime',
+          'openingTimes.endTime',
+          'openingTimes.startDayCounted',
+          'openingTimes.endDayCounted'
+        ])
+        .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
+    ).as('endTime'),
+    sql<number>`booking_status.end_date - 
+      booking_status.start_date - 1
+      + (select "opening_times"."start_day_counted" from "opening_times" where "booking_status"."start_time_id" = "opening_times"."id")
+      + (select "opening_times"."end_day_counted" from "opening_times" where "booking_status"."end_time_id" = "opening_times"."id")
+      `.as('days')
+  ] as const
 }
 
 function withStatuses(eb: ExpressionBuilder<Database, 'bookings'>) {
   return jsonArrayFrom(
     eb
       .selectFrom('bookingStatus')
-      .select([
-        'bookingStatus.id',
-        'bookingStatus.status',
-        'bookingStatus.startDate',
-        'bookingStatus.endDate',
-        'bookingStatus.startTimeId',
-        'bookingStatus.endTimeId',
-        'bookingStatus.comments',
-        'bookingStatus.modifiedAt',
-        'bookingStatus.petIds',
-        'bookingStatus.status',
-        'bookingStatus.createdAt',
-        'bookingStatus.bookingId'
-      ])
-      .select(({ eb: eb1 }) => [
-        jsonObjectFrom(
-          eb1
-            .selectFrom('openingTimes')
-            .select([
-              'openingTimes.id',
-              'openingTimes.name',
-              'openingTimes.startTime',
-              'openingTimes.endTime',
-              'openingTimes.startDayCounted',
-              'openingTimes.endDayCounted'
-            ])
-            .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
-        ).as('startTime'),
-        jsonObjectFrom(
-          eb1
-            .selectFrom('openingTimes')
-            .select([
-              'openingTimes.id',
-              'openingTimes.name',
-              'openingTimes.startTime',
-              'openingTimes.endTime',
-              'openingTimes.startDayCounted',
-              'openingTimes.endDayCounted'
-            ])
-            .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
-        ).as('endTime'),
-        sql<number>`booking_status.end_date - 
-          booking_status.start_date - 1
-          + (select "opening_times"."start_day_counted" from "opening_times" where "booking_status"."start_time_id" = "opening_times"."id")
-          + (select "opening_times"."end_day_counted" from "opening_times" where "booking_status"."end_time_id" = "opening_times"."id")
-          `.as('days')
-      ])
+      .select(bookingStatusBaseSelect)
+      .select((eb1) => withBookingStatusOpeningTimes(eb1))
       .whereRef('bookings.id', '=', 'bookingStatus.bookingId')
       .orderBy('bookingStatus.modifiedAt', 'desc')
   ).as('statuses')
@@ -485,53 +496,8 @@ function withStatus(eb: ExpressionBuilder<Database, 'bookings'>) {
         '=',
         sql`(select max(modified_at) from booking_status where booking_status.booking_id = bookings.id)`
       )
-      .select([
-        'bookingStatus.id',
-        'bookingStatus.status',
-        'bookingStatus.startDate',
-        'bookingStatus.endDate',
-        'bookingStatus.startTimeId',
-        'bookingStatus.endTimeId',
-        'bookingStatus.comments',
-        'bookingStatus.modifiedAt',
-        'bookingStatus.petIds',
-        'bookingStatus.status',
-        'bookingStatus.createdAt',
-        'bookingStatus.bookingId'
-      ])
-      .select(({ eb: eb1 }) => [
-        jsonObjectFrom(
-          eb1
-            .selectFrom('openingTimes')
-            .select([
-              'openingTimes.id',
-              'openingTimes.name',
-              'openingTimes.startTime',
-              'openingTimes.endTime',
-              'openingTimes.startDayCounted',
-              'openingTimes.endDayCounted'
-            ])
-            .whereRef('bookingStatus.startTimeId', '=', 'openingTimes.id')
-        ).as('startTime'),
-        jsonObjectFrom(
-          eb1
-            .selectFrom('openingTimes')
-            .select([
-              'openingTimes.id',
-              'openingTimes.name',
-              'openingTimes.startTime',
-              'openingTimes.endTime',
-              'openingTimes.startDayCounted',
-              'openingTimes.endDayCounted'
-            ])
-            .whereRef('bookingStatus.endTimeId', '=', 'openingTimes.id')
-        ).as('endTime'),
-        sql<number>`booking_status.end_date - 
-          booking_status.start_date - 1
-          + (select "opening_times"."start_day_counted" from "opening_times" where "booking_status"."start_time_id" = "opening_times"."id")
-          + (select "opening_times"."end_day_counted" from "opening_times" where "booking_status"."end_time_id" = "opening_times"."id")
-          `.as('days')
-      ])
+      .select(bookingStatusBaseSelect)
+      .select((eb1) => withBookingStatusOpeningTimes(eb1))
   ).as('status')
 }
 
@@ -1115,6 +1081,11 @@ export async function cancelBooking(
   ignoreCancelationPeriod?: boolean
 ) {
   const booking = await findBooking({ criteria })
+  const vacations = await findVacations({
+    from: booking?.startDate,
+    until: booking?.endDate
+  })
+
   if (
     booking?.startDate &&
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
@@ -1154,7 +1125,8 @@ export async function cancelBooking(
             differenceInDays
           },
           booking: lastApprovedBooking,
-          BOOKING_STATUS
+          BOOKING_STATUS,
+          vacations
         }))
       }
     } catch (e) {
@@ -1163,9 +1135,7 @@ export async function cancelBooking(
 
       const maxCancelationDate = subMonths(
         parseISO(booking.startDate),
-        env.read('CANCELATION_PERIOD_MONTHS') ||
-          env.read('VITE_CANCELATION_PERIOD_MONTHS') ||
-          0
+        config.cancelationPeriodMonths
       )
 
       status =
@@ -1229,10 +1199,7 @@ export async function getBookingsCount(status: BOOKING_STATUS) {
   return count
 }
 
-export const downPaymentPaymentTermDays =
-  env.read('VITE_DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  env.read('DOWN_PAYMENT_PAYMENT_TERM_DAYS') ||
-  5
+export const downPaymentPaymentTermDays = config.downPaymentPaymentTermDays
 export async function checkDownPayments({
   fastify
 }: {
@@ -1263,7 +1230,7 @@ export async function checkDownPayments({
     .selectAll()
     .execute()
 
-  const localeCode = env.read('VITE_LANG')
+  const localeCode = config.lang
 
   let reason: string
   try {
@@ -1293,7 +1260,7 @@ export async function checkDownPayments({
     ) {
       await cancelBooking({ id: booking.id }, reason, true)
       if (fastify?.mailer) {
-        const localeCode = env.read('VITE_LANG')
+        const localeCode = config.lang
         let template: { subject: string; body: string }
         try {
           template = await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
@@ -1326,10 +1293,9 @@ export async function checkDownPayments({
 
             await fastify.mailer.sendMail({
               from: `Petboarding <noreply@petboarding.app>`,
-              replyTo:
-                env.read('MAIL_REPLY_TO') || env.read('VITE_MAIL_REPLY_TO'),
+              replyTo: config.mailReplyTo,
               to: customer.account?.email,
-              bcc: env.read('MAIL_BCC') || env.read('VITE_MAIL_BCC'),
+              bcc: config.mailBcc,
               subject,
               html: body
             })

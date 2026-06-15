@@ -87,7 +87,7 @@ import { useLang } from '../../lang/index.js'
 import type { Pet, BookingService } from '@petboarding/api/zod'
 import type { ParsedBooking } from '@petboarding/api'
 import { useQuasar } from 'quasar'
-import { useConfiguration } from '../../configuration.js'
+import { useConfiguration, currencySymbols } from '../../configuration.js'
 
 export interface Props {
   modelValue: ParsedBooking
@@ -99,11 +99,6 @@ defineProps<Props>()
 const lang = useLang()
 const $q = useQuasar()
 const configuration = useConfiguration()
-
-const currencySymbols = ref({
-  EUR: '€',
-  USD: '$'
-})
 
 const dateFormatter = (date: Date, locale: string) =>
   new Intl.DateTimeFormat(locale, {

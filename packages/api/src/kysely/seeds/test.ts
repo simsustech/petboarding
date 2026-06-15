@@ -7,6 +7,7 @@ import {
   OPENING_TIME_TYPE,
   SERVICE_TYPE
 } from '@petboarding/tools/constants'
+import { getRandomInt } from './fake/index.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -41,7 +42,13 @@ const seed = async () => {
     birthDate: '2020-02-02',
     gender: 'male',
     sterilized: true,
-    customerId: nr
+    customerId: nr,
+    food: {
+      timesADay: 2,
+      amount: getRandomInt(300),
+      amountUnit: 'gram' as const,
+      kind: 'Generic'
+    }
   }))
 
   const bookings = [1, 2, 3, 4, 5].map((nr) => ({
@@ -68,7 +75,7 @@ const seed = async () => {
     petId: 5
   })
 
-  const bookingStatuseEnum = [
+  const bookingStatusesEnum = [
     BOOKING_STATUS.PENDING,
     BOOKING_STATUS.APPROVED,
     BOOKING_STATUS.REJECTED,
@@ -86,7 +93,7 @@ const seed = async () => {
   const bookingStatuses = [1, 2, 3, 4, 5].map((nr) => ({
     ...bookings[nr - 1],
     bookingId: nr,
-    status: bookingStatuseEnum[nr - 1],
+    status: bookingStatusesEnum[nr - 1],
     petIds: `[${nr - 1}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
@@ -94,7 +101,7 @@ const seed = async () => {
   bookingStatuses.push({
     ...bookings[5],
     bookingId: 6,
-    status: bookingStatuseEnum[0],
+    status: bookingStatusesEnum[0],
     petIds: `[${5}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
@@ -309,6 +316,19 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   //   }
   // ]
 
+  const buildings = [
+    {
+      name: 'Main building',
+      location: 'A',
+      description: 'The main building'
+    }
+  ]
+
+  const kennels = Array.from({ length: 10 }, (_, i) => ({
+    name: (i + 1).toString(),
+    buildingId: 1
+  }))
+
   const announcements = [
     {
       title: 'This is a public demo',
@@ -319,6 +339,8 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     }
   ]
 
+  await db.insertInto('buildings').values(buildings).execute()
+  await db.insertInto('kennels').values(kennels).execute()
   await db.insertInto('announcements').values(announcements).execute()
   await db.insertInto('categories').values(categories).execute()
   await db.insertInto('categoryPrices').values(categoryPrices).execute()

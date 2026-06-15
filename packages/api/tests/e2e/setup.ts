@@ -37,10 +37,39 @@ export const initializeAndLogin = async ({
 }
 
 export const initializePage = async ({ browser }: { browser: Browser }) => {
-  const page = await browser.newPage()
+  const context = await browser.newContext({
+    serviceWorkers: 'block'
+  })
+  const page = await context.newPage()
 
   page.on('pageerror', (exception) => {
     console.log(`Uncaught exception: "${exception}"`)
+  })
+
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.log(`Console error: "${msg.text()}"`)
+    }
+  })
+
+  // Log all warnings too (Vue hydration mismatches are logged as warnings)
+  page.on('console', (msg) => {
+    if (msg.type() === 'warning') {
+      console.log(`Console warning: "${msg.text()}"`)
+    }
+  })
+
+  page.on('response', async (response) => {
+    if (!response.ok() && response.request().resourceType() === 'xhr') {
+      try {
+        const body = await response.text()
+        console.log(
+          `Network error: ${response.status()} ${response.url()} — "${body.slice(0, 500)}"`
+        )
+      } catch {
+        // ignore if body can't be read
+      }
+    }
   })
 
   return page

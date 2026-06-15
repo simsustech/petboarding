@@ -64,11 +64,15 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { watch, toRefs } from 'vue'
-import { QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { toRefs } from 'vue'
+
+import { useLang } from '../../lang/index.js'
 import type { Booking } from '@petboarding/api/zod'
 import BookingItemContent from './BookingItemContent.vue'
+
+export type OpenCustomerHandler = (payload: { id: number }) => void
+export type OpenBookingHandler = (payload: { id: number }) => void
+export type OpenPetsHandler = (payload: { ids: number[] }) => void
 
 export interface Props {
   modelValue: Booking
@@ -76,9 +80,9 @@ export interface Props {
   showApprovalButtons?: boolean
   showEditButton?: boolean
   status?: 'arriving' | 'departing' | 'staying'
-  onOpenCustomer?: unknown
-  onOpenBooking?: unknown
-  onOpenPets?: unknown
+  onOpenCustomer?: OpenCustomerHandler
+  onOpenBooking?: OpenBookingHandler
+  onOpenPets?: OpenPetsHandler
 }
 
 const props = defineProps<Props>()
@@ -184,12 +188,6 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
-
-const $q = useQuasar()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
 
 const currentDate = new Date().toISOString().slice(0, 10)
 const { status, modelValue } = toRefs(props)

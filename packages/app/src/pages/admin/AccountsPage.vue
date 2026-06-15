@@ -97,7 +97,9 @@ const onAddRole = async ({
     await accountAddRoleMutation({ id, role })
 
     await executeAccounts()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
   // const result = useMutation('admin.addRole', {
   //   args: { id, role: role as PETBOARDING_ACCOUNT_ROLES },
   //   immediate: true
@@ -119,7 +121,9 @@ const onRemoveRole = async ({
     await accountRemoveRoleMutation({ id, role })
 
     await executeAccounts()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
   // const result = useMutation('admin.removeRole', {
   //   args: { id, role: role as PETBOARDING_ACCOUNT_ROLES },
   //   immediate: true
