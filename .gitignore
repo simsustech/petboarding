@@ -12,3 +12,8 @@ clients
 **/components.d.ts
 test-results.json
 docker-compose.*.override.yaml
+
+# SigMap generated context (regenerated at session start)
+packages/**/AGENTS.md
+.contextignore
+**/.github/context*.md
