@@ -152,7 +152,9 @@ const updateContactPerson: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const createContactPerson: InstanceType<
@@ -165,7 +167,9 @@ const createContactPerson: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const ready = ref<boolean>(false)

@@ -51,7 +51,7 @@ const {
   ids: selectedBookings
 } = useEmployeeGetBookingLabelsQuery()
 if (Array.isArray(route.params.ids)) {
-  selectedBookings.value = [...route.params.ids.map((id) => Number(id))]
+  selectedBookings.value = route.params.ids.map((id) => Number(id))
 }
 // const { data, execute } = useQuery('employee.getBookingsByIds', {
 //   args: reactive({ ids: selectedBookings }),

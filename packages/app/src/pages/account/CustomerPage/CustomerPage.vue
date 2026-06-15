@@ -144,7 +144,9 @@ const updateCustomer: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const createCustomer: InstanceType<
@@ -159,7 +161,9 @@ const createCustomer: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 onMounted(async () => {

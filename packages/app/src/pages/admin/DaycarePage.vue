@@ -185,7 +185,9 @@ const approveDaycareDates = async () => {
       await approveDaycareDatesMutation({ ids: selectedEventIds.value })
       await execute()
       selectedEventIds.value = []
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
@@ -207,7 +209,9 @@ const rejectDaycareDates = async () => {
       await rejectDaycareDatesMutation({ ids: selectedEventIds.value })
       await execute()
       selectedEventIds.value = []
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
@@ -229,7 +233,9 @@ const standbyDaycareDates = async () => {
       await standbyDaycareDatesMutation({ ids: selectedEventIds.value })
       await execute()
       selectedEventIds.value = []
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

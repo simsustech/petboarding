@@ -108,18 +108,6 @@
           <q-avatar class="col-12">
             <q-icon name="i-mdi-more-horiz" size="md" />
           </q-avatar>
-          <!-- <q-icon
-            style="
-              position: absolute;
-              right: 0.5em;
-              bottom: 0.8em;
-              font-size: 1em;
-            "
-            name="i-mdi-approve"
-            :class="{
-              'text-green': true
-            }"
-          /> -->
           <q-menu>
             <q-list>
               <q-item
@@ -263,9 +251,8 @@ export const formatBookingDates = ({
 </script>
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import { QItem, QItemLabel, QItemSection, useQuasar } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { useQuasar } from 'quasar'
+import { useLang } from '../../lang/index.js'
 import type { Booking } from '@petboarding/api/zod'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
 import { BOOKING_ICON, BOOKING_ICON_COLOR } from '../../configuration.js'
@@ -363,10 +350,6 @@ const lang = useLang()
 const configuration = useConfiguration()
 
 const $q = useQuasar()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
 
 const formatDates = (
   startDate: string,

@@ -84,7 +84,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch, computed, toRefs } from 'vue'
+import { ref, computed, toRefs } from 'vue'
 import {
   QForm,
   QFormProps,
@@ -94,7 +94,7 @@ import {
   date as dateUtil,
   QDate
 } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingServicesSelect from './BookingServicesSelect.vue'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
@@ -162,10 +162,6 @@ const { ignoreTermsAndConditions } = toRefs(props)
 
 const $q = useQuasar()
 const lang = useLang()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, (val) => {
-  loadLang($q.lang.isoName)
-})
 
 const formRef = ref<QForm>()
 const initialStartDate = ref<string | null>('')

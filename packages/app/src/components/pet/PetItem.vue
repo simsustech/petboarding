@@ -80,7 +80,6 @@ export default {
 
 <script setup lang="ts">
 import { ref, toRefs } from 'vue'
-import { QItem } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import type { Pet as PetType } from '@petboarding/api/zod'
 import ImageAvatar from '../ImageAvatar.vue'

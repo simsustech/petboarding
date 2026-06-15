@@ -99,6 +99,7 @@ import { ref } from 'vue'
 import Price from '../Price.vue'
 import { useConfiguration } from '../../configuration.js'
 import type { Category } from '@petboarding/api/zod'
+
 import { useLang } from '../../lang/index.js'
 
 export interface Props {

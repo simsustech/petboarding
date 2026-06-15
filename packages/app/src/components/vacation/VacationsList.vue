@@ -85,7 +85,6 @@ export interface Props {
 }
 defineProps<Props>()
 
-const $q = useQuasar()
 const emit = defineEmits<{
   (
     e: 'update',
@@ -110,6 +109,7 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
+const $q = useQuasar()
 
 const dateFormatter = (date: Date, locale: string) =>
   new Intl.DateTimeFormat(locale, {

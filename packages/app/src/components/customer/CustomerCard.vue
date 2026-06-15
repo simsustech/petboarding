@@ -121,15 +121,6 @@ const update = (customer: Customer) => {
   }
   emit('update', { data: customer, done })
 }
-// const openBookings = () =>
-//   emit('openBookings', {
-//     ids: props.modelValue.bookings?.map((booking) => booking.id) || []
-//   })
-
-// const openPets = () =>
-//   emit('openPets', {
-//     ids: modelValue.value.pets?.map((pet) => pet.id) || []
-//   })
 
 const lang = useLang()
 </script>

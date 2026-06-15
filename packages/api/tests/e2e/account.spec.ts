@@ -191,7 +191,9 @@ test.describe('Account', async () => {
       .filter({ hasText: /^End time\*$/ })
       .first()
       .click()
-    await page.getByRole('option', { name: booking.endTime }).click()
+    await page
+      .getByRole('option', { name: booking.endTime })
+      .click({ force: true })
 
     await page
       .getByRole('checkbox', { name: 'I agree to the terms and conditions.' })

@@ -63,7 +63,6 @@
           </template>
           <template #day="{ scope: { timestamp } }">
             <div v-if="Object.keys(eventsMap).length" style="min-height: 30px">
-              <!-- <slot name="dayHeader" :timestamp="timestamp" /> -->
               <template
                 v-for="event in eventsMap[timestamp.date]"
                 :key="event.id"
@@ -164,7 +163,7 @@ export interface Props {
   disabledDates?: string[]
   focusable?: boolean
   hoverable?: boolean
-  onOpenPets?: unknown
+  onOpenPets?: (payload: { ids: number[] }) => void
   maxNumberOfSelectedDates?: number
   currentDaycareDates?: DaycareDate[]
   allowPastDates?: boolean

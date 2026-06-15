@@ -22,7 +22,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { QSelect } from 'quasar'
 import { ref, toRefs, useAttrs } from 'vue'
 import { useAdminFindAccountsQuery } from 'src/queries/admin/account.js'
 

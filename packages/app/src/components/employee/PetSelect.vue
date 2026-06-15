@@ -47,7 +47,6 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { QSelect } from 'quasar'
 import { ref, toRefs, useAttrs, useSlots } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { useEmployeeSearchPetsQuery } from 'src/queries/employee/pet.js'

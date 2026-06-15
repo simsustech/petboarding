@@ -159,7 +159,9 @@ const openDeleteKennelDialog = ({ data }: { data: Kennel }) => {
     try {
       await deleteKennelMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

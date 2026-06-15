@@ -127,9 +127,9 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { QForm, QFormProps, QInputProps, useQuasar, extend } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { ref, computed } from 'vue'
+import { QForm, QFormProps, QInputProps, extend } from 'quasar'
+import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import {
   GenderSelect,
@@ -195,13 +195,7 @@ if (props.useRating) initialValue.rating = 0
 
 const modelValue = ref<Customer>(initialValue)
 
-const $q = useQuasar()
 const lang = useLang()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, (val) => {
-  loadLang($q.lang.isoName)
-})
-
 const formRef = ref<QForm>()
 
 const setValue = (newValue: Customer) => {

@@ -141,7 +141,9 @@ const openDeleteVacationDialog = ({ data }: { data: VacationData }) => {
     try {
       await deleteVacationMutation({ id: data.id! })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

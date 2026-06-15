@@ -149,7 +149,10 @@ import { useQuasar } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
-import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
+import BookingExpansionItem, {
+  type OpenCustomerHandler,
+  type UpdateBookingInvoiceHandler
+} from '../../components/booking/BookingExpansionItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { EmailInput, DateInput } from '@simsustech/quasar-components/form'
 import BookingServiceForm from '../../components/booking/BookingServiceForm.vue'
@@ -530,9 +533,7 @@ const updateBookingService: InstanceType<
   // if (done) done(!result.error.value)
 }
 
-const openCustomer: InstanceType<
-  typeof BookingExpansionItem
->['$props']['onOpenCustomer'] = ({ id }) =>
+const openCustomer: OpenCustomerHandler = ({ id }) =>
   router.push(`/employee/customers/${id}`)
 
 const settleCancelation: InstanceType<
@@ -572,9 +573,10 @@ const settleCancelation: InstanceType<
 
 // const filteredCustomers = ref<Customer[]>([])
 
-const updateBookingInvoice: InstanceType<
-  typeof BookingExpansionItem
->['$props']['onUpdateBookingInvoice'] = async ({ data, done }) => {
+const updateBookingInvoice: UpdateBookingInvoiceHandler = async ({
+  data,
+  done
+}) => {
   if (data.id) {
     try {
       await updateBookingInvoiceMutation(data.id)

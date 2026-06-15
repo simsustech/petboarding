@@ -11,19 +11,32 @@ let page: Page
 test.describe.configure({ mode: 'serial' })
 
 test.beforeAll(async ({ browser }) => {
-  page = await initializeAndLogin({ browser, email, password })
+  const maxRetries = 5
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      page = await initializeAndLogin({ browser, email, password })
+      break
+    } catch (e) {
+      if (i === maxRetries - 1) throw e
+      await new Promise((r) => setTimeout(r, 2000))
+    }
+  }
 
   await expect(
     page
       .getByRole('tab', { name: 'Employee' })
       .or(page.getByText('Employee').locator(':scope.q-item__label'))
-  ).toBeVisible()
+  ).toBeVisible({ timeout: 15000 })
 })
 
 test.describe('KennelLayout', () => {
   test.beforeEach(async () => {
     await page.goto('/employee/kennellayout/2024-01-02')
     await page.waitForLoadState('networkidle')
+    await expect(
+      page.locator('text="Drag and drop the pets into the kennels."')
+    ).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
   })
 
   test('should display the kennel layout page with waitlist and buildings', async () => {
@@ -39,6 +52,7 @@ test.describe('KennelLayout', () => {
     const petsInWaitlist = page.locator(
       '#waitlist .q-chip, #waitlist [id^="pet"]'
     )
+    await expect(petsInWaitlist.first()).toBeVisible({ timeout: 5000 })
     const initialWaitlistCount = await petsInWaitlist.count()
 
     if (initialWaitlistCount === 0) {

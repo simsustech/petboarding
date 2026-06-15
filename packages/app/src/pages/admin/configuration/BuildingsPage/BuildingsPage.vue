@@ -146,7 +146,9 @@ const openDeleteBuildingDialog = ({ data }: { data: Building }) => {
     try {
       await deleteBuildingMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

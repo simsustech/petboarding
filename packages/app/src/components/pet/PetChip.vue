@@ -151,7 +151,7 @@ interface Props {
   >
   showImage?: boolean
   showLastName?: boolean
-  onOpenPet?: unknown
+  onOpenPet?: boolean
   showBadge?: boolean
   showFood?: boolean
   overline?: string

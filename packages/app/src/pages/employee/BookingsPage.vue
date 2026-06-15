@@ -93,7 +93,10 @@ export default {
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
-import BookingExpansionItem from '../../components/booking/BookingExpansionItem.vue'
+import BookingExpansionItem, {
+  type OpenCustomerHandler,
+  type UpdateBookingInvoiceHandler
+} from '../../components/booking/BookingExpansionItem.vue'
 import BookingItem from '../../components/booking/BookingItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import BookingForm from '../../components/booking/BookingForm.vue'
@@ -228,9 +231,10 @@ const cancelBooking: InstanceType<
   }
 }
 
-const updateBookingInvoice: InstanceType<
-  typeof BookingExpansionItem
->['$props']['onUpdateBookingInvoice'] = async ({ data, done }) => {
+const updateBookingInvoice: UpdateBookingInvoiceHandler = async ({
+  data,
+  done
+}) => {
   if (data.id) {
     try {
       await updateBookingInvoiceMutation(data.id)
@@ -247,9 +251,7 @@ const updateBookingInvoice: InstanceType<
   }
 }
 
-const openCustomer: InstanceType<
-  typeof BookingExpansionItem
->['$props']['onOpenCustomer'] = ({ id }) =>
+const openCustomer: OpenCustomerHandler = ({ id }) =>
   router.push(`/employee/customers/${id}`)
 
 const updateBookingServiceDialogRef = ref<typeof ResponsiveDialog>()

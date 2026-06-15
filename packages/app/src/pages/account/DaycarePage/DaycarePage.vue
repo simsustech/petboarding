@@ -302,7 +302,9 @@ const createDaycare: InstanceType<
     })
     await execute()
     await executeCustomerDaycareSubscriptions()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const dateFormatter = (date: Date, locale: string) =>
@@ -329,7 +331,9 @@ const cancelDaycareDates = async () => {
 
       await execute()
       selectedEvents.value = []
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 
@@ -381,7 +385,9 @@ const onPurchaseCustomerDaycareSubscription = async ({
 
     if (result?.checkoutUrl) window.location.href = result.checkoutUrl
     done()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const purchaseCustomerDaycareSubscriptionDialogRef =

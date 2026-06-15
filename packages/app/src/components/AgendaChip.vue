@@ -85,6 +85,7 @@ export default {
 <script setup lang="ts">
 import type { Booking, DaycareDate } from '@petboarding/api/zod'
 import { computed, ref, toRefs } from 'vue'
+
 import { useLang } from '../lang/index.js'
 import {
   AGENDA_CHIP_BADGE_COLORS,
@@ -96,8 +97,8 @@ export interface Props {
   modelValue: Booking | DaycareDate
   type: 'arrival' | 'departure' | 'stay' | 'daycare'
   selectedPets?: number[]
-  onOpenPets?: unknown
-  onOpenBooking?: unknown
+  onOpenPets?: (payload: { ids: number[] }) => void
+  onOpenBooking?: (id: number) => void
   showLastName?: boolean
 }
 

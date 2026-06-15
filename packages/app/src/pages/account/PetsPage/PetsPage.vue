@@ -160,7 +160,9 @@ const updatePet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const createPet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
@@ -174,7 +176,9 @@ const createPet: InstanceType<typeof PetForm>['$props']['onSubmit'] = async ({
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const ready = ref<boolean>(false)

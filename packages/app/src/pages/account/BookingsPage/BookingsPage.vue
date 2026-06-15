@@ -237,7 +237,9 @@ const updateBooking: InstanceType<
 
     done()
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const cancelBooking: InstanceType<
@@ -252,7 +254,9 @@ const cancelBooking: InstanceType<
 
       done()
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 
@@ -271,7 +275,9 @@ const createBooking: InstanceType<
     })
 
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const ready = ref<boolean>(false)

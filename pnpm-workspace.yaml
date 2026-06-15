@@ -6,23 +6,23 @@ packages:
 minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
-  - "@vitrify/*"
+  - '@vitrify/*'
   - vitrify
   - unocss-preset-quasar
-  - "@simsustech/*"
-  - "@modular-api/*"
+  - '@simsustech/*'
+  - '@modular-api/*'
   - otplib
-  - "@otplib/*"
-  - "@vue/*"
+  - '@otplib/*'
+  - '@vue/*'
   - vue-tsc
   - date-fns
   - unocss
-  - "@unocss/*"
-  - "@quasar/*"
+  - '@unocss/*'
+  - '@quasar/*'
   - sass
 
 allowBuilds:
-  "@parcel/watcher": true
+  '@parcel/watcher': true
   core-js: true
   esbuild: true
   sharp: true

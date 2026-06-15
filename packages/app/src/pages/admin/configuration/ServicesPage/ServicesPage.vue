@@ -145,7 +145,9 @@ const openDeleteServiceDialog = ({ data }: { data: Service }) => {
     try {
       await deleteServiceMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

@@ -23,6 +23,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
+          aria-label="More options"
         >
           <q-menu>
             <q-list>
@@ -55,19 +56,6 @@
             </q-list>
           </q-menu>
         </q-btn>
-        <!-- <q-btn
-          v-if="showEditButton" v-close-popup
-          icon="i-mdi-edit"
-          data-testid="edit-button"
-          @click="emit('update', { data: announcement })"
-        />
-        <q-btn
-          v-if="showDeleteButton" v-close-popup
-          icon="i-mdi-delete"
-          color="red"
-          data-testid="delete-button"
-          @click="emit('delete', { data: announcement })"
-        /> -->
       </q-item-section>
     </q-item>
   </q-list>

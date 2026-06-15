@@ -27,6 +27,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
+          aria-label="More options"
         >
           <q-menu>
             <q-list>
@@ -59,19 +60,6 @@
             </q-list>
           </q-menu>
         </q-btn>
-        <!-- <q-btn
-          v-if="showEditButton" v-close-popup
-          icon="i-mdi-edit"
-          data-testid="edit-button"
-          @click="emit('update', { data: daycareSubscription, done: () => {} })"
-        />
-        <q-btn
-          v-if="showDeleteButton" v-close-popup
-          icon="i-mdi-delete"
-          color="red"
-          data-testid="delete-button"
-          @click="emit('delete', { data: daycareSubscription, done: () => {} })"
-        /> -->
         <q-btn
           v-if="showPurchaseButton"
           icon="i-mdi-add-shopping-cart"
@@ -139,6 +127,7 @@ const emit = defineEmits<{
 }>()
 
 const lang = useLang()
+
 const configuration = useConfiguration()
 
 const formatValidityPeriod = (

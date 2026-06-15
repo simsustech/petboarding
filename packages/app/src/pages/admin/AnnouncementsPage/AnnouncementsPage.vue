@@ -103,7 +103,9 @@ const createAnnouncement: InstanceType<
     await createAnnouncementMutation(data)
     done(true)
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const updateAnnouncementDialogRef = ref<typeof ResponsiveDialog>()
@@ -133,7 +135,9 @@ const updateAnnouncement: InstanceType<
     await updateAnnouncementMutation(data)
     done(true)
     await execute()
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 const openDeleteAnnouncementDialog = ({ data }: { data: Announcement }) => {
@@ -148,7 +152,9 @@ const openDeleteAnnouncementDialog = ({ data }: { data: Announcement }) => {
     try {
       await deleteAnnouncementMutation({ id: data.id })
       await execute()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   })
 }
 

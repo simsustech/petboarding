@@ -2,7 +2,7 @@
   <div>
     <q-avatar :class="{ 'cursor-pointer': modelValue }" @click="open">
       <img v-if="modelValue" :src="modelValue" />
-      <q-icon v-else size="lg" name="i-mdi-camera" />
+      <q-icon v-else size="lg" name="i-mdi-camera" aria-hidden="true" />
     </q-avatar>
     <q-btn
       v-if="allowChange"
@@ -13,6 +13,7 @@
       padding="xs"
       style="position: relative; right: 18px; bottom: -15px"
       :icon="modelValue ? 'i-mdi-edit' : 'i-mdi-add'"
+      :aria-label="modelValue ? lang.edit : lang.add"
       @click="pickFiles"
     ></q-btn>
     <q-file

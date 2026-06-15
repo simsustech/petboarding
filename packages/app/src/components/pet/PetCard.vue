@@ -267,6 +267,12 @@ import { ref } from 'vue'
 import PetSelect from '../employee/PetSelect.vue'
 import { useEmployeeSetPetRelation } from '../../mutations/employee/pet.js'
 
+export type OpenCustomerHandler = (payload: { id: number }) => void
+export type DeleteHandler = (payload: {
+  data: PetType
+  done: (success?: boolean) => void
+}) => void
+
 export interface Pet extends PetType {
   image?: string
 }
@@ -277,9 +283,9 @@ export interface Props {
   useComments?: boolean
   showAddVaccination?: boolean
   allowDelete?: boolean
-  onOpenCustomer?: unknown
-  onDelete?: unknown
   showRelations?: boolean
+  onOpenCustomer?: OpenCustomerHandler
+  onDelete?: DeleteHandler
 }
 const props = defineProps<Props>()
 

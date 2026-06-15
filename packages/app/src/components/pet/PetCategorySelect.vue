@@ -20,8 +20,8 @@ export default {
 
 <script setup lang="ts">
 import { watch, useAttrs, ref, toRefs } from 'vue'
-import { ValidationRule, useQuasar } from 'quasar'
-import { useLang, loadLang } from '../../lang/index.js'
+import { ValidationRule } from 'quasar'
+import { useLang } from '../../lang/index.js'
 import type { Category, Pet } from '@petboarding/api/zod'
 
 export interface Props {
@@ -35,12 +35,6 @@ const props = defineProps<Props>()
 const attrs = useAttrs()
 
 const lang = useLang()
-
-const $q = useQuasar()
-if (lang.value.isoName !== $q.lang.isoName) loadLang($q.lang.isoName)
-watch($q.lang, () => {
-  loadLang($q.lang.isoName)
-})
 
 const { categories, species } = toRefs(props)
 
