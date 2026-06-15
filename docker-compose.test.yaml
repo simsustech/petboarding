@@ -84,11 +84,10 @@ services:
       POSTGRES_HOST: database
       POSTGRES_DB: petboarding
       POSTGRES_PASSWORD: ufgouifdgjdfg
-      MAIL_HOST: ${MAIL_HOST}
-      MAIL_PORT: ${MAIL_PORT}
-      MAIL_FROM: ${MAIL_FROM}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASS: ${MAIL_PASS}
+      MAIL_HOST: mailhog
+      MAIL_PORT: '1025'
+      MAIL_FROM: 'test@petboarding.app'
+      MAIL_SECURE: 'false'
       OIDC_COOKIES_KEYS: 7JOoAPoC5232uJiUdDd+7EUuyFFcZqQJwsAQDnoldZI=
       OTP_SECRET: NNXHQ5TPNF2WK53POJUWU53MMVXHE===
       OTP_VALIDITY_SECONDS: 3600
