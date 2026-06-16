@@ -248,7 +248,9 @@ export async function calculateBookingCosts({
             parse
           },
           dateHolidays: Holidays,
-          computeInvoiceCosts
+          computeInvoiceCosts,
+          locale: config.lang,
+          country: config.country
         }))
       } catch (e) {
         console.error('Unable to load API config')

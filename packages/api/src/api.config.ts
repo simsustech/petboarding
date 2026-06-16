@@ -33,6 +33,11 @@ const bookingCostsHandler: BookingCostsHandler = ({
   dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
   dateHolidays,
   computeInvoiceCosts,
+  surchargeHolidays = [],
+  locale = 'en-US',
+  country = 'NL',
+  requiredDownPaymentAmountFractionOfTotal = 0,
+  minimumRequiredDownPaymentAmount = 5000,
   vacations
 }) => {
   let lines: RawInvoiceLine[] = []
@@ -82,25 +87,26 @@ const bookingCostsHandler: BookingCostsHandler = ({
     }
   }
 
-  let holidayDays = 0
-  if (dateHolidays && eachDayOfInterval) {
-    const holidays = new dateHolidays()
-    const surchargeHolidays: string[] = []
-    surchargeHolidays.forEach((holiday) => holidays.setHoliday(holiday, 'en'))
+  if (dateHolidays && eachDayOfInterval && surchargeHolidays.length > 0) {
+    const holidays = new dateHolidays(country, { languages: [locale, 'en'] })
+    const localHolidays = holidays.getHolidays(undefined, locale)
     for (const date of eachDayOfInterval({
       start: parse(startDate, 'yyyy-MM-dd', new Date()),
       end: parse(endDate, 'yyyy-MM-dd', new Date())
     })) {
-      if (holidays.isHoliday(date)) {
-        holidayDays++
-      }
-    }
-    if (holidayDays) {
+      if (!holidays.isHoliday(date)) continue
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+      const holiday = localHolidays.find((h) => h.date.startsWith(dateKey))
+      if (!holiday) continue
+      const matched = surchargeHolidays.find(
+        ({ rule }) => rule === holiday.rule
+      )
+      if (!matched) continue
       lines.push({
-        description: 'Holidays surcharge',
-        listPrice: 500,
+        description: holiday.name,
+        listPrice: matched.listPrice ?? 500,
         listPriceIncludesTax: true,
-        quantity: pets.length * holidayDays,
+        quantity: pets.length,
         quantityPerMille: false,
         discount: 0,
         taxRate: 21
@@ -142,8 +148,6 @@ const bookingCostsHandler: BookingCostsHandler = ({
     })
   }
 
-  const requiredDownPaymentAmountFractionOfTotal = 0
-  const minimumRequiredDownPaymentAmount = 5000
   let requiredDownPaymentAmount =
     computedInvoiceCosts &&
     computedInvoiceCosts.totalIncludingTax *

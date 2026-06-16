@@ -16,6 +16,22 @@ const bookingCostsHandler = ({
   dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
   dateHolidays,
   computeInvoiceCosts,
+  surchargeHolidays = [
+    { rule: '01-01' },
+    { rule: 'easter' },
+    { rule: 'easter 1' },
+    { rule: 'easter 39' },
+    { rule: 'easter 49' },
+    { rule: 'easter 50' },
+    { rule: '12-25' },
+    { rule: '12-26' },
+    { rule: '12-31' },
+    { rule: '04-27 if sunday then previous saturday since 2014' }
+  ],
+  locale = 'en-US',
+  country = 'NL',
+  requiredDownPaymentAmountFractionOfTotal = 0,
+  minimumRequiredDownPaymentAmount = 5000,
   vacations
 }) => {
   let lines = []
@@ -67,40 +83,26 @@ const bookingCostsHandler = ({
     }
   }
 
-  let holidayDays = 0
-  if (dateHolidays && eachDayOfInterval) {
-    const holidays = new dateHolidays()
-    const surchargeHolidays = [
-      '01-01',
-      'easter',
-      'easter 1',
-      'easter 39',
-      'easter 49',
-      'easter 50',
-      'easter -50',
-      'easter -49',
-      'easter -48',
-      'easter -47',
-      '12-25',
-      '12-26',
-      '12-31',
-      '04-27 if sunday then previous saturday since 2014'
-    ]
-    surchargeHolidays.forEach((holiday) => holidays.setHoliday(holiday, 'en'))
+  if (dateHolidays && eachDayOfInterval && surchargeHolidays.length > 0) {
+    const holidays = new dateHolidays(country, { languages: [locale, 'en'] })
+    const localHolidays = holidays.getHolidays(undefined, locale)
     for (const date of eachDayOfInterval({
       start: parse(startDate, 'yyyy-MM-dd', new Date()),
       end: parse(endDate, 'yyyy-MM-dd', new Date())
     })) {
-      if (holidays.isHoliday(date)) {
-        holidayDays++
-      }
-    }
-    if (holidayDays) {
+      if (!holidays.isHoliday(date)) continue
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+      const holiday = localHolidays.find((h) => h.date.startsWith(dateKey))
+      if (!holiday) continue
+      const matched = surchargeHolidays.find(
+        ({ rule }) => rule === holiday.rule
+      )
+      if (!matched) continue
       lines.push({
-        description: 'Feestdagen toeslag',
-        listPrice: 500,
+        description: holiday.name,
+        listPrice: matched.listPrice ?? 500,
         listPriceIncludesTax: true,
-        quantity: pets.length * holidayDays,
+        quantity: pets.length,
         quantityPerMille: false,
         discount: 0,
         taxRate: 21
@@ -142,8 +144,6 @@ const bookingCostsHandler = ({
     })
   }
 
-  const requiredDownPaymentAmountFractionOfTotal = 0
-  const minimumRequiredDownPaymentAmount = 5000
   let requiredDownPaymentAmount =
     computedInvoiceCosts &&
     computedInvoiceCosts.totalIncludingTax *

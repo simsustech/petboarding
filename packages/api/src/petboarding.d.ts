@@ -42,6 +42,11 @@ export type BookingCostsHandler = (params: {
   }
   dateHolidays?: typeof Holidays
   computeInvoiceCosts?: typeof computeInvoiceCosts
+  surchargeHolidays?: { rule: string; listPrice?: number }[]
+  locale?: string
+  country?: string
+  requiredDownPaymentAmountFractionOfTotal?: number
+  minimumRequiredDownPaymentAmount?: number
   vacations: {
     name: string
     startDate: string
