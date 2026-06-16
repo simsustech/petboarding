@@ -23,7 +23,8 @@ import type { FastifyInstance } from 'fastify'
 
 const employeePetValidation = pet.omit({
   customer: true,
-  customerId: true
+  customerId: true,
+  relations: true
 })
 
 export const convertVaccinationImage = async (uri: string) => {
