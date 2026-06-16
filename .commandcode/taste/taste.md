@@ -11,6 +11,9 @@
 
 # code-style
 - Use a config/ directory (not env/) for configuration module files like env.ts and postgres.ts. Confidence: 0.65
+- Prefer simple, direct code over complex implementations. When iterating on a solution, don't over-engineer (e.g., nested probes, rule-by-date maps, UTC indirection, double Holidays init) when a straightforward loop with a counter or map would work. The user will explicitly call out overly complicated code. Confidence: 0.95
+- Trust library return values without defensive fallbacks (e.g., `namer.isHoliday(date)?.[0]?.name ?? result[0].name`, `?? locale`, `|| rule === result[0].name`). If `isHoliday` returns false, `!result` is sufficient. If it returns a hit, `result[0].name` and `result[0].rule` are sufficient. The user will explicitly point out when defensive code is unnecessary. Confidence: 0.85
+- For test/factory `buildParams`-style helpers, let the destructured parameter name match the param name and shadow a module-scope default constant (e.g., `country = country`) — do NOT use a `passed<Name>` prefix or an "Argument" suffix. The parameter is passed by design, not as an argument. Confidence: 0.80
 
 # git
 - When staging partial changes from files with mixed concerns, use git add -p to selectively stage only relevant hunks rather than staging entire files. Confidence: 0.70
@@ -43,7 +46,6 @@ See [workflow/taste.md](workflow/taste.md)
 - Vacation date ranges cannot overlap — each vacation must have a unique, non-overlapping date range. When seeding multiple vacations, ensure sequential non-overlapping date ranges. Confidence: 0.75
 
 # dates
-- Use date-fns for generating date sequences and intervals instead of manual string arithmetic. Confidence: 0.80
-
+See [dates/taste.md](dates/taste.md)
 # sigmap
 See [sigmap/taste.md](sigmap/taste.md)

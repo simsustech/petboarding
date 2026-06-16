@@ -7,3 +7,5 @@
 - Do not dismiss skipped e2e tests — investigate and fix them before continuing with other work, even if they appear to be conditionally skipped due to data/seeding issues. Confidence: 0.75
 - Use sigmap (https://github.com/manojmallick/sigmap) for the project. Save the usage strategy to AGENTS.md. Confidence: 0.60
 - At the start of every new session, remind the user to run the session in tmux. Confidence: 0.85
+- Prefer simpler, more direct implementations over complex refactors. If a working approach exists, keep the existing structure rather than introducing elaborate abstractions (lookup maps, probe instances, multi-step year iteration) unless there's a clear, demonstrated need. Confidence: 0.80
+- Before starting a multi-step implementation, think through the approach first and confirm the design is correct. Do not propose or execute several "crazy approaches" back-to-back when the initial idea from the user is already clear. The user has explicitly called out that wasting their time with over-engineered exploration is unacceptable — take the time to think it through first. Confidence: 0.95
