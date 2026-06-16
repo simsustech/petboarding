@@ -17,13 +17,29 @@ export const configurationAnnouncementRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getAnnouncements: procedure.query(async () => {
-    const announcements = await findAnnouncements({
-      criteria: {}
-    })
-    if (announcements) return announcements
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getAnnouncements: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([z.literal('title'), z.literal('expirationDate')])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const announcements = await findAnnouncements({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (announcements) return announcements
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createAnnouncement: procedure
     .input(announcement)
     .mutation(async ({ input }) => {

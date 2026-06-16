@@ -29,28 +29,50 @@ test.beforeAll(async ({ browser }) => {
 })
 
 test.describe('Vacations', async () => {
+  test('Pagination: 12 seeded items across 2 pages', async () => {
+    await page.goto('/admin/configuration/vacations')
+    await page.waitForLoadState('networkidle')
+
+    const pagination = page.locator('.q-pagination')
+    await expect(pagination).toBeVisible()
+
+    // 12 items, 10 per page — Vacation 10 is last on page 1
+    await expect(page.getByText('Vacation 10').first()).toBeVisible()
+    await expect(page.getByText('Vacation 11').first()).not.toBeVisible()
+
+    // Navigate to page 2
+    await pagination.locator('button').last().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Vacation 11').first()).toBeVisible()
+    await expect(page.getByText('Vacation 10').first()).not.toBeVisible()
+
+    // Navigate back to page 1
+    await pagination.locator('button').first().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Vacation 10').first()).toBeVisible()
+  })
+
   test('Create vacation', async () => {
     await page.goto('/admin/configuration/vacations')
     await page.waitForLoadState('networkidle')
 
     await page.locator('#fabAdd').click()
-
     await page.getByLabel('Name').fill(vacation.name)
-
     await page.locator('.q-date__calendar-item--in').first().click()
     await page
       .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
       .click()
     await page.locator('.q-date__calendar-item--in').first().click()
-
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${vacation.name}`)).toBeVisible()
   })
 
   test('Update vacation', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('edit-button').last().click()
+    await page.getByRole('listitem').first().getByRole('button').click()
+    await page.getByTestId('edit-button').first().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedVacation')
@@ -60,8 +82,8 @@ test.describe('Vacations', async () => {
   })
 
   test('Delete vacation', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('delete-button').last().click()
+    await page.getByRole('listitem').first().getByRole('button').click()
+    await page.getByTestId('delete-button').first().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()

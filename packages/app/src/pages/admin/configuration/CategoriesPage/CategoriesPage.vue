@@ -1,5 +1,9 @@
 <template>
   <q-page padding @create="openCreateDialog">
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <categories-list
       v-if="categories"
       v-model="categories"
@@ -10,6 +14,15 @@
       @add-price="openCreateCategoryPriceDialog"
       @delete-price="openDeleteCategoryPriceDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createCategoryDialogRef"
@@ -50,7 +63,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Category, CategoryPrice } from '@petboarding/api/zod'
@@ -77,7 +90,13 @@ bus.on('administrator-configuration-open-categories-create-dialog', () => {
     })
 })
 
-const { categories, refetch: execute } = useConfigurationGetCategoriesQuery()
+const {
+  categories,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetCategoriesQuery()
+const total = computed(() => categories.value?.at(0)?.total || 0)
 
 const { mutateAsync: createCategoryMutation } =
   useConfigurationCreateCategoryMutation()

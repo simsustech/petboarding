@@ -1,5 +1,9 @@
 <template>
   <q-page padding @create="openCreateDialog">
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <buildings-list
       v-if="buildings"
       :model-value="buildings"
@@ -8,6 +12,15 @@
       @update="openUpdateBuildingDialog"
       @delete="openDeleteBuildingDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createBuildingDialogRef"
@@ -36,7 +49,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Building } from '@petboarding/api/zod'
@@ -50,7 +63,7 @@ import {
   useConfigurationDeleteBuildingMutation,
   useConfigurationUpdateBuildingMutation
 } from 'src/mutations/configuration/building.js'
-import { useConfigurationGetBuildingsQuery } from 'src/queries/configuration/building.js'
+import { useConfigurationGetBuildingsPaginatedQuery } from 'src/queries/configuration/building.js'
 
 const bus = inject<EventBus>('bus')!
 bus.on('administrator-configuration-open-buildings-create-dialog', () => {
@@ -60,7 +73,13 @@ bus.on('administrator-configuration-open-buildings-create-dialog', () => {
     })
 })
 
-const { buildings, refetch: execute } = useConfigurationGetBuildingsQuery()
+const {
+  buildings,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetBuildingsPaginatedQuery()
+const total = computed(() => buildings.value?.at(0)?.total || 0)
 
 const { mutateAsync: createBuildingMutation } =
   useConfigurationCreateBuildingMutation()

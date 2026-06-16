@@ -17,11 +17,33 @@ export const configurationServiceRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getServices: procedure.query(async () => {
-    const services = await findServices({ criteria: {} })
-    if (services) return services
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getServices: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([
+                z.literal('name'),
+                z.literal('type'),
+                z.literal('listPrice')
+              ])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const services = await findServices({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (services) return services
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createService: procedure.input(service).mutation(async ({ input }) => {
     const service = await createService(input)
 

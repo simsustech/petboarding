@@ -17,12 +17,32 @@ export const configurationDaycareSubscriptionRoutes = ({
   fastify: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getDaycareSubscriptions: procedure.query(async ({}) => {
-    const daycareSubscriptions = await findDaycareSubscriptions({
-      criteria: {}
-    })
-    return daycareSubscriptions
-  }),
+  getDaycareSubscriptions: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([
+                z.literal('description'),
+                z.literal('numberOfDays'),
+                z.literal('listPrice')
+              ])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const daycareSubscriptions = await findDaycareSubscriptions({
+        criteria: {},
+        pagination: input.pagination
+      })
+      return daycareSubscriptions
+    }),
   createDaycareSubscription: procedure
     .input(daycareSubscriptionValidation)
     .mutation(async ({ input }) => {

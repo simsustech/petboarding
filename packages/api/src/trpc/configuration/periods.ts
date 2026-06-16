@@ -17,15 +17,31 @@ export const configurationPeriodRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getPeriods: procedure.query(async () => {
-    const periods = await findPeriods({
-      criteria: {
-        from: new Date().toISOString().slice(0, 10)
-      }
-    })
-    if (periods) return periods
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getPeriods: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([z.literal('startDate'), z.literal('type')])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const periods = await findPeriods({
+        criteria: {
+          from: new Date().toISOString().slice(0, 10)
+        },
+        pagination: input.pagination
+      })
+      if (periods) return periods
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createPeriod: procedure.input(period).mutation(async ({ input }) => {
     const period = await createPeriod(input)
 

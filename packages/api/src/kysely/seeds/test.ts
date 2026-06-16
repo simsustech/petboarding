@@ -1,10 +1,12 @@
 import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import { sql } from 'kysely'
+import { addDays } from 'date-fns'
 import {
   BOOKING_STATUS,
   DAYCARE_DATE_STATUS,
   OPENING_TIME_TYPE,
+  PERIOD_TYPE,
   SERVICE_TYPE
 } from '@petboarding/tools/constants'
 import { getRandomInt } from './fake/index.js'
@@ -342,6 +344,33 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   await db.insertInto('buildings').values(buildings).execute()
   await db.insertInto('kennels').values(kennels).execute()
   await db.insertInto('announcements').values(announcements).execute()
+
+  const baseDate = new Date('2030-01-01')
+  const vacations = Array.from({ length: 12 }, (_, i) => ({
+    name: `Vacation ${String(i + 1).padStart(2, '0')}`,
+    startDate: addDays(baseDate, i * 7)
+      .toISOString()
+      .slice(0, 10),
+    endDate: addDays(baseDate, i * 7 + 2)
+      .toISOString()
+      .slice(0, 10),
+    surchargePerDay: 0
+  }))
+  await db.insertInto('vacations').values(vacations).execute()
+
+  const periodBase = new Date('2030-06-01')
+  const periods = Array.from({ length: 12 }, (_, i) => ({
+    startDate: addDays(periodBase, i * 3)
+      .toISOString()
+      .slice(0, 10),
+    endDate: addDays(periodBase, i * 3 + 1)
+      .toISOString()
+      .slice(0, 10),
+    type: PERIOD_TYPE.UNAVAILABLE_FOR_ALL,
+    comments: `Period ${String(i + 1).padStart(2, '0')}`
+  }))
+  await db.insertInto('periods').values(periods).execute()
+
   await db.insertInto('categories').values(categories).execute()
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()

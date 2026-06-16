@@ -1,5 +1,9 @@
 <template>
   <q-page padding @create="openCreateDialog">
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <services-list
       v-if="services"
       :model-value="services"
@@ -8,6 +12,15 @@
       @update="openUpdateServiceDialog"
       @delete="openDeleteServiceDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createServiceDialogRef"
@@ -36,7 +49,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Service } from '@petboarding/api/zod'
@@ -60,7 +73,13 @@ bus.on('administrator-configuration-open-services-create-dialog', () => {
     })
 })
 
-const { services, refetch: execute } = useConfigurationGetServicesQuery()
+const {
+  services,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetServicesQuery()
+const total = computed(() => services.value?.at(0)?.total || 0)
 
 const { mutateAsync: createServiceMutation } =
   useConfigurationCreateServiceMutation()

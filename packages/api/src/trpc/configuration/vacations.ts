@@ -16,11 +16,26 @@ export const configurationVacationRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getVacations: procedure.query(async () => {
-    const vacations = await findVacations()
-    if (vacations) return vacations
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getVacations: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([z.literal('name'), z.literal('startDate')])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const vacations = await findVacations(undefined, input.pagination)
+      if (vacations) return vacations
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createVacation: procedure.input(vacation).mutation(async ({ input }) => {
     const result = await createVacation(input)
     if (result) return true

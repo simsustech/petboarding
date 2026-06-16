@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { initializeAndLogin } from '../setup'
 
-// import { format } from 'date-fns'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const email = 'admin@petboarding.app'
@@ -30,26 +29,47 @@ test.beforeAll(async ({ browser }) => {
 })
 
 test.describe('Periods', async () => {
+  test('Pagination: 12 seeded items across 2 pages', async () => {
+    await page.goto('/admin/periods')
+    await page.waitForLoadState('networkidle')
+
+    const pagination = page.locator('.q-pagination')
+    await expect(pagination).toBeVisible()
+
+    // 12 items, 10 per page — Period 10 is last on page 1
+    await expect(page.getByText('Period 10').first()).toBeVisible()
+    await expect(page.getByText('Period 11').first()).not.toBeVisible()
+
+    // Navigate to page 2
+    await pagination.locator('button').last().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Period 11').first()).toBeVisible()
+    await expect(page.getByText('Period 10').first()).not.toBeVisible()
+
+    // Navigate back to page 1
+    await pagination.locator('button').first().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Period 10').first()).toBeVisible()
+  })
+
   test('Create period', async () => {
     await page.goto('/admin/periods')
     await page.waitForLoadState('networkidle')
 
     await page.locator('#fabAdd').click()
-    // await page.getByLabel('Start date').fill(period.startDate)
-    // await page.getByLabel('End date').fill(`${period.endDate}`)
     await page.locator('.q-date__calendar-item--in').first().click()
     await page
       .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
       .click()
-    // await page.locator('div:nth-child(3) > .q-btn').first().click()
     await page.locator('.q-date__calendar-item--in').first().click()
-
     await page.getByLabel('Comments').fill(`${period.comments}`)
-
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${period.comments}`)).toBeVisible()
   })
+
   test('Update period', async () => {
     await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()

@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { initializeAndLogin } from '../setup'
 
-// import { format } from 'date-fns'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const email = 'admin@petboarding.app'
@@ -29,37 +28,53 @@ test.beforeAll(async ({ browser }) => {
   ).toBeVisible()
 })
 
+async function gotoPage() {
+  await page.goto('/admin/configuration/services')
+  await page.waitForLoadState('networkidle')
+}
+
 test.describe('Services', async () => {
   test('Create service', async () => {
-    await page.goto('/admin/configuration/services')
-    await page.waitForLoadState('networkidle')
+    await gotoPage()
 
     await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(service.name)
     await page.getByLabel('Description').fill(`${service.description}`)
-
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${service.name}`)).toBeVisible()
   })
+
   test('Update service', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
+    await gotoPage()
+
+    const updatedItem = page
+      .getByRole('listitem')
+      .filter({ hasText: service.name })
+    await updatedItem.getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog')
     await dialog.isVisible()
     await page.getByLabel('Name').fill('UpdatedName')
     await dialog.locator('text=Submit').click()
-    await delay(100)
+    await delay(200)
     await expect(page.getByText('UpdatedName').first()).toBeVisible()
   })
 
   test('Delete service', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
-    await dialog.isVisible()
-    await dialog.locator('text=Ok').click()
+    await gotoPage()
 
+    await page
+      .getByRole('listitem')
+      .filter({ hasText: 'UpdatedName' })
+      .first()
+      .getByRole('button')
+      .click()
+    await page.getByTestId('delete-button').last().click()
+    await expect(page.locator('.q-dialog')).toBeVisible()
+    await page.locator('.q-dialog').getByRole('button', { name: 'Ok' }).click()
+
+    await gotoPage()
     await expect(page.getByText('UpdatedName')).toHaveCount(0)
   })
 })

@@ -18,10 +18,17 @@ const defaultSelect = [
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Period> & { from?: string; types?: PERIOD_TYPE[] }
   select?: (keyof Period)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'type' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -44,7 +51,23 @@ function find({
     query = query.where('type', 'in', criteria.types)
   }
 
-  return query.select(select)
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  return query
+    .select(select)
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
 }
 
 export async function findPeriod({
@@ -61,14 +84,22 @@ export async function findPeriod({
 
 export async function findPeriods({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Period> & { from?: string; types?: PERIOD_TYPE[] }
   select?: (keyof Period)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'startDate' | 'type' | null
+    descending: boolean
+  }
 }) {
   const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
   return query.orderBy('startDate').execute()
 }

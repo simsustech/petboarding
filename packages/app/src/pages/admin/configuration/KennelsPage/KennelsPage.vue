@@ -1,5 +1,9 @@
 <template>
   <q-page padding @create="openCreateDialog">
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <kennels-list
       v-if="kennels"
       :model-value="kennels"
@@ -8,6 +12,15 @@
       @update="openUpdateKennelDialog"
       @delete="openDeleteKennelDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createKennelDialogRef"
@@ -44,7 +57,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Kennel } from '@petboarding/api/zod'
@@ -73,7 +86,13 @@ bus.on('administrator-configuration-open-kennels-create-dialog', () => {
 const { buildings, refetch: executeBuildings } =
   useConfigurationGetBuildingsQuery()
 
-const { kennels, refetch: execute } = useConfigurationGetKennelsQuery()
+const {
+  kennels,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetKennelsQuery()
+const total = computed(() => kennels.value?.at(0)?.total || 0)
 
 const { mutateAsync: createKennelMutation } =
   useConfigurationCreateKennelMutation()

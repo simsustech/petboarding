@@ -38,5 +38,12 @@ See [workflow/taste.md](workflow/taste.md)
 - Avoid using getCurrentInstance() in application code — it is an internal API intended for official Vue libraries, not userland code. It was mistakenly documented in early v3 docs but is no longer considered a public API. Confidence: 0.85
 - When a child component needs to detect whether a parent is listening to an event, pass the handler function as a prop (e.g., `:on-open-customer="openCustomer"`) and check `!!props.onOpenCustomer` in the child, rather than using boolean flags or getCurrentInstance(). Confidence: 0.70
 
+# e2e-testing
+- When e2e tests need bulk data (e.g., for pagination testing), seed the data programmatically beforehand (via API calls or DB seeding) rather than creating it through repeated browser form interactions. Confidence: 0.70
+- Vacation date ranges cannot overlap — each vacation must have a unique, non-overlapping date range. When seeding multiple vacations, ensure sequential non-overlapping date ranges. Confidence: 0.75
+
+# dates
+- Use date-fns for generating date sequences and intervals instead of manual string arithmetic. Confidence: 0.80
+
 # sigmap
 See [sigmap/taste.md](sigmap/taste.md)

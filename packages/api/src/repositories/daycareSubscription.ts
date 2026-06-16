@@ -16,10 +16,17 @@ const defaultSelect = [
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<DaycareSubscription>
   select?: (keyof DaycareSubscription)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'description' | 'numberOfDays' | 'listPrice' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -30,7 +37,23 @@ function find({
     query = query.where('id', '=', criteria.id)
   }
 
-  return query.select(select)
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  return query
+    .select(select)
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
 }
 
 export async function findDaycareSubscription({
@@ -47,14 +70,22 @@ export async function findDaycareSubscription({
 
 export async function findDaycareSubscriptions({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<DaycareSubscription>
   select?: (keyof DaycareSubscription)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'description' | 'numberOfDays' | 'listPrice' | null
+    descending: boolean
+  }
 }) {
   const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
   return query.execute()
 }

@@ -17,13 +17,33 @@ export const configurationKennelRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getKennels: procedure.query(async () => {
-    const kennels = await findKennels({
-      criteria: {}
-    })
-    if (kennels) return kennels
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getKennels: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([
+                z.literal('name'),
+                z.literal('capacity'),
+                z.literal('order')
+              ])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const kennels = await findKennels({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (kennels) return kennels
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createKennel: procedure.input(kennel).mutation(async ({ input }) => {
     const kennel = await createKennel(input)
 
