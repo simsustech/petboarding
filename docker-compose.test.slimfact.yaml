@@ -1,0 +1,76 @@
+# Override file to enable SlimFact integration in test environment.
+#
+# Adds a slimfact service alongside petboarding, both behind the same caddy:
+#   https://petboarding.localhost → petboarding
+#   https://slimfact.localhost     → slimfact
+#
+# Both .localhost domains resolve to 127.0.0.1 per RFC 6761. Caddy differentiates
+# by Host header and auto-generates TLS certs.
+#
+# Usage:
+#   docker compose -f docker-compose.test.yaml -f docker-compose.test.slimfact.yaml up --build
+#
+# The slimfact image must be pre-built:
+#   cd /path/to/slimfact && docker compose -f docker-compose.test.yaml build
+services:
+  # Create slimfact database on the shared postgres instance
+  database:
+    volumes:
+      - ./.docker/init-slimfact-db.sql:/docker-entrypoint-initdb.d/init-slimfact-db.sql
+
+  # Override petboarding to use hostname-based routing
+  app:
+    extra_hosts:
+      - 'petboarding.localhost:host-gateway'
+      - 'slimfact.localhost:host-gateway'
+    labels:
+      caddy: petboarding.localhost
+      caddy.reverse_proxy: '{{upstreams 80}}'
+      caddy.encode: zstd gzip
+    environment:
+      VITE_API_HOST: petboarding.localhost
+      SLIMFACT_HOST: slimfact.localhost
+      SLIMFACT_COMPANY_ID: '1'
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+
+  # SlimFact test service
+  slimfact:
+    image: slimfact-api:latest
+    depends_on:
+      database:
+        condition: service_healthy
+    labels:
+      caddy: slimfact.localhost
+      caddy.reverse_proxy: '{{upstreams 80}}'
+      caddy.encode: zstd gzip
+    environment:
+      API_HOST: slimfact.localhost
+      VITE_API_HOST: slimfact.localhost
+      VITE_TITLE: SlimFact
+      VITE_LICENSE_KEY: undefined
+      VITE_LANG: en-US
+      POSTGRES_HOST: database
+      POSTGRES_DB: slimfact
+      POSTGRES_PASSWORD: ufgouifdgjdfg
+      MAIL_HOST: mailhog
+      MAIL_PORT: '1025'
+      MAIL_FROM: 'test@slimfact.app'
+      MAIL_SECURE: 'false'
+      OIDC_CLIENT_SECRET: petboarding
+      OIDC_COOKIES_KEYS: 7JOoAPoC5232uJiUdDd+7EUuyFFcZqQJwsAQDnoldZI=
+      OTP_SECRET: 7JOoAPoC5232uJiUdDd+7EUuyFFcZqQJwsAQDnoldZI=
+      OTP_VALIDITY_SECONDS: '3600'
+      EMAIL_FOOTER: 'SlimFact <info@slimfact.app>'
+      PETBOARDING_CLIENT_HOST: petboarding.localhost
+      VITE_SOURCE_COLOR: '#00a4e6'
+    command:
+      ['sh', '-c', 'npm run migrate:latest && npm run seed:test && npm run serve']
+    healthcheck:
+      test: curl --fail --insecure http://localhost || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 15s
+      timeout: 10s
+    networks:
+      test:
+      web:
