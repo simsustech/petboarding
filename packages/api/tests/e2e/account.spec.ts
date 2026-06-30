@@ -97,9 +97,9 @@ test.describe('Account', async () => {
     expect(page.locator(`text=${customer.firstName}`)).toBeVisible()
 
     await page.locator('#fabEdit').click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('First name*').fill('NewFirstName')
+    await dialog.getByLabel('First name*').fill('NewFirstName')
     await dialog.locator('text=Submit').click()
 
     await expect(page.locator(`text=NewFirstName`)).toBeVisible()
@@ -120,9 +120,9 @@ test.describe('Account', async () => {
     await expect(page.locator(`text=${contactPerson.firstName}`)).toBeVisible()
 
     await page.getByTestId('edit-button').click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('First name*').fill('NewContactPersonFirstName')
+    await dialog.getByLabel('First name*').fill('NewContactPersonFirstName')
     await dialog.locator('text=Submit').click()
 
     await expect(page.locator(`text=NewContactPersonFirstName`)).toBeVisible()
@@ -153,9 +153,9 @@ test.describe('Account', async () => {
     await expect(page.locator(`text=${pet.name}`)).toBeVisible()
 
     await page.getByTestId('edit-button').click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Name*').fill(newPetName)
+    await dialog.getByLabel('Name*').fill(newPetName)
     await dialog.locator('text=Submit').click()
 
     await expect(page.locator(`text=${newPetName}`)).toBeVisible()
@@ -163,7 +163,9 @@ test.describe('Account', async () => {
 
   test('Add booking', async () => {
     await page.goto('/account/bookings')
+    await page.waitForLoadState('networkidle')
 
+    await page.locator('#fabAdd').waitFor()
     await page.locator('#fabAdd').click()
 
     await page.locator('.q-date__calendar-item--in').first().click()

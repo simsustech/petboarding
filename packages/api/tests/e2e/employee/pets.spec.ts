@@ -33,11 +33,11 @@ test.describe('Employee Pets', async () => {
 
     await page.getByTestId('edit-button').first().click()
 
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
 
-    await page.getByLabel('Name*').fill(newPetName)
-    await page.getByLabel('Category*').click()
+    await dialog.getByLabel('Name*').fill(newPetName)
+    await dialog.getByLabel('Category*').click()
     await page.getByRole('option').first().click()
     await dialog.locator('text=Submit').click()
 
@@ -53,11 +53,11 @@ test.describe('Employee Pets', async () => {
 
     await page.getByTestId('edit-button').first().click()
 
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
 
-    await page.getByLabel('Name*').fill('name2')
-    await page.getByLabel('Category*').click()
+    await dialog.getByLabel('Name*').fill('name2')
+    await dialog.getByLabel('Category*').click()
     await page.getByRole('option').first().click()
     await dialog.locator('text=Submit').click()
 

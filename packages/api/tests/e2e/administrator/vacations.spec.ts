@@ -73,9 +73,9 @@ test.describe('Vacations', async () => {
   test('Update vacation', async () => {
     await page.getByRole('listitem').first().getByRole('button').click()
     await page.getByTestId('edit-button').first().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Name').fill('UpdatedVacation')
+    await dialog.getByLabel('Name').fill('UpdatedVacation')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedVacation').first()).toBeVisible()
@@ -84,7 +84,7 @@ test.describe('Vacations', async () => {
   test('Delete vacation', async () => {
     await page.getByRole('listitem').first().getByRole('button').click()
     await page.getByTestId('delete-button').first().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 

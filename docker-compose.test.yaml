@@ -69,12 +69,12 @@ services:
       database:
         condition: service_healthy
     labels:
-      caddy: localhost:3000
+      caddy: petboarding.localhost
       caddy.reverse_proxy: '{{upstreams 80}}'
       caddy.encode: zstd gzip
     environment:
       # API env variables
-      VITE_API_HOST: localhost:3000
+      VITE_API_HOST: petboarding.localhost
       VITE_LICENSE_KEY: undefined
       VITE_TITLE: Petboarding
       VITE_SOURCE_COLOR: '#4EBDC2'

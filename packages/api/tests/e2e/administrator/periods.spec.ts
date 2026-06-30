@@ -73,9 +73,9 @@ test.describe('Periods', async () => {
   test('Update period', async () => {
     await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Comments').fill('UpdatedComments')
+    await dialog.getByLabel('Comments').fill('UpdatedComments')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedComments').first()).toBeVisible()
@@ -84,7 +84,7 @@ test.describe('Periods', async () => {
   test('Delete period', async () => {
     await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 

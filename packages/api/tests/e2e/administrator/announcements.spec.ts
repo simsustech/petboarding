@@ -48,9 +48,9 @@ test.describe('Announcements', async () => {
   test('Update announcement', async () => {
     await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Title').fill('UpdatedTitle')
+    await dialog.getByLabel('Title').fill('UpdatedTitle')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedTitle').first()).toBeVisible()
@@ -59,7 +59,7 @@ test.describe('Announcements', async () => {
   test('Delete announcement', async () => {
     await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 

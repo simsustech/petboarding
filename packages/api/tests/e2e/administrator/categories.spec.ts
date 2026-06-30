@@ -47,9 +47,9 @@ test.describe('Categories', async () => {
     // await page.getByRole('listitem').last().getByRole('button').click()
     await page.getByTestId('edit-button').last().click()
 
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Name').fill('UpdatedName')
+    await dialog.getByLabel('Name').fill('UpdatedName')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedName').first()).toBeVisible()
@@ -64,7 +64,7 @@ test.describe('Categories', async () => {
     //   .click()
     await page.getByTestId('item-menu-button').last().click()
     await page.getByText('Add price').click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     const [YYYY, MM, DD] = '2030-01-01'.split('-')
     await page.getByPlaceholder('DD').first().fill(DD)
@@ -78,7 +78,7 @@ test.describe('Categories', async () => {
   test('Delete category', async () => {
     await page.getByTestId('item-menu-button').last().click()
     await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 
