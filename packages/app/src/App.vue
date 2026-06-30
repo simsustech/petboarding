@@ -22,6 +22,7 @@ import { provide } from 'vue'
 import { useConfiguration } from './configuration.js'
 import { useMeta } from 'quasar'
 import { EventBus } from 'quasar'
+import { generateTheme, setThemeColors } from 'unocss-preset-quasar/theme'
 
 const bus = new EventBus<{
   'account-open-customer-create-dialog': () => void
@@ -42,6 +43,10 @@ const bus = new EventBus<{
 provide<EventBus>('bus', bus)
 
 const configuration = useConfiguration()
+if (configuration.value.THEME_COLORS) {
+  setThemeColors(configuration.value.THEME_COLORS)
+}
+
 useMeta(() => {
   return {
     title: configuration.value.TITLE
