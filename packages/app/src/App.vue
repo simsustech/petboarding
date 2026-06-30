@@ -18,7 +18,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, watch } from 'vue'
 import { useConfiguration } from './configuration.js'
 import { useMeta } from 'quasar'
 import { EventBus } from 'quasar'
@@ -43,9 +43,11 @@ const bus = new EventBus<{
 provide<EventBus>('bus', bus)
 
 const configuration = useConfiguration()
-if (configuration.value.THEME_COLORS) {
-  setThemeColors(configuration.value.THEME_COLORS)
-}
+watch(configuration, (newVal) => {
+  if (newVal.THEME_COLORS) {
+    setThemeColors(newVal.THEME_COLORS)
+  }
+})
 
 useMeta(() => {
   return {
