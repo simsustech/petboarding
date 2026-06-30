@@ -85,7 +85,7 @@
         :label="lang.pet.fields.food"
         :model-value="
           modelValue.food
-            ? `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''} 
+            ? `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''}
                     ${lang.pet.food.unit[modelValue.food?.amountUnit] ?? ''} ${modelValue.food?.kind}`
             : undefined
         "
@@ -183,7 +183,6 @@
       <template #prepend> <q-icon name="i-mdi-search" /> </template>
       <template #side="{ itemProps, opt }">
         <q-rating
-          v-if="modelValue.relations?.[opt.value] !== void 0"
           :model-value="modelValue.relations?.[opt.value]?.rating / 2 || 0"
           size="3em"
           icon="i-mdi-star-border"

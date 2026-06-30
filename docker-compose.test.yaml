@@ -7,8 +7,8 @@ services:
       - '80:80'
       - '443:443'
       - '443:443/udp'
-      - '3000:3000'
-      - '3000:3000/udp'
+      # - '3000:3000'  # disabled
+      # - '3000:3000/udp'
     environment:
       - CADDY_INGRESS_NETWORKS=web
     labels:
