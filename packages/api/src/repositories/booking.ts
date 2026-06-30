@@ -284,7 +284,8 @@ export async function calculateBookingCosts({
           quantity: days * 1000,
           quantityPerMille: true,
           discount: 0,
-          taxRate: 21
+          taxRate: 21,
+          type: 'petboarding_booking'
         }))
         if (withServices) {
           for (const service of booking.services) {
@@ -296,7 +297,8 @@ export async function calculateBookingCosts({
                 quantity: 1,
                 quantityPerMille: false,
                 discount: 0,
-                taxRate: 21
+                taxRate: 21,
+                type: 'petboarding_service'
               })
             }
           }

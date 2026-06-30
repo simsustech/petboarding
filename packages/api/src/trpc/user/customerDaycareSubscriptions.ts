@@ -85,7 +85,8 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       quantity: 1,
       quantityPerMille: false,
       discount: 0,
-      taxRate: 21
+      taxRate: 21,
+      type: 'petboarding_daycare'
     }
   ]
   const discounts: RawInvoiceDiscount[] = []

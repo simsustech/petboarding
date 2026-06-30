@@ -19,13 +19,18 @@ export default defineConfig({
     video: 'on-first-retry',
     ignoreHTTPSErrors: true,
     headless: !!process.env.CI,
-    baseURL: 'https://localhost:3000'
+    baseURL: 'https://petboarding.localhost'
   },
 
   projects: [
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: ['--no-sandbox']
+        }
+      }
     }
   ]
 })

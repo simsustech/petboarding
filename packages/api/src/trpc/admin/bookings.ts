@@ -256,7 +256,8 @@ export const createOrUpdateSlimfactInvoice = async ({
           referenceId: 'petboarding',
           referenceUrl: `https://${host}/employee/bookings/${booking.id}`,
           webhookUrl: `https://${host}/webhook/slimfact`
-        }
+        },
+        replaceExistingLinesOfSameType: true
       })
 
       return {
