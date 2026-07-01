@@ -12,12 +12,14 @@ const createVaccinations = async () => {
 
   const pets = await db.selectFrom('pets').selectAll().execute()
 
-  const vaccinations = pets.map((pet) => ({
-    image: image,
-    expirationDate: new Date().toISOString(),
-    types: JSON.stringify(types[Math.floor(Math.random() * types.length)]),
-    petId: pet.id
-  }))
+  const vaccinations = pets
+    .filter(() => Math.random() > 0.05)
+    .map((pet) => ({
+      image: image,
+      expirationDate: new Date().toISOString(),
+      types: JSON.stringify(types[Math.floor(Math.random() * types.length)]),
+      petId: pet.id
+    }))
 
   await db.insertInto('vaccinations').values(vaccinations).execute()
 }

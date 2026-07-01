@@ -3,7 +3,11 @@ import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import { sql } from 'kysely'
 import { readFileSync } from 'fs'
-import { OPENING_TIME_TYPE, SERVICE_TYPE } from '@petboarding/tools/constants'
+import {
+  OPENING_TIME_TYPE,
+  SERVICE_TYPE,
+  BOOKING_STATUS
+} from '@petboarding/tools/constants'
 import { getAllVacations } from './vacations/index.js'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -283,6 +287,166 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     ])
     .execute()
 
+  const [demoAccount] = await db
+    .insertInto('accounts')
+    .values({ email: 'demo@petboarding.app', roles: '[]' })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('authenticationMethods')
+    .values({
+      accountId: demoAccount.id,
+      provider: 'native',
+      password: await hashPassword('demodemo')
+    })
+    .execute()
+  const [demoCustomer] = await db
+    .insertInto('customers')
+    .values({
+      accountId: demoAccount.id,
+      gender: 'female',
+      firstName: 'Emma',
+      lastName: 'Williams',
+      address: 'Park Avenue 15',
+      postalCode: '5678 CD',
+      city: 'Utrecht',
+      telephoneNumber: '+31611122334',
+      veterinarian: 'Dierenkliniek Centrum'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('contactPeople')
+    .values([
+      {
+        customerId: demoCustomer.id,
+        firstName: 'Mark',
+        lastName: 'Williams',
+        telephoneNumber: '+31655566778'
+      },
+      {
+        customerId: demoCustomer.id,
+        firstName: 'Lisa',
+        lastName: 'de Vries',
+        telephoneNumber: '+31699988776'
+      }
+    ])
+    .execute()
+  const [dp1] = await db
+    .insertInto('pets')
+    .values({
+      customerId: demoCustomer.id,
+      species: 'dog',
+      name: 'Charlie',
+      breed: 'Golden Retriever',
+      gender: 'male',
+      sterilized: true,
+      birthDate: '2022-03-15',
+      color: 'Golden',
+      chipNumber: 'CHIP20220315'
+    })
+    .returning('id')
+    .execute()
+  const [dp2] = await db
+    .insertInto('pets')
+    .values({
+      customerId: demoCustomer.id,
+      species: 'cat',
+      name: 'Luna',
+      breed: 'Europese Korthaar',
+      gender: 'female',
+      sterilized: true,
+      birthDate: '2023-07-22',
+      color: 'Black & White',
+      chipNumber: 'CHIP20230722'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('vaccinations')
+    .values([
+      {
+        petId: dp1.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'kennelcough',
+          'parvo',
+          'hepatitis',
+          'distemper',
+          'leptospirosis',
+          'rabies'
+        ]),
+        expirationDate: '2027-06-01'
+      },
+      {
+        petId: dp2.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'panleukopenia',
+          'rhinotracheitis',
+          'caliciviruses',
+          'rabies',
+          'leukemia'
+        ]),
+        expirationDate: '2027-06-01'
+      }
+    ])
+    .execute()
+  const nm = new Date()
+  nm.setMonth(nm.getMonth() + 1)
+  const s = nm.toISOString().split('T')[0]
+  const e = new Date(nm)
+  e.setDate(e.getDate() + 5)
+  const es = e.toISOString().split('T')[0]
+  const [demoBook] = await db
+    .insertInto('bookings')
+    .values({
+      customerId: demoCustomer.id,
+      startDate: s,
+      endDate: es,
+      startTimeId: 1,
+      endTimeId: 2,
+      comments: 'test booking'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('bookingPetKennel')
+    .values({ bookingId: demoBook.id, petId: dp1.id })
+    .execute()
+  await db
+    .insertInto('bookingStatus')
+    .values({
+      bookingId: demoBook.id,
+      status: BOOKING_STATUS.APPROVED,
+      petIds: JSON.stringify([dp1.id]),
+      startDate: s,
+      endDate: es,
+      startTimeId: 1,
+      endTimeId: 2,
+      comments: 'test booking',
+      modifiedAt: new Date().toISOString()
+    })
+    .execute()
+
+  for (const pet of pets.filter(() => Math.random() > 0.05)) {
+    await db
+      .insertInto('vaccinations')
+      .values({
+        petId: pet.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'kennelcough',
+          'parvo',
+          'hepatitis',
+          'distemper',
+          'leptospirosis',
+          'rabies'
+        ]),
+        expirationDate: '2027-06-01'
+      })
+      .execute()
+  }
   const petRelations: {
     petId1: number
     petId2: number

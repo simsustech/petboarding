@@ -22,7 +22,7 @@ packages/
 - **Framework:** Fastify with Modular API
 - **Entry:** `src/main.ts` (dev), `dist/main.js` (prod)
 - **Key Features:**
-  - Authentication (OIDC, 2FA/TOTP)
+  - Authentication (OIDC)
   - Booking & daycare management
   - Email notifications (nodemailer)
   - PDF generation (Puppeteer)
@@ -89,7 +89,7 @@ pnpm run dev
 ## Architecture Notes
 - **Modular API:** Backend uses @simsustech/modular-api for modular architecture
 - **Monorepo:** pnpm workspaces with shared tools package
-- **Authentication:** OIDC-based with optional 2FA/TOTP
+- **Authentication:** OIDC-based
 - **Authorization:** Role-based (customer, employee, admin)
 
 ## SigMap Context Strategy

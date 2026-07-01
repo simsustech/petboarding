@@ -427,6 +427,22 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
       }
     ])
     .execute()
+
+  await db
+    .insertInto('authenticationMethods')
+    .values([
+      {
+        accountId: 1,
+        provider: 'native',
+        password: await hashPassword('qjiNWdT8L')
+      }
+    ])
+    .execute()
+  await db
+    .updateTable('accounts')
+    .set({ roles: '["administrator","employee"]' })
+    .where('id', '=', 1)
+    .execute()
 }
 
 seed()
