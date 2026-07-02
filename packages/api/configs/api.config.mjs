@@ -49,7 +49,8 @@ const bookingCostsHandler = ({
     quantity: days * 1000,
     quantityPerMille: true,
     discount: 0,
-    taxRate: 21
+    taxRate: 21,
+    type: 'petboarding_booking'
   }))
 
   // Multiple pets discount
@@ -77,7 +78,8 @@ const bookingCostsHandler = ({
           quantity: 1,
           quantityPerMille: false,
           discount: 0,
-          taxRate: 21
+          taxRate: 21,
+          type: 'petboarding_service'
         })
       }
     }
@@ -105,7 +107,8 @@ const bookingCostsHandler = ({
         quantity: pets.length,
         quantityPerMille: false,
         discount: 0,
-        taxRate: 21
+        taxRate: 21,
+        type: 'petboarding_holiday'
       })
     }
   }
@@ -130,7 +133,8 @@ const bookingCostsHandler = ({
         quantity: pets.length * (overlapDays + 1),
         quantityPerMille: false,
         discount: 0,
-        taxRate: 21
+        taxRate: 21,
+        type: 'petboarding_vacation'
       })
     }
   }
@@ -233,7 +237,8 @@ const bookingCancelationHandler = ({
                 listPriceIncludesTax: true,
                 discount: 0,
                 quantity: 1,
-                quantityPerMille: false
+                quantityPerMille: false,
+                type: 'petboarding_cancelation'
               }
             ]
           : [
@@ -244,7 +249,8 @@ const bookingCancelationHandler = ({
                 listPriceIncludesTax: true,
                 discount: 0,
                 quantity: 1,
-                quantityPerMille: false
+                quantityPerMille: false,
+                type: 'petboarding_downpayment'
               }
             ]
     }
