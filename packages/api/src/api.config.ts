@@ -94,7 +94,9 @@ const bookingCostsHandler: BookingCostsHandler = ({
   const surchargeHolidayDateKeys: string[] = []
 
   if (dateHolidays && eachDayOfInterval && surchargeHolidays.length > 0) {
-    const holidays = new dateHolidays(country, { languages: [locale, 'en'] })
+    const holidays = new dateHolidays(country, {
+      languages: [locale.slice(0, 2), 'en']
+    })
 
     // Fetch holidays for all years covered by the interval (not just current year)
     const startYear = parse(startDate, 'yyyy-MM-dd', new Date()).getFullYear()
