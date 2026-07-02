@@ -85,6 +85,10 @@ const bookingCostsHandler = ({
     }
   }
 
+  // Collect the date keys of surcharge holidays so we can subtract them
+  // from vacation overlap days (avoiding double-charging).
+  const surchargeHolidayDateKeys = []
+
   if (dateHolidays && eachDayOfInterval && surchargeHolidays.length > 0) {
     const holidays = new dateHolidays(country, { languages: [locale, 'en'] })
     const localHolidays = holidays.getHolidays(undefined, locale)
@@ -100,6 +104,7 @@ const bookingCostsHandler = ({
         ({ rule }) => rule === holiday.rule
       )
       if (!matched) continue
+      surchargeHolidayDateKeys.push(dateKey)
       lines.push({
         description: holiday.name,
         listPrice: matched.listPrice ?? 500,
@@ -114,23 +119,35 @@ const bookingCostsHandler = ({
   }
 
   for (const vacation of vacations) {
+    const vacationStart = parse(vacation.startDate, 'yyyy-MM-dd', new Date())
+    const vacationEnd = parse(vacation.endDate, 'yyyy-MM-dd', new Date())
     const overlapDays = getOverlappingDaysInIntervals(
       {
         start: parse(startDate, 'yyyy-MM-dd', new Date()),
         end: parse(endDate, 'yyyy-MM-dd', new Date())
       },
       {
-        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+        start: vacationStart,
+        end: vacationEnd
       }
     )
 
-    if (overlapDays > 0) {
+    // Subtract surcharge holidays that fall within this vacation period
+    // to avoid charging both a holiday surcharge and a vacation surcharge
+    // for the same day.
+    const holidaysInVacation = surchargeHolidayDateKeys.filter((dateKey) => {
+      const d = parse(dateKey, 'yyyy-MM-dd', new Date())
+      return d >= vacationStart && d <= vacationEnd
+    }).length
+
+    const adjustedOverlapDays = overlapDays - holidaysInVacation
+
+    if (adjustedOverlapDays > 0) {
       lines.push({
         description: vacation.name,
         listPrice: vacation.surchargePerDay ?? 100,
         listPriceIncludesTax: true,
-        quantity: pets.length * (overlapDays + 1),
+        quantity: pets.length * (adjustedOverlapDays + 1),
         quantityPerMille: false,
         discount: 0,
         taxRate: 21,
