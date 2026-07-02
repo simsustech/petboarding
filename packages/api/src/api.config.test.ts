@@ -1248,3 +1248,30 @@ function makeBooking({
     statuses: []
   } as any
 }
+
+describe('bookingCostsHandler — cross-year holiday detection', () => {
+  it('detects 01-01 across year boundary (Dec 2026 – Jan 2027)', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: {
+          startDate: '2026-12-20',
+          endDate: '2027-01-13',
+          days: 25
+        },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: [] as any
+      }) as any
+    )
+
+    // Should find the Nieuwjaarsdag (01-01) surcharge line
+    const expectedName = getHolidayName('2027-01-01', 'NL', 'nl')
+    const surcharge = result.lines.find((l) => l.description === expectedName)
+    expect(surcharge).toBeDefined()
+  })
+})
