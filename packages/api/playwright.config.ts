@@ -18,14 +18,14 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
     ignoreHTTPSErrors: true,
-    headless: !!process.env.CI,
-    baseURL: 'https://localhost:3000'
+    headless: true,
+    baseURL: 'https://localhost:3003'
   },
 
   projects: [
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] }
     }
   ]
 })

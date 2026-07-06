@@ -7,8 +7,8 @@ services:
       - '80:80'
       - '443:443'
       - '443:443/udp'
-      - '3000:3000'
-      - '3000:3000/udp'
+      - '3003:3000'
+      - '3003:3000/udp'
     environment:
       - CADDY_INGRESS_NETWORKS=web
     labels:
@@ -74,7 +74,7 @@ services:
       caddy.encode: zstd gzip
     environment:
       # API env variables
-      VITE_API_HOST: localhost:3000
+      VITE_API_HOST: localhost:3003
       VITE_LICENSE_KEY: undefined
       VITE_TITLE: Petboarding
       VITE_SOURCE_COLOR: '#4EBDC2'
