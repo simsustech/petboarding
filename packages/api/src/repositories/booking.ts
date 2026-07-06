@@ -235,7 +235,9 @@ export async function calculateBookingCosts({
           period: {
             startDate: booking.startDate,
             endDate: booking.endDate,
-            days
+            days,
+            startDayCounted: booking.startTime?.startDayCounted,
+            endDayCounted: booking.endTime?.endDayCounted
           },
           services: booking.services,
           pets: booking.pets,
@@ -245,7 +247,8 @@ export async function calculateBookingCosts({
           dateFns: {
             eachDayOfInterval,
             getOverlappingDaysInIntervals,
-            parse
+            parse,
+            isWithinInterval
           },
           dateHolidays: Holidays,
           computeInvoiceCosts,

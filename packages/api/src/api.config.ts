@@ -25,12 +25,12 @@ const findActualPrice = ({
 }
 
 const bookingCostsHandler: BookingCostsHandler = ({
-  period: { startDate, endDate, days },
+  period: { startDate, endDate, days, startDayCounted = 1, endDayCounted = 1 },
   pets,
   categories,
   services,
   withServices,
-  dateFns: { eachDayOfInterval, getOverlappingDaysInIntervals, parse },
+  dateFns: { getOverlappingDaysInIntervals, parse, isWithinInterval },
   dateHolidays,
   computeInvoiceCosts,
   surchargeHolidays = [],
@@ -92,31 +92,41 @@ const bookingCostsHandler: BookingCostsHandler = ({
   // Collect the date keys of surcharge holidays so we can subtract them
   // from vacation overlap days (avoiding double-charging).
   const surchargeHolidayDateKeys: string[] = []
+  const bookingStart = parse(startDate, 'yyyy-MM-dd', new Date())
+  const bookingEnd = parse(endDate, 'yyyy-MM-dd', new Date())
 
-  if (dateHolidays && eachDayOfInterval && surchargeHolidays.length > 0) {
+  if (dateHolidays && surchargeHolidays.length > 0) {
     const holidays = new dateHolidays(country, {
       languages: [locale.slice(0, 2), 'en']
     })
 
-    // Fetch holidays for all years covered by the interval (not just current year)
-    const startYear = parse(startDate, 'yyyy-MM-dd', new Date()).getFullYear()
-    const endYear = parse(endDate, 'yyyy-MM-dd', new Date()).getFullYear()
+    // Fetch holidays for all years covered by the interval
+    const startYear = bookingStart.getFullYear()
+    const endYear = bookingEnd.getFullYear()
     const localHolidays: any[] = []
     for (let year = startYear; year <= endYear; year++) {
       localHolidays.push(...holidays.getHolidays(year, locale))
     }
-    for (const date of eachDayOfInterval({
-      start: parse(startDate, 'yyyy-MM-dd', new Date()),
-      end: parse(endDate, 'yyyy-MM-dd', new Date())
-    })) {
-      if (!holidays.isHoliday(date)) continue
-      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-      const holiday = localHolidays.find((h) => h.date.startsWith(dateKey))
-      if (!holiday) continue
+
+    for (const holiday of localHolidays) {
+      const holidayDate = parse(
+        holiday.date.slice(0, 10),
+        'yyyy-MM-dd',
+        new Date()
+      )
+      if (
+        !isWithinInterval(holidayDate, {
+          start: bookingStart,
+          end: bookingEnd
+        })
+      ) {
+        continue
+      }
       const matched = surchargeHolidays.find(
         ({ rule }) => rule === holiday.rule
       )
       if (!matched) continue
+      const dateKey = holiday.date.slice(0, 10)
       surchargeHolidayDateKeys.push(dateKey)
       lines.push({
         description: holiday.name,
@@ -134,38 +144,54 @@ const bookingCostsHandler: BookingCostsHandler = ({
   for (const vacation of vacations) {
     const vacationStart = parse(vacation.startDate, 'yyyy-MM-dd', new Date())
     const vacationEnd = parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+
     const overlapDays = getOverlappingDaysInIntervals(
-      {
-        start: parse(startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(endDate, 'yyyy-MM-dd', new Date())
-      },
-      {
-        start: vacationStart,
-        end: vacationEnd
-      }
+      { start: bookingStart, end: bookingEnd },
+      { start: vacationStart, end: vacationEnd }
     )
 
-    // Subtract surcharge holidays that fall within this vacation period
-    // to avoid charging both a holiday surcharge and a vacation surcharge
-    // for the same day.
     const holidaysInVacation = surchargeHolidayDateKeys.filter((dateKey) => {
       const d = parse(dateKey, 'yyyy-MM-dd', new Date())
-      return d >= vacationStart && d <= vacationEnd
+      return isWithinInterval(d, {
+        start: vacationStart,
+        end: vacationEnd
+      })
     }).length
+
+    const startInVacation = isWithinInterval(bookingStart, {
+      start: vacationStart,
+      end: vacationEnd
+    })
+    const endInVacation =
+      startDate !== endDate &&
+      isWithinInterval(bookingEnd, {
+        start: vacationStart,
+        end: vacationEnd
+      })
 
     const adjustedOverlapDays = overlapDays - holidaysInVacation
 
-    if (adjustedOverlapDays > 0) {
-      lines.push({
-        description: vacation.name,
-        listPrice: vacation.surchargePerDay ?? 100,
-        listPriceIncludesTax: true,
-        quantity: pets.length * (adjustedOverlapDays + 1),
-        quantityPerMille: false,
-        discount: 0,
-        taxRate: 21,
-        type: 'petboarding_vacation'
-      })
+    if (adjustedOverlapDays > 0 || startInVacation || endInVacation) {
+      let effectiveDays = adjustedOverlapDays + 1
+      if (startInVacation) {
+        effectiveDays = effectiveDays - 1 + startDayCounted
+      }
+      if (endInVacation) {
+        effectiveDays = effectiveDays - 1 + endDayCounted
+      }
+
+      if (effectiveDays > 0) {
+        lines.push({
+          description: vacation.name,
+          listPrice: vacation.surchargePerDay ?? 100,
+          listPriceIncludesTax: true,
+          quantity: pets.length * effectiveDays,
+          quantityPerMille: false,
+          discount: 0,
+          taxRate: 21,
+          type: 'petboarding_vacation'
+        })
+      }
     }
   }
 

@@ -37,8 +37,9 @@ const getHolidayName = (
   country: string,
   language: string
 ): string | undefined => {
-  const h = new Holidays(country, { languages: ['en', language] })
-  return h.getHolidays(undefined, language).find((x) => x.date.startsWith(date))
+  const h = new Holidays(country, { languages: [language, 'en'] })
+  const year = Number(date.slice(0, 4))
+  return h.getHolidays(year, language).find((x) => x.date.startsWith(date))
     ?.name
 }
 
@@ -74,6 +75,10 @@ const nlVacations2026 = [
     surchargePerDay: 100
   }
 ] as const
+
+const surchargeHolidaysWithoutKingsDay = defaultSurchargeHolidays.filter(
+  (r: { rule: string }) => !r.rule.startsWith('04-27')
+)
 
 const makeCategory = ({
   id,
@@ -167,7 +172,13 @@ const buildParams = ({
   requiredDownPaymentAmountFractionOfTotal,
   minimumRequiredDownPaymentAmount
 }: {
-  period: { startDate: string; endDate: string; days: number }
+  period: {
+    startDate: string
+    endDate: string
+    days: number
+    startDayCounted?: number
+    endDayCounted?: number
+  }
   pets?: any[]
   categories?: any[]
   services?: any[]
@@ -582,18 +593,17 @@ describe('bookingCostsHandler — vacation surcharge', () => {
             prices: [{ date: '2025-01-01', listPrice: 2000 }]
           })
         ],
-        vacations: nlVacations2026 as any
+        vacations: nlVacations2026 as any,
+        surchargeHolidays: surchargeHolidaysWithoutKingsDay
       }) as any
     )
 
     const vac = result.lines.find((l) => l.description === 'Meivakantie')
     expect(vac).toBeDefined()
-    // Booking 04-22..04-28 overlaps Meivakantie (04-25..05-03) on 3 days
-    // (end-exclusive: 25, 26, 27 are inside, 28 is the booking end and excluded)
-    expect(vac!.quantity).toBe(1 * (3 + 1))
+    expect(vac!.quantity).toBe(1 * 4)
   })
 
-  it('does not add a line when the booking ends exactly on a vacation start', () => {
+  it('adds a line when the booking ends on a vacation start (end day counts)', () => {
     const result = bookingCostsHandler(
       buildParams({
         period: { startDate: '2026-02-10', endDate: '2026-02-14', days: 5 },
@@ -608,12 +618,12 @@ describe('bookingCostsHandler — vacation surcharge', () => {
       }) as any
     )
 
-    expect(
-      result.lines.find((l) => l.description === 'Voorjaarsvakantie')
-    ).toBeUndefined()
+    const vac = result.lines.find((l) => l.description === 'Voorjaarsvakantie')
+    expect(vac).toBeDefined()
+    expect(vac!.quantity).toBe(1 * 1)
   })
 
-  it('does not add a line when the booking starts exactly on a vacation end', () => {
+  it('adds a line when the booking starts on a vacation end (start day counts)', () => {
     const result = bookingCostsHandler(
       buildParams({
         period: { startDate: '2026-02-22', endDate: '2026-02-25', days: 4 },
@@ -628,9 +638,9 @@ describe('bookingCostsHandler — vacation surcharge', () => {
       }) as any
     )
 
-    expect(
-      result.lines.find((l) => l.description === 'Voorjaarsvakantie')
-    ).toBeUndefined()
+    const vac = result.lines.find((l) => l.description === 'Voorjaarsvakantie')
+    expect(vac).toBeDefined()
+    expect(vac!.quantity).toBe(1 * 1)
   })
 
   it('adds a line per overlapping vacation when two vacations match', () => {

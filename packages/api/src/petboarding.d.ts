@@ -26,6 +26,8 @@ export type BookingCostsHandler = (params: {
     startDate: string
     endDate: string
     days: number
+    startDayCounted?: number
+    endDayCounted?: number
   }
   pets: BookingPets
   categories: ParsedCategory[]
