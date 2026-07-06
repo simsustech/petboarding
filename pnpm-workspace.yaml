@@ -73,5 +73,4 @@ allowBuilds:
 
 overrides:
   '@simsustech/quasar-components': link:../quasar-components/packages/components
-  unocss-preset-quasar: link:../unocss-preset-quasar/packages/preset
 
