@@ -58,6 +58,15 @@
             :model-value="customerDaycareSubscription.invoice"
           />
         </q-item-section>
+        <q-item-section v-if="!customerDaycareSubscription.invoice" side>
+          <q-btn
+            flat
+            data-testid="daycare-subscription-edit-button"
+            dense
+            icon="i-mdi-pencil"
+            @click="$emit('update', { data: customerDaycareSubscription })"
+          />
+        </q-item-section>
       </template>
       <q-item>
         <q-item-section>
@@ -93,6 +102,17 @@ export interface Props {
   modelValue: CustomerDaycareSubscription[]
 }
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (
+    e: 'update',
+    {
+      data
+    }: {
+      data: CustomerDaycareSubscription
+    }
+  ): void
+}>()
 
 const { modelValue } = toRefs(props)
 
