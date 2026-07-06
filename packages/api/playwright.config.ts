@@ -19,7 +19,7 @@ export default defineConfig({
     video: 'on-first-retry',
     ignoreHTTPSErrors: true,
     headless: true,
-    baseURL: 'https://localhost:3003'
+    baseURL: 'https://petboarding.localhost'
   },
 
   projects: [
