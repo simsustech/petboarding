@@ -142,6 +142,7 @@
             v-if="customerDaycareSubscriptions"
             :model-value="customerDaycareSubscriptions"
             :opened="true"
+            @update="openUpdateDaycareSubscriptionDialog"
           />
         </q-card-section>
         <q-card-section>
@@ -220,6 +221,19 @@
       @submit="createDaycare"
     ></daycare-form>
   </responsive-dialog>
+
+  <responsive-dialog
+    ref="updateDaycareSubscriptionDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="submitUpdateDaycareSubscription"
+  >
+    <customer-daycare-subscription-form
+      ref="updateDaycareSubscriptionFormRef"
+      @submit="updateDaycareSubscription"
+    ></customer-daycare-subscription-form>
+  </responsive-dialog>
 </template>
 
 <script setup lang="ts">
@@ -242,6 +256,7 @@ import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
+import CustomerDaycareSubscriptionForm from '../../components/daycareSubscription/CustomerDaycareSubscriptionForm.vue'
 import { useConfiguration } from '../../configuration.js'
 import {
   useEmployeeGetCustomerQuery,
@@ -254,6 +269,7 @@ import {
 import { useEmployeeCreateBookingMutation } from 'src/mutations/employee/booking.js'
 import { useEmployeeCreateDaycareDatesMutation } from 'src/mutations/employee/daycareDate.js'
 import { useEmployeeUpdateCustomerMutation } from 'src/mutations/employee/customer.js'
+import { useEmployeeUpdateCustomerDaycareSubscriptionMutation } from 'src/mutations/employee/customerDaycareSubscription.js'
 
 const configuration = useConfiguration()
 const route = useRoute()
@@ -312,6 +328,8 @@ const { categories, refetch: executeCategories } = usePublicGetCategories()
 const { mutateAsync: updateCustomerMutation } =
   useEmployeeUpdateCustomerMutation()
 
+const { mutateAsync: updateDaycareSubscriptionMutation } =
+  useEmployeeUpdateCustomerDaycareSubscriptionMutation()
 if (route.params.id) id.value = Number(route.params.id)
 // const { data: bookings, execute: executeBookings } = useQuery(
 //   'employee.getBookings',
@@ -632,6 +650,46 @@ const createDaycare: InstanceType<
   //   await executeDaycareDates()
   // }
   // done(!result.error.value)
+}
+
+const updateDaycareSubscriptionDialogRef = ref<typeof ResponsiveDialog>()
+const updateDaycareSubscriptionFormRef =
+  ref<typeof CustomerDaycareSubscriptionForm>()
+const openUpdateDaycareSubscriptionDialog: InstanceType<
+  typeof CustomerDaycareSubscriptionsList
+>['$props']['onUpdate'] = ({ data }) => {
+  updateDaycareSubscriptionDialogRef.value?.functions.open()
+  nextTick(() => {
+    updateDaycareSubscriptionFormRef.value?.functions.setValue({
+      id: data.id,
+      expirationDate: data.expirationDate
+    })
+  })
+}
+
+const submitUpdateDaycareSubscription: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  const afterUpdate = (success?: boolean) => {
+    done(success)
+    execute()
+  }
+  updateDaycareSubscriptionFormRef.value?.functions.submit({
+    done: afterUpdate
+  })
+}
+
+const updateDaycareSubscription: InstanceType<
+  typeof CustomerDaycareSubscriptionForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  try {
+    await updateDaycareSubscriptionMutation(data)
+
+    done()
+    await execute()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 onMounted(async () => {

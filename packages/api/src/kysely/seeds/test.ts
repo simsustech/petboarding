@@ -5,6 +5,7 @@ import { addDays } from 'date-fns'
 import {
   BOOKING_STATUS,
   DAYCARE_DATE_STATUS,
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   OPENING_TIME_TYPE,
   PERIOD_TYPE,
   SERVICE_TYPE
@@ -331,6 +332,15 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     buildingId: 1
   }))
 
+  const daycareSubscriptions = [
+    {
+      description: '5 days per week',
+      numberOfDays: 5,
+      validityPeriod: JSON.stringify({ years: 0, months: 1, days: 0 }),
+      listPrice: 25000
+    }
+  ]
+
   const announcements = [
     {
       title: 'This is a public demo',
@@ -338,6 +348,16 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
         'Please do NOT enter personal information when using this demo. It may be public to everyone',
       type: 'important',
       expirationDate: '2030-01-01'
+    }
+  ]
+
+  const customerDaycareSubscriptions = [
+    {
+      effectiveDate: `${CURRENT_YEAR}-01-01`,
+      expirationDate: `${CURRENT_YEAR + 1}-12-31`,
+      status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+      daycareSubscriptionId: 1,
+      customerId: 1
     }
   ]
 
@@ -381,6 +401,15 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   await sql`ALTER SEQUENCE customers_id_seq RESTART WITH ${sql.lit(
     customers.length + 1
   )}`.execute(db)
+
+  await db
+    .insertInto('daycareSubscriptions')
+    .values(daycareSubscriptions)
+    .execute()
+  await db
+    .insertInto('customerDaycareSubscriptions')
+    .values(customerDaycareSubscriptions)
+    .execute()
   await db.insertInto('contactPeople').values(contactPeople).execute()
 
   await sql`ALTER SEQUENCE contact_people_id_seq RESTART WITH ${sql.lit(
