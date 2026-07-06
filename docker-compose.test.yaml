@@ -57,9 +57,9 @@ services:
       target: api
       network: 'host'
       additional_contexts:
-        linked-quasar-components: .docker/empty
+        linked-quasar-components: ${LINKED_QUASAR_COMPONENTS_PATH:-.docker/empty}
         linked-vitrify: .docker/empty
-        linked-unocss-preset-quasar: .docker/empty
+        linked-unocss-preset-quasar: ${LINKED_UNOCSS_PRESET_QUASAR_PATH:-.docker/empty}
         linked-modular-api: .docker/empty
         linked-modular-api-api: .docker/empty
         linked-modular-api-fastify-oidc: .docker/empty

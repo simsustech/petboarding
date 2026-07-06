@@ -2,6 +2,7 @@
   <q-page padding>
     <q-toolbar class="q-mb-lg">
       <pet-select
+        style="flex: 1"
         :model-value="ids"
         multiple
         clearable
@@ -335,3 +336,9 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+:deep(.q-field__before:empty) {
+  display: none;
+}
+</style>

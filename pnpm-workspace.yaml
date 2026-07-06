@@ -70,3 +70,8 @@ allowBuilds:
   esbuild: true
   sharp: true
   simple-git-hooks: true
+
+overrides:
+  '@simsustech/quasar-components': link:../quasar-components/packages/components
+  unocss-preset-quasar: link:../unocss-preset-quasar/packages/preset
+
