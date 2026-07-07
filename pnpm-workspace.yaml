@@ -112,5 +112,4 @@ allowBuilds:
   sharp: true
   simple-git-hooks: true
 
-overrides:
-  '@simsustech/quasar-components': link:../quasar-components/packages/components
+confirmModulesPurge: false
