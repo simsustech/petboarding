@@ -29,7 +29,7 @@
     "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
-    "@modular-api/fastify-checkout": "^0.8.0",
+    "@modular-api/fastify-checkout": "^0.8.1",
     "@rgrove/parse-xml": "^4.2.1",
     "export-to-csv": "^1.4.0",
     "fast-xml-parser": "^5.9.3",
