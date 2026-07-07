@@ -123,11 +123,7 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
-import {
-  addToDate,
-  parseTimestamp,
-  today
-} from '@quasar/quasar-ui-qcalendar/Timestamp'
+import { addToDate, parseTimestamp, today } from '@timestamp-js/core'
 import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
