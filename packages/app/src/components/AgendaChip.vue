@@ -2,7 +2,7 @@
   <div class="q-mb-md">
     <pet-chip
       v-for="(pet, index) in modelValue.pets"
-      :key="pet.id"
+      :overline="timeLabel"
       :model-value="pet"
       :show-last-name="showLastName"
       :selected="selectedPets?.includes(pet.id!)"
@@ -123,6 +123,22 @@ const { modelValue } = toRefs(props)
 const petIds = computed(
   () => modelValue.value.pets?.map((pet) => pet.id!) || []
 )
+
+const timeLabel = computed(() => {
+  if (
+    props.type === 'arrival' &&
+    'startTime' in modelValue.value &&
+    modelValue.value.startTime?.name
+  )
+    return `${modelValue.value.startTime.name}`
+  if (
+    props.type === 'departure' &&
+    'endTime' in modelValue.value &&
+    modelValue.value.endTime?.name
+  )
+    return `${modelValue.value.endTime.name}`
+  return ''
+})
 
 const icons = ref({
   arrival: 'i-mdi-add',
