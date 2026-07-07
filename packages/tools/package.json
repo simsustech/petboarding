@@ -29,7 +29,7 @@
     "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
-    "@modular-api/fastify-checkout": "^0.7.0",
+    "@modular-api/fastify-checkout": "^0.8.0",
     "@rgrove/parse-xml": "^4.2.1",
     "export-to-csv": "^1.4.0",
     "fast-xml-parser": "^5.9.3",
@@ -38,9 +38,9 @@
   },
   "devDependencies": {
     "@types/iban": "^0.0.35",
-    "@types/node": "^26.0.1",
-    "csv-parse": "^7.0.0",
-    "kysely": "0.29.2",
+    "@types/node": "^26.1.0",
+    "csv-parse": "^7.0.1",
+    "kysely": "0.29.3",
     "typescript": "^6.0.3"
   }
 }
