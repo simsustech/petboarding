@@ -528,7 +528,8 @@ const lang: Language = {
       purchase: 'Kopen',
       purchaseSubscription: 'Abonnement kopen',
       checkout: 'Afrekenen',
-      showAll: 'Toon alle'
+      showAll: 'Toon alle',
+      edit: 'Bewerken'
     },
     messages: {
       daycareSubscriptionRequired:

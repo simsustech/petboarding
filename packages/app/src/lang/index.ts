@@ -487,6 +487,7 @@ export interface Language {
       purchaseSubscription: string
       checkout: string
       showAll: string
+      edit: string
     }
     messages: {
       daycareSubscriptionRequired: string

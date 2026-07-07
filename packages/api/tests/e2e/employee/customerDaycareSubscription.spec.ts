@@ -30,7 +30,13 @@ test.describe('Customer daycare subscription', async () => {
       await showAllToggle.click()
     }
 
-    // Click the edit button on the daycare subscription
+    // Open the more options menu
+    await page
+      .locator('[data-testid="daycare-subscription-more-button"]')
+      .first()
+      .click()
+
+    // Click the edit button inside the menu
     await page
       .locator('[data-testid="daycare-subscription-edit-button"]')
       .first()

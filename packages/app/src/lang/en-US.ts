@@ -515,7 +515,8 @@ const lang: Language = {
       purchase: 'Purchase',
       purchaseSubscription: 'Purchase subscription',
       checkout: 'Checkout',
-      showAll: 'Show all'
+      showAll: 'Show all',
+      edit: 'Edit'
     },
     messages: {
       daycareSubscriptionRequired:

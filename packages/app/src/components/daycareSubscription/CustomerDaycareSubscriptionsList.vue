@@ -57,15 +57,34 @@
             v-if="customerDaycareSubscription.invoice"
             :model-value="customerDaycareSubscription.invoice"
           />
-        </q-item-section>
-        <q-item-section v-if="!customerDaycareSubscription.invoice" side>
           <q-btn
+            v-else
             flat
-            data-testid="daycare-subscription-edit-button"
             dense
-            icon="i-mdi-pencil"
-            @click="$emit('update', { data: customerDaycareSubscription })"
-          />
+            round
+            icon="i-mdi-dots-vertical"
+            data-testid="daycare-subscription-more-button"
+          >
+            <q-menu>
+              <q-list style="min-width: 120px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  data-testid="daycare-subscription-edit-button"
+                  @click="
+                    $emit('update', { data: customerDaycareSubscription })
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-pencil" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ lang.customerDaycareSubscription.labels.edit }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </q-item-section>
       </template>
       <q-item>
