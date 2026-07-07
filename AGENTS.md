@@ -173,7 +173,7 @@ After completing every task, send a recap notification via ntfy.sh on topic "cmd
 
 **MANDATORY: After every file modification task, store a change recap.** Never skip this step.
 
-Store the recap in `.commandcode/changes/<date>-<description>.md` with:
+Store the recap in `.pi/changes/<date>-<description>.md` and commit it along with the changes.
 - File paths and line numbers
 - What was changed (added/removed/modified)
 - For mixed-concern files: which hunks were staged vs rejected

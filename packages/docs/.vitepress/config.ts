@@ -14,6 +14,7 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Features', link: '/features' },
+          { text: 'Pricing', link: '/pricing' },
           { text: 'Guide', link: '/guide/' },
           { text: 'Contact', link: '/contact' },
         ],
@@ -44,6 +45,7 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/nl/' },
           { text: 'Functionaliteiten', link: '/nl/features' },
+          { text: 'Prijzen', link: '/nl/pricing' },
           { text: 'Handleiding', link: '/nl/guide/' },
           { text: 'Contact', link: '/nl/contact' },
         ],
@@ -60,6 +62,7 @@ export default defineConfig({
             },
           ],
         },
+        outlineTitle: 'Op deze pagina',
         footer: {
           message: 'Copyright © simsustech 2023-heden',
           copyright: 'ELv2 Licentie',
