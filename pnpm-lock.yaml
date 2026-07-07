@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
   injectWorkspacePackages: true
 
-overrides:
-  '@simsustech/quasar-components': link:../quasar-components/packages/components
-
 importers:
 
   .:
@@ -249,8 +246,8 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@simsustech/quasar-components':
-        specifier: link:../../../quasar-components/packages/components
-        version: link:../../../quasar-components/packages/components
+        specifier: 0.12.5
+        version: 0.12.5(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))
       '@timestamp-js/core':
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
@@ -2949,6 +2946,11 @@ packages:
   '@simple-libs/stream-utils@2.0.0':
     resolution: {integrity: sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ==}
     engines: {node: '>=22'}
+
+  '@simsustech/quasar-components@0.12.5':
+    resolution: {integrity: sha512-Wnuz0N+SdHCFMUfbGkD4IjmKvYPViz59044mfZGHX8616x7j1RrWTUg3cR34nf+wAkl6wGxK3pHYjbagxp3u9g==}
+    peerDependencies:
+      quasar: ^2.19.3
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -9329,6 +9331,14 @@ snapshots:
   '@simple-libs/stream-utils@1.2.0': {}
 
   '@simple-libs/stream-utils@2.0.0': {}
+
+  '@simsustech/quasar-components@0.12.5(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))':
+    dependencies:
+      '@vueuse/core': 14.3.0(vue@3.5.39(typescript@6.0.3))
+      quasar: 2.21.1
+      validator: 13.15.35
+    transitivePeerDependencies:
+      - vue
 
   '@standard-schema/spec@1.1.0': {}
 
