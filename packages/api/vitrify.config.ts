@@ -1,5 +1,5 @@
 import type { VitrifyConfig } from 'vitrify'
-import { certificateFor } from 'devcert'
+import { getCertificate } from '@vitejs/plugin-basic-ssl'
 import { loadEnv } from 'vite'
 
 export default async function ({ mode, command }): Promise<VitrifyConfig> {
@@ -46,8 +46,20 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
     }
   }
   if (mode === 'development') {
+    const certificate = await getCertificate(
+      'node_modules/.vite/basic-ssl',
+      '',
+      ['vitrify.test']
+    )
     config.server = {
-      https: await certificateFor('vitrify.local')
+      https: {
+        cert: certificate,
+        key: certificate
+      }
+    }
+    // When using NetBird tunnel, set the public origin so Vite generates correct URLs
+    if (env.VITE_API_HOST?.includes('netbird')) {
+      config.server.origin = `https://${env.VITE_API_HOST}`
     }
   }
   return config

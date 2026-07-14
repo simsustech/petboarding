@@ -71,7 +71,7 @@ importers:
         version: link:../app
       '@petboarding/tools':
         specifier: workspace:*
-        version: link:../tools
+        version: file:packages/tools(@types/node@26.1.0)(kysely@0.29.3)
       '@pinia/colada':
         specifier: 1.3.1
         version: 1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.39(typescript@6.0.3)))(vue@3.5.39(typescript@6.0.3))
@@ -154,15 +154,15 @@ importers:
       '@unocss/preset-wind3':
         specifier: ^66.7.5
         version: 66.7.5
+      '@vitejs/plugin-basic-ssl':
+        specifier: ^2.3.0
+        version: 2.3.0(vite@8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))
       '@vitejs/plugin-vue':
         specifier: 6.0.7
         version: 6.0.7(vite@8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))
       beasties:
         specifier: ^0.4.2
         version: 0.4.2
-      devcert:
-        specifier: 1.2.3
-        version: 1.2.3
       docker-compose:
         specifier: ^1.4.2
         version: 1.4.2
@@ -2354,6 +2354,9 @@ packages:
     resolution: {integrity: sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==}
     engines: {node: '>= 10.0.0'}
 
+  '@petboarding/tools@file:packages/tools':
+    resolution: {directory: packages/tools, type: directory}
+
   '@pinia/colada@1.3.1':
     resolution: {integrity: sha512-DLHtyCud5sACbNLdVIHsoPrhcHMT/1LvObFHxxbmJKU2fqGPluc8Y8CtmCTQ71BgnzcNMuAl97G5XrAgOZqxvg==}
     peerDependencies:
@@ -3171,6 +3174,12 @@ packages:
     resolution: {integrity: sha512-1z1TBCNJCR2WzjPtjzmCHr8rtzXHosMjLdsCNe6Mzsfwiw044gzzLVuiEZO9vIjkI50lvQ+gIOxOiVQG0hGAeA==}
     peerDependencies:
       vite: ^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0 || ^8.0.0-0
+
+  '@vitejs/plugin-basic-ssl@2.3.0':
+    resolution: {integrity: sha512-bdyo8rB3NnQbikdMpHaML9Z1OZPBu6fFOBo+OtxsBlvMJtysWskmBcnbIDhUqgC8tcxNv/a+BcV5U+2nQMm1OQ==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
 
   '@vitejs/plugin-vue@6.0.7':
     resolution: {integrity: sha512-km+p+XdSz9Sxm5rqUbqcSfZYaAniKxWBj1KURl+Jr7UaPvvX7BmaWMdP69I5rrFDeQGyxAG7NXdc57vz+snhWg==}
@@ -8828,6 +8837,19 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.5.6
     optional: true
 
+  '@petboarding/tools@file:packages/tools(@types/node@26.1.0)(kysely@0.29.3)':
+    dependencies:
+      '@modular-api/fastify-checkout': 0.8.1(@types/node@26.1.0)(kysely@0.29.3)
+      '@rgrove/parse-xml': 4.2.1
+      export-to-csv: 1.4.0
+      fast-xml-parser: 5.9.3
+      handlebars: 4.7.9
+      ibantools: 4.5.4
+    transitivePeerDependencies:
+      - '@types/node'
+      - encoding
+      - kysely
+
   '@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.39(typescript@6.0.3)))(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       pinia: 3.0.4(typescript@6.0.3)(vue@3.5.39(typescript@6.0.3))
@@ -9639,6 +9661,10 @@ snapshots:
       pathe: 2.0.3
       tinyglobby: 0.2.17
       unplugin-utils: 0.3.2
+      vite: 8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0)
+
+  '@vitejs/plugin-basic-ssl@2.3.0(vite@8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))':
+    dependencies:
       vite: 8.1.3(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0)
 
   '@vitejs/plugin-vue@6.0.7(vite@7.3.6(@types/node@26.1.0)(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.101.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.39(typescript@6.0.3))':
