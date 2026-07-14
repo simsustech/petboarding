@@ -27,7 +27,6 @@ ENV CI=true
 COPY --from=linked-quasar-components ./ /build/local-packages/quasar-components/
 COPY --from=linked-vitrify ./ /build/local-packages/vitrify/
 COPY --from=linked-unocss-preset-quasar ./ /build/local-packages/unocss-preset-quasar/
-COPY --from=linked-modular-api ./ /build/local-packages/modular-api/
 COPY --from=linked-modular-api-api ./ /build/local-packages/modular-api-api/
 COPY --from=linked-modular-api-fastify-oidc ./ /build/local-packages/modular-api-fastify-oidc/
 COPY --from=linked-modular-api-fastify-checkout ./ /build/local-packages/modular-api-fastify-checkout/
