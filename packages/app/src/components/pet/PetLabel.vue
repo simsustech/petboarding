@@ -106,7 +106,7 @@
             tabindex="0"
           >
             {{
-              `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''} 
+              `${modelValue.food?.timesADay ?? ''}x ${modelValue.food.amount || ''}
                     ${lang.pet.food.unit[modelValue.food?.amountUnit] ?? ''} ${modelValue.food?.kind}`
             }}
           </div>
@@ -186,3 +186,9 @@ const qrSvg = ref(
   renderSVG(`${window.location.origin}/employee/pets/${modelValue.id}`)
 )
 </script>
+
+<style scoped>
+:deep(.q-field--standard) .q-field__control {
+  background: transparent;
+}
+</style>

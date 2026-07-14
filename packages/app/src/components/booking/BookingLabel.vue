@@ -132,3 +132,9 @@ defineExpose({
   functions
 })
 </script>
+
+<style scoped>
+:deep(.q-field--standard) .q-field__control {
+  background: transparent;
+}
+</style>
