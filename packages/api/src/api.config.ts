@@ -7,6 +7,8 @@ import type {
   BookingCancelationHandler,
   BookingCostsHandler
 } from './petboarding.d.ts'
+import { differenceInDays } from 'date-fns'
+
 const findActualPrice = ({
   prices,
   date
@@ -117,12 +119,12 @@ const bookingCostsHandler: BookingCostsHandler = ({
     getOverlappingDaysInIntervals,
     parse,
     isWithinInterval,
-    isAfter: fnIsAfter,
-    isBefore: fnIsBefore,
-    parseISO: fnParseISO,
-    subMonths: fnSubMonths,
-    subDays: fnSubDays,
-    differenceInDays: fnDiffDays
+    isAfter,
+    isBefore,
+    parseISO,
+    subMonths,
+    subDays,
+    differenceInDays
   },
   dateHolidays,
   computeInvoiceCosts: computeInvoiceCostsFn,
@@ -305,14 +307,14 @@ const bookingCostsHandler: BookingCostsHandler = ({
         days: ref.days
       },
       dateFns: {
-        isBefore: fnIsBefore ?? (() => false),
-        isAfter: fnIsAfter ?? (() => true),
+        isBefore,
+        isAfter,
         isWithinInterval,
         parse,
-        parseISO: fnParseISO ?? parseISO,
-        subMonths: fnSubMonths ?? subMonths,
-        subDays: fnSubDays ?? subDays,
-        differenceInDays: fnDiffDays ?? differenceInDays
+        parseISO,
+        subMonths,
+        subDays,
+        differenceInDays
       },
       booking: ref,
       BOOKING_STATUS: ctx.BOOKING_STATUS,
@@ -345,14 +347,14 @@ const bookingCostsHandler: BookingCostsHandler = ({
           days: lastApprovedBooking.days
         },
         dateFns: {
-          isBefore: fnIsBefore ?? (() => false),
-          isAfter: fnIsAfter ?? (() => true),
+          isBefore,
+          isAfter,
           isWithinInterval,
           parse,
-          parseISO: fnParseISO ?? parseISO,
-          subMonths: fnSubMonths ?? subMonths,
-          subDays: fnSubDays ?? subDays,
-          differenceInDays: fnDiffDays ?? differenceInDays
+          parseISO,
+          subMonths,
+          subDays,
+          differenceInDays
         },
         booking: lastApprovedBooking,
         BOOKING_STATUS: ctx.BOOKING_STATUS,
