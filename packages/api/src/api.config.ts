@@ -141,6 +141,7 @@ const bookingCostsHandler: BookingCostsHandler = ({
   let lines: RawInvoiceLine[] = []
   const discounts: RawInvoiceDiscount[] = []
   const surcharges: RawInvoiceSurcharge[] = []
+  let requiredDownPaymentAmount = 0
 
   lines = pets.map((pet) => ({
     description: pet.name,
@@ -398,7 +399,7 @@ const bookingCostsHandler: BookingCostsHandler = ({
     })
   }
 
-  let requiredDownPaymentAmount =
+  requiredDownPaymentAmount =
     computedInvoiceCosts &&
     computedInvoiceCosts.totalIncludingTax *
       requiredDownPaymentAmountFractionOfTotal >
