@@ -13,7 +13,7 @@ import {
   updateBookingService
 } from '../../repositories/booking.js'
 import { findCustomer } from 'src/repositories/customer.js'
-import { createOrUpdateSlimfactInvoice } from '../admin/bookings.js'
+import { createOrUpdateSlimfactInvoice } from '../admin/slimfactInvoice.js'
 
 export const employeeBookingValidation = booking
   .omit({

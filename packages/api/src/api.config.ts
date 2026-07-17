@@ -7,7 +7,6 @@ import type {
   BookingCancelationHandler,
   BookingCostsHandler
 } from './petboarding.d.ts'
-
 const findActualPrice = ({
   prices,
   date
@@ -24,21 +23,118 @@ const findActualPrice = ({
   return sortedAndFiltered?.at(0)?.listPrice || NaN
 }
 
+const bookingCancelationHandler: BookingCancelationHandler = ({
+  period: { startDate, endDate },
+  dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
+  booking,
+  BOOKING_STATUS,
+  vacations
+}) => {
+  const start = parse(startDate, 'yyyy-MM-dd', new Date())
+  const end = parse(endDate, 'yyyy-MM-dd', new Date())
+
+  const summerVacations = vacations.filter(
+    (vacation) => vacation.name === 'Zomervakantie'
+  )
+  let isInSummerVacation = false
+  for (const vacation of summerVacations) {
+    if (
+      isWithinInterval(start, {
+        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+      }) ||
+      isWithinInterval(end, {
+        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+      })
+    ) {
+      isInSummerVacation = true
+      break
+    }
+  }
+
+  const maxCancelationDate = subMonths(
+    parseISO(startDate),
+    isInSummerVacation ? 4 : 2
+  )
+
+  const status = isAfter(new Date(), maxCancelationDate)
+    ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+    : BOOKING_STATUS.CANCELED
+
+  let bookingCancelationCosts = 0
+  if (isAfter(new Date(), subDays(parseISO(startDate), 14))) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax
+  } else if (isAfter(new Date(), subMonths(parseISO(startDate), 1))) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.75
+  } else if (isAfter(new Date(), maxCancelationDate)) {
+    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.5
+  } else {
+    bookingCancelationCosts = booking.costs.requiredDownPaymentAmount || 0
+  }
+
+  return {
+    status,
+    cancelationCosts: {
+      lines:
+        status === BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD &&
+        bookingCancelationCosts > (booking.costs.requiredDownPaymentAmount || 0)
+          ? [
+              {
+                description: 'Cancelation costs',
+                listPrice: Math.round(bookingCancelationCosts),
+                taxRate: 21,
+                listPriceIncludesTax: true,
+                discount: 0,
+                quantity: 1,
+                quantityPerMille: false,
+                type: 'petboarding_cancelation'
+              }
+            ]
+          : [
+              {
+                description: 'Down payment',
+                listPrice: booking.costs.requiredDownPaymentAmount || 0,
+                taxRate: 21,
+                listPriceIncludesTax: true,
+                discount: 0,
+                quantity: 1,
+                quantityPerMille: false,
+                type: 'petboarding_downpayment'
+              }
+            ]
+    }
+  }
+}
+
 const bookingCostsHandler: BookingCostsHandler = ({
   period: { startDate, endDate, days, startDayCounted = 1, endDayCounted = 1 },
   pets,
   categories,
   services,
   withServices,
-  dateFns: { getOverlappingDaysInIntervals, parse, isWithinInterval },
+  dateFns: {
+    getOverlappingDaysInIntervals,
+    parse,
+    isWithinInterval,
+    isAfter: fnIsAfter,
+    isBefore: fnIsBefore,
+    parseISO: fnParseISO,
+    subMonths: fnSubMonths,
+    subDays: fnSubDays,
+    differenceInDays: fnDiffDays
+  },
   dateHolidays,
-  computeInvoiceCosts,
+  computeInvoiceCosts: computeInvoiceCostsFn,
   surchargeHolidays = [],
   locale = 'en-US',
   country = 'NL',
   requiredDownPaymentAmountFractionOfTotal = 0,
   minimumRequiredDownPaymentAmount = 5000,
-  vacations
+  vacations,
+  bookingStatus,
+  lastApprovedBooking,
+  ctx
 }) => {
   let lines: RawInvoiceLine[] = []
   const discounts: RawInvoiceDiscount[] = []
@@ -59,19 +155,6 @@ const bookingCostsHandler: BookingCostsHandler = ({
     type: 'petboarding_booking'
   }))
 
-  // // Multiple pets discount
-  // lines = lines
-  //   .sort((a, b) => b.listPrice - a.listPrice)
-  //   .map((item, index) => ({
-  //     ...item,
-  //     discount:
-  //       index > 0
-  //         ? Math.round(0.15 *
-  //           ((item.listPrice * item.quantity) /
-  //             (item.quantityPerMille ? 1000 : 1)))
-  //         : 0
-  //   }))
-
   if (withServices) {
     for (const service of services) {
       if (service.service && service.listPrice) {
@@ -89,8 +172,6 @@ const bookingCostsHandler: BookingCostsHandler = ({
     }
   }
 
-  // Collect the date keys of surcharge holidays so we can subtract them
-  // from vacation overlap days (avoiding double-charging).
   const surchargeHolidayDateKeys: string[] = []
   const bookingStart = parse(startDate, 'yyyy-MM-dd', new Date())
   const bookingEnd = parse(endDate, 'yyyy-MM-dd', new Date())
@@ -100,7 +181,6 @@ const bookingCostsHandler: BookingCostsHandler = ({
       languages: [locale.slice(0, 2), 'en']
     })
 
-    // Fetch holidays for all years covered by the interval
     const startYear = bookingStart.getFullYear()
     const endYear = bookingEnd.getFullYear()
     const localHolidays: any[] = []
@@ -195,9 +275,121 @@ const bookingCostsHandler: BookingCostsHandler = ({
     }
   }
 
+  // ── Branch on booking status ──────────────────────────────────────────
+  if (
+    bookingStatus &&
+    ctx &&
+    (bookingStatus === ctx.BOOKING_STATUS.CANCELED ||
+      bookingStatus === ctx.BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD)
+  ) {
+    // Full cancellation — replace with cancelation costs.
+    const ref = lastApprovedBooking ?? {
+      costs: {
+        totalIncludingTax:
+          computeInvoiceCostsFn?.({
+            lines,
+            discounts,
+            surcharges
+          }).totalIncludingTax ?? 0,
+        requiredDownPaymentAmount: 0
+      },
+      startDate,
+      endDate,
+      days
+    }
+
+    const { cancelationCosts } = bookingCancelationHandler({
+      period: {
+        startDate: ref.startDate,
+        endDate: ref.endDate,
+        days: ref.days
+      },
+      dateFns: {
+        isBefore: fnIsBefore ?? (() => false),
+        isAfter: fnIsAfter ?? (() => true),
+        isWithinInterval,
+        parse,
+        parseISO: fnParseISO ?? parseISO,
+        subMonths: fnSubMonths ?? subMonths,
+        subDays: fnSubDays ?? subDays,
+        differenceInDays: fnDiffDays ?? differenceInDays
+      },
+      booking: ref,
+      BOOKING_STATUS: ctx.BOOKING_STATUS,
+      vacations
+    })
+
+    if (cancelationCosts) {
+      lines = cancelationCosts.lines
+      if (cancelationCosts.discounts) discounts.length = 0
+      if (cancelationCosts.surcharges) surcharges.length = 0
+      if (cancelationCosts.requiredDownPaymentAmount !== undefined) {
+        requiredDownPaymentAmount = cancelationCosts.requiredDownPaymentAmount
+      }
+    }
+    return { lines, discounts, surcharges, requiredDownPaymentAmount }
+  }
+
+  if (
+    bookingStatus === ctx?.BOOKING_STATUS.APPROVED &&
+    lastApprovedBooking &&
+    computeInvoiceCostsFn &&
+    ctx
+  ) {
+    // Modification surcharge — check if last approved booking is inside the cancellation period.
+    const { status, cancelationCosts: refCancelation } =
+      bookingCancelationHandler({
+        period: {
+          startDate: lastApprovedBooking.startDate,
+          endDate: lastApprovedBooking.endDate,
+          days: lastApprovedBooking.days
+        },
+        dateFns: {
+          isBefore: fnIsBefore ?? (() => false),
+          isAfter: fnIsAfter ?? (() => true),
+          isWithinInterval,
+          parse,
+          parseISO: fnParseISO ?? parseISO,
+          subMonths: fnSubMonths ?? subMonths,
+          subDays: fnSubDays ?? subDays,
+          differenceInDays: fnDiffDays ?? differenceInDays
+        },
+        booking: lastApprovedBooking,
+        BOOKING_STATUS: ctx.BOOKING_STATUS,
+        vacations
+      })
+
+    if (status === ctx.BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD) {
+      const invoiceTotal = computeInvoiceCostsFn({
+        lines,
+        discounts,
+        surcharges
+      }).totalIncludingTax
+      const cancelationTotal = refCancelation
+        ? computeInvoiceCostsFn(refCancelation).totalIncludingTax
+        : 0
+      const lastApprovedTotal = lastApprovedBooking.costs.totalIncludingTax
+      const percentage = cancelationTotal / lastApprovedTotal
+      const removedCost = lastApprovedTotal - invoiceTotal
+      const cancelationDelta = Math.round(removedCost * percentage)
+
+      if (cancelationDelta > 0 && refCancelation?.lines.at(0)) {
+        surcharges.push({
+          ...refCancelation.lines.at(0)!,
+          description:
+            ctx.lang?.booking?.cancelationCosts ?? 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: cancelationDelta
+        })
+      }
+    }
+  }
+
+  // ── Compute down payment & return ────────────────────────────────────
   let computedInvoiceCosts
-  if (computeInvoiceCosts) {
-    computedInvoiceCosts = computeInvoiceCosts({
+  if (computeInvoiceCostsFn) {
+    computedInvoiceCosts = computeInvoiceCostsFn({
       lines,
       discounts,
       surcharges
@@ -226,90 +418,6 @@ const bookingCostsHandler: BookingCostsHandler = ({
     discounts,
     surcharges,
     requiredDownPaymentAmount
-  }
-}
-
-const bookingCancelationHandler: BookingCancelationHandler = ({
-  period: { startDate, endDate },
-  dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
-  booking,
-  BOOKING_STATUS,
-  vacations
-}) => {
-  const start = parse(startDate, 'yyyy-MM-dd', new Date())
-  const end = parse(endDate, 'yyyy-MM-dd', new Date())
-
-  const summerVacations = vacations.filter(
-    (vacation) => vacation.name === 'Zomervakantie'
-  )
-  let isInSummerVacation = false
-  for (const vacation of summerVacations) {
-    if (
-      isWithinInterval(start, {
-        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
-      }) ||
-      isWithinInterval(end, {
-        start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
-        end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
-      })
-    ) {
-      isInSummerVacation = true
-      break
-    }
-  }
-
-  const maxCancelationDate = subMonths(
-    parseISO(startDate),
-    isInSummerVacation ? 4 : 2
-  )
-
-  const status = isAfter(new Date(), maxCancelationDate)
-    ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
-    : BOOKING_STATUS.CANCELED
-
-  let bookingCancelationCosts = 0
-  if (isAfter(new Date(), subDays(parseISO(startDate), 14))) {
-    bookingCancelationCosts = booking.costs.totalIncludingTax
-  } else if (isAfter(new Date(), subMonths(parseISO(startDate), 1))) {
-    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.75
-  } else if (isAfter(new Date(), maxCancelationDate)) {
-    bookingCancelationCosts = booking.costs.totalIncludingTax * 0.5
-  } else {
-    bookingCancelationCosts = booking.costs.requiredDownPaymentAmount || 0
-  }
-
-  return {
-    status,
-    cancelationCosts: {
-      lines:
-        status === BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD &&
-        bookingCancelationCosts > (booking.costs.requiredDownPaymentAmount || 0)
-          ? [
-              {
-                description: 'Cancelation costs',
-                listPrice: Math.round(bookingCancelationCosts),
-                taxRate: 21,
-                listPriceIncludesTax: true,
-                discount: 0,
-                quantity: 1,
-                quantityPerMille: false,
-                type: 'petboarding_cancelation'
-              }
-            ]
-          : [
-              {
-                description: 'Down payment',
-                listPrice: booking.costs.requiredDownPaymentAmount || 0,
-                taxRate: 21,
-                listPriceIncludesTax: true,
-                discount: 0,
-                quantity: 1,
-                quantityPerMille: false,
-                type: 'petboarding_downpayment'
-              }
-            ]
-    }
   }
 }
 

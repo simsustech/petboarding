@@ -13,7 +13,7 @@ import {
 import { findCustomer } from '../../repositories/customer'
 import { config } from '../../env.js'
 import { compileEmail } from '../admin/bookings'
-import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
+import { createOrUpdateSlimfactInvoice } from '../admin/slimfactInvoice.js'
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 const MAIL_BCC = config.mailBcc
