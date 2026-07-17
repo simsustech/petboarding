@@ -1259,6 +1259,818 @@ function makeBooking({
   } as any
 }
 
+describe('modification inside cancellation period — delta surcharge', () => {
+  beforeAll(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2025-11-01T12:00:00Z'))
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
+
+  const dateFnsForCancel = {
+    getOverlappingDaysInIntervals,
+    parse,
+    isBefore: undefined as any,
+    isAfter,
+    isWithinInterval,
+    parseISO,
+    subMonths,
+    subDays,
+    differenceInDays: undefined as any
+  }
+
+  it('reports CANCELED_OUTSIDE_PERIOD (costs apply) for an approved booking shortened within 14 days', () => {
+    // Original 10-day stay starts 2025-11-08 (7 days out → 100% window).
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    // Past the free-cancel window → full cancellation cost applies, so the
+    // booking is "inside the cancellation period" (status CANCELED_OUTSIDE_PERIOD)
+    // while still APPROVED.
+    expect(cancelation.status).toBe(BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD)
+    expect(cancelation.cancelationCosts!.lines[0].listPrice).toBe(
+      computeInvoiceCosts(original).totalIncludingTax
+    )
+  })
+
+  it('computes a cancellation surcharge equal to the removed days when the stay is shortened (10 → 8 days)', () => {
+    // Original 10-day stay, inside the 100% window.
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // Shortened to 8 days (same start date, moved end date earlier).
+    const modified = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // Cancellation cost of the ORIGINAL stay (100% window) = original total.
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const computedOriginal = computeInvoiceCosts(cancelation.cancelationCosts!)
+    const computedModified = computeInvoiceCosts({
+      lines: modified.lines,
+      discounts: modified.discounts,
+      surcharges: modified.surcharges
+    })
+
+    const delta =
+      computedOriginal.totalIncludingTax - computedModified.totalIncludingTax
+
+    // 2 removed days at 2000 cents/day = 4000 (tax-inclusive, no holidays/vacations in this range)
+    expect(delta).toBe(4000)
+
+    // After adding the cancellation surcharge, the modified invoice total equals the original.
+    const withSurcharge = computeInvoiceCosts({
+      lines: modified.lines,
+      discounts: modified.discounts,
+      surcharges: [
+        ...(modified.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: Math.round(delta)
+        }
+      ]
+    })
+    expect(withSurcharge.totalIncludingTax).toBe(
+      computedOriginal.totalIncludingTax
+    )
+  })
+
+  it('computes a cancellation surcharge equal to the removed pet when a pet is dropped', () => {
+    // Original 2-pet stay, inside the 100% window.
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // One pet removed.
+    const modified = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const computedOriginal = computeInvoiceCosts(cancelation.cancelationCosts!)
+    const computedModified = computeInvoiceCosts({
+      lines: modified.lines,
+      discounts: modified.discounts,
+      surcharges: modified.surcharges
+    })
+
+    const delta =
+      computedOriginal.totalIncludingTax - computedModified.totalIncludingTax
+
+    // One removed pet, 2000 cents/day * 10 days = 20000.
+    expect(delta).toBe(20000)
+
+    const withSurcharge = computeInvoiceCosts({
+      lines: modified.lines,
+      discounts: modified.discounts,
+      surcharges: [
+        ...(modified.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: Math.round(delta)
+        }
+      ]
+    })
+    expect(withSurcharge.totalIncludingTax).toBe(
+      computedOriginal.totalIncludingTax
+    )
+  })
+
+  it('adds no surcharge when the booking is modified inside the free-cancel window (before the period)', () => {
+    // Booking 7 months out → still inside the free-cancel window, so the handler
+    // returns CANCELED with only a Down payment (no cancellation costs apply).
+    // A modification here must NOT add a cancellation surcharge.
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2026-06-01', endDate: '2026-06-11', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2026-06-01',
+        endDate: '2026-06-11',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    // Inside the free window → status CANCELED (only down payment), so the
+    // modification (APPROVED) branch does not fire.
+    expect(cancelation.status).toBe(BOOKING_STATUS.CANCELED)
+    expect(cancelation.cancelationCosts!.lines[0].description).toBe(
+      'Down payment'
+    )
+  })
+
+  it('double shortening (10→8→6) still references the highest-days approved version (10 days)', () => {
+    // Simulate booking that was approved at 10 days (original), then at 8 days
+    // (first modification), and is now at 6 days (second modification).
+    // The code in getLastApprovedForBooking now picks the APPROVED status with
+    // the highest number of days, so the original 10-day period is used.
+
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const _afterFirstMod = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const current = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-14', days: 6 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // The "last approved" version is the one with the most days (10-day).
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const cancelationTotal = computeInvoiceCosts(
+      cancelation.cancelationCosts!
+    ).totalIncludingTax
+    const currentTotal = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: current.surcharges
+    }).totalIncludingTax
+
+    const delta = cancelationTotal - currentTotal
+
+    // 10→6 = 4 removed days at 2000 cents/day = 8000.
+    expect(delta).toBe(8000)
+
+    // Adding the surcharge must bring the 6-day total back to the 10-day total.
+    const withSurcharge = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: [
+        ...(current.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: Math.round(delta)
+        }
+      ]
+    })
+    expect(withSurcharge.totalIncludingTax).toBe(cancelationTotal)
+  })
+
+  it('shortening one pet and then the other both accrue surcharges against the highest-days version', () => {
+    // Two pets, 10 days. Remove pet A → 1 pet, stays 8 days (first mod).
+    // Then remove pet B → 0 pets (second mod). The highest-days APPROVED
+    // version is the original (2 pets, 10 days), so all deltas reference that.
+
+    const twoPet = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const onePet = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(twoPet).totalIncludingTax,
+        downPayment: twoPet.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const cancelationTotal = computeInvoiceCosts(
+      cancelation.cancelationCosts!
+    ).totalIncludingTax
+
+    // First mod: 1 pet removed → current = 1 pet's cost.
+    const firstCurrent = computeInvoiceCosts({
+      lines: onePet.lines,
+      discounts: onePet.discounts,
+      surcharges: onePet.surcharges
+    }).totalIncludingTax
+    const firstDelta = cancelationTotal - firstCurrent
+    // 1 pet removed × 10 days × 2000 = 20000
+    expect(firstDelta).toBe(20000)
+
+    const firstWithSurcharge = computeInvoiceCosts({
+      lines: onePet.lines,
+      discounts: onePet.discounts,
+      surcharges: [
+        ...(onePet.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: Math.round(firstDelta)
+        }
+      ]
+    })
+    expect(firstWithSurcharge.totalIncludingTax).toBe(cancelationTotal)
+  })
+
+  it('adds no surcharge when the modification keeps the total at or above the highest-days approved total', () => {
+    // Original: 2 pets, 10 days. Remove one pet but add it back → still 2
+    // pets, 10 days → current total ≥ highest-days total → no surcharge.
+    const original = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+        downPayment: original.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const cancelationTotal = computeInvoiceCosts(
+      cancelation.cancelationCosts!
+    ).totalIncludingTax
+    const currentTotal = computeInvoiceCosts({
+      lines: original.lines,
+      discounts: original.discounts,
+      surcharges: original.surcharges
+    }).totalIncludingTax
+
+    // Current total equals the highest-days total → delta ≤ 0 → no surcharge.
+    expect(currentTotal).toBe(cancelationTotal)
+  })
+
+  it('charges the cancellation percentage on the removed portion (75% tier, 8 → 6 days)', () => {
+    // Start is 2025-11-20, "now" is 2025-11-01 → 19 days out → 14-30 day
+    // range → 75% cancellation tier.
+    const approved = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-20', endDate: '2025-11-28', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const current = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-20', endDate: '2025-11-26', days: 6 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-20',
+        endDate: '2025-11-28',
+        days: 8
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(approved).totalIncludingTax,
+        downPayment: approved.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const cancelationTotal = computeInvoiceCosts(
+      cancelation.cancelationCosts!
+    ).totalIncludingTax
+    const currentTotal = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: current.surcharges
+    }).totalIncludingTax
+    const approvedTotal = computeInvoiceCosts({
+      lines: approved.lines,
+      discounts: approved.discounts,
+      surcharges: approved.surcharges
+    }).totalIncludingTax
+
+    // 75% of 8-day total = cancelationTotal (verify the tier).
+    expect(cancelationTotal).toBe(Math.round(approvedTotal * 0.75))
+
+    // Surcharge formula: percentage × removedCost.
+    // percentage = cancelationTotal / approvedTotal = 0.75.
+    // removedCost = approvedTotal - currentTotal = 2 × 2000 = 4000.
+    // surcharge = 4000 × 0.75 = 3000.
+    const percentage = cancelationTotal / approvedTotal
+    const removedCost = approvedTotal - currentTotal
+    const surcharge = Math.round(removedCost * percentage)
+
+    expect(surcharge).toBe(3000)
+
+    // After adding the surcharge, total = currentTotal + surcharge.
+    const withSurcharge = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: [
+        ...(current.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: surcharge
+        }
+      ]
+    })
+    expect(withSurcharge.totalIncludingTax).toBe(currentTotal + surcharge)
+  })
+
+  it('outside-then-inside: 10→8 free cancel, 8→6 at 100% only charges 2 days', () => {
+    // 1. 10-day booking approved.
+    // 2. 10→8 OUTSIDE the cancellation period → free, no surcharge.
+    // 3. The 8-day version is the last APPROVED status.
+    // 4. 8→6 INSIDE the cancellation period → surcharge for 2 removed days.
+    const approved = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const current = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-14', days: 6 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // Compute cancelation as if the 8-day version is the lastApproved.
+    const cancelation = bookingCancelationHandler({
+      period: {
+        startDate: '2025-11-08',
+        endDate: '2025-11-16',
+        days: 8
+      },
+      dateFns: dateFnsForCancel,
+      booking: makeBooking({
+        totalIncludingTax: computeInvoiceCosts(approved).totalIncludingTax,
+        downPayment: approved.requiredDownPaymentAmount
+      }),
+      BOOKING_STATUS,
+      vacations: nlVacations2026 as any
+    } as any)
+
+    const cancelationTotal = computeInvoiceCosts(
+      cancelation.cancelationCosts!
+    ).totalIncludingTax
+    const currentTotal = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: current.surcharges
+    }).totalIncludingTax
+    const approvedTotal = computeInvoiceCosts({
+      lines: approved.lines,
+      discounts: approved.discounts,
+      surcharges: approved.surcharges
+    }).totalIncludingTax
+
+    // 100% tier → cancelationTotal = approvedTotal.
+    expect(cancelationTotal).toBe(approvedTotal)
+
+    // Only 2 days of the 8-day version are removed (6 days remain).
+    const percentage = cancelationTotal / approvedTotal
+    const removedCost = approvedTotal - currentTotal
+    const surcharge = Math.round(removedCost * percentage)
+
+    // 2 removed days × 2000 × 100% = 4000.
+    expect(removedCost).toBe(4000)
+    expect(surcharge).toBe(4000)
+
+    const withSurcharge = computeInvoiceCosts({
+      lines: current.lines,
+      discounts: current.discounts,
+      surcharges: [
+        ...(current.surcharges ?? []),
+        {
+          ...cancelation.cancelationCosts!.lines.at(0),
+          description: 'Cancelation costs',
+          listPriceIncludesTax: true,
+          taxRate: 21,
+          listPrice: surcharge
+        }
+      ]
+    })
+    // Total = 6-day cost + 2-day surcharge = 8-day approved total.
+    expect(withSurcharge.totalIncludingTax).toBe(approvedTotal)
+  })
+})
+
+describe('bookingCostsHandler — full cancellation branch', () => {
+  it('returns cancellation costs when bookingStatus is CANCELED_OUTSIDE_PERIOD', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      bookingStatus: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD,
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      }
+    } as any)
+
+    // Single cancellation-costs line (type petboarding_cancelation).
+    expect(result.lines).toHaveLength(1)
+    expect(result.lines[0].type).toBe('petboarding_cancelation')
+    // 100 % of last-approved total at 100 % tier.
+    expect(result.lines[0].listPrice).toBe(20000)
+  })
+
+  it('returns down-payment-only when bookingStatus is CANCELED (free cancel)', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2026-01-15', endDate: '2026-01-25', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      bookingStatus: BOOKING_STATUS.CANCELED,
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
+        startDate: '2026-01-15',
+        endDate: '2026-01-25',
+        days: 10
+      }
+    } as any)
+
+    // Free cancel → down payment line only.
+    expect(result.lines).toHaveLength(1)
+    expect(result.lines[0].type).toBe('petboarding_downpayment')
+    expect(result.lines[0].listPrice).toBe(5000)
+  })
+})
+
+describe('bookingCostsHandler — modification surcharge via handler', () => {
+  it('appends surcharge when lastApprovedBooking is inside the cancellation window', () => {
+    // Plain pricing for the current 8-day booking.
+    const plain8 = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts
+    })
+
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts,
+      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      bookingStatus: BOOKING_STATUS.APPROVED,
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: computeInvoiceCosts(plain8).totalIncludingTax },
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      }
+    } as any)
+
+    // Base pet lines + 1 surcharge.
+    const surchargeLines = result.surcharges.filter(
+      (s) => s.description === 'Cancelation costs'
+    )
+    expect(surchargeLines).toHaveLength(1)
+    const delta = surchargeLines[0].listPrice
+    // The cancellation tier is 100 % (within 14 days of start).
+    // lastApprovedTotal = 10 × 2000 = 20000, current 8-day total = 16000.
+    // surcharge = 1.0 × (20000 - 16000) = 4000.
+    expect(delta).toBe(4000)
+  })
+
+  it('does not append surcharge without lastApprovedBooking', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts,
+      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      bookingStatus: BOOKING_STATUS.APPROVED
+    } as any)
+
+    // No surcharge lines — plain pricing.
+    expect(result.surcharges.filter((s) => s.description === 'Cancelation costs')).toHaveLength(0)
+  })
+})
+
 describe('bookingCostsHandler — cross-year holiday detection', () => {
   it('detects 01-01 across year boundary (Dec 2026 – Jan 2027)', () => {
     const result = bookingCostsHandler(

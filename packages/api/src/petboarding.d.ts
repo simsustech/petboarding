@@ -38,9 +38,12 @@ export type BookingCostsHandler = (params: {
     getOverlappingDaysInIntervals: typeof getOverlappingDaysInIntervals
     parse: typeof parse
     isBefore?: typeof isBefore
+    isAfter?: typeof isAfter
     isWithinInterval?: typeof isWithinInterval
     parseISO?: typeof parseISO
     subMonths?: typeof subMonths
+    subDays?: typeof subDays
+    differenceInDays?: typeof differenceInDays
   }
   dateHolidays?: typeof Holidays
   computeInvoiceCosts?: typeof computeInvoiceCosts
@@ -55,6 +58,17 @@ export type BookingCostsHandler = (params: {
     endDate: string
     surchargePerDay: number
   }[]
+  bookingStatus?: string
+  lastApprovedBooking?: {
+    costs: { totalIncludingTax: number; requiredDownPaymentAmount?: number }
+    startDate: string
+    endDate: string
+    days: number
+  }
+  ctx?: {
+    BOOKING_STATUS: typeof BOOKING_STATUS
+    lang?: { booking: { cancelationCosts?: string } }
+  }
 }) => {
   lines: RawInvoiceLine[]
   discounts: RawInvoiceDiscount[]
