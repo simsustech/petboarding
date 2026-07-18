@@ -92,34 +92,7 @@ pnpm run dev
 - **Authentication:** OIDC-based
 - **Authorization:** Role-based (customer, employee, admin)
 
-## SigMap Context Strategy
 
-SigMap generates AI context files by extracting function/class signatures from the codebase. It uses the **per-module** strategy with the **codex** adapter (writes to AGENTS.md).
-
-### How it works
-- `npx sigmap --monorepo` scans all packages and writes compact signatures to AGENTS.md
-- The root AGENTS.md contains an overview with module references (`.github` and `packages`)
-- Each package (`api`, `app`, `tools`, `docs`) has detailed context files at `.github/context-*.md`
-- **97%+ token reduction** — AI sees every signature without loading full files
-
-### Configuration
-- Config file: `gen-context.config.json` (strategy: `per-module`, monorepo: `true`)
-- Adapter: `codex` → writes to AGENTS.md
-- Output: context files per package — `.github/context-src.md`, `.github/context-tests.md`, etc.
-
-### When to regenerate
-- After significant code changes (new files, new exports)
-- After refactors or merges
-- Run `npx sigmap --monorepo` to regenerate
-
-### SigMap commands for session use
-| When | Command |
-|------|---------|
-| Before answering a question about code | `sigmap --query "<question>"` |
-| To rank files by topic | `sigmap --query "<topic>"` |
-| After changing config or source dirs | `sigmap validate` |
-| To check context health | `sigmap --health` |
-| To verify an AI answer is grounded | `sigmap judge --response <file>` |
 
 ## Common Workflows
 - `pnpm run build` - Build all packages

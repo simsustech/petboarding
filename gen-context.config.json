@@ -1,5 +1,5 @@
 {
-  "srcDirs": ["src", "lib"],
+  "srcDirs": ["packages/api/src", "packages/app/src", "packages/tools/src"],
   "exclude": ["node_modules", ".git", "dist", "build"],
   "outputs": ["codex"],
   "maxTokens": 8000,
