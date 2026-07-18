@@ -20,6 +20,20 @@ export const useEmployeeSetBookingPetKennelMutation = () => {
   }
 }
 
+export const useEmployeeSetBookingPetKennelForDateMutation = () => {
+  const { ...rest } = useMutation({
+    mutation: (input: {
+      bookingId: number
+      petId: number
+      date: string
+      kennelId: number | null
+    }) => trpc.employee.setBookingPetKennelForDate.mutate(input)
+  })
+  return {
+    ...rest
+  }
+}
+
 export const useEmployeeSetDaycareDatePetKennelMutation = () => {
   const { ...rest } = useMutation({
     mutation: (
