@@ -157,6 +157,21 @@ export async function getBookingPetKennels(date: string) {
     .selectFrom('pets')
     .innerJoin('bookingPetKennel', 'pets.id', 'bookingPetKennel.petId')
     .innerJoin('bookings', 'bookings.id', 'bookingPetKennel.bookingId')
+    .leftJoinLateral(
+      (eb) =>
+        eb
+          .selectFrom('bookingPetKennelOverride as bpk_o')
+          .select('bpk_o.kennelId')
+          .whereRef('bpk_o.bookingId', '=', 'bookingPetKennel.bookingId')
+          .whereRef('bpk_o.petId', '=', 'bookingPetKennel.petId')
+          .whereRef('bpk_o.date', '<=', sql<string>`${date}::date`)
+          .whereRef('bpk_o.date', '>=', 'bookings.startDate')
+          .whereRef('bpk_o.date', '<=', 'bookings.endDate')
+          .orderBy('bpk_o.date', 'desc')
+          .limit(1)
+          .as('override'),
+      (join) => join.onTrue()
+    )
     .where('bookings.startDate', '<=', date)
     .where('bookings.endDate', '>=', date)
     .where(({ eb, selectFrom }) =>
@@ -214,7 +229,13 @@ export async function getBookingPetKennels(date: string) {
         .end()
         .as('departureTimeId'),
       convertImageSql.as('image'),
-      'bookingPetKennel.kennelId as kennelId',
+      seb
+        .case()
+        .when('override.kennelId', 'is not', null)
+        .then(sql`override.kennel_id`)
+        .else(sql`booking_pet_kennel.kennel_id`)
+        .end()
+        .as('kennelId'),
       'bookingPetKennel.bookingId as bookingId',
       jsonObjectFrom(
         seb
@@ -291,5 +312,40 @@ export async function setDaycareDatePetKennel(daycareDatePetKennel: {
     .set({
       kennelId: daycareDatePetKennel.kennelId
     })
+    .execute()
+}
+
+export async function setBookingPetKennelForDate(input: {
+  bookingId: number
+  petId: number
+  date: string
+  kennelId: number
+}) {
+  return db
+    .insertInto('bookingPetKennelOverride')
+    .values({
+      bookingId: input.bookingId,
+      petId: input.petId,
+      date: input.date,
+      kennelId: input.kennelId
+    })
+    .onConflict((oc) =>
+      oc.columns(['bookingId', 'petId', 'date']).doUpdateSet({
+        kennelId: input.kennelId
+      })
+    )
+    .execute()
+}
+
+export async function clearForwardBookingPetKennelOverrides(input: {
+  bookingId: number
+  petId: number
+  fromDate: string
+}) {
+  return db
+    .deleteFrom('bookingPetKennelOverride')
+    .where('bookingId', '=', input.bookingId)
+    .where('petId', '=', input.petId)
+    .where('date', '>=', input.fromDate)
     .execute()
 }

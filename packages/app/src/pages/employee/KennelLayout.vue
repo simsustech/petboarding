@@ -153,7 +153,7 @@ import PetLegend from '../../components/pet/PetLegend.vue'
 import { useEmployeeGetPetKennelsQuery } from '../../queries/employee/petKennel.js'
 import { useEmployeeGetBuildingsQuery } from '../../queries/employee/building.js'
 import {
-  useEmployeeSetBookingPetKennelMutation,
+  useEmployeeSetBookingPetKennelForDateMutation,
   useEmployeeSetDaycareDatePetKennelMutation
 } from '../../mutations/employee/petKennel.js'
 import type { PetKennel } from '../../configuration.js'
@@ -185,8 +185,8 @@ selectedDate.value = !Array.isArray(route.params.date)
   : new Date().toISOString().slice(0, 10)
 const { openingTimes } = usePublicGetOpeningTimesQuery()
 
-const { mutateAsync: setBookingPetKennelMutation } =
-  useEmployeeSetBookingPetKennelMutation()
+const { mutateAsync: setBookingPetKennelForDateMutation } =
+  useEmployeeSetBookingPetKennelForDateMutation()
 const { mutateAsync: setDaycareDatePetKennelMutation } =
   useEmployeeSetDaycareDatePetKennelMutation()
 
@@ -274,7 +274,12 @@ function onDrop(e) {
 
 const setPetKennel = async (petKennel: PetKennel) => {
   if (petKennel.bookingId) {
-    await setBookingPetKennelMutation(petKennel)
+    await setBookingPetKennelForDateMutation({
+      bookingId: petKennel.bookingId,
+      petId: petKennel.id,
+      date: selectedDate.value,
+      kennelId: petKennel.kennelId
+    })
   } else if (petKennel.daycareDateId) {
     await setDaycareDatePetKennelMutation(petKennel)
   }

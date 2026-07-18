@@ -49,6 +49,13 @@ export interface BookingPetKennel {
   kennelId: number | null
 }
 
+export interface BookingPetKennelOverride {
+  bookingId: number
+  petId: number
+  date: string
+  kennelId: number | null
+}
+
 export interface Bookings {
   id: Generated<number>
   startDate: string
@@ -300,6 +307,7 @@ export interface DB {
   oidcPayloads: OidcPayloadsTable
   announcements: Announcements
   bookingPetKennel: BookingPetKennel
+  bookingPetKennelOverride: BookingPetKennelOverride
   bookings: Bookings
   bookingService: BookingService
   bookingStatus: BookingStatus

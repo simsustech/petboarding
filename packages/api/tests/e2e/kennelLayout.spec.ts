@@ -147,4 +147,88 @@ test.describe('KennelLayout', () => {
 
     await expect(page.locator('#waitlist')).toBeVisible()
   })
+
+  test('should keep today layout untouched when booking pet is dragged on a different day', async () => {
+    // Go to "today" first (the beforeEach already does this at 2024-01-02).
+    await page.goto('/employee/kennellayout/2024-01-02')
+    await page.waitForLoadState('networkidle')
+    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+
+    const petsInWaitlist = page.locator(
+      '#waitlist .q-chip, #waitlist [id^="pet"]'
+    )
+    if ((await petsInWaitlist.count()) === 0) {
+      test.skip(
+        true,
+        'No waitlist pets on 2024-01-02 to test per-day isolation'
+      )
+      return
+    }
+
+    // Drag the first waitlist pet into the first kennel on "today".
+    const firstPet = petsInWaitlist.first()
+    const petId = await firstPet.getAttribute('id')
+    expect(petId).toBeTruthy()
+
+    const todayKennel = page.locator('.drop-target[id^="kennel"]').first()
+    await expect(todayKennel).toBeVisible()
+
+    const petBox = await firstPet.boundingBox()
+    const kennelBox = await todayKennel.boundingBox()
+
+    await page.mouse.move(
+      petBox!.x + petBox!.width / 2,
+      petBox!.y + petBox!.height / 2
+    )
+    await page.mouse.down()
+    await page.mouse.move(
+      kennelBox!.x + kennelBox!.width / 2,
+      kennelBox!.y + kennelBox!.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+    await page.waitForLoadState('networkidle')
+
+    // That same pet now lives inside the first kennel for "today". Two DOM
+    // nodes share the `pet{id}` (an outer wrapper div and the inner chip),
+    // so use the direct-child selector to refer to the kennel that contains it.
+    const petInTodayKennel = page.locator(`#kennel1 > [id="${petId}"]`)
+    await expect(petInTodayKennel).toBeVisible({ timeout: 5000 })
+
+    // Switch to "tomorrow" (2024-01-03).
+    await page.goto('/employee/kennellayout/2024-01-03')
+    await page.waitForLoadState('networkidle')
+    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+
+    // If the same pet is present tomorrow (overlapping booking), drag it to a DIFFERENT kennel.
+    const tomorrowPet = page.locator(`[id="${petId}"]`)
+    if ((await tomorrowPet.count()) > 0) {
+      const targetKennel = page.locator('.drop-target[id^="kennel"]').nth(1) // second kennel
+      if ((await targetKennel.count()) > 0) {
+        const tPetBox = await tomorrowPet.first().boundingBox()
+        const tKennelBox = await targetKennel.boundingBox()
+
+        await page.mouse.move(
+          tPetBox!.x + tPetBox!.width / 2,
+          tPetBox!.y + tPetBox!.height / 2
+        )
+        await page.mouse.down()
+        await page.mouse.move(
+          tKennelBox!.x + tKennelBox!.width / 2,
+          tKennelBox!.y + tKennelBox!.height / 2,
+          { steps: 20 }
+        )
+        await page.mouse.up()
+        await page.waitForLoadState('networkidle')
+      }
+    }
+
+    // Switch BACK to "today" and confirm the pet is still in kennel 1, not affected by tomorrow's edit.
+    await page.goto('/employee/kennellayout/2024-01-02')
+    await page.waitForLoadState('networkidle')
+    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+
+    const petAfter = page.locator(`#kennel1 > [id="${petId}"]`)
+    await expect(petAfter).toBeVisible({ timeout: 5000 })
+  })
 })

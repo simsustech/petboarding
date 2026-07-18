@@ -1003,6 +1003,11 @@ export async function updateBooking(
           .executeTakeFirstOrThrow()
 
         await trx
+          .deleteFrom('bookingPetKennelOverride')
+          .where('bookingId', '=', updatedBooking.id)
+          .executeTakeFirstOrThrow()
+
+        await trx
           .insertInto('bookingPetKennel')
           .values(
             updateWith.petIds.map((petId) => ({
