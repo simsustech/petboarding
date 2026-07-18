@@ -7,7 +7,6 @@ import type {
   BookingCancelationHandler,
   BookingCostsHandler
 } from './petboarding.d.ts'
-import { differenceInDays } from 'date-fns'
 
 const findActualPrice = ({
   prices,
@@ -198,7 +197,7 @@ const bookingCostsHandler: BookingCostsHandler = ({
         new Date()
       )
       if (
-        !isWithinInterval(holidayDate, {
+        !isWithinInterval!(holidayDate, {
           start: bookingStart,
           end: bookingEnd
         })
@@ -235,19 +234,19 @@ const bookingCostsHandler: BookingCostsHandler = ({
 
     const holidaysInVacation = surchargeHolidayDateKeys.filter((dateKey) => {
       const d = parse(dateKey, 'yyyy-MM-dd', new Date())
-      return isWithinInterval(d, {
+      return isWithinInterval!(d, {
         start: vacationStart,
         end: vacationEnd
       })
     }).length
 
-    const startInVacation = isWithinInterval(bookingStart, {
+    const startInVacation = isWithinInterval!(bookingStart, {
       start: vacationStart,
       end: vacationEnd
     })
     const endInVacation =
       startDate !== endDate &&
-      isWithinInterval(bookingEnd, {
+      isWithinInterval!(bookingEnd, {
         start: vacationStart,
         end: vacationEnd
       })

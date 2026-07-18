@@ -12,7 +12,7 @@ import {
 import { computeInvoiceCosts } from '@modular-api/fastify-checkout'
 import Holidays from 'date-holidays'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
-import { bookingCancelationHandler, bookingCostsHandler } from './api.config.ts'
+import { bookingCancelationHandler, bookingCostsHandler } from './api.config.js'
 
 // Mirror the default list in `packages/api/configs/api.config.mjs`. Kept local
 // so the test does not depend on the runtime variant config.
@@ -1948,7 +1948,10 @@ describe('bookingCostsHandler — full cancellation branch', () => {
         ],
         vacations: nlVacations2026 as any
       }),
-      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      ctx: {
+        BOOKING_STATUS,
+        lang: { booking: { cancelationCosts: 'Cancelation costs' } }
+      },
       bookingStatus: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD,
       lastApprovedBooking: {
         costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
@@ -1968,7 +1971,7 @@ describe('bookingCostsHandler — full cancellation branch', () => {
   it('returns down-payment-only when bookingStatus is CANCELED (free cancel)', () => {
     const result = bookingCostsHandler({
       ...buildParams({
-        period: { startDate: '2026-01-15', endDate: '2026-01-25', days: 10 },
+        period: { startDate: '2027-01-15', endDate: '2027-01-25', days: 10 },
         pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
         categories: [
           makeCategory({
@@ -1978,12 +1981,15 @@ describe('bookingCostsHandler — full cancellation branch', () => {
         ],
         vacations: nlVacations2026 as any
       }),
-      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      ctx: {
+        BOOKING_STATUS,
+        lang: { booking: { cancelationCosts: 'Cancelation costs' } }
+      },
       bookingStatus: BOOKING_STATUS.CANCELED,
       lastApprovedBooking: {
         costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
-        startDate: '2026-01-15',
-        endDate: '2026-01-25',
+        startDate: '2027-01-15',
+        endDate: '2027-01-25',
         days: 10
       }
     } as any)
@@ -1997,10 +2003,12 @@ describe('bookingCostsHandler — full cancellation branch', () => {
 
 describe('bookingCostsHandler — modification surcharge via handler', () => {
   it('appends surcharge when lastApprovedBooking is inside the cancellation window', () => {
-    // Plain pricing for the current 8-day booking.
-    const plain8 = bookingCostsHandler({
+    // Plain pricing for the previously-approved 10-day booking — used to seed
+    // `lastApprovedBooking.costs.totalIncludingTax`. The 8-day current booking
+    // is intentionally different so the cancellation delta is non-zero.
+    const plain10 = bookingCostsHandler({
       ...buildParams({
-        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
         pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
         categories: [
           makeCategory({
@@ -2026,10 +2034,15 @@ describe('bookingCostsHandler — modification surcharge via handler', () => {
         vacations: nlVacations2026 as any
       }),
       computeInvoiceCosts,
-      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      ctx: {
+        BOOKING_STATUS,
+        lang: { booking: { cancelationCosts: 'Cancelation costs' } }
+      },
       bookingStatus: BOOKING_STATUS.APPROVED,
       lastApprovedBooking: {
-        costs: { totalIncludingTax: computeInvoiceCosts(plain8).totalIncludingTax },
+        costs: {
+          totalIncludingTax: computeInvoiceCosts(plain10).totalIncludingTax
+        },
         startDate: '2025-11-08',
         endDate: '2025-11-18',
         days: 10
@@ -2062,12 +2075,17 @@ describe('bookingCostsHandler — modification surcharge via handler', () => {
         vacations: nlVacations2026 as any
       }),
       computeInvoiceCosts,
-      ctx: { BOOKING_STATUS, lang: { booking: { cancelationCosts: 'Cancelation costs' } } },
+      ctx: {
+        BOOKING_STATUS,
+        lang: { booking: { cancelationCosts: 'Cancelation costs' } }
+      },
       bookingStatus: BOOKING_STATUS.APPROVED
     } as any)
 
     // No surcharge lines — plain pricing.
-    expect(result.surcharges.filter((s) => s.description === 'Cancelation costs')).toHaveLength(0)
+    expect(
+      result.surcharges.filter((s) => s.description === 'Cancelation costs')
+    ).toHaveLength(0)
   })
 })
 
