@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
-import { format } from 'date-fns'
 import { initializeAndLogin } from './setup'
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const email = 'admin@petboarding.app'
 const password = 'qjiNWdT8L'
@@ -20,27 +18,6 @@ test.beforeAll(async ({ browser }) => {
       .getByRole('tab', { name: 'Employee' })
       .or(page.getByText('Employee').locator(':scope.q-item__label'))
   ).toBeVisible()
-  // page = await browser.newPage()
-
-  // await page.goto('/')
-
-  // await page.click('text=Login')
-
-  // await page.waitForLoadState('networkidle')
-
-  // await expect(page).toHaveURL(/.*login/)
-
-  // await page.locator('text="Email"').fill(email)
-  // await page.locator('text="Password"').fill(password)
-
-  // await page.locator('button >> text=Login').click()
-
-  // await page.waitForURL(/.*user/)
-  // await expect(
-  //   page
-  //     .getByRole('tab', { name: 'Employee' })
-  //     .or(page.getByText('Employee').locator(':scope.q-item__label'))
-  // ).toBeVisible()
 })
 
 test.describe('Employee', async () => {
@@ -55,6 +32,9 @@ test.describe('Employee', async () => {
     await page.getByPlaceholder('MM').first().fill(MM)
     await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
+    // Wait for SPA navigation triggered by date change
+    await page.waitForURL(/.*overview\/2024-01-12/)
+    await page.waitForLoadState('networkidle')
     await expect(page.getByText('name2').first()).toBeVisible()
   })
   test('Agenda', async () => {
@@ -69,7 +49,12 @@ test.describe('Employee', async () => {
     await page.getByPlaceholder('MM').first().fill(MM)
     await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
-    await page.getByText('name2').first().waitFor()
+    // Wait for SPA navigation and data to load for the new date
+    await page.waitForURL(/.*agenda\/2024-01-12/)
+    await page.waitForLoadState('networkidle')
+    await expect(page.getByText('name2').first()).toBeVisible({
+      timeout: 10000
+    })
     await expect(page.getByText('name2')).toHaveCount(5)
   })
 })
