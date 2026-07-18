@@ -1,6 +1,6 @@
 FROM node:lts AS tools-build
 
-RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
+RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN printf "@modular-api:registry=https://npm.simsus.tech\n//npm.simsus.tech/:_authToken=%s\n" "$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
 
 WORKDIR /build
 RUN npm install -g pnpm
@@ -11,7 +11,7 @@ RUN pnpm --filter @petboarding/tools run build
 
 FROM node:lts AS install-stage
 
-RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
+RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN printf "@modular-api:registry=https://npm.simsus.tech\n//npm.simsus.tech/:_authToken=%s\n" "$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
 
 WORKDIR /build
 RUN npm install -g pnpm
@@ -65,7 +65,7 @@ FROM build-stage AS api-deploy
 # Remove circular dependency
 # RUN pnpm -C packages/app remove @petboarding/api
 # RUN pnpm prune --prod
-RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
+RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN printf "@modular-api:registry=https://npm.simsus.tech\n//npm.simsus.tech/:_authToken=%s\n" "$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
 RUN pnpm --filter @petboarding/api deploy api --prod
 RUN pnpm --filter @petboarding/app deploy app --prod --no-optional
 RUN rm ~/.npmrc
