@@ -1,9 +1,21 @@
+FROM node:lts AS tools-build
+
+RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
+
+WORKDIR /build
+RUN npm install -g pnpm
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/tools ./packages/tools
+RUN pnpm install --frozen-lockfile --filter @petboarding/tools
+RUN pnpm --filter @petboarding/tools run build
+
 FROM node:lts AS install-stage
 
 RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
 
 WORKDIR /build
 RUN npm install -g pnpm
+COPY --from=tools-build /build/packages/tools/dist ./packages/tools/dist
 COPY . .
 RUN rm -rf node_modules
 RUN pnpm install --frozen-lockfile
@@ -48,14 +60,15 @@ RUN for pkg in /build/local-packages/*/; do \
     done
 
 RUN if [ "$DEBUG" = "true" ]; then pnpm run build:debug; else pnpm run build; fi
-RUN rm ~/.npmrc
 
 FROM build-stage AS api-deploy
 # Remove circular dependency
 # RUN pnpm -C packages/app remove @petboarding/api
 # RUN pnpm prune --prod
+RUN --mount=type=secret,id=SIMSUSTECH_NPM_TOKEN echo "//npm.simsus.tech/:_authToken=$(cat /run/secrets/SIMSUSTECH_NPM_TOKEN)" >> ~/.npmrc
 RUN pnpm --filter @petboarding/api deploy api --prod
 RUN pnpm --filter @petboarding/app deploy app --prod --no-optional
+RUN rm ~/.npmrc
 
 WORKDIR "/build/app/dist/ssr/client"
 RUN find . ! -name 'logo.svg' -type f -exec gzip {} +
