@@ -1,14 +1,16 @@
 # Memory
 
 ## Project Overview
+
 Petboarding is a pet boarding/daycare management SaaS application built on Modular API. It provides customer registration, booking management, daycare appointments, and role-based access control.
 
-**Website:** https://www.petboarding.app  
-**Demo:** https://demo.petboarding.app
+**Website:** <https://www.petboarding.app>  
+**Demo:** <https://demo.petboarding.app>
 
 ## Codebase Structure
 
 ### Monorepo Layout (pnpm workspaces)
+
 ```
 packages/
 ├── api/          # Backend API (Fastify + Modular API)
@@ -19,6 +21,7 @@ packages/
 ### Key Packages
 
 #### `packages/api` - Backend API
+
 - **Framework:** Fastify with Modular API
 - **Entry:** `src/main.ts` (dev), `dist/main.js` (prod)
 - **Key Features:**
@@ -30,6 +33,7 @@ packages/
 - **Scripts:** `pnpm run dev`, `pnpm run build`, `pnpm run migrate:latest`
 
 #### `packages/app` - Frontend Application
+
 - **Framework:** Vue 3 + Quasar v2 + Vite
 - **Entry:** `src/main.ts`
 - **Key Features:**
@@ -40,6 +44,7 @@ packages/
 - **Scripts:** `pnpm run dev`, `pnpm run build`
 
 #### `packages/tools` - Shared Utilities
+
 - **Purpose:** Shared types, validation schemas, utilities
 - **Entry:** `src/index.ts`
 - **Used by:** Both api and app packages
@@ -47,23 +52,26 @@ packages/
 ### Entry Points
 
 | Package | Dev Entry | Build Output |
-|---------|-----------|--------------|
+| --------- | ----------- | -------------- |
 | api | `src/main.ts` | `dist/main.js` |
 | app | `src/main.ts` | `dist/` (SPA files) |
 | tools | `src/index.ts` | `dist/index.js` |
 
 ### Key Configuration Files
+
 - `docker-compose.yaml` - Production deployment
 - `docker-compose.dev.yaml` - Development environment
 - `.env.example` - Environment variables template
 - `packages/api/.env.example` - API-specific env vars
 
 ### Database
+
 - **Type:** PostgreSQL
 - **Migrations:** `packages/api/migrations/`
 - **Seeding:** `pnpm run seed:fake` (fake data for dev)
 
 ### Development Workflow
+
 ```bash
 # Start infrastructure
 docker compose -f docker-compose.dev.yaml up
@@ -82,28 +90,31 @@ pnpm run dev
 ```
 
 ## Code Style Guidelines
+
 - Use descriptive variable names
 - Follow existing patterns in the codebase
 - Extract complex conditions into meaningful boolean variables
 
 ## Architecture Notes
+
 - **Modular API:** Backend uses @simsustech/modular-api for modular architecture
 - **Monorepo:** pnpm workspaces with shared tools package
 - **Authentication:** OIDC-based
 - **Authorization:** Role-based (customer, employee, admin)
 
-
-
 ## Common Workflows
+
 - `pnpm run build` - Build all packages
 - `pnpm run lint` - Lint all packages
 - `pnpm run test` - Run API tests
 - `pnpm run format:check` / `pnpm run format:write` - Code formatting
 
 ## Debugging Docker
+
 - When a container fails or a service isn't responding, inspect logs: `docker logs petboarding-[service]` (e.g. `petboarding-app-1`, `petboarding-database-1`)
 
 ## Debugging Failed E2E Tests
+
 - Screenshots and videos are captured on failure and saved in `./packages/api/test-results/`
 - Playwright saves screenshots automatically (`only-on-failure`) and videos (`on-first-retry`)  
 - The JSON report is at `./packages/api/test-results.json` — read it to see which tests failed and why
@@ -119,6 +130,7 @@ pnpm run dev
   - Server errors showing as alerts (e.g. "null value in column") — read `error-context.md` to see what's rendered, then check docker logs for the actual SQL error
 
 ## Quality Checks (run after every change or batch of changes)
+
 ```bash
 pnpm run lint || pnpm run lint:fix
 pnpm run format:check || pnpm run format:write
@@ -126,6 +138,7 @@ pnpm run build
 export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN) && docker compose -f docker-compose.dev.yaml down && docker compose -f docker-compose.test.yaml down --volumes && docker compose -f docker-compose.test.yaml build --no-cache && docker compose -f docker-compose.test.yaml up --force-recreate
 cd packages/api && pnpm run test:e2e
 ```
+
 The playwright test results are stored in `./packages/api/test-results.json`. Read it and use it to apply fixes.
 
 **Note:** The e2e test step is mandatory — it must be included in every quality check run, not skipped or deferred.
@@ -147,11 +160,13 @@ After completing every task, send a recap notification via ntfy.sh on topic "cmd
 **MANDATORY: After every file modification task, store a change recap.** Never skip this step.
 
 Store the recap in `.pi/changes/<date>-<description>.md` and commit it along with the changes.
+
 - File paths and line numbers
 - What was changed (added/removed/modified)
 - For mixed-concern files: which hunks were staged vs rejected
 
 Format:
+
 ```markdown
 # Changes: <description> (<date>)
 
@@ -176,6 +191,18 @@ When working on multiple features simultaneously, use `git add -p` to stage only
 
 **Strategy:** Pure feature files → stage directly. Single-concern changes → `git add -p file.ts` accept all. Mixed concerns → accept feature hunks (`y`), reject unrelated (`n`). For adjacent hunks that can't be split, use the temporary edit approach: `cp file.ts file.ts.bak`, edit to feature changes only, `git add file.ts`, restore from backup.
 
+## SigMap — mandatory first step
+
+**ALWAYS run `sigmap ask` before reading any source file.** Never `grep` or `read` a file blind — sigmap finds the right files by meaning in ~500 tokens instead of 20K+ tokens of grep-and-read.
+
+| When | Command |
+| ------ | --------- |
+| Before reading files | `sigmap ask "<what you need to understand>"` |
+| To rank files by relevance | `sigmap query "<topic>"` |
+| To understand a specific file | `sigmap file <path>` |
+| To see blast radius of a change | `sigmap impact <path>` |
+
+Violating this rule wastes tokens and misses context that sigmap would surface immediately.
 
 ## Auto-generated signatures
 <!-- Updated by gen-context.js -->
