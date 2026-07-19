@@ -1,6 +1,7 @@
 const lang = {
   booking: {
-    cancelationCosts: 'Cancelation costs'
+    cancelationCosts: 'Cancelation costs',
+    downPayment: 'Down payment'
   }
 }
 

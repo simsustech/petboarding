@@ -1,6 +1,7 @@
 const lang = {
   booking: {
-    cancelationCosts: 'Annuleringskosten'
+    cancelationCosts: 'Annuleringskosten',
+    downPayment: 'Aanbetaling'
   }
 }
 

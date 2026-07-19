@@ -96,6 +96,10 @@ export type BookingCancelationHandler = (params: {
   booking: Booking
   BOOKING_STATUS: typeof BOOKING_STATUS
   vacations: { name: string; startDate: string; endDate: string }[]
+  lang?: {
+    cancelationCosts: string
+    downPayment: string
+  }
 }) => {
   status: BOOKING_STATUS
   cancelationCosts?: {

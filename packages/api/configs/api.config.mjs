@@ -18,6 +18,18 @@
  *    overrides when supplied.
  */
 
+const DEFAULT_SURCHARGE_HOLIDAYS = [
+  { rule: '01-01' },
+  { rule: 'easter' },
+  { rule: 'easter 1' },
+  { rule: 'easter 39' },
+  { rule: 'easter 49' },
+  { rule: 'easter 50' },
+  { rule: '12-25' },
+  { rule: '12-26' },
+  { rule: '12-31' },
+  { rule: '04-27 if sunday then previous saturday since 2014' }
+]
 const findActualPrice = ({ prices, date }) => {
   const sortedAndFiltered = prices
     ?.filter((price) => price.date <= date)
@@ -32,7 +44,8 @@ const bookingCancelationHandler = ({
   dateFns: { parse, isAfter, isWithinInterval, parseISO, subMonths, subDays },
   booking,
   BOOKING_STATUS,
-  vacations
+  vacations,
+  lang
 }) => {
   const isWithinIntervalFn = isWithinInterval
   const start = parse(startDate, 'yyyy-MM-dd', new Date())
@@ -86,7 +99,7 @@ const bookingCancelationHandler = ({
         bookingCancelationCosts > (booking.costs.requiredDownPaymentAmount || 0)
           ? [
               {
-                description: 'Cancelation costs',
+                description: lang?.cancelationCosts ?? 'Cancelation costs',
                 listPrice: Math.round(bookingCancelationCosts),
                 taxRate: 21,
                 listPriceIncludesTax: true,
@@ -98,7 +111,7 @@ const bookingCancelationHandler = ({
             ]
           : [
               {
-                description: 'Down payment',
+                description: lang?.downPayment ?? 'Down payment',
                 listPrice: booking.costs.requiredDownPaymentAmount || 0,
                 taxRate: 21,
                 listPriceIncludesTax: true,
@@ -131,7 +144,7 @@ const bookingCostsHandler = ({
   },
   dateHolidays,
   computeInvoiceCosts: computeInvoiceCostsFn,
-  surchargeHolidays = [],
+  surchargeHolidays = DEFAULT_SURCHARGE_HOLIDAYS,
   locale = 'en-US',
   country = 'NL',
   requiredDownPaymentAmountFractionOfTotal = 0,

@@ -1,6 +1,7 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
-import { Database, db } from '../kysely/index.js'
+import { type Database, db } from '../kysely/index.js'
 import { config } from '../env.js'
+import { getLang } from '../lang/index.js'
 import {
   getOverlappingDaysInIntervals,
   parse,
@@ -48,7 +49,7 @@ import {
 } from '@modular-api/fastify-checkout'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { BookingCostsHandler } from '../petboarding.d.ts'
-import { FastifyInstance } from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import { bookingEmailTemplates } from '../templates/email/bookings/index.js'
 import { compileEmail } from '../trpc/admin/bookings.js'
 import { findCustomer } from './customer.js'
@@ -1119,6 +1120,8 @@ export async function cancelBooking(
     const lastApprovedBooking = getLastApprovedForBooking(booking)
     try {
       ;({ bookingCancelationHandler } = await import('../api.config.js'))
+      const locale = config.lang
+      const resolvedLang = await getLang(locale)
       if (days) {
         ;({ status, cancelationCosts } = bookingCancelationHandler({
           period: {
@@ -1138,7 +1141,8 @@ export async function cancelBooking(
           },
           booking: lastApprovedBooking,
           BOOKING_STATUS,
-          vacations
+          vacations,
+          lang: resolvedLang.default.booking
         }))
       }
     } catch (e) {

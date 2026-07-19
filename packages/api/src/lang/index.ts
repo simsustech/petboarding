@@ -1,6 +1,8 @@
 const langs: Record<
   string,
-  () => Promise<{ default: { booking: { cancelationCosts: string } } }>
+  () => Promise<{
+    default: { booking: { cancelationCosts: string; downPayment: string } }
+  }>
 > = {
   nl: () => import('./nl.js'),
   en: () => import('./en-US.js'),
