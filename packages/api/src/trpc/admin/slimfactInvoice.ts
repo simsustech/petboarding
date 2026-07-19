@@ -99,11 +99,18 @@ export const createOrUpdateSlimfactInvoice = async ({
     }
   })
 
+  const vacations = await findVacations({
+    from: booking.startDate,
+    until: booking.endDate
+  })
+
   const costsResult = bookingCostsHandler({
     period: {
       startDate: booking.startDate,
       endDate: booking.endDate,
-      days: booking.days
+      days: booking.days,
+      startDayCounted: booking.startTime?.startDayCounted,
+      endDayCounted: booking.endTime?.endDayCounted
     },
     pets,
     categories,
@@ -121,9 +128,8 @@ export const createOrUpdateSlimfactInvoice = async ({
       subDays,
       differenceInDays
     },
-
     computeInvoiceCosts,
-    vacations: await findVacations(),
+    vacations,
     bookingStatus: booking.status?.status,
     lastApprovedBooking: lastApprovedBooking.days
       ? {

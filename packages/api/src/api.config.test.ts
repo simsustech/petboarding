@@ -740,6 +740,66 @@ describe('bookingCostsHandler — vacation surcharge', () => {
     expect(vac).toBeDefined()
     expect(vac!.quantity).toBe(0)
   })
+
+  it('produces correct Zomervakantie quantity for 10.5-day booking with endDayCounted=0.5', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: {
+          startDate: '2026-07-14',
+          endDate: '2026-07-24',
+          days: 10.5,
+          startDayCounted: 1,
+          endDayCounted: 0.5
+        },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const vac = result.lines.find((l: any) => l.description === 'Zomervakantie')
+    expect(vac).toBeDefined()
+    // 2 pets × 10.5 effective days = 21
+    expect(vac!.quantity).toBe(21)
+  })
+
+  it('overcounts Zomervakantie days when endDayCounted defaults to 1', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: {
+          startDate: '2026-07-14',
+          endDate: '2026-07-24',
+          days: 10.5
+          // no startDayCounted/endDayCounted — defaults to 1
+        },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    const vac = result.lines.find((l: any) => l.description === 'Zomervakantie')
+    expect(vac).toBeDefined()
+    // Without endDayCounted, defaults to 1 giving 11 effective days
+    // 2 pets × 11 = 22
+    expect(vac!.quantity).toBe(22)
+  })
 })
 
 describe('bookingCostsHandler — required down payment', () => {
