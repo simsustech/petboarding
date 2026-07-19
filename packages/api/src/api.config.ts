@@ -436,4 +436,4 @@ const bookingCostsHandler: BookingCostsHandler = ({
   }
 }
 
-export { type bookingCostsHandler, bookingCancelationHandler }
+export { bookingCostsHandler, bookingCancelationHandler }

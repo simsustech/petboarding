@@ -5,6 +5,7 @@ import {
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { config } from '../../env.js'
+import { findVacations } from '../../repositories/vacation.js'
 import { getLang } from '../../lang/index.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
@@ -118,9 +119,9 @@ export const createOrUpdateSlimfactInvoice = async ({
       subDays,
       differenceInDays
     },
-    // dateHolidays and surchargeHolidays not available in this path — costs are already pre-computed
+
     computeInvoiceCosts,
-    vacations: [],
+    vacations: await findVacations(),
     bookingStatus: booking.status?.status,
     lastApprovedBooking: lastApprovedBooking.days
       ? {
