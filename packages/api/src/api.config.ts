@@ -31,7 +31,7 @@ const findActualPrice = ({
 }) => {
   const sortedAndFiltered = prices
     ?.filter((price) => price.date <= date)
-    .sort((a, b) => {
+    ?.sort((a, b) => {
       return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
     })
 

@@ -52,13 +52,14 @@ test.describe('KennelLayout', () => {
     const petsInWaitlist = page.locator(
       '#waitlist .q-chip, #waitlist [id^="pet"]'
     )
-    await expect(petsInWaitlist.first()).toBeVisible({ timeout: 5000 })
     const initialWaitlistCount = await petsInWaitlist.count()
 
     if (initialWaitlistCount === 0) {
       test.skip(true, 'No pets in waitlist for this date')
       return
     }
+
+    await expect(petsInWaitlist.first()).toBeVisible({ timeout: 5000 })
 
     const firstPet = petsInWaitlist.first()
     const petId = await firstPet.getAttribute('id')

@@ -6,6 +6,7 @@ import {
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { config } from '../../env.js'
 import { findVacations } from '../../repositories/vacation.js'
+import { findCategories } from '../../repositories/category.js'
 import { getLang } from '../../lang/index.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
@@ -92,10 +93,11 @@ export const createOrUpdateSlimfactInvoice = async ({
     // calculateBookingCosts stores categoryId on the pet in the costs context
     categoryId: pet.categoryId
   }))
-  const categories: import('../../zod/category.js').ParsedCategory[] =
-    booking.pets
-      .map((pet) => pet.category)
-      .filter((c): c is NonNullable<typeof c> => !!c)
+  const categories = await findCategories({
+    criteria: {
+      date: booking.startDate
+    }
+  })
 
   const costsResult = bookingCostsHandler({
     period: {
@@ -212,6 +214,8 @@ export const createOrUpdateSlimfactInvoice = async ({
       return { success: true, invoice }
     }
   } catch (e) {
+    fastify.log.error(e)
+    fastify.log.error('Failed to create or update SlimFact invoice')
     return {
       success: false,
       errorMessage: 'Could not create or update booking invoice.'
