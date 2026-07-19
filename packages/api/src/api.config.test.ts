@@ -912,6 +912,150 @@ describe('bookingCostsHandler — combined realistic scenarios', () => {
   })
 })
 
+describe('bookingCostsHandler — multiple pets discount', () => {
+  it('gives no discount for a single pet', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2026-01-05', endDate: '2026-01-09', days: 5 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    expect(result.lines).toHaveLength(1)
+    expect(result.lines[0]).toMatchObject({
+      description: 'Rex',
+      discount: 0
+    })
+  })
+
+  it('applies 15% discount to the second pet when prices differ', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2026-01-05', endDate: '2026-01-09', days: 5 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 2 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2500 }]
+          }),
+          makeCategory({
+            id: 2,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // Sorted by listPrice descending: Rex (2500) → Bella (2000)
+    const rexLine = result.lines.find((l) => l.description === 'Rex')
+    const bellaLine = result.lines.find((l) => l.description === 'Bella')
+
+    expect(rexLine).toBeDefined()
+    expect(bellaLine).toBeDefined()
+    // Rex is most expensive → index 0 → no discount
+    expect(rexLine!.discount).toBe(0)
+    // Bella is second → index 1 → 15% off
+    // discount = round(0.15 * 2000 * 5000 / 1000) = round(0.15 * 10000) = 1500
+    expect(bellaLine!.discount).toBe(1500)
+  })
+
+  it('applies 15% discount to the second of two same-price pets', () => {
+    const result = bookingCostsHandler(
+      buildParams({
+        period: { startDate: '2026-01-05', endDate: '2026-01-09', days: 5 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }) as any
+    )
+
+    // Sorted by listPrice descending: both 2000 → stable sort preserves input order
+    const rexLine = result.lines.find((l) => l.description === 'Rex')
+    const bellaLine = result.lines.find((l) => l.description === 'Bella')
+
+    expect(rexLine).toBeDefined()
+    expect(bellaLine).toBeDefined()
+    // First pet (Rex) → index 0 → no discount
+    expect(rexLine!.discount).toBe(0)
+    // Second pet (Bella) → index 1 → 15% off
+    expect(bellaLine!.discount).toBe(1500)
+  })
+
+  it('does not apply discount when booking is canceled', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2026-01-05', endDate: '2026-01-09', days: 5 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts,
+      ctx: { BOOKING_STATUS },
+      bookingStatus: BOOKING_STATUS.CANCELED
+    } as any)
+
+    // Canceled bookings replace lines entirely — no pet lines, no discount
+    const petLines = result.lines.filter(
+      (l) => l.type === 'petboarding_booking'
+    )
+    expect(petLines).toHaveLength(0)
+  })
+
+  it('does not apply discount when booking is CANCELED_OUTSIDE_PERIOD', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2026-01-05', endDate: '2026-01-09', days: 5 },
+        pets: [
+          makePet({ id: 1, name: 'Rex', categoryId: 1 }),
+          makePet({ id: 2, name: 'Bella', categoryId: 1 })
+        ],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts,
+      ctx: { BOOKING_STATUS },
+      bookingStatus: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+    } as any)
+
+    const petLines = result.lines.filter(
+      (l) => l.type === 'petboarding_booking'
+    )
+    expect(petLines).toHaveLength(0)
+  })
+})
+
 describe('bookingCancelationHandler — status', () => {
   beforeAll(() => {
     vi.useFakeTimers()

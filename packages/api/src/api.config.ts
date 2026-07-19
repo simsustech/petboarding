@@ -20,6 +20,8 @@ const DEFAULT_SURCHARGE_HOLIDAYS: { rule: string; listPrice?: number }[] = [
   { rule: '12-31' },
   { rule: '04-27 if sunday then previous saturday since 2014' }
 ]
+
+const MULTIPLE_PETS_DISCOUNT_FRACTION = 0.15
 const findActualPrice = ({
   prices,
   date
@@ -169,6 +171,19 @@ const bookingCostsHandler: BookingCostsHandler = ({
     taxRate: 21,
     type: 'petboarding_booking'
   }))
+  lines = lines
+    .sort((a, b) => b.listPrice - a.listPrice)
+    .map((item, index) => ({
+      ...item,
+      discount:
+        index > 0
+          ? Math.round(
+              MULTIPLE_PETS_DISCOUNT_FRACTION *
+                ((item.listPrice * item.quantity) /
+                  (item.quantityPerMille ? 1000 : 1))
+            )
+          : 0
+    }))
 
   if (withServices) {
     for (const service of services) {
