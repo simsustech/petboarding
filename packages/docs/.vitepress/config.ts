@@ -16,6 +16,7 @@ export default defineConfig({
           { text: 'Features', link: '/features' },
           { text: 'Pricing', link: '/pricing' },
           { text: 'Guide', link: '/guide/' },
+          { text: 'Blog', link: '/blog/' },
           { text: 'Contact', link: '/contact' },
         ],
         sidebar: {
@@ -27,6 +28,18 @@ export default defineConfig({
                 { text: 'Customer Guide', link: '/guide/customer' },
                 { text: 'Employee Guide', link: '/guide/employee' },
                 { text: 'Administrator Guide', link: '/guide/administrator' },
+              ],
+            },
+          ],
+          '/blog/': [
+            {
+              text: 'Blog',
+              items: [
+                { text: 'Overview', link: '/blog/' },
+                {
+                  text: 'Per-Day Kennel Layout for Bookings',
+                  link: '/blog/2026-07-18-per-day-kennel-layout'
+                },
               ],
             },
           ],
@@ -47,6 +60,7 @@ export default defineConfig({
           { text: 'Functionaliteiten', link: '/nl/features' },
           { text: 'Prijzen', link: '/nl/pricing' },
           { text: 'Handleiding', link: '/nl/guide/' },
+          { text: 'Blog', link: '/nl/blog/' },
           { text: 'Contact', link: '/nl/contact' },
         ],
         sidebar: {
@@ -58,6 +72,18 @@ export default defineConfig({
                 { text: 'Klantenhandleiding', link: '/nl/guide/customer' },
                 { text: 'Medewerkershandleiding', link: '/nl/guide/employee' },
                 { text: 'Beheerdershandleiding', link: '/nl/guide/administrator' },
+              ],
+            },
+          ],
+          '/nl/blog/': [
+            {
+              text: 'Blog',
+              items: [
+                { text: 'Overzicht', link: '/nl/blog/' },
+                {
+                  text: 'Kennelindeling per dag voor boekingen',
+                  link: '/nl/blog/2026-07-18-per-day-kennel-layout'
+                },
               ],
             },
           ],

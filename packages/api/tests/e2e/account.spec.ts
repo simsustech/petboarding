@@ -194,7 +194,9 @@ test.describe('Account', async () => {
       .first()
       .click()
     await page
-      .getByRole('option', { name: booking.endTime })
+      .locator('.q-item')
+      .filter({ hasText: booking.endTime })
+      .first()
       .click({ force: true })
 
     await page
