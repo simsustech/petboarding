@@ -10,7 +10,7 @@
     ".github/**/*.md",
     ".context"
   ],
-  "outputs": ["codex", "copilot"],
+  "outputs": ["copilot"],
   "maxTokens": 16000,
   "autoMaxTokens": false,
   "coverageTarget": 0.95,
