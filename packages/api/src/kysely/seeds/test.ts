@@ -42,6 +42,7 @@ const seed = async () => {
     species: 'dog',
     name: `name${nr}`,
     breed: `name${nr}`,
+    categoryId: nr === 1 ? 1 : undefined,
     birthDate: '2020-02-02',
     gender: 'male',
     sterilized: true,
@@ -108,6 +109,52 @@ const seed = async () => {
     petIds: `[${5}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
+  })
+
+  // Booking 7: modified booking (27.5→20.5 days, Zomervakantie 2026)
+  bookings.push({
+    startDate: '2026-07-20',
+    endDate: '2026-08-09',
+    startTimeId: 1,
+    endTimeId: 1,
+    customerId: 1
+  })
+  bookingPet.push({
+    bookingId: 7,
+    petId: 1
+  })
+  bookingStatuses.push({
+    startDate: '2026-07-20',
+    endDate: '2026-08-16',
+    startTimeId: 1,
+    endTimeId: 1,
+    bookingId: 7,
+    customerId: undefined,
+    status: BOOKING_STATUS.APPROVED,
+    petIds: '[1]',
+    modifiedAt: '2025-11-05T12:28:00.000Z'
+  })
+  bookingStatuses.push({
+    startDate: '2026-07-20',
+    endDate: '2026-08-09',
+    startTimeId: 1,
+    endTimeId: 1,
+    bookingId: 7,
+    customerId: undefined,
+    status: BOOKING_STATUS.PENDING,
+    petIds: '[1]',
+    modifiedAt: '2026-07-15T14:32:00.000Z'
+  })
+  bookingStatuses.push({
+    startDate: '2026-07-20',
+    endDate: '2026-08-09',
+    startTimeId: 1,
+    endTimeId: 1,
+    bookingId: 7,
+    customerId: undefined,
+    status: BOOKING_STATUS.APPROVED,
+    petIds: '[1]',
+    modifiedAt: '2026-07-15T19:08:00.000Z'
   })
 
   const daycareDates = [1, 2, 3, 4, 5].map((nr) => ({

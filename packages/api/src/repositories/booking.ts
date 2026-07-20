@@ -188,11 +188,20 @@ export function calculateBookingDays(
 export async function calculateBookingCosts({
   booking,
   categories,
-  withServices
+  withServices,
+  bookingStatus,
+  lastApprovedBooking
 }: {
   booking: Omit<ParsedBooking, 'costs' | 'status' | 'statuses' | 'invoiceUuid'>
   categories: ParsedCategory[]
   withServices?: boolean
+  bookingStatus?: string
+  lastApprovedBooking?: {
+    costs: { totalIncludingTax: number; requiredDownPaymentAmount?: number }
+    startDate: string
+    endDate: string
+    days: number
+  }
 }): Promise<BookingCosts | null> {
   let lines: RawInvoiceLine[] = []
   let discounts: RawInvoiceDiscount[] = []
@@ -249,12 +258,31 @@ export async function calculateBookingCosts({
             eachDayOfInterval,
             getOverlappingDaysInIntervals,
             parse,
-            isWithinInterval
+            isWithinInterval,
+            isAfter,
+            isBefore,
+            parseISO,
+            subMonths,
+            subDays,
+            differenceInDays
           },
           dateHolidays: Holidays,
           computeInvoiceCosts,
           locale: config.lang,
-          country: config.country
+          country: config.country,
+          bookingStatus,
+          lastApprovedBooking,
+          ctx: {
+            BOOKING_STATUS,
+            lang: {
+              booking: {
+                cancelationCosts:
+                  config.lang === 'nl-NL'
+                    ? 'Annuleringskosten'
+                    : 'Cancelation costs'
+              }
+            }
+          }
         }))
       } catch (e) {
         console.error('Unable to load API config')
@@ -793,12 +821,20 @@ export async function findBooking({
     const categories = await findCategories({
       criteria: {}
     })
+
+    const lastApprovedBooking = await getHighestDaysApprovedForBooking(
+      result,
+      categories
+    )
+
     return {
       ...result,
       costs: await calculateBookingCosts({
         booking: { ...result, days },
         categories,
-        withServices: true
+        withServices: true,
+        bookingStatus: result.status?.status,
+        lastApprovedBooking
       }),
       invoice: await getBookingInvoice({ booking: result, fastify })
     }
@@ -858,10 +894,17 @@ export async function findBookings({
     results.map(async (result) => {
       const days = calculateBookingDays(result)
 
+      const lastApprovedBooking = await getHighestDaysApprovedForBooking(
+        result,
+        categories
+      )
+
       const costs = await calculateBookingCosts({
         booking: { ...result, days },
         categories,
-        withServices: true
+        withServices: true,
+        bookingStatus: result.status?.status,
+        lastApprovedBooking
       })
 
       const invoice = await getBookingInvoice({ booking: result, fastify })
@@ -1368,6 +1411,53 @@ export async function getLastApprovedForBooking(booking: ParsedBooking) {
     }
   }
   return booking
+}
+
+async function getHighestDaysApprovedForBooking(
+  result: any,
+  categories: ParsedCategory[]
+) {
+  if (!result.statuses?.length) return undefined
+
+  const approvedStatuses = result.statuses
+    .filter((s: any) => s.status === BOOKING_STATUS.APPROVED)
+    .sort((a: any, b: any) => {
+      const aDays = calculateBookingDays(a)
+      const bDays = calculateBookingDays(b)
+      return bDays - aDays
+    })
+
+  if (
+    !approvedStatuses.length ||
+    (approvedStatuses[0].startDate === result.startDate &&
+      approvedStatuses[0].endDate === result.endDate)
+  )
+    return undefined
+
+  const refStatus = approvedStatuses[0]
+  const refDays = calculateBookingDays(refStatus)
+  const refCosts = await calculateBookingCosts({
+    booking: {
+      ...result,
+      days: refDays,
+      startDate: refStatus.startDate,
+      endDate: refStatus.endDate
+    },
+    categories,
+    withServices: true
+  })
+
+  if (!refCosts?.totalIncludingTax) return undefined
+
+  return {
+    costs: {
+      totalIncludingTax: refCosts.totalIncludingTax,
+      requiredDownPaymentAmount: refCosts.requiredDownPaymentAmount
+    },
+    startDate: refStatus.startDate,
+    endDate: refStatus.endDate,
+    days: refDays
+  }
 }
 
 export const createReceiptsForBookings = async ({

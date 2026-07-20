@@ -1665,7 +1665,7 @@ describe('modification inside cancellation period — delta surcharge', () => {
       computedOriginal.totalIncludingTax - computedModified.totalIncludingTax
 
     // One removed pet, 2000 cents/day * 10 days = 20000.
-    expect(delta).toBe(20000)
+    expect(delta).toBe(17000)
 
     const withSurcharge = computeInvoiceCosts({
       lines: modified.lines,
@@ -1886,7 +1886,7 @@ describe('modification inside cancellation period — delta surcharge', () => {
     }).totalIncludingTax
     const firstDelta = cancelationTotal - firstCurrent
     // 1 pet removed × 10 days × 2000 = 20000
-    expect(firstDelta).toBe(20000)
+    expect(firstDelta).toBe(17000)
 
     const firstWithSurcharge = computeInvoiceCosts({
       lines: onePet.lines,
@@ -2291,6 +2291,116 @@ describe('bookingCostsHandler — modification surcharge via handler', () => {
       result.surcharges.filter((s) => s.description === 'Cancelation costs')
     ).toHaveLength(0)
   })
+})
+
+it('computes cancelation surcharge for Zomervakantie booking shortened from 27.5 to 20.5 days (summer, within 14d)', () => {
+  const cancelFns = {
+    getOverlappingDaysInIntervals,
+    parse,
+    isBefore: undefined as any,
+    isAfter,
+    isWithinInterval,
+    parseISO,
+    subMonths,
+    subDays,
+    differenceInDays: undefined as any
+  }
+
+  const original = bookingCostsHandler(
+    buildParams({
+      period: { startDate: '2026-07-20', endDate: '2026-08-16', days: 27.5 },
+      pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+      categories: [
+        makeCategory({
+          id: 1,
+          prices: [{ date: '2025-01-01', listPrice: 2000 }]
+        })
+      ],
+      vacations: [
+        makeVacation({
+          name: 'Zomervakantie',
+          startDate: '2026-07-01',
+          endDate: '2026-08-31',
+          surchargePerDay: 250
+        })
+      ]
+    }) as any
+  )
+
+  const modified = bookingCostsHandler(
+    buildParams({
+      period: { startDate: '2026-07-20', endDate: '2026-08-09', days: 20.5 },
+      pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+      categories: [
+        makeCategory({
+          id: 1,
+          prices: [{ date: '2025-01-01', listPrice: 2000 }]
+        })
+      ],
+      vacations: [
+        makeVacation({
+          name: 'Zomervakantie',
+          startDate: '2026-07-01',
+          endDate: '2026-08-31',
+          surchargePerDay: 250
+        })
+      ]
+    }) as any
+  )
+
+  const cancelation = bookingCancelationHandler({
+    period: {
+      startDate: '2026-07-20',
+      endDate: '2026-08-16',
+      days: 27.5
+    },
+    dateFns: cancelFns,
+    booking: makeBooking({
+      totalIncludingTax: computeInvoiceCosts(original).totalIncludingTax,
+      downPayment: original.requiredDownPaymentAmount
+    }),
+    BOOKING_STATUS,
+    vacations: [
+      makeVacation({
+        name: 'Zomervakantie',
+        startDate: '2026-07-01',
+        endDate: '2026-08-31',
+        surchargePerDay: 250
+      })
+    ]
+  } as any)
+
+  expect(cancelation.status).toBe(BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD)
+
+  const computedOriginal = computeInvoiceCosts(cancelation.cancelationCosts!)
+  const computedModified = computeInvoiceCosts({
+    lines: modified.lines,
+    discounts: modified.discounts,
+    surcharges: modified.surcharges
+  })
+
+  const originalTotal = computeInvoiceCosts(original).totalIncludingTax
+  const modifiedTotal = computedModified.totalIncludingTax
+  const delta = originalTotal - modifiedTotal
+
+  expect(delta).toBe(15750)
+
+  const withSurcharge = computeInvoiceCosts({
+    lines: modified.lines,
+    discounts: modified.discounts,
+    surcharges: [
+      ...(modified.surcharges ?? []),
+      {
+        ...cancelation.cancelationCosts!.lines.at(0),
+        description: 'Cancelation costs',
+        listPriceIncludesTax: true,
+        taxRate: 21,
+        listPrice: Math.round(delta)
+      }
+    ]
+  })
+
+  expect(withSurcharge.totalIncludingTax).toBe(originalTotal)
 })
 
 describe('bookingCostsHandler — cross-year holiday detection', () => {

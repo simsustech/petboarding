@@ -20,7 +20,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
     ignoreHTTPSErrors: true,
-    headless: !!process.env.CI,
+    headless: true,
     baseURL: 'https://petboarding.localhost'
   },
 
