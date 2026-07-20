@@ -404,7 +404,7 @@ const bookingCostsHandler: BookingCostsHandler = ({
       const cancelationDelta = Math.round(removedCost * percentage)
 
       if (cancelationDelta > 0 && refCancelation?.lines.at(0)) {
-        surcharges.push({
+        lines.push({
           ...refCancelation.lines.at(0)!,
           description:
             ctx.lang?.booking?.cancelationCosts ?? 'Cancelation costs',
