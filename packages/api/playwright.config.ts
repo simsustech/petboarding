@@ -6,8 +6,12 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './tests/e2e',
   testIgnore: process.env.PLAYWRIGHT_ALLOW_SCREENHOTS
-    ? ['**/slimfact.spec.ts']
-    : ['**/slimfact.spec.ts', '**/screenshots*.spec.ts'],
+    ? process.env.PLAYWRIGHT_SLIMFACT
+      ? ['**/screenshots*.spec.ts']
+      : ['**/slimfact.spec.ts', '**/screenshots*.spec.ts']
+    : process.env.PLAYWRIGHT_SLIMFACT
+      ? ['**/screenshots*.spec.ts']
+      : ['**/slimfact.spec.ts', '**/screenshots*.spec.ts'],
   fullyParallel: false,
   workers: 1,
   retries: 0,

@@ -53,3 +53,77 @@ test('slimfact: OIDC connect and verify', async ({ browser, request }) => {
   expect(h2.checks.slimfact.status).toBe('healthy')
   expect(h2.status).toBe('healthy')
 })
+
+test.describe('Booking approve/reject (SlimFact connected)', async () => {
+  test('Approve a pending booking with SlimFact invoice', async ({
+    browser
+  }) => {
+    test.setTimeout(120000)
+    const page = await login(browser)
+
+    await page.goto('admin/bookings')
+    await page.waitForLoadState('networkidle')
+
+    // Booking #6 (PENDING, pet "name5", CURRENT_YEAR dates)
+    const bookingItem = page
+      .locator('.q-expansion-item')
+      .filter({
+        hasText: 'name5'
+      })
+      .first()
+
+    const approvalButton = bookingItem.locator(
+      '[data-testid="booking-approval-button"]'
+    )
+    await expect(approvalButton).toBeVisible({ timeout: 5000 })
+    await approvalButton.click()
+    await page.getByText('Approve booking').click()
+
+    const dialog = page.locator('.q-dialog').last()
+    await expect(dialog).toBeVisible({ timeout: 10000 })
+    await dialog.locator('button').filter({ hasText: 'Send' }).click()
+    await expect(dialog).not.toBeVisible({ timeout: 15000 })
+
+    // Navigate to the employee booking detail page to verify the SlimFact invoice
+    await page.goto('employee/bookings/6')
+    await page.waitForLoadState('networkidle')
+
+    // The InvoiceButton component renders with aria-label "Open bill or invoice."
+    // It only appears when invoiceUuid is set, confirming SlimFact created the invoice
+    const invoiceLink = page.getByRole('button', {
+      name: 'Open bill or invoice.'
+    })
+    await expect(invoiceLink).toBeVisible({ timeout: 10000 })
+  })
+
+  test('Reject a pending booking with SlimFact connected', async ({
+    browser
+  }) => {
+    test.setTimeout(120000)
+    const page = await login(browser)
+
+    await page.goto('admin/bookings')
+    await page.waitForLoadState('networkidle')
+
+    // Booking #8 (PENDING, pet "name2", CURRENT_YEAR dates)
+    const bookingItem = page
+      .locator('.q-expansion-item')
+      .filter({
+        hasText: 'name2'
+      })
+      .first()
+    await expect(bookingItem).toBeVisible({ timeout: 5000 })
+
+    const approvalButton = bookingItem.locator(
+      '[data-testid="booking-approval-button"]'
+    )
+    await expect(approvalButton).toBeVisible({ timeout: 5000 })
+    await approvalButton.click()
+    await page.getByText('Reject booking').click()
+
+    const dialog = page.locator('.q-dialog').last()
+    await expect(dialog).toBeVisible({ timeout: 10000 })
+    await dialog.locator('button').filter({ hasText: 'Send' }).click()
+    await expect(dialog).not.toBeVisible({ timeout: 15000 })
+  })
+})
