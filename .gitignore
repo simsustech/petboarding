@@ -18,3 +18,4 @@ packages/**/AGENTS.md
 .contextignore
 **/.github/context*.md
 **/.pnpm-store/**
+.worktrees/**

@@ -34,10 +34,8 @@
           />
         </div>
       </div>
-      <div class="row q-pl-md">
-        {{ modelValue.name }}
-      </div>
-      <div class="row justify-center">
+      <div class="row q-pl-md items-center">
+        <span class="q-mr-md">{{ modelValue.name }}</span>
         <q-rating
           v-if="useRating"
           :model-value="modelValue.rating || 0"
@@ -275,6 +273,7 @@ export type DeleteHandler = (payload: {
 export interface Pet extends PetType {
   image?: string
 }
+
 export interface Props {
   modelValue: Pet
   categories: Record<string, Category>
@@ -368,7 +367,6 @@ const updateVaccination = (vaccination: Vaccination) => {
   function done() {
     //
   }
-
   if (vaccination.id) {
     emit('update:vaccination', {
       data: { ...vaccination, species: modelValue.value.species },
@@ -382,6 +380,7 @@ const dateFormatter = (date: Date, locale: string) =>
     dateStyle: 'long',
     timeZone: 'UTC'
   }).format(date)
+
 const formatDate = (date: string | null) => {
   if (date) return dateFormatter(new Date(date), $q.lang.isoName)
   return '-'
