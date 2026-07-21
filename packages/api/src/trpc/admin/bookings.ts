@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { t } from '../index.js'
+import type { t } from '../index.js'
 import * as z from 'zod'
 import { BOOKING_STATUS, bookingService } from '../../zod/booking.js'
 import handlebars from 'handlebars'
@@ -39,13 +39,10 @@ export const compileEmail = async ({
 }) => {
   let locale
   try {
-    locale = (await import(`date-fns/locale/${localeCode?.slice(0, 2)}`))
-      .default
+    locale = (await import(`date-fns/locale/${localeCode || 'en-US'}`)).default
   } catch {
     locale = (
-      await import(
-        `date-fns/locale/${process.env.VITE_LANG?.slice(0, 2) || 'en-US'}`
-      )
+      await import(`date-fns/locale/${process.env.VITE_LANG || 'en-US'}`)
     ).default
   }
 
@@ -247,7 +244,7 @@ export const adminBookingRoutes = ({
               })
             }
             if (result.success) {
-              invoiceUrl = `https://${slimfactHost}/invoice/${result.invoice.uuid}`
+              invoiceUrl = `https://${config.slimfactHost}/invoice/${result.invoice.uuid}`
               requiredDownPaymentAmount =
                 (booking.costs?.requiredDownPaymentAmount || 0) -
                 (booking.invoice?.amountPaid || 0)

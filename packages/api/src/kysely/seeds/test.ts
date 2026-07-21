@@ -42,7 +42,7 @@ const seed = async () => {
     species: 'dog',
     name: `name${nr}`,
     breed: `name${nr}`,
-    categoryId: nr === 1 ? 1 : undefined,
+    categoryId: nr === 1 || nr === 5 ? 1 : undefined,
     birthDate: '2020-02-02',
     gender: 'male',
     sterilized: true,
@@ -156,6 +156,26 @@ const seed = async () => {
     status: BOOKING_STATUS.APPROVED,
     petIds: '[1]',
     modifiedAt: '2026-07-15T19:08:00.000Z'
+  })
+
+  bookings.push({
+    startDate: `${CURRENT_YEAR}-02-01`,
+    endDate: `${CURRENT_YEAR}-02-11`,
+    startTimeId: 1,
+    endTimeId: 1,
+    customerId: 2
+  })
+  bookingPet.push({
+    bookingId: 8,
+    petId: 2
+  })
+  bookingStatuses.push({
+    ...bookings.at(-1)!,
+    bookingId: 8,
+    status: BOOKING_STATUS.PENDING,
+    petIds: '[2]',
+    modifiedAt: new Date().toISOString(),
+    customerId: undefined
   })
 
   const daycareDates = [1, 2, 3, 4, 5].map((nr) => ({
