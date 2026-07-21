@@ -141,6 +141,47 @@ cd packages/api && pnpm run test:e2e
 
 The playwright test results are stored in `./packages/api/test-results.json`. Read it and use it to apply fixes.
 
+## SlimFact Integration Testing
+
+SlimFact integration e2e tests verify OIDC connection + invoice creation flow. These tests require the SlimFact service.
+
+### Prerequisites
+
+- SlimFact Docker image must be pre-built: `docker pull slimfact-api:latest` or built locally
+- SlimFact admin password from its seed file (currently `Sif5uEG5hcTH`)
+
+### Running SlimFact tests
+
+```bash
+# Start with SlimFact service
+cd /path/to/petboarding
+export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN)
+docker compose -f docker-compose.test.yaml -f docker-compose.test.slimfact.yaml down --volumes
+docker compose -f docker-compose.test.yaml -f docker-compose.test.slimfact.yaml build --no-cache
+docker compose -f docker-compose.test.yaml -f docker-compose.test.slimfact.yaml up --force-recreate -d
+
+# Wait for all containers to be healthy
+
+# Run slimfact-specific tests
+cd packages/api
+SLIMFACT_ADMIN_PASSWORD='Sif5uEG5hcTH' PLAYWRIGHT_SLIMFACT=true npx playwright test tests/e2e/slimfact.spec.ts
+```
+
+### Test file ignore rules (`playwright.config.ts`)
+
+- `PLAYWRIGHT_SLIMFACT=true` — includes slimfact.spec.ts, excludes screenshots
+- `PLAYWRIGHT_ALLOW_SCREENHOTS` set — includes screenshots
+- Neither set — only normal e2e tests run
+
+### What the slimfact tests cover
+
+1. **OIDC connect and verify** — connects Petboarding to SlimFact via OIDC, verifies health endpoint reports `slimfact: healthy`
+2. **Approve a pending booking** — approves booking #6 (pet "name5"), verifies SlimFact invoice was created via the invoice button on `/employee/bookings/6`
+3. **Reject a pending booking** — rejects booking #8 (pet "name2"), verifies the dialog flow succeeds
+
+### Non-slimfact approve/reject tests
+
+`tests/e2e/administrator/bookings.spec.ts` — tests approve/reject WITHOUT SlimFact (runs in normal e2e suite). Approval doesn't create an invoice but sends confirmation email via MailHog.
 **Note:** The e2e test step is mandatory — it must be included in every quality check run, not skipped or deferred.
 
 ## Post-Task Notifications
