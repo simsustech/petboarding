@@ -37,14 +37,15 @@ export const compileEmail = async ({
   localeCode?: string
   variables?: Record<string, string>
 }) => {
-  let locale
-  try {
-    locale = (await import(`date-fns/locale/${localeCode || 'en-US'}`)).default
-  } catch {
-    locale = (
-      await import(`date-fns/locale/${process.env.VITE_LANG || 'en-US'}`)
-    ).default
-  }
+  const locale = await Promise.any(
+    [
+      localeCode,
+      (localeCode || process.env.VITE_LANG || 'en-US').slice(0, 2),
+      'en-US'
+    ]
+      .filter(Boolean)
+      .map(async (code) => (await import(`date-fns/locale/${code}`)).default)
+  )
 
   const context = {
     customer: {

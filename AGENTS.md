@@ -85,3 +85,44 @@ Use `git add -p` for mixed-concern files: accept feature hunks, reject unrelated
 ## Post-Task Notification
 
 After every task, send recap: `./scripts/ntfy.sh "<title>" "<recap>"`
+
+## Unit Tests (vitrify test)
+
+Tests live in `src/**/*.test.ts` and run via `pnpm vitrify test` (vitest with happy-dom).
+
+### Mocking env for tests
+
+API modules often import `../../env.js` which requires `POSTGRES_PASSWORD` at module init. To test functions that transitively depend on env, mock it early:
+
+```ts
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('../../env.js', () => ({
+  config: {
+    slimfactHost: 'slimfact.localhost',
+    lang: 'en-US',
+    downPaymentPaymentTermDays: 5
+  }
+}))
+
+// Mock other side-effect-heavy deps as needed
+vi.mock('handlebars', () => ({
+  default: { compile: () => (ctx: Record<string, string>) => `${ctx.startDate}` }
+}))
+
+import { myFunction } from './module.js'
+```
+
+### date-fns locale resolution pattern
+
+date-fns v4.4.0 does not export all locale variants (e.g. `en` doesn't exist — only `en-US`, `nl` exists but `nl-NL` does not). Use `Promise.any` to try candidates in order and take the first that resolves:
+
+```ts
+const locale = await Promise.any(
+  [localeCode, (localeCode || envValue || 'en-US').slice(0, 2), 'en-US']
+    .filter(Boolean)
+    .map(async (code) => (await import(`date-fns/locale/${code}`)).default)
+)
+```
+
+This tries: full code → short 2-letter code → hardcoded `en-US` fallback.
