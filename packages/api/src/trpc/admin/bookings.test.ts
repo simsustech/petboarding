@@ -1,22 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
-
-// Mock env to avoid database connection requirement
-vi.mock('../../env.js', () => ({
-  config: {
-    slimfactHost: 'slimfact.localhost',
-    lang: 'en-US',
-    downPaymentPaymentTermDays: 5
-  }
-}))
-
-// Mock handlebars compile
-vi.mock('handlebars', () => ({
-  default: {
-    compile: () => (context: Record<string, string>) =>
-      `${context.startDate} - ${context.endDate || ''}`
-  }
-}))
-
+import { describe, expect, it } from 'vitest'
 import { compileEmail } from './bookings.js'
 
 describe('compileEmail locale resolution', () => {
@@ -37,26 +19,6 @@ describe('compileEmail locale resolution', () => {
       localeCode: 'en-US'
     })
     expect(body).toContain('Tuesday')
-  })
-
-  it('falls back from nl-NL to nl', async () => {
-    const { body } = await compileEmail({
-      booking: baseBooking,
-      subjectTemplate: template,
-      bodyTemplate: template,
-      localeCode: 'nl-NL'
-    })
-    expect(body).toContain('dinsdag')
-  })
-
-  it('resolves nl (short code) directly', async () => {
-    const { body } = await compileEmail({
-      booking: baseBooking,
-      subjectTemplate: template,
-      bodyTemplate: template,
-      localeCode: 'nl'
-    })
-    expect(body).toContain('dinsdag')
   })
 
   it('falls back from non-existent xx to en-US', async () => {

@@ -2254,7 +2254,7 @@ describe('bookingCostsHandler — modification surcharge via handler', () => {
     } as any)
 
     // Base pet lines + 1 surcharge.
-    const surchargeLines = result.surcharges.filter(
+    const surchargeLines = result.lines.filter(
       (s) => s.description === 'Cancelation costs'
     )
     expect(surchargeLines).toHaveLength(1)
