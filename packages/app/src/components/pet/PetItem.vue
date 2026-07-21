@@ -17,6 +17,15 @@
         </div>
       </q-item-label>
       <q-item-label>{{ modelValue.name }}</q-item-label>
+      <q-item-label v-if="modelValue.rating">
+        <q-rating
+          :model-value="modelValue.rating"
+          size="sm"
+          icon="i-mdi-star-border"
+          icon-selected="i-mdi-star"
+          icon-half="i-mdi-star-half"
+        />
+      </q-item-label>
       <q-item-label caption>
         <div class="row">
           {{
@@ -48,19 +57,9 @@
         </q-field>
       </q-item-label>
     </q-item-section>
-    <q-item-section side>
+    <q-item-section v-if="showEditButton" side>
       <q-item-label>
-        <q-rating
-          v-if="modelValue.rating"
-          class="q-mr-md"
-          :model-value="modelValue.rating"
-          size="sm"
-          icon="i-mdi-star-border"
-          icon-selected="i-mdi-star"
-          icon-half="i-mdi-star-half"
-        />
         <q-btn
-          v-if="showEditButton"
           v-close-popup
           icon="i-mdi-edit"
           data-testid="edit-button"
@@ -94,6 +93,7 @@ export interface Props {
   showEditButton?: boolean
 }
 const props = defineProps<Props>()
+
 const emit = defineEmits<{
   (
     e: 'edit',

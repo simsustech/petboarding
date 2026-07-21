@@ -47,6 +47,7 @@ const seed = async () => {
     gender: 'male',
     sterilized: true,
     customerId: nr,
+    rating: nr === 2 ? 4 : 0,
     food: {
       timesADay: 2,
       amount: getRandomInt(300),
