@@ -19,3 +19,4 @@ packages/**/AGENTS.md
 **/.github/context*.md
 **/.pnpm-store/**
 .worktrees/**
+.pi/fff
