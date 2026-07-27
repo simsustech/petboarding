@@ -27,7 +27,17 @@ export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN) \
 cd packages/api && pnpm run test:e2e   # mandatory — never skip
 ```
 
-## SlimFact Integration Tests
+## Playwright E2E tests
+
+- Always run from `packages/api` with `pnpm`. Do NOT invoke `node_modules/.bin/playwright` directly.
+  - Full suite: `cd packages/api && pnpm run test:e2e`
+  - Single file: `cd packages/api && pnpm exec playwright test tests/e2e/<file>.spec.ts`
+  - Filtered: `cd packages/api && pnpm exec playwright test --grep="<pattern>"`
+- Config-only changes go in `packages/api/playwright.config.ts`. Avoid adding new CLI scripts in package.json.
+
+d05|
+
+bfe|## SlimFact Integration Tests
 
 Requires `slimfact-api:latest` image + password from its seed (currently `Sif5uEG5hcTH`).
 
