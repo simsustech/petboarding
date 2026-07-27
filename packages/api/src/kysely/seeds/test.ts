@@ -81,10 +81,22 @@ const seed = async () => {
     customerId: 5
   })
 
-  const bookingPet = [1, 2, 3, 4, 5].map((nr) => ({
-    bookingId: nr,
-    petId: nr
-  }))
+  // Booking 2 / pet 2 is intentionally seeded *with* `kennelId: 1` so the
+  // kennelLayout drag-to-waitlist e2e can exercise a non-null
+  // `bookingPetKennel.kennelId`, which is the state needed to reproduce the
+  // original bug where pets reappear in their original kennel on a fresh
+  // server read.
+  const bookingPet: Array<{
+    bookingId: number
+    petId: number
+    kennelId?: number | null
+  }> = [
+    { bookingId: 1, petId: 1 },
+    { bookingId: 2, petId: 2, kennelId: 1 },
+    { bookingId: 3, petId: 3 },
+    { bookingId: 4, petId: 4 },
+    { bookingId: 5, petId: 5 }
+  ]
   bookingPet.push({
     bookingId: 6,
     petId: 5
