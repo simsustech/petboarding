@@ -290,6 +290,15 @@ export interface PetRelations {
   comment: string | null
 }
 
+export interface PetAlerts {
+  id: Generated<number>
+  petId: number
+  condition: string
+  startDate: string | null
+  endDate: string | null
+  createdAt: Generated<string>
+}
+
 export interface Vacations {
   id: Generated<number>
   name: string
@@ -329,5 +338,6 @@ export interface DB {
   vaccinations: Vaccinations
   documents: Documents
   petRelations: PetRelations
+  petAlerts: PetAlerts
   vacations: Vacations
 }

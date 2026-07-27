@@ -244,7 +244,8 @@ export async function getBookingPetKennels(date: string) {
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
       withValidVaccinations,
-      withRelations
+      withRelations,
+      withAlerts(date)
     ])
     .execute()
 }
@@ -276,7 +277,8 @@ export async function getDaycareDatePetKennels(date: string) {
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
       withValidVaccinations,
-      withRelations
+      withRelations,
+      withAlerts(date)
     ])
     .execute()
 }

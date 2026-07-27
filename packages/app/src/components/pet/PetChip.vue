@@ -104,6 +104,23 @@
           size="0.8em"
         />
       </q-badge>
+      <q-badge
+        v-for="alert in modelValue.alerts"
+        :key="alert.condition"
+        :style="{
+          padding: '0px',
+          'padding-left': '3px',
+          'padding-right': '3px'
+        }"
+        :color="PET_ALERT_COLORS[alert.condition]"
+        rounded
+      >
+        <q-icon
+          class="q-ma-none q-pa-none"
+          :name="PET_ALERT_ICONS[alert.condition]"
+          size="0.8em"
+        />
+      </q-badge>
       <slot name="badge"></slot>
     </q-badge>
 
@@ -128,12 +145,20 @@ import Base64Image from '../Base64Image.vue'
 import { computed, toRefs } from 'vue'
 import {
   PET_CHIP_BADGE_COLORS,
-  PET_CHIP_BADGE_ICONS
+  PET_CHIP_BADGE_ICONS,
+  PET_ALERT_COLORS,
+  PET_ALERT_ICONS
 } from 'src/configuration.js'
 
 type Pet = Pick<
   PetType,
-  'id' | 'name' | 'image' | 'hasMandatoryVaccinations' | 'medicines' | 'food'
+  | 'id'
+  | 'name'
+  | 'image'
+  | 'hasMandatoryVaccinations'
+  | 'medicines'
+  | 'food'
+  | 'alerts'
 > & {
   customer?: Pick<CustomerType, 'lastName'>
 }
@@ -148,6 +173,7 @@ interface Props {
     | 'hasMandatoryVaccinations'
     | 'medicines'
     | 'food'
+    | 'alerts'
   >
   showImage?: boolean
   showLastName?: boolean

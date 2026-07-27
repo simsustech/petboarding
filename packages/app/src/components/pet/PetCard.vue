@@ -168,6 +168,38 @@
           />
         </q-item-section>
       </q-item>
+      <q-item v-if="showAlerts && modelValue.alerts?.length">
+        <q-item-section>
+          <q-item-label header>
+            {{ lang.pet.alerts.title }}
+          </q-item-label>
+          <div class="row items-center">
+            <q-badge
+              v-for="alert in modelValue.alerts"
+              :key="alert.condition"
+              :class="`bg-${PET_ALERT_COLORS[alert.condition]} text-white`"
+              :title="
+                lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
+              "
+              dense
+              rounded
+              class="q-mr-sm"
+            >
+              <q-icon :name="PET_ALERT_ICONS[alert.condition]" size="xs" />
+              {{
+                lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
+              }}
+            </q-badge>
+          </div>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            outline
+            icon="i-mdi-alert"
+            @click="petAlertsDialogRef?.functions.open()"
+          />
+        </q-item-section>
+      </q-item>
     </q-list>
   </q-styled-card>
 
@@ -234,6 +266,18 @@
       </div>
     </q-list>
   </responsive-dialog>
+
+  <responsive-dialog
+    ref="petAlertsDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    display
+  >
+    <pet-alerts-form
+      v-model:model-value="modelValue.alerts"
+      @update:modelValue="saveAlerts"
+    />
+  </responsive-dialog>
 </template>
 
 <script lang="ts">
@@ -263,6 +307,12 @@ import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { ref } from 'vue'
 import PetSelect from '../employee/PetSelect.vue'
 import { useEmployeeSetPetRelation } from '../../mutations/employee/pet.js'
+import PetAlertsForm from './PetAlertsForm.vue'
+import {
+  PET_ALERT_COLORS,
+  PET_ALERT_ICONS,
+  type PetAlert
+} from '../../configuration.js'
 
 export type OpenCustomerHandler = (payload: { id: number }) => void
 export type DeleteHandler = (payload: {
@@ -282,6 +332,7 @@ export interface Props {
   showAddVaccination?: boolean
   allowDelete?: boolean
   showRelations?: boolean
+  showAlerts?: boolean
   onOpenCustomer?: OpenCustomerHandler
   onDelete?: DeleteHandler
 }
@@ -396,6 +447,7 @@ const deletePet = (pet: Pet) => {
 const configuration = useConfiguration()
 
 const petRelationsDialogRef = ref<typeof ResponsiveDialog>()
+const petAlertsDialogRef = ref<typeof ResponsiveDialog>()
 
 const updatePetRelation = async ({
   petId1,
@@ -416,6 +468,13 @@ const updatePetRelation = async ({
     relations: {
       ...modelValue.value.relations
     }
+  })
+}
+
+const saveAlerts = (alerts: PetAlert[]) => {
+  emit('update:modelValue', {
+    ...modelValue.value,
+    alerts
   })
 }
 </script>

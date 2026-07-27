@@ -197,6 +197,17 @@ const lang: Language = {
     },
     relations: {
       relations: 'Relaties met andere dieren'
+    },
+    alerts: {
+      title: 'Waarschuwingen',
+      condition: 'Conditie',
+      startDate: 'Start datum',
+      endDate: 'Eind datum',
+      addAlert: 'Waarschuwing toevoegen',
+      in_heat: 'In roep',
+      needs_rest: 'Rust nodig',
+      aggressive: 'Aanvallend',
+      diabetic: 'Diabetisch'
     }
   },
   booking: {

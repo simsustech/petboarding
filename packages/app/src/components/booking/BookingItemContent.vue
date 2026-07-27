@@ -59,6 +59,10 @@
       <q-icon name="i-mdi-warning" color="red"> </q-icon>
       {{ `${lang.booking.messages.overlapsWithUnavailablePeriod}` }}
     </q-item-label>
+    <q-item-label v-if="hasAlerts" caption>
+      <q-icon name="i-mdi-alert" color="warning" />
+      {{ alertLabels }}
+    </q-item-label>
     <q-item-label
       v-if="modelValue.comments"
       class="text-bold"
@@ -252,6 +256,7 @@ export const formatBookingDates = ({
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
+import { computed } from 'vue'
 import { useLang } from '../../lang/index.js'
 import type { Booking } from '@petboarding/api/zod'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
@@ -268,7 +273,7 @@ export interface Props {
   showHistory?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (
@@ -350,6 +355,20 @@ const lang = useLang()
 const configuration = useConfiguration()
 
 const $q = useQuasar()
+
+const hasAlerts = computed(() =>
+  props.modelValue.pets?.some((p) => p.alerts?.length)
+)
+
+const alertLabels = computed(() =>
+  props.modelValue.pets
+    ?.flatMap((p) => p.alerts || [])
+    .map(
+      (a) =>
+        lang.value.pet.alerts[a.condition as keyof typeof lang.value.pet.alerts]
+    )
+    .join(', ')
+)
 
 const formatDates = (
   startDate: string,

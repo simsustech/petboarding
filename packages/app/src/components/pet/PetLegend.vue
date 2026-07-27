@@ -18,6 +18,12 @@
       </q-badge>
       {{ lang.pet.vaccination.missingVaccinations }}
     </div>
+    <div v-for="alert in PET_ALERTS" :key="alert.value" class="col-12 col-sm">
+      <q-badge :color="alert.color" rounded>
+        <q-icon :name="alert.icon" size="0.8em" />
+      </q-badge>
+      {{ lang.pet.alerts[alert.value as keyof typeof lang.pet.alerts] }}
+    </div>
   </div>
 </template>
 
@@ -27,6 +33,7 @@ import {
   PET_CHIP_BADGE_COLORS,
   PET_CHIP_BADGE_ICONS
 } from '../../configuration.js'
+import { PET_ALERTS } from '@petboarding/tools/constants'
 
 const lang = useLang()
 </script>

@@ -21,6 +21,14 @@ export interface ParsedPet extends Omit<Pet, 'image'> {
   vaccinations?: Vaccination[]
   validVaccinations?: string[]
   hasMandatoryVaccinations?: boolean
+  alerts?: PetAlert[]
+}
+
+export interface PetAlert {
+  id?: number
+  condition: string
+  startDate: string | null
+  endDate: string | null
 }
 
 const mandatoryVaccinations: Record<string, string[]> = {
@@ -162,6 +170,33 @@ export function withRelations(eb: ExpressionBuilder<Database, 'pets'>) {
     .as('relations')
 }
 
+export function withAlerts(date?: string) {
+  return (eb: ExpressionBuilder<Database, 'pets'>) => {
+    let subquery = eb
+      .selectFrom('petAlerts')
+      .select([
+        'petAlerts.id',
+        'petAlerts.condition',
+        'petAlerts.startDate',
+        'petAlerts.endDate'
+      ])
+      .whereRef('petAlerts.petId', '=', 'pets.id')
+
+    if (date) {
+      subquery = subquery
+        .where('petAlerts.startDate', '<=', sql<string>`${date}::date`)
+        .where((eb) =>
+          eb.or([
+            eb('petAlerts.endDate', 'is', null),
+            eb('petAlerts.endDate', '>=', sql<string>`${date}::date`)
+          ])
+        )
+    }
+
+    return jsonArrayFrom(subquery).as('alerts')
+  }
+}
+
 function find({
   criteria,
   select,
@@ -172,6 +207,7 @@ function find({
   relations?: {
     vaccinations?: boolean
     relations?: boolean
+    alerts?: boolean
   }
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -203,6 +239,10 @@ function find({
 
   if (relations?.relations) {
     query = query.select([withRelations])
+  }
+
+  if (relations?.alerts) {
+    query = query.select([withAlerts()])
   }
 
   return query

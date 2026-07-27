@@ -24,6 +24,7 @@ import {
 import type { OpeningTime } from './openingTime.js'
 import {
   withValidVaccinations,
+  withAlerts,
   checkVaccinations,
   type ParsedPet
 } from './pet.js'
@@ -420,6 +421,7 @@ function withPets(eb: ExpressionBuilder<Database, 'bookings'>) {
         'pets.medicines',
         'pets.food',
         withValidVaccinations,
+        withAlerts(),
         jsonObjectFrom(
           ceb
             .selectFrom('customers')

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { Loading, Notify } from 'quasar'
 import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
-import { PET_SPECIES } from '@petboarding/tools/constants'
+import { PET_SPECIES, PET_ALERTS } from '@petboarding/tools/constants'
 import { QuasarTheme } from 'unocss-preset-quasar/theme'
 import { Locales } from '@simsustech/quasar-components/form'
 
@@ -18,7 +18,23 @@ export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
   arrivalTimeId?: number
   departureTimeId?: number
   relations?: Record<number, { rating: number; name: string; comment?: string }>
+  alerts?: PetAlert[]
 }
+
+export interface PetAlert {
+  id?: number
+  condition: string
+  startDate: string | null
+  endDate: string | null
+}
+
+export const PET_ALERT_COLORS = Object.fromEntries(
+  PET_ALERTS.map((a) => [a.value, a.color])
+) as Record<string, string>
+
+export const PET_ALERT_ICONS = Object.fromEntries(
+  PET_ALERTS.map((a) => [a.value, a.icon])
+) as Record<string, string>
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
   API_HOST?: string

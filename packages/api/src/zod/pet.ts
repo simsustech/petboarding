@@ -47,6 +47,16 @@ export const petValidation = {
         comment: z.string().optional()
       })
     )
+    .optional(),
+  alerts: z
+    .array(
+      z.object({
+        condition: z.string(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .nullable()
     .optional()
 }
 

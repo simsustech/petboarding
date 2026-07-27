@@ -196,6 +196,17 @@ const lang: Language = {
     },
     relations: {
       relations: 'Relations with other pets'
+    },
+    alerts: {
+      title: 'Alerts',
+      condition: 'Condition',
+      startDate: 'Start date',
+      endDate: 'End date',
+      addAlert: 'Add alert',
+      in_heat: 'In heat',
+      needs_rest: 'Needs rest',
+      aggressive: 'Aggressive',
+      diabetic: 'Diabetic'
     }
   },
   booking: {

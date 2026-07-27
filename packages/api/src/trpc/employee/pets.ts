@@ -13,6 +13,7 @@ import {
   setPetRelation,
   updatePet
 } from '../../repositories/pet.js'
+import { db } from '../../kysely/index.js'
 import {
   createVaccination,
   findVaccinations,
@@ -260,5 +261,55 @@ export const employeePetRoutes = ({
     .mutation(async ({ input }) => {
       const { petId1, petId2, rating } = input
       return setPetRelation({ petId1, petId2, rating })
+    }),
+  createAlert: procedure
+    .input(
+      z.object({
+        petId: z.number(),
+        condition: z.string(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { petId, condition, startDate, endDate } = input
+      return db
+        .insertInto('petAlerts')
+        .values({
+          petId,
+          condition,
+          startDate: startDate ?? null,
+          endDate: endDate ?? null
+        })
+        .returningAll()
+        .executeTakeFirst()
+    }),
+  updateAlert: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        condition: z.string(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, condition, startDate, endDate } = input
+      return db
+        .updateTable('petAlerts')
+        .set({
+          condition,
+          startDate: startDate ?? null,
+          endDate: endDate ?? null
+        })
+        .where('id', '=', id)
+        .returningAll()
+        .executeTakeFirst()
+    }),
+  deleteAlert: procedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const { id } = input
+      return db.deleteFrom('petAlerts').where('id', '=', id).execute()
     })
 })
