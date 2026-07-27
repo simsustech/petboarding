@@ -146,6 +146,7 @@ export function withRelations(eb: ExpressionBuilder<Database, 'pets'>) {
       'relatedPets.id',
       'unioned_relations.petId'
     )
+    .where('relatedPets.deceased', '=', false)
     .innerJoin(
       'customers as relatedCustomers',
       'relatedCustomers.id',
@@ -390,7 +391,8 @@ export async function searchPets(searchPhrase: string) {
       pets p 
       inner join customers c on p.customer_id = c.id 
     where 
-      p.fulltext @@ to_tsquery(
+      p.deceased = false
+      and p.fulltext @@ to_tsquery(
         'english', ${sql.val(tsQueryString)}
         )
   ), relation as (
@@ -417,7 +419,8 @@ export async function searchPets(searchPhrase: string) {
       pets p 
       inner join customers c on p.customer_id = c.id 
     where 
-      c.fulltext @@ to_tsquery(
+      p.deceased = false
+      and c.fulltext @@ to_tsquery(
         'english', ${sql.val(tsQueryString)}
       )
   )

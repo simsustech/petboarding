@@ -69,7 +69,8 @@ export const createPet = ({
         : undefined,
     customerId: customerId,
     id: petId,
-    categoryId: 1
+    categoryId: 1,
+    deceased: false
   }
 }
 

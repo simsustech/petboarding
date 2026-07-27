@@ -343,7 +343,8 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
       sterilized: true,
       birthDate: '2022-03-15',
       color: 'Golden',
-      chipNumber: 'CHIP20220315'
+      chipNumber: 'CHIP20220315',
+      deceased: true
     })
     .returning('id')
     .execute()
