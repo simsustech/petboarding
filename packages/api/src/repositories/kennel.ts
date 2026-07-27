@@ -1,5 +1,5 @@
-import { ExpressionBuilder, sql } from 'kysely'
-import { Database, db } from '../kysely/index.js'
+import { type ExpressionBuilder, sql } from 'kysely'
+import { type Database, db } from '../kysely/index.js'
 import type { Kennels } from '../kysely/types.js'
 import {
   BOOKING_STATUS,
@@ -161,7 +161,7 @@ export async function getBookingPetKennels(date: string) {
       (eb) =>
         eb
           .selectFrom('bookingPetKennelOverride as bpk_o')
-          .select('bpk_o.kennelId')
+          .select(['bpk_o.kennelId', 'bpk_o.bookingId as has_override'])
           .whereRef('bpk_o.bookingId', '=', 'bookingPetKennel.bookingId')
           .whereRef('bpk_o.petId', '=', 'bookingPetKennel.petId')
           .whereRef('bpk_o.date', '<=', sql<string>`${date}::date`)
@@ -231,7 +231,7 @@ export async function getBookingPetKennels(date: string) {
       convertImageSql.as('image'),
       seb
         .case()
-        .when('override.kennelId', 'is not', null)
+        .when('override.has_override', 'is not', null)
         .then(sql`override.kennel_id`)
         .else(sql`booking_pet_kennel.kennel_id`)
         .end()
@@ -342,10 +342,26 @@ export async function clearForwardBookingPetKennelOverrides(input: {
   petId: number
   fromDate: string
 }) {
-  return db
-    .deleteFrom('bookingPetKennelOverride')
-    .where('bookingId', '=', input.bookingId)
-    .where('petId', '=', input.petId)
-    .where('date', '>=', input.fromDate)
-    .execute()
+  return db.transaction().execute(async (trx) => {
+    await trx
+      .deleteFrom('bookingPetKennelOverride')
+      .where('bookingId', '=', input.bookingId)
+      .where('petId', '=', input.petId)
+      .where('date', '>=', input.fromDate)
+      .execute()
+    await trx
+      .insertInto('bookingPetKennelOverride')
+      .values({
+        bookingId: input.bookingId,
+        petId: input.petId,
+        date: input.fromDate,
+        kennelId: null
+      })
+      .onConflict((oc) =>
+        oc.columns(['bookingId', 'petId', 'date']).doUpdateSet({
+          kennelId: null
+        })
+      )
+      .execute()
+  })
 }

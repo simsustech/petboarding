@@ -95,6 +95,66 @@ test.describe('KennelLayout', () => {
     await expect(page.locator(`#waitlist #${petId}`)).toHaveCount(0)
   })
 
+  test('should keep pet on waitlist across a print-route server read after drag-to-waitlist', async () => {
+    // Booking 2 / pet 2 is seeded with `bookingPetKennel.kennelId = 1`, putting
+    // pet 2 in kennel 1 on 2024-01-02. Without the per-day override -> NULL
+    // sentinel fix in `packages/api/src/repositories/kennel.ts`, dragging pet
+    // 2 from kennel 1 back to the waitlist would only delete any forward
+    // override rows and leave the read resolver falling back to the booking's
+    // default kennel — so pet 2 would reappear in kennel 1 on the print
+    // route (and on any fresh /employee reload), even though the opt-in
+    // mutation was sent.
+    await page.goto('/employee/kennellayout/2024-01-02')
+    await page.waitForLoadState('networkidle')
+    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+
+    const petInKennel = page.locator('.drop-target[id^="kennel"] [id="pet2"]')
+    if ((await petInKennel.count()) === 0) {
+      test.skip(
+        true,
+        'pet2 is not in any kennel on 2024-01-02 — bug cannot be reproduced'
+      )
+      return
+    }
+
+    const waitlist = page.locator('#waitlist')
+    await expect(waitlist).toBeVisible()
+
+    const petBox = await petInKennel.first().boundingBox()
+    expect(petBox).toBeTruthy()
+    const waitlistBox = await waitlist.boundingBox()
+    expect(waitlistBox).toBeTruthy()
+
+    // Drag pet 2 from anywhere in any kennel onto #waitlist.
+    await page.mouse.move(
+      petBox!.x + petBox!.width / 2,
+      petBox!.y + petBox!.height / 2
+    )
+    await page.mouse.down()
+    await page.mouse.move(
+      waitlistBox!.x + waitlistBox!.width / 2,
+      waitlistBox!.y + waitlistBox!.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+    await page.waitForLoadState('networkidle')
+
+    // Navigate to the print route — a fresh server read.
+    await page.goto('/print/kennellayout/2024-01-02')
+    await page.waitForLoadState('networkidle')
+
+    // The print view (`packages/app/src/pages/print/KennelLayout.vue`)
+    // renders pets waiting (kennelId === null) in the top row and pets
+    // assigned to a kennel inside `#kennelN` containers. There is no
+    // dedicated `#waitlist` id on the print route. To verify the fix:
+    // assert pet2 is NOT present inside any `#kennelN` on the print
+    // page. By construction that means pet2 lives in the waitlist row.
+    const printKennelLocator = page.locator(
+      '.q-col-gutter-md [id^="kennel"] #pet2'
+    )
+    await expect(printKennelLocator).toHaveCount(0, { timeout: 5000 })
+  })
+
   test('should drag a pet from a kennel back to the waitlist', async () => {
     const petsInKennels = page.locator(
       '.drop-target[id^="kennel"] .q-chip, .drop-target[id^="kennel"] [id^="pet"]'
