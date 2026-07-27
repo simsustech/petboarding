@@ -192,6 +192,8 @@
             </q-badge>
           </div>
         </q-item-section>
+      </q-item>
+      <q-item v-if="showAlerts">
         <q-item-section side>
           <q-btn
             outline

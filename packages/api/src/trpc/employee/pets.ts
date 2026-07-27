@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { t } from '../index.js'
+import type { t } from '../index.js'
 import * as z from 'zod'
 import { pet } from '../../zod/pet.js'
 import { VACCINATION_IMAGE_SIZE } from '@petboarding/tools/constants'
@@ -94,7 +94,8 @@ export const employeePetRoutes = ({
           select: ['rating', 'comments'],
           relations: {
             vaccinations: true,
-            relations: true
+            relations: true,
+            alerts: true
           }
         })
         return pets

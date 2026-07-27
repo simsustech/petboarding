@@ -15,6 +15,16 @@ import { getRandomInt } from './fake/index.js'
 const CURRENT_YEAR = new Date().getFullYear()
 
 const seed = async () => {
+  // Guard: if any test data already exists, skip reseeding
+  // Guard: if any accounts already exist, skip reseeding to make seed idempotent
+  const existingCount = await sql<{
+    count: number
+  }>`SELECT count(*)::int as count FROM accounts`.execute(db)
+  if (Number(existingCount?.rows?.[0]?.count ?? 0) > 0) {
+    console.log('Test database already seeded. Skipping reseed.')
+    return
+  }
+
   const accounts = [1, 2, 3, 4, 5].map((nr) => ({
     email: `test${nr}@petboarding.app`
   }))
@@ -459,6 +469,9 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
   }))
   await db.insertInto('periods').values(periods).execute()
 
+  // Reset the sequence so categoryPrices.categoryId=1 references the inserted category
+  // Reset sequence so category always gets id=1 for categoryPrices to reference
+  await sql`ALTER SEQUENCE categories_id_seq RESTART WITH 1`.execute(db)
   await db.insertInto('categories').values(categories).execute()
   await db.insertInto('categoryPrices').values(categoryPrices).execute()
   await db.insertInto('openingTimes').values(openingTimes).execute()
