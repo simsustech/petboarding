@@ -68,6 +68,8 @@
             :overline="getOverline(pet)"
             show-image
             show-last-name
+            show-badge
+            overline="{{ getOverline(pet) }}"
             @dragstart="onDragStart"
             @open-pet="openPet"
           >
