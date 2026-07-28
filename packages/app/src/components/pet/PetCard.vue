@@ -223,7 +223,7 @@
       <template #side="{ itemProps, opt }">
         <q-rating
           :model-value="modelValue.relations?.[opt.value]?.rating / 2 || 0"
-          size="3em"
+          size="2em"
           icon="i-mdi-star-border"
           icon-selected="i-mdi-star"
           icon-half="i-mdi-star-half"
