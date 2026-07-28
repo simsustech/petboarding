@@ -339,8 +339,8 @@ importers:
         specifier: 66.7.5
         version: 66.7.5(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
       unocss-preset-quasar:
-        specifier: ^0.4.1
-        version: 0.4.1(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
+        specifier: 0.4.2
+        version: 0.4.2(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
       vite:
         specifier: 8.1.3
         version: 8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)
@@ -6438,8 +6438,8 @@ packages:
       vite:
         optional: true
 
-  unocss-preset-quasar@0.4.1:
-    resolution: {integrity: sha512-nX8ywMqq3Jjq8QyGQvXH53PeLzisr3Hr+VEPlFsRFgwSAsFm9wE37Lybt0M5UrGC4i8SFa5IG/tLwDl1cTsAsQ==}
+  unocss-preset-quasar@0.4.2:
+    resolution: {integrity: sha512-MZD54sdTiCZBiGKtFBxkqdrcqqdyidRo1G8L5ibeo3LX22JaRxlwdajjSviikrL68Q2/wbI3yiL4O5Wco22R8g==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       quasar: ^2.21.1
@@ -13206,7 +13206,7 @@ snapshots:
       - '@unocss/webpack'
       - animate.css
 
-  unocss-preset-quasar@0.4.1(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)):
+  unocss-preset-quasar@0.4.2(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)):
     dependencies:
       '@poupe/material-color-utilities': 0.4.1
       '@unocss/core': 66.7.5
