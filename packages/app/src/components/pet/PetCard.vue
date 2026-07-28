@@ -493,7 +493,7 @@ const createAlert: InstanceType<
 const confirmDeleteAlert = (alert: PetAlert) => {
   $q.dialog({
     title: lang.value.pet.alerts.title,
-    message: `${lang.value.delete} ${lang.value.pet.alerts[alert.condition as keyof typeof lang.value.pet.alerts]}?`,
+    message: `${lang.value.pet.alerts[alert.condition as keyof typeof lang.value.pet.alerts]} (${modelValue.value.name}) — ${formatDate(alert.startDate)} → ${formatDate(alert.endDate)}`,
     cancel: true,
     persistent: true
   }).onOk(async () => {
