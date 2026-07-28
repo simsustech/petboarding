@@ -9,8 +9,7 @@ import {
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
-import { withRelations, withValidVaccinations } from './pet.js'
-type Kennel = Selectable<Kennels>
+import { withAlerts, withRelations, withValidVaccinations } from './pet.js'
 type NewKennel = Insertable<Kennels>
 type KennelUpdate = Updateable<Kennels>
 

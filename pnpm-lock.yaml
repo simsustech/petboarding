@@ -339,8 +339,8 @@ importers:
         specifier: 66.7.5
         version: 66.7.5(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
       unocss-preset-quasar:
-        specifier: ^0.4.0
-        version: 0.4.0(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
+        specifier: ^0.4.1
+        version: 0.4.1(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
       vite:
         specifier: 8.1.3
         version: 8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)
@@ -6430,6 +6430,16 @@ packages:
 
   unocss-preset-quasar@0.4.0:
     resolution: {integrity: sha512-HGXC4ctvFhKB94yVQxpdQoUXfb3DQQS1LYO8tRLVQhXbz5qZ6QgDCE4dcXsyFTpz8Y0DyX1eGxpWJL2e0m7qdg==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      quasar: ^2.21.1
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
+
+  unocss-preset-quasar@0.4.1:
+    resolution: {integrity: sha512-nX8ywMqq3Jjq8QyGQvXH53PeLzisr3Hr+VEPlFsRFgwSAsFm9wE37Lybt0M5UrGC4i8SFa5IG/tLwDl1cTsAsQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       quasar: ^2.21.1
@@ -13178,6 +13188,25 @@ snapshots:
   universalify@2.0.1: {}
 
   unocss-preset-quasar@0.4.0(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)):
+    dependencies:
+      '@poupe/material-color-utilities': 0.4.1
+      '@unocss/core': 66.7.5
+      '@unocss/preset-uno': 66.7.5
+      '@unocss/preset-web-fonts': 66.7.4
+      '@unocss/preset-wind': 66.7.5
+      '@unocss/preset-wind4': 66.7.4
+      animated-unocss: 0.0.6(animate.css@4.1.1)(unocss@66.7.4(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)))
+      quasar: 2.21.1
+      unocss: 66.7.4(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0))
+    optionalDependencies:
+      vite: 8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)
+    transitivePeerDependencies:
+      - '@unocss/astro'
+      - '@unocss/postcss'
+      - '@unocss/webpack'
+      - animate.css
+
+  unocss-preset-quasar@0.4.1(animate.css@4.1.1)(quasar@2.21.1)(vite@8.1.3(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.101.0)(terser@5.49.0)(yaml@2.9.0)):
     dependencies:
       '@poupe/material-color-utilities': 0.4.1
       '@unocss/core': 66.7.5

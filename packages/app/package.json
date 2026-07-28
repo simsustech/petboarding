@@ -88,7 +88,7 @@
     "quasar": "2.21.1",
     "typescript": "6.0.3",
     "unocss": "66.7.5",
-    "unocss-preset-quasar": "^0.4.0",
+    "unocss-preset-quasar": "^0.4.1",
     "vite": "8.1.3",
     "vite-plugin-pwa": "1.3.0",
     "vitrify": "0.26.11",

@@ -168,15 +168,15 @@
           />
         </q-item-section>
       </q-item>
-      <q-item v-if="showAlerts && modelValue.alerts?.length">
+      <q-item v-if="showAlerts">
         <q-item-section>
           <q-item-label header>
             {{ lang.pet.alerts.title }}
           </q-item-label>
-          <div class="row items-center">
+          <div v-if="modelValue.alerts?.length" class="row items-center">
             <q-badge
               v-for="alert in modelValue.alerts"
-              :key="alert.condition"
+              :key="alert.id || alert.condition"
               :class="`bg-${PET_ALERT_COLORS[alert.condition]} text-white`"
               :title="
                 lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
@@ -189,15 +189,22 @@
               {{
                 lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
               }}
+              <q-btn
+                dense
+                flat
+                round
+                size="xs"
+                icon="i-mdi-close-circle"
+                class="q-ml-xs"
+                @click.stop="confirmDeleteAlert(alert)"
+              />
             </q-badge>
           </div>
         </q-item-section>
-      </q-item>
-      <q-item v-if="showAlerts">
         <q-item-section side>
           <q-btn
             outline
-            icon="i-mdi-alert"
+            icon="i-mdi-add"
             @click="petAlertsDialogRef?.functions.open()"
           />
         </q-item-section>
@@ -273,12 +280,9 @@
     ref="petAlertsDialogRef"
     padding
     :icons="{ close: 'i-mdi-close' }"
-    display
+    @submit="submitAlertForm"
   >
-    <pet-alerts-form
-      v-model:model-value="modelValue.alerts"
-      @update:modelValue="saveAlerts"
-    />
+    <pet-alerts-form ref="petAlertsFormRef" @submit="createAlert" />
   </responsive-dialog>
 </template>
 
@@ -304,6 +308,9 @@ import PetCategoryItem from './PetCategoryItem.vue'
 import ImageAvatar from '../ImageAvatar.vue'
 import VaccinationItem from '../vaccination/VaccinationItem.vue'
 import { useConfiguration } from '../../configuration.js'
+import { useEmployeeCreateAlert } from '../../mutations/employee/pet.js'
+
+import { useEmployeeDeleteAlert } from '../../mutations/employee/pet.js'
 import type { Vaccination } from '../vaccination/VaccinationItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { ref } from 'vue'
@@ -450,6 +457,56 @@ const configuration = useConfiguration()
 
 const petRelationsDialogRef = ref<typeof ResponsiveDialog>()
 const petAlertsDialogRef = ref<typeof ResponsiveDialog>()
+
+const petAlertsFormRef = ref<typeof PetAlertsForm>()
+
+const submitAlertForm: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = ({ done }) => {
+  petAlertsFormRef.value?.functions.submit({ done })
+}
+
+const createAlert: InstanceType<
+  typeof PetAlertsForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  if (modelValue.value.id) {
+    const { mutateAsync: createAlertMutation } = useEmployeeCreateAlert()
+    try {
+      await createAlertMutation({
+        petId: modelValue.value.id,
+        condition: data.condition,
+        startDate: data.startDate,
+        endDate: data.endDate
+      })
+      done()
+      emit('update:modelValue', {
+        ...modelValue.value,
+        alerts: [...(modelValue.value.alerts || []), data]
+      })
+    } catch (e) {
+      console.error(e)
+      done(false)
+    }
+  }
+}
+
+const confirmDeleteAlert = (alert: PetAlert) => {
+  $q.dialog({
+    title: lang.value.pet.alerts.title,
+    message: `${lang.value.delete} ${lang.value.pet.alerts[alert.condition as keyof typeof lang.value.pet.alerts]}?`,
+    cancel: true,
+    persistent: true
+  }).onOk(async () => {
+    if (alert.id && modelValue.value.id) {
+      const { mutateAsync: deleteAlert } = useEmployeeDeleteAlert()
+      await deleteAlert({ id: alert.id })
+      emit('update:modelValue', {
+        ...modelValue.value,
+        alerts: modelValue.value.alerts?.filter((a) => a.id !== alert.id) || []
+      })
+    }
+  })
+}
 
 const updatePetRelation = async ({
   petId1,

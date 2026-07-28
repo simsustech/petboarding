@@ -121,10 +121,13 @@ const seed = async () => {
     ...bookings[nr - 1],
     bookingId: nr,
     status: bookingStatusesEnum[nr - 1],
-    petIds: `[${nr - 1}]`,
+    petIds: `[${nr}]`,
     modifiedAt: new Date().toISOString(),
     customerId: undefined
   }))
+
+  // Override booking #5 status to PENDING for the approve test
+  bookingStatuses[4].status = BOOKING_STATUS.PENDING
   bookingStatuses.push({
     ...bookings[5],
     bookingId: 6,

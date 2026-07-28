@@ -1,61 +1,77 @@
 <template>
-  <q-list>
-    <div
-      v-for="(alert, index) in modelValue"
-      :key="index"
-      class="row items-end q-pb-sm"
-    >
+  <q-form ref="formRef">
+    <div class="grid grid-cols-12 gap-3">
       <q-select
-        v-model="modelValue[index].condition"
+        v-model="alert.condition"
         :options="alertOptions"
         :label="lang.pet.alerts.condition"
-        class="col-6"
+        class="col-span-12"
         map-options
         emit-value
+        :rules="[(val: any) => !!val || 'Required']"
       />
-      <q-input
-        v-model="modelValue[index].startDate"
-        type="date"
+      <date-input
+        v-model="alert.startDate"
         :label="lang.pet.alerts.startDate"
-        class="col-3 q-mx-sm"
+        format="DD-MM-YYYY"
+        clearable
+        class="col-span-12 md:col-span-6"
+        :date="{
+          noUnset: true,
+          firstDayOfWeek: '1'
+        }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
-      <q-input
-        v-model="modelValue[index].endDate"
-        type="date"
+      <date-input
+        v-model="alert.endDate"
         :label="lang.pet.alerts.endDate"
-        class="col-3 q-mx-sm"
-      />
-      <q-btn
-        icon="i-mdi-delete"
-        label="Remove"
-        color="red"
-        @click="removeAlert(index)"
-        class="q-ml-sm"
+        format="DD-MM-YYYY"
+        clearable
+        class="col-span-12 md:col-span-6"
+        :date="{
+          noUnset: true,
+          firstDayOfWeek: '1'
+        }"
+        :icons="{
+          event: 'i-mdi-event',
+          clear: 'i-mdi-clear'
+        }"
       />
     </div>
-  </q-list>
-  <q-btn label="Add alert" icon="i-mdi-add" @click="addAlert()" />
+  </q-form>
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { PET_ALERTS } from '@petboarding/tools/constants'
+import { DateInput } from '@simsustech/quasar-components/form'
 import type { PetAlert } from '../../configuration.js'
-import { useEmployeeDeleteAlert } from '../../mutations/employee/pet.js'
 
 interface Props {
-  modelValue: PetAlert[]
+  modelValue?: PetAlert
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => ({ condition: '', startDate: null, endDate: null })
+})
+
 const emit = defineEmits<{
-  (e: 'update:model-value', value: PetAlert[]): void
+  (e: 'update:model-value', value: PetAlert): void
+  (
+    e: 'submit',
+    value: { data: PetAlert; done: (success?: boolean) => void }
+  ): void
 }>()
 
 const lang = useLang()
-const { modelValue } = toRefs(props)
-const { mutateAsync: deleteAlert } = useEmployeeDeleteAlert()
+
+const formRef = ref<any>()
+
+const alert = reactive<PetAlert>({ ...props.modelValue })
 
 const alertOptions = computed(() =>
   PET_ALERTS.map((a) => ({
@@ -64,18 +80,28 @@ const alertOptions = computed(() =>
   }))
 )
 
-function addAlert() {
-  const current = [...(modelValue.value || [])]
-  current.push({ condition: '', startDate: null, endDate: null })
-  emit('update:model-value', current)
+function setValue(data: PetAlert) {
+  alert.condition = data.condition
+  alert.startDate = data.startDate
+  alert.endDate = data.endDate
 }
 
-async function removeAlert(index: number) {
-  const current = [...(modelValue.value || [])]
-  const removed = current.splice(index, 1)[0]
-  if (removed?.id) {
-    await deleteAlert({ id: removed.id })
-  }
-  emit('update:model-value', current)
+function submit({ done }: { done: (success?: boolean) => void }) {
+  formRef.value.validate().then((success: boolean) => {
+    if (success) {
+      emit('submit', { data: { ...alert }, done })
+    } else {
+      done(false)
+    }
+  })
 }
+
+const functions = ref({
+  setValue,
+  submit
+})
+
+defineExpose({
+  functions
+})
 </script>
