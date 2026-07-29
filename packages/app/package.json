@@ -57,7 +57,7 @@
     "@quasar/extras": "2.0.2",
     "@quasar/quasar-ui-qcalendar": "5.0.0",
     "@quasar/quasar-ui-qmarkdown": "3.0.0",
-    "@simsustech/quasar-components": "0.12.5",
+    "@simsustech/quasar-components": "0.12.7",
     "@timestamp-js/core": "0.1.0-rc.5",
     "@trpc/client": "11.18.0",
     "@trpc/server": "11.18.0",

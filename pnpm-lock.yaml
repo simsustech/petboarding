@@ -246,8 +246,8 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@simsustech/quasar-components':
-        specifier: 0.12.5
-        version: 0.12.5(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))
+        specifier: 0.12.7
+        version: 0.12.7(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))
       '@timestamp-js/core':
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
@@ -2818,8 +2818,8 @@ packages:
     resolution: {integrity: sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ==}
     engines: {node: '>=22'}
 
-  '@simsustech/quasar-components@0.12.5':
-    resolution: {integrity: sha512-Wnuz0N+SdHCFMUfbGkD4IjmKvYPViz59044mfZGHX8616x7j1RrWTUg3cR34nf+wAkl6wGxK3pHYjbagxp3u9g==}
+  '@simsustech/quasar-components@0.12.7':
+    resolution: {integrity: sha512-fEFBk0tOKjngAd6ETbJqgepETtFGuRlHJT9dJdxrxdATMMTuG1HAp0dWyX4Y7z/8TMUmyEzpJ33gRFgIPYv/Qg==}
     peerDependencies:
       quasar: ^2.19.3
 
@@ -9176,7 +9176,7 @@ snapshots:
 
   '@simple-libs/stream-utils@2.0.0': {}
 
-  '@simsustech/quasar-components@0.12.5(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))':
+  '@simsustech/quasar-components@0.12.7(quasar@2.21.1)(vue@3.5.39(typescript@6.0.3))':
     dependencies:
       '@vueuse/core': 14.3.0(vue@3.5.39(typescript@6.0.3))
       quasar: 2.21.1
