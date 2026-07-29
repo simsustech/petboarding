@@ -3,7 +3,7 @@
     <div class="row justify-center text-h6">
       {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
-    <div class="row pt-0px mt-0px">
+    <div id="waitlist" class="row pt-0px mt-0px">
       <pet-chip
         v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
         :id="`pet${pet.id}`"
