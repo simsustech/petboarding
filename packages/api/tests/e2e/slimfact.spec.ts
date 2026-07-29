@@ -89,10 +89,8 @@ test.describe('Booking approve/reject (SlimFact connected)', async () => {
     await page.waitForLoadState('networkidle')
 
     // The InvoiceButton component renders with aria-label "Open bill or invoice."
-    // It only appears when invoiceUuid is set, confirming SlimFact created the invoice
-    const invoiceLink = page.getByRole('button', {
-      name: 'Open bill or invoice.'
-    })
+    // It only appears when invoiceUuid is set, confirming SlimFact created the invoice.
+    const invoiceLink = page.getByTestId('invoice-button')
     await expect(invoiceLink).toBeVisible({ timeout: 10000 })
   })
 

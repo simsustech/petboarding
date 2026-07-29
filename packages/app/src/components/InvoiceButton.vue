@@ -8,6 +8,7 @@
     :rounded="false"
     :class="classes"
     :aria-label="lang.booking.messages.openInvoice"
+    data-testid="invoice-button"
   >
     <div class="column items-center">
       <q-avatar class="col-12">
