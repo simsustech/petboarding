@@ -159,7 +159,6 @@ import {
   useEmployeeSetDaycareDatePetKennelMutation
 } from '../../mutations/employee/petKennel.js'
 import type { PetKennel } from '../../configuration.js'
-import { PET_ALERT_COLORS } from '../../configuration.js'
 import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
 import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
 import { computed } from 'vue'
@@ -243,9 +242,9 @@ function onDrop(e) {
   }
   let kennel = e.target
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     if (!kennel.id?.match(/(kennel|waitlist)(.*)/)) {
-      kennel = kennel.parentNode
+      kennel = kennel?.parentNode
     }
   }
   const draggedId = e.dataTransfer.getData('text')
@@ -253,9 +252,12 @@ function onDrop(e) {
   let petId: number | undefined
   if (draggedId) petId = Number(draggedId.match(/pet(.*)/).at(1))
   let kennelId: number | undefined | null
-  if (kennel.id) {
+  if (kennel?.id) {
     if (kennel.id === 'waitlist') kennelId = null
-    else kennelId = Number(kennel.id?.match(/kennel(.*)/).at(1))
+    else {
+      const kennelMatch = kennel.id?.match(/kennel(.*)/)
+      if (kennelMatch) kennelId = Number(kennelMatch.at(1))
+    }
   }
 
   // check if original parent node
@@ -359,9 +361,6 @@ const getPetChipClasses = (petKennel: PetKennel) => {
     }
   } else if (draggedPetId.value) {
     return 'bg-grey-2'
-  } else if (petKennel.alerts?.length) {
-    const alertType = petKennel.alerts[0].condition
-    return `bg-${PET_ALERT_COLORS[alertType]}-2`
   } else if (petKennel.bookingId) {
     return 'bg-blue-2'
   } else if (petKennel.daycareDateId) {
