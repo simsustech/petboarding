@@ -42,10 +42,30 @@ export enum PET_ALERT_CONDITIONS {
 }
 
 export const PET_ALERTS = [
-  { value: PET_ALERT_CONDITIONS.IN_HEAT, label: 'pet.alerts.inHeat', icon: 'i-mdi-paw', color: 'pink' },
-  { value: PET_ALERT_CONDITIONS.NEEDS_REST, label: 'pet.alerts.needsRest', icon: 'i-mdi-bed', color: 'yellow' },
-  { value: PET_ALERT_CONDITIONS.AGGRESSIVE, label: 'pet.alerts.aggressive', icon: 'i-mdi-alert', color: 'red' },
-  { value: PET_ALERT_CONDITIONS.DIABETIC, label: 'pet.alerts.diabetic', icon: 'i-mdi-needle', color: 'blue' }
+  {
+    value: PET_ALERT_CONDITIONS.IN_HEAT,
+    label: 'pet.alerts.inHeat',
+    icon: 'i-mdi-paw',
+    color: 'pink'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.NEEDS_REST,
+    label: 'pet.alerts.needsRest',
+    icon: 'i-mdi-bed',
+    color: 'yellow'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.AGGRESSIVE,
+    label: 'pet.alerts.aggressive',
+    icon: 'i-mdi-alert',
+    color: 'red'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.DIABETIC,
+    label: 'pet.alerts.diabetic',
+    icon: 'i-mdi-needle',
+    color: 'blue'
+  }
 ] as const
 
 export enum PETBOARDING_ACCOUNT_ROLES {
