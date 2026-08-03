@@ -362,8 +362,6 @@ const getPetChipClasses = (petKennel: PetKennel) => {
     }
   } else if (draggedPetId.value) {
     return 'bg-grey-2'
-  } else if (petKennel.food?.timesADay > 2) {
-    return `bg-${PET_CHIP_BADGE_COLORS.food}-2`
   } else if (petKennel.bookingId) {
     return 'bg-blue-2'
   } else if (petKennel.daycareDateId) {
