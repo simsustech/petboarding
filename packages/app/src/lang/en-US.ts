@@ -203,8 +203,8 @@ const lang: Language = {
       startDate: 'Start date',
       endDate: 'End date',
       addAlert: 'Add alert',
-      in_heat: 'In heat',
-      needs_rest: 'Needs rest',
+      inHeat: 'In heat',
+      needsRest: 'Needs rest',
       aggressive: 'Aggressive',
       diabetic: 'Diabetic'
     }

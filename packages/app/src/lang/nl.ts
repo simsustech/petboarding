@@ -204,8 +204,8 @@ const lang: Language = {
       startDate: 'Start datum',
       endDate: 'Eind datum',
       addAlert: 'Waarschuwing toevoegen',
-      in_heat: 'In roep',
-      needs_rest: 'Rust nodig',
+      inHeat: 'Loops',
+      needsRest: 'Rust nodig',
       aggressive: 'Aanvallend',
       diabetic: 'Diabetisch'
     }

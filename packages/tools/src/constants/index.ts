@@ -35,8 +35,8 @@ export const VACCINATION_TYPES = {
 export const PET_SPECIES = ['dog', 'cat'] as const
 
 export const PET_ALERTS = [
-  { value: 'in_heat', label: 'pet.alerts.in_heat', icon: 'i-mdi-paw', color: 'pink' },
-  { value: 'needs_rest', label: 'pet.alerts.needs_rest', icon: 'i-mdi-bed', color: 'yellow' },
+  { value: 'inHeat', label: 'pet.alerts.inHeat', icon: 'i-mdi-paw', color: 'pink' },
+  { value: 'needsRest', label: 'pet.alerts.needsRest', icon: 'i-mdi-bed', color: 'yellow' },
   { value: 'aggressive', label: 'pet.alerts.aggressive', icon: 'i-mdi-alert', color: 'red' },
   { value: 'diabetic', label: 'pet.alerts.diabetic', icon: 'i-mdi-needle', color: 'blue' }
 ] as const
