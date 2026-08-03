@@ -2,7 +2,10 @@ import { TRPCError } from '@trpc/server'
 import type { t } from '../index.js'
 import * as z from 'zod'
 import { pet } from '../../zod/pet.js'
-import { VACCINATION_IMAGE_SIZE } from '@petboarding/tools/constants'
+import {
+  PET_ALERT_CONDITIONS,
+  VACCINATION_IMAGE_SIZE
+} from '@petboarding/tools/constants'
 import { vaccination } from '../../zod/vaccination.js'
 import sharp from 'sharp'
 import { subYears } from 'date-fns'
@@ -267,7 +270,7 @@ export const employeePetRoutes = ({
     .input(
       z.object({
         petId: z.number(),
-        condition: z.string(),
+        condition: z.nativeEnum(PET_ALERT_CONDITIONS),
         startDate: z.string().nullable().optional(),
         endDate: z.string().nullable().optional()
       })

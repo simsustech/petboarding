@@ -8,6 +8,7 @@ import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   OPENING_TIME_TYPE,
   PERIOD_TYPE,
+  PET_ALERT_CONDITIONS,
   SERVICE_TYPE
 } from '@petboarding/tools/constants'
 import { getRandomInt } from './fake/index.js'
@@ -69,11 +70,16 @@ const seed = async () => {
   const petAlerts = [
     {
       petId: 2,
-      condition: 'aggressive',
+      condition: PET_ALERT_CONDITIONS.AGGRESSIVE,
       startDate: '2024-01-05',
       endDate: '2024-01-12'
     },
-    { petId: 2, condition: 'diabetic', startDate: null, endDate: null }
+    {
+      petId: 2,
+      condition: PET_ALERT_CONDITIONS.DIABETIC,
+      startDate: null,
+      endDate: null
+    }
   ]
 
   const bookings = [1, 2, 3, 4, 5].map((nr) => ({

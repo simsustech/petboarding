@@ -2,9 +2,13 @@ import { ref } from 'vue'
 import { Loading, Notify } from 'quasar'
 import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
-import { PET_SPECIES, PET_ALERTS } from '@petboarding/tools/constants'
-import { QuasarTheme } from 'unocss-preset-quasar/theme'
-import { Locales } from '@simsustech/quasar-components/form'
+import {
+  type PET_SPECIES,
+  PET_ALERTS,
+  type PET_ALERT_CONDITIONS
+} from '@petboarding/tools/constants'
+import type { QuasarTheme } from 'unocss-preset-quasar/theme'
+import type { Locales } from '@simsustech/quasar-components/form'
 
 const lang = useLang()
 
@@ -23,7 +27,7 @@ export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
 
 export interface PetAlert {
   id?: number
-  condition: string
+  condition: PET_ALERT_CONDITIONS
   startDate: string | null
   endDate: string | null
 }

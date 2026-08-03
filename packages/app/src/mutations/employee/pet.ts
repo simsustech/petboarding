@@ -1,6 +1,7 @@
 import type { Pet } from '@petboarding/api/zod'
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
+import type { PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 
 export const useEmployeeUpdatePetMutation = () => {
   const { ...rest } = useMutation({
@@ -37,7 +38,7 @@ export const useEmployeeCreateAlert = () => {
       endDate
     }: {
       petId: number
-      condition: string
+      condition: PET_ALERT_CONDITIONS
       startDate?: string | null
       endDate?: string | null
     }) =>
@@ -57,7 +58,7 @@ export const useEmployeeUpdateAlert = () => {
       endDate
     }: {
       id: number
-      condition: string
+      condition: PET_ALERT_CONDITIONS
       startDate?: string | null
       endDate?: string | null
     }) =>

@@ -1,7 +1,8 @@
-import { Database, db } from '../kysely/index.js'
+import { type Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
 import type { Pets } from '../kysely/types.ts'
+import type { PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 import { config } from '../env.js'
 import {
   type Insertable,
@@ -10,7 +11,7 @@ import {
   type ExpressionBuilder,
   sql
 } from 'kysely'
-import { Vaccination } from '../zod/index.js'
+import type { Vaccination } from '../zod/index.js'
 import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
 type NewPet = Insertable<Pets>
@@ -26,7 +27,7 @@ export interface ParsedPet extends Omit<Pet, 'image'> {
 
 export interface PetAlert {
   id?: number
-  condition: string
+  condition: PET_ALERT_CONDITIONS
   startDate: string | null
   endDate: string | null
 }

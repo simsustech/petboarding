@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useLang } from '../../lang/index.js'
-import { PET_ALERTS } from '@petboarding/tools/constants'
+import { PET_ALERTS, PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 import { DateInput } from '@simsustech/quasar-components/form'
 import type { PetAlert } from '../../configuration.js'
 
@@ -56,7 +56,11 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: () => ({ condition: '', startDate: null, endDate: null })
+  modelValue: () => ({
+    condition: PET_ALERT_CONDITIONS.IN_HEAT,
+    startDate: null,
+    endDate: null
+  })
 })
 
 const emit = defineEmits<{

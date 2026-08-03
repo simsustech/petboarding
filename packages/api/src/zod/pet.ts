@@ -1,7 +1,7 @@
 import * as z from 'zod'
 import { customer } from './customer.js'
 import { vaccination } from './vaccination.js'
-import { PET_SPECIES } from '@petboarding/tools/constants'
+import { PET_SPECIES, PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 
 export const PET_IMAGE_SIZE = {
   width: 1024,
@@ -51,7 +51,7 @@ export const petValidation = {
   alerts: z
     .array(
       z.object({
-        condition: z.string(),
+        condition: z.nativeEnum(PET_ALERT_CONDITIONS),
         startDate: z.string().nullable().optional(),
         endDate: z.string().nullable().optional()
       })

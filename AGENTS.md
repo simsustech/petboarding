@@ -148,3 +148,7 @@ const locale = await Promise.any(
 ```
 
 This tries: full code → short 2-letter code → hardcoded `en-US` fallback.
+
+### Pet alert conditions: use `PET_ALERT_CONDITIONS`, not `string`
+
+Pet alert conditions are a closed set (`inHeat`, `needsRest`, `aggressive`, `diabetic`), defined as the `PET_ALERT_CONDITIONS` enum in `packages/tools/src/constants/index.ts` (values drive `PET_ALERTS`, colors, icons and the i18n keys). Whenever you type or validate an alert condition — interfaces, zod schemas (`z.nativeEnum(PET_ALERT_CONDITIONS)`), mutations, seeds, form defaults — use the enum instead of `string` so new/renamed conditions are caught at compile time.

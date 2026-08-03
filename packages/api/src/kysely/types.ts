@@ -4,13 +4,14 @@ import type {
   OidcPayloadsTable,
   AuthenticationMethodsTable
 } from '@modular-api/fastify-oidc/kysely'
-import {
+import type {
   BOOKING_STATUS,
   DAYCARE_DATE_STATUS,
   OPENING_TIME_TYPE,
   PERIOD_TYPE,
   SERVICE_TYPE,
-  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  PET_ALERT_CONDITIONS
 } from '@petboarding/tools/constants'
 
 export type Generated<T> =
@@ -293,7 +294,7 @@ export interface PetRelations {
 export interface PetAlerts {
   id: Generated<number>
   petId: number
-  condition: string
+  condition: PET_ALERT_CONDITIONS
   startDate: string | null
   endDate: string | null
   createdAt: Generated<string>
