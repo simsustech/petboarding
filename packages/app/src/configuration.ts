@@ -129,7 +129,7 @@ export const AGENDA_CHIP_BADGE_ICONS = {
 }
 
 export const PET_CHIP_BADGE_COLORS = {
-  food: 'yellow',
+  food: 'teal',
   medicines: 'orange',
   vaccinations: 'red'
 }
