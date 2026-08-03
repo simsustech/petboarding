@@ -154,7 +154,10 @@
         :show-edit-button="showAddVaccination"
         @update="updateVaccination"
       />
-      <q-item v-if="showRelations">
+    </q-list>
+
+    <q-list v-if="showRelations">
+      <q-item>
         <q-item-section>
           <q-item-label>
             {{ lang.pet.relations.relations }}
@@ -168,7 +171,10 @@
           />
         </q-item-section>
       </q-item>
-      <q-item v-if="showAlerts">
+    </q-list>
+
+    <q-list v-if="showAlerts">
+      <q-item>
         <q-item-section>
           <q-item-label header>
             {{ lang.pet.alerts.title }}
@@ -183,7 +189,7 @@
               "
               dense
               rounded
-              class="q-mr-sm"
+              class="q-mr-sm q-mb-xs"
             >
               <q-icon :name="PET_ALERT_ICONS[alert.condition]" size="xs" />
               {{

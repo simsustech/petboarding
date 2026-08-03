@@ -31,7 +31,7 @@
         @update="openUpdatePetDialog"
         @open-customer="openCustomer"
         @delete="deletePet"
-        show-alerts
+        :show-alerts="true"
       />
     </div>
   </q-page>

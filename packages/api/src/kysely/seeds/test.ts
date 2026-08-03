@@ -66,6 +66,16 @@ const seed = async () => {
     }
   }))
 
+  const petAlerts = [
+    {
+      petId: 2,
+      condition: 'aggressive',
+      startDate: '2024-01-05',
+      endDate: '2024-01-12'
+    },
+    { petId: 2, condition: 'diabetic', startDate: null, endDate: null }
+  ]
+
   const bookings = [1, 2, 3, 4, 5].map((nr) => ({
     startDate: `2024-01-0${nr}`,
     endDate: `2024-01-1${nr}`,
@@ -512,6 +522,7 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     contactPeople.length + 1
   )}`.execute(db)
   await db.insertInto('pets').values(pets).execute()
+  await db.insertInto('petAlerts').values(petAlerts).execute()
   await sql`ALTER SEQUENCE pets_id_seq RESTART WITH ${sql.lit(
     pets.length + 1
   )}`.execute(db)
