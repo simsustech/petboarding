@@ -51,7 +51,7 @@ cd packages/api
 SLIMFACT_ADMIN_PASSWORD='Sif5uEG5hcTH' PLAYWRIGHT_SLIMFACT=true npx playwright test tests/e2e/slimfact.spec.ts
 ```
 
-**Ignore logic** (`playwright.config.ts`): `PLAYWRIGHT_SLIMFACT=true` includes slimfact tests; `PLAYWRIGHT_ALLOW_SCREENHOTS` includes screenshots; neither → only normal e2e.
+**Ignore logic** (`playwright.config.ts`): `PLAYWRIGHT_SLIMFACT=true` includes slimfact tests; `PLAYWRIGHT_ALLOW_SCREENSHOTS` includes screenshots; neither → only normal e2e.
 
 **Tests**: OIDC connect + approve booking #6 (verifies SlimFact invoice at `/employee/bookings/6`) + reject booking #8.
 

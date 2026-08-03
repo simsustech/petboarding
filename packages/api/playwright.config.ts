@@ -7,13 +7,8 @@ export default defineConfig({
   testDir: './tests/e2e',
   testIgnore: [
     process.env.PLAYWRIGHT_TEST_FEATURES ? [] : ['**/features/**/*.spec.ts'],
-    process.env.PLAYWRIGHT_ALLOW_SCREENHOTS
-      ? process.env.PLAYWRIGHT_SLIMFACT
-        ? ['**/screenshots*.spec.ts']
-        : ['**/slimfact.spec.ts', '**/screenshots*.spec.ts']
-      : process.env.PLAYWRIGHT_SLIMFACT
-        ? ['**/screenshots*.spec.ts']
-        : ['**/slimfact.spec.ts', '**/screenshots*.spec.ts']
+    process.env.PLAYWRIGHT_ALLOW_SCREENSHOTS ? [] : ['**/screenshots*.spec.ts'],
+    process.env.PLAYWRIGHT_SLIMFACT ? [] : ['**/slimfact.spec.ts']
   ].flat(),
   fullyParallel: false,
   workers: 1,
