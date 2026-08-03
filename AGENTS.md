@@ -100,6 +100,18 @@ After every task, send recap: `./scripts/ntfy.sh "<title>" "<recap>"`
 
 Tests live in `src/**/*.test.ts` and run via `pnpm vitrify test` (vitest with happy-dom).
 
+### Test environment setup
+
+`pnpm test` works out of the box: `vitest.config.ts` calls Vite's `loadEnv` and injects `packages/api/.env` into `process.env` (real env vars take precedence). No manual exports needed.
+
+Why this matters: some test files (e.g. `src/trpc/admin/bookings.test.ts`) import modules that transitively load `env.js`, which calls `required()` for `API_HOST`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `OIDC_COOKIES_KEYS`, `OTP_SECRET`, `OTP_VALIDITY_SECONDS`, `MAIL_FROM`, `MAIL_HOST`, `EMAIL_FOOTER` at module init — even when the test itself never touches the DB. Without the `.env` load, collection fails with `Missing required environment variable: ...`.
+
+Notes:
+
+- `packages/api/.env` is **gitignored** — on a fresh clone, recreate it (required vars, incl. `API_HOST=localhost:3000`, which is NOT in `.env.development` since that file is not loaded in test mode).
+- The mocking pattern below still works — `vi.mock` wins over the loaded env.
+- If you add new `required()` vars to `env.ts`, add a default to `packages/api/.env` too or the unit tests break at collection.
+
 ### Mocking env for tests
 
 API modules often import `../../env.js` which requires `POSTGRES_PASSWORD` at module init. To test functions that transitively depend on env, mock it early:
