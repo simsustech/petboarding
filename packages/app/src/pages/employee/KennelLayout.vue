@@ -159,6 +159,7 @@ import {
   useEmployeeSetDaycareDatePetKennelMutation
 } from '../../mutations/employee/petKennel.js'
 import type { PetKennel } from '../../configuration.js'
+import { PET_CHIP_BADGE_COLORS } from '../../configuration.js'
 import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
 import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
 import { computed } from 'vue'
@@ -361,6 +362,8 @@ const getPetChipClasses = (petKennel: PetKennel) => {
     }
   } else if (draggedPetId.value) {
     return 'bg-grey-2'
+  } else if (petKennel.food?.timesADay > 2) {
+    return `bg-${PET_CHIP_BADGE_COLORS.food}-2`
   } else if (petKennel.bookingId) {
     return 'bg-blue-2'
   } else if (petKennel.daycareDateId) {
