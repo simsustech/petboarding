@@ -250,8 +250,8 @@ importers:
         specifier: 4.2.0
         version: 4.2.0
       '@simsustech/quasar-components':
-        specifier: link:../../../quasar-components/packages/components
-        version: link:../../../quasar-components/packages/components
+        specifier: 0.12.9
+        version: 0.12.9(quasar@2.25.1)(vue@3.5.41(typescript@6.0.3))
       '@timestamp-js/core':
         specifier: 1.0.0
         version: 1.0.0
