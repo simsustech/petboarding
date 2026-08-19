@@ -81,4 +81,4 @@ allowBuilds:
 
 overrides:
   'typescript': '6.0.3'
-  'unocss': '66.7.5'
+  'unocss-preset-quasar': 'link:../unocss-preset-quasar/packages/preset'

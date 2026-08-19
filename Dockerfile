@@ -18,7 +18,24 @@ RUN npm install -g pnpm
 COPY --from=tools-build /build/packages/tools/dist ./packages/tools/dist
 COPY . .
 RUN rm -rf node_modules
-RUN pnpm install --frozen-lockfile
+
+# Copy local packages inside the packages/* workspace glob so the workspace
+# install resolves their dependencies (unocss, fastify, etc.) and the app
+# build can import them.
+COPY --from=linked-quasar-components ./ /build/packages/quasar-components/
+COPY --from=linked-vitrify ./ /build/packages/vitrify/
+COPY --from=linked-unocss-preset-quasar ./ /build/packages/unocss-preset-quasar/
+COPY --from=linked-modular-api-api ./ /build/packages/modular-api-api/
+COPY --from=linked-modular-api-fastify-oidc ./ /build/packages/modular-api-fastify-oidc/
+COPY --from=linked-modular-api-fastify-checkout ./ /build/packages/modular-api-fastify-checkout/
+COPY --from=linked-modular-api-quasar-components ./ /build/packages/modular-api-quasar-components/
+
+# Inject link: overrides into pnpm-workspace.yaml for every local package that
+# has a package.json, then install. --no-frozen-lockfile is only used when linked
+# packages are present, so the lockfile records the link: entries (and the
+# linked package's own deps) and pnpm deploy can resolve them.
+RUN node -e "const fs=require('fs'),path=require('path'),y=fs.readFileSync('pnpm-workspace.yaml','utf8'),pkgs='/build/packages';let ov={};fs.readdirSync(pkgs).forEach(d=>{let p=path.join(pkgs,d,'package.json');if(fs.existsSync(p)){let pkg=JSON.parse(fs.readFileSync(p,'utf8'));ov[pkg.name]='link:./packages/'+d}});if(Object.keys(ov).length){let ovBlock='overrides:\\n'+Object.entries(ov).map(([k,v])=>'  \"'+k+'\": \"'+v+'\"').join('\\n')+'\\n';let n=y.replace(/^overrides:[\s\S]*?(?=\n\S|$)/m,'');fs.writeFileSync('pnpm-workspace.yaml',ovBlock+'\n'+n);fs.writeFileSync('/tmp/has-linked','')}" \
+  && if [ -f /tmp/has-linked ]; then pnpm install --no-frozen-lockfile; else pnpm install --frozen-lockfile; fi
 
 FROM install-stage AS build-stage
 
@@ -35,29 +52,13 @@ ARG SASS_VARIABLE_PRIMARY
 ARG DEBUG=false
 ENV CI=true
 
-# Build and link any local packages provided via docker-compose additional_contexts
-COPY --from=linked-quasar-components ./ /build/local-packages/quasar-components/
-COPY --from=linked-vitrify ./ /build/local-packages/vitrify/
-COPY --from=linked-unocss-preset-quasar ./ /build/local-packages/unocss-preset-quasar/
-COPY --from=linked-modular-api-api ./ /build/local-packages/modular-api-api/
-COPY --from=linked-modular-api-fastify-oidc ./ /build/local-packages/modular-api-fastify-oidc/
-COPY --from=linked-modular-api-fastify-checkout ./ /build/local-packages/modular-api-fastify-checkout/
-COPY --from=linked-modular-api-quasar-components ./ /build/local-packages/modular-api-quasar-components/
-
-RUN for pkg in /build/local-packages/*/; do \
+# Build any local packages so their dist/ exists for the app build and deploy
+RUN for pkg in /build/packages/modular-api-* /build/packages/quasar-components /build/packages/vitrify /build/packages/unocss-preset-quasar; do \
       if [ -f "$pkg/package.json" ]; then \
         echo "[local] building $(basename "$pkg")..." && \
-        cd "$pkg" && pnpm install && pnpm run build; \
+        (cd "$pkg" && pnpm run build); \
       fi; \
     done || true
-
-WORKDIR /build
-RUN for pkg in /build/local-packages/*/; do \
-      if [ -f "$pkg/package.json" ]; then \
-        echo "[local] linking $(basename "$pkg")..." && \
-        pnpm link "$pkg"; \
-      fi; \
-    done
 
 RUN if [ "$DEBUG" = "true" ]; then pnpm run build:debug; else pnpm run build; fi
 
