@@ -31,7 +31,7 @@
   "dependencies": {
     "@modular-api/fastify-checkout": "^0.9.1",
     "@rgrove/parse-xml": "^4.2.3",
-    "export-to-csv": "^1.4.0",
+    "export-to-csv": "^1.5.0",
     "fast-xml-parser": "^5.11.0",
     "handlebars": "^4.7.9",
     "ibantools": "^4.5.4"
