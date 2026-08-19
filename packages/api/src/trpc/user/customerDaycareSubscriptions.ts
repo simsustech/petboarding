@@ -275,7 +275,7 @@ export const userCustomerDaycareSubscriptionRoutes = ({
                   payment: {
                     currency,
                     amount: invoice.totalIncludingTax,
-                    method: PaymentMethod.ideal,
+                    method: PaymentMethod.wero,
                     redirectUrl: `https://${host}/account/daycare`
                   }
                 })
