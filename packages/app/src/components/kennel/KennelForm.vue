@@ -111,7 +111,7 @@ const lang = useLang()
 const formRef = ref<QForm>()
 
 const initialValue = {
-  buildingId: NaN,
+  buildingId: null,
   name: '',
   description: '',
   capacity: null,

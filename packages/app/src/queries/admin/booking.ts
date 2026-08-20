@@ -7,7 +7,7 @@ import { computed } from 'vue'
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
 export const useAdminGetBookingsQuery = defineQuery(() => {
-  const customerId = ref(NaN)
+  const customerId = ref<number | null>(null)
   const from = ref(
     dateUtil
       .subtractFromDate(new Date(), { years: 2 })

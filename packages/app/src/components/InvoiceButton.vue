@@ -86,6 +86,6 @@ const classes = computed(() => {
         return 'text-orange'
     }
   }
-  return 'text-grey'
+  return 'text-gray'
 })
 </script>
