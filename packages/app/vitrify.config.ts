@@ -225,8 +225,10 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
               'src/**/configuration.ts',
               /@simsustech\/quasar-components/,
               /@modular-api\/quasar-components/,
-              /simsustech/,
-              /modular-api/
+              // Linked/overlay installs resolve scoped packages to a local path
+              // that does NOT contain the scoped name — match the dir name too.
+              /quasar-components\//,
+              /modular-api\//
             ]
           }
         }
