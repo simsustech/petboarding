@@ -560,7 +560,7 @@ onMounted(async () => {
       ) {
         $q.loading.show({
           message: `${lang.value.redirecting}...`,
-          boxClass: 'bg-grey-2 text-grey-9',
+          boxClass: 'bg-grey-2 text-gray-9',
           spinnerColor: 'primary'
         })
         setTimeout(() => {

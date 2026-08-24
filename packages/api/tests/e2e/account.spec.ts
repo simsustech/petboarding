@@ -134,13 +134,18 @@ test.describe('Account', async () => {
     await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(pet.name)
     await page.getByLabel('Breed').fill(pet.breed)
+    await page.keyboard.press('Escape') // Close breed autocomplete dropdown
     // await page.getByLabel('Birth date').fill(pet.birthDate)
     const [YYYY, MM, DD] = pet.birthDate.split('-')
     await page.getByPlaceholder('DD').first().fill(DD)
     await page.getByPlaceholder('MM').first().fill(MM)
     await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
-    await page.locator('#gender').click()
+    await page
+      .locator('div')
+      .filter({ hasText: /^Gender\*$/ })
+      .first()
+      .click()
     await page.getByRole('option', { name: 'Female' }).click()
     await page
       .locator('div')
@@ -148,6 +153,7 @@ test.describe('Account', async () => {
       .first()
       .click()
     await page.getByRole('option', { name: 'Yes' }).click()
+    await page.keyboard.press('Escape') // Close sterilized dropdown
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${pet.name}`)).toBeVisible()

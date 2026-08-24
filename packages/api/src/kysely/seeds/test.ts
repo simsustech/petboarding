@@ -53,7 +53,7 @@ const seed = async () => {
     species: 'dog',
     name: `name${nr}`,
     breed: `name${nr}`,
-    categoryId: nr === 1 || nr === 5 ? 1 : undefined,
+    categoryId: 1,
     birthDate: '2020-02-02',
     gender: 'male',
     sterilized: true,
