@@ -63,6 +63,7 @@ minimumReleaseAgeExclude:
   - oxlint@1.79.0
   - quasar@2.25.1
   - export-to-csv@1.5.0
+  - pg-boss@12.28.0
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
