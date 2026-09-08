@@ -250,6 +250,7 @@ export default async function (fastify: FastifyInstance) {
       TITLE: config.title,
       ALLOWED_SPECIES: config.allowedSpecies,
       DAYCARE_DISABLED_WEEKDAYS: config.daycareDisabledWeekdays,
+      DAYCARE_CUTOFF_PERIOD_HOURS: config.daycareCutoffPeriodHours,
       MANDATORY_VACCINATIONS_DOG: config.mandatoryVaccinationsDog,
       MANDATORY_VACCINATIONS_CAT: config.mandatoryVaccinationsCat,
       TERMS_AND_CONDITIONS_URL: config.termsAndConditionsUrl,

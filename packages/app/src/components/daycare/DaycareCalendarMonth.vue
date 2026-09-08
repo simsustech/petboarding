@@ -123,14 +123,19 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
-import { addToDate, parseTimestamp, today } from '@timestamp-js/core'
-import type { Timestamp } from '@quasar/quasar-ui-qcalendar'
+import {
+  type Timestamp,
+  addToDate,
+  nowUTC,
+  parseTimestamp,
+  today
+} from '@timestamp-js/core'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
 import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
-// import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
-import '../../css/q-calendar.scss'
-import '../../css/calendar-month.scss'
-import '../../css/calendar-month-mini.scss'
+import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
+// import '../../css/q-calendar.scss'
+// import '../../css/calendar-month.scss'
+// import '../../css/calendar-month-mini.scss'
 
 import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'
@@ -139,7 +144,8 @@ import { useQuasar } from 'quasar'
 import type { DaycareDate } from '@petboarding/api/zod'
 import {
   DAYCARE_DATE_BUTTON_BG_CLASSES,
-  DAYCARE_DATE_BUTTON_OUTLINE_CLASSES
+  DAYCARE_DATE_BUTTON_OUTLINE_CLASSES,
+  useConfiguration
 } from '../../configuration.js'
 
 export interface QCalendarEvent {
@@ -164,6 +170,7 @@ export interface Props {
   currentDaycareDates?: DaycareDate[]
   allowPastDates?: boolean
 }
+const configuration = useConfiguration()
 const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'click:event', value: QCalendarEvent): void
@@ -274,8 +281,11 @@ const onClickHeadWorkweek = (data) => {
 }
 
 const disabledBefore = computed(() => {
-  let ts = parseTimestamp(today())
-  ts = addToDate(ts!, { day: allowPastDates.value ? -30 : -1 })
+  let ts = nowUTC()
+  ts = addToDate(ts!, {
+    day: allowPastDates.value ? -30 : 0,
+    hour: Number(configuration.value.DAYCARE_CUTOFF_PERIOD_HOURS) ?? 0
+  })
   return ts.date
 })
 

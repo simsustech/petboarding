@@ -3,7 +3,7 @@
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [
-    ["@petboarding/api", "@petboarding/app", "@petboarding/tools"]
+    ["@petboarding/api", "@petboarding/app", "@petboarding/tools", "@petboarding/docs"]
   ],
   "linked": [],
   "access": "restricted",

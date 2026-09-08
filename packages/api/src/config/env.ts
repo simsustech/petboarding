@@ -59,5 +59,6 @@ export const appConfig = {
   modularapiDefaultEmail: read('MODULARAPI_DEFAULT_EMAIL'),
   modularapiDefaultPassword: read('MODULARAPI_DEFAULT_PASSWORD'),
 
-  rateLimitPerMinute: read('RATE_LIMIT_PER_MINUTE')
+  rateLimitPerMinute: read('RATE_LIMIT_PER_MINUTE'),
+  daycareCutoffPeriodHours: read('DAYCARE_CUTOFF_PERIOD_HOURS')
 } as const
