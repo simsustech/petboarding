@@ -23,13 +23,19 @@ services:
     extra_hosts:
       - 'petboarding.localhost:host-gateway'
       - 'slimfact.localhost:host-gateway'
+      # Resolve the NetBird hostnames to the host locally so the app's startup
+      # OIDC discovery reaches caddy directly instead of leaving the container
+      # and hairpinning through the public ingress (which returns 502).
+      - 'petboarding-dev.eu1.netbird.services:host-gateway'
+      - 'slimfact-dev.eu1.netbird.services:host-gateway'
     labels:
       caddy: petboarding.localhost
       caddy.reverse_proxy: '{{upstreams 80}}'
       caddy.encode: zstd gzip
     environment:
-      VITE_API_HOST: petboarding.localhost
-      SLIMFACT_HOST: slimfact.localhost
+      VITE_API_HOST: ${PETBOARDING_DEV_HOST:-petboarding.localhost}
+      API_HOST: ${PETBOARDING_DEV_HOST:-petboarding.localhost}
+      SLIMFACT_HOST: ${SLIMFACT_DEV_HOST:-slimfact.localhost}
       SLIMFACT_COMPANY_ID: '1'
       NODE_TLS_REJECT_UNAUTHORIZED: '0'
 
@@ -44,8 +50,8 @@ services:
       caddy.reverse_proxy: '{{upstreams 80}}'
       caddy.encode: zstd gzip
     environment:
-      API_HOST: slimfact.localhost
-      VITE_API_HOST: slimfact.localhost
+      API_HOST: ${SLIMFACT_DEV_HOST:-slimfact.localhost}
+      VITE_API_HOST: ${SLIMFACT_DEV_HOST:-slimfact.localhost}
       VITE_TITLE: SlimFact
       VITE_LICENSE_KEY: undefined
       VITE_LANG: en-US
@@ -61,7 +67,9 @@ services:
       OTP_SECRET: 7JOoAPoC5232uJiUdDd+7EUuyFFcZqQJwsAQDnoldZI=
       OTP_VALIDITY_SECONDS: '3600'
       EMAIL_FOOTER: 'SlimFact <info@slimfact.app>'
-      PETBOARDING_CLIENT_HOST: petboarding.localhost
+      # Must equal petboarding's API_HOST exactly — slimfact registers
+      # petboarding's redirect_uri as https://${PETBOARDING_CLIENT_HOST}/callback/slimfact.
+      PETBOARDING_CLIENT_HOST: ${PETBOARDING_DEV_HOST:-petboarding.localhost}
       VITE_SOURCE_COLOR: '#00a4e6'
     command:
       ['sh', '-c', 'npm run migrate:latest && npm run seed:test && npm run serve']

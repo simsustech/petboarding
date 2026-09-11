@@ -1,0 +1,32 @@
+# NetBird ingress override.
+#
+# NetBird's ingress terminates TLS itself and connects DIRECTLY to the service
+# port — caddy must not be in the path. Verified by watching caddy's request
+# log: when these ports are closed the ingress returns 502 and the request
+# never reaches caddy; when they are open the ingress serves our app directly.
+#   petboarding-dev.eu1.netbird.services -> host:3000 -> app:80
+#   slimfact-dev.eu1.netbird.services    -> host:3001 -> slimfact:80
+#
+# The caddy site labels are still needed for browser access via the NetBird
+# hostnames on :443, which goes through caddy rather than the ingress.
+#
+# API_HOST / SLIMFACT_HOST / PETBOARDING_CLIENT_HOST (in
+# docker-compose.test.slimfact.yaml) must be set to these same NetBird
+# hostnames so the OIDC issuer + redirect URI and the Mollie webhook URL all
+# agree with the URL the browser and Mollie actually reach.
+services:
+  app:
+    ports:
+      - '3000:80'
+    labels:
+      caddy_1: petboarding-dev.eu1.netbird.services
+      caddy_1.reverse_proxy: '{{upstreams 80}}'
+      caddy_1.encode: zstd gzip
+
+  slimfact:
+    ports:
+      - '3001:80'
+    labels:
+      caddy_1: slimfact-dev.eu1.netbird.services
+      caddy_1.reverse_proxy: '{{upstreams 80}}'
+      caddy_1.encode: zstd gzip

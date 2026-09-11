@@ -93,6 +93,9 @@
         />
         <q-btn
           v-if="step === 3 && customerDaycareSubscription"
+          :loading="purchasePending"
+          :disable="purchasePending"
+          data-testid="purchase-daycare-subscription-button"
           color="primary"
           :label="lang.customerDaycareSubscription.labels.purchase"
           @click="
@@ -122,9 +125,12 @@ import { useQuasar, date as dateUtil } from 'quasar'
 
 interface Props {
   daycareSubscriptions: DaycareSubscription[]
+  purchasePending?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  purchasePending: false
+})
 const lang = useLang()
 const configuration = useConfiguration()
 const $q = useQuasar()
@@ -145,7 +151,7 @@ const emit = defineEmits<{
 const step = ref<number>(1)
 const stepper = ref<QStepper>()
 
-const { daycareSubscriptions } = toRefs(props)
+const { daycareSubscriptions, purchasePending } = toRefs(props)
 const daycareSubscription = computed(() =>
   daycareSubscriptions.value.find(
     (val) => val.id === customerDaycareSubscription.value?.daycareSubscriptionId

@@ -96,66 +96,87 @@ export default async function (fastify: FastifyInstance) {
         reply: FastifyReply
       ) => {
         const { uuid } = request.body
-        const invoice = await fastify.slimfact.admin.getInvoice.query({ uuid })
-        if (invoice) {
-          const customerDaycareSubscription =
-            await findCustomerDaycareSubscription({
+        try {
+          const invoice = await fastify.slimfact.admin.getInvoice.query({
+            uuid
+          })
+          if (invoice) {
+            const customerDaycareSubscription =
+              await findCustomerDaycareSubscription({
+                criteria: {
+                  invoiceUuid: uuid
+                }
+              })
+            const booking = await findBooking({
               criteria: {
                 invoiceUuid: uuid
               }
             })
-          const booking = await findBooking({
-            criteria: {
-              invoiceUuid: uuid
-            }
-          })
-          if (customerDaycareSubscription) {
-            const getCustomerDaycareSubscriptionStatus = ({
-              invoice,
-              customerDaycareSubscriptionStatus
-            }: {
-              invoice: Invoice
-              customerDaycareSubscriptionStatus: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
-            }) => {
-              if (invoice.status === InvoiceStatus.PAID)
-                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-              if (invoice.status === InvoiceStatus.CANCELED)
-                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
-              if (
-                typeof invoice.amountDue === 'number' &&
-                invoice.amountDue <= 0
-              ) {
-                return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+            if (customerDaycareSubscription) {
+              const getCustomerDaycareSubscriptionStatus = ({
+                invoice,
+                customerDaycareSubscriptionStatus
+              }: {
+                invoice: Invoice
+                customerDaycareSubscriptionStatus: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+              }) => {
+                if (invoice.status === InvoiceStatus.PAID)
+                  return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+                if (invoice.status === InvoiceStatus.CANCELED)
+                  return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.CANCELED
+                if (
+                  typeof invoice.amountDue === 'number' &&
+                  invoice.amountDue <= 0
+                ) {
+                  return CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+                }
+                return customerDaycareSubscriptionStatus
               }
-              return customerDaycareSubscriptionStatus
-            }
-            await setCustomerDaycareSubscriptionStatus({
-              id: customerDaycareSubscription.id,
-              status: getCustomerDaycareSubscriptionStatus({
-                invoice: invoice,
-                customerDaycareSubscriptionStatus:
-                  customerDaycareSubscription.status
-              })
-            })
-          }
-
-          if (booking) {
-            if (
-              booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT
-            ) {
-              if (
-                invoice.amountPaid &&
-                invoice.requiredDownPaymentAmount &&
-                invoice.amountPaid >= invoice.requiredDownPaymentAmount
-              ) {
-                await createBookingStatus({
-                  booking,
-                  petIds: booking.pets.map((pet) => pet.id),
-                  status: BOOKING_STATUS.APPROVED
+              await setCustomerDaycareSubscriptionStatus({
+                id: customerDaycareSubscription.id,
+                status: getCustomerDaycareSubscriptionStatus({
+                  invoice: invoice,
+                  customerDaycareSubscriptionStatus:
+                    customerDaycareSubscription.status
                 })
+              })
+            }
+
+            if (booking) {
+              if (
+                booking.status?.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT
+              ) {
+                if (
+                  invoice.amountPaid &&
+                  invoice.requiredDownPaymentAmount &&
+                  invoice.amountPaid >= invoice.requiredDownPaymentAmount
+                ) {
+                  await createBookingStatus({
+                    booking,
+                    petIds: booking.pets.map((pet) => pet.id),
+                    status: BOOKING_STATUS.APPROVED
+                  })
+                }
               }
             }
+            if (!customerDaycareSubscription && !booking) {
+              fastify.log.error(
+                {
+                  uuid,
+                  total: invoice.totalIncludingTax,
+                  status: invoice.status
+                },
+                'slimfact webhook: paid bill matches no subscription or booking'
+              )
+            }
           }
+        } catch (webhookError) {
+          // Unknown uuids (orphan bills) and lookup failures must never
+          // break the webhook reply; the orphan is surfaced via log.error.
+          fastify.log.error(
+            { uuid, err: webhookError },
+            'slimfact webhook: failed to process invoice'
+          )
         }
         return reply.send()
       }

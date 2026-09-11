@@ -382,12 +382,18 @@ export async function createCustomerDaycareSubscription(
 
 export async function updateCustomerDaycareSubscription(
   criteria: Partial<CustomerDaycareSubscription>,
-  updateWith: CustomerDaycareSubscriptionUpdate
+  updateWith: CustomerDaycareSubscriptionUpdate,
+  opts?: { onlyIfInvoiceUuidNull?: boolean }
 ) {
   let query = db.updateTable('customerDaycareSubscriptions')
 
   if (criteria.id) {
     query = query.where('id', '=', criteria.id)
+  }
+
+  if (opts?.onlyIfInvoiceUuidNull) {
+    query = query.where('invoiceUuid', 'is', null)
+    return query.set(updateWith).returningAll().executeTakeFirst()
   }
 
   return query.set(updateWith).returningAll().executeTakeFirstOrThrow()

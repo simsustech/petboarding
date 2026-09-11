@@ -1018,6 +1018,33 @@ export async function updateBooking(
   },
   options?: {
     skipStatusUpdate?: boolean
+    onlyIfInvoiceUuidNull?: false
+  }
+): Promise<Selectable<Booking>>
+export async function updateBooking(
+  criteria: Partial<Booking>,
+  updateWith: {
+    booking: BookingUpdate
+    petIds: number[]
+    serviceIds: number[]
+    status?: BOOKING_STATUS
+  },
+  options: {
+    skipStatusUpdate?: boolean
+    onlyIfInvoiceUuidNull: true
+  }
+): Promise<Selectable<Booking> | null>
+export async function updateBooking(
+  criteria: Partial<Booking>,
+  updateWith: {
+    booking: BookingUpdate
+    petIds: number[]
+    serviceIds: number[]
+    status?: BOOKING_STATUS
+  },
+  options?: {
+    skipStatusUpdate?: boolean
+    onlyIfInvoiceUuidNull?: boolean
   }
 ) {
   let query = db.updateTable('bookings')
@@ -1028,7 +1055,10 @@ export async function updateBooking(
     if (criteria.customerId) {
       query = query.where('customerId', '=', criteria.customerId)
     }
-    const updatedBooking = await query
+    if (options?.onlyIfInvoiceUuidNull) {
+      query = query.where('invoiceUuid', 'is', null)
+    }
+    const updateQuery = query
       .set({
         startDate: updateWith.booking.startDate,
         startTimeId: updateWith.booking.startTimeId,
@@ -1039,7 +1069,10 @@ export async function updateBooking(
         customerId: updateWith.booking.customerId
       })
       .returningAll()
-      .executeTakeFirstOrThrow()
+    const updatedBooking = options?.onlyIfInvoiceUuidNull
+      ? await updateQuery.executeTakeFirst()
+      : await updateQuery.executeTakeFirstOrThrow()
+    if (!updatedBooking) return null
 
     if (Array.isArray(updateWith.petIds)) {
       await db.transaction().execute(async (trx) => {

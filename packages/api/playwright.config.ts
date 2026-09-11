@@ -23,7 +23,11 @@ export default defineConfig({
     video: 'on-first-retry',
     ignoreHTTPSErrors: true,
     headless: true,
-    baseURL: 'https://petboarding.localhost',
+    // Honour the E2E base URL so specs that navigate relatively (e.g. the
+    // shared login helper's `page.goto('/')`) hit the same origin the session
+    // was established on. Defaults to the .localhost dev host.
+    baseURL:
+      process.env.PETBOARDING_E2E_BASE_URL ?? 'https://petboarding.localhost',
     timeout: 60000
   },
 

@@ -132,6 +132,7 @@
   >
     <customer-daycare-subscription-stepper
       :daycare-subscriptions="daycareSubscriptions"
+      :purchase-pending="isCreateCustomerDaycareSubscriptionPending"
       @purchase-customer-daycare-subscription="
         onPurchaseCustomerDaycareSubscription
       "
@@ -248,8 +249,10 @@ const { mutateAsync: createDaycareDatesMutation } =
   useAccountCreateDaycareDatesMutation()
 const { mutateAsync: cancelDaycareDatesMutation } =
   useAccountCancelDaycareDateMutation()
-const { mutateAsync: createCustomerDaycareSubscriptionMutation } =
-  useAccountCreateCustomerDaycareSubscriptionMutation()
+const {
+  mutateAsync: createCustomerDaycareSubscriptionMutation,
+  isPending: isCreateCustomerDaycareSubscriptionPending
+} = useAccountCreateCustomerDaycareSubscriptionMutation()
 
 const missingVaccinations = computed(() =>
   petsData.value?.some(

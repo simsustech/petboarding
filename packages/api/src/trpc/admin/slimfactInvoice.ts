@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import {
   updateBooking,
+  findBooking,
   getLastApprovedForBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
@@ -207,15 +208,45 @@ export const createOrUpdateSlimfactInvoice = async ({
         }
       })
 
-      await updateBooking(
+      const linkedBooking = await updateBooking(
         { id: booking.id },
         {
           booking: { ...booking, invoiceUuid: invoice.uuid },
           petIds: booking.pets.map((pet) => pet.id),
           serviceIds: booking.services.map((service) => service.id)
         },
-        { skipStatusUpdate: true }
+        { skipStatusUpdate: true, onlyIfInvoiceUuidNull: true }
       )
+
+      if (!linkedBooking) {
+        // Lost a concurrent invoice-creation race: cancel our orphan bill
+        // (best-effort) and continue on the winner's invoice.
+        try {
+          await fastify.slimfact.admin.setInvoiceStatus.mutate({
+            id: invoice.id,
+            status: InvoiceStatus.CANCELED
+          })
+        } catch (cancelError) {
+          fastify.log.warn(
+            cancelError,
+            `slimfactInvoice: failed to cancel orphan bill ${invoice.uuid} for booking ${booking.id}`
+          )
+        }
+        const winner = await findBooking({
+          criteria: { id: booking.id }
+        })
+        const winnerInvoice = winner?.invoiceUuid
+          ? await fastify.slimfact.admin.getInvoice.query({
+              uuid: winner.invoiceUuid
+            })
+          : null
+        if (!winnerInvoice) {
+          throw new Error(
+            `Booking ${booking.id} invoice was linked concurrently but no invoice found`
+          )
+        }
+        return { success: true, invoice: winnerInvoice }
+      }
 
       return { success: true, invoice }
     }

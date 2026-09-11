@@ -24,7 +24,10 @@ import {
   type RawInvoiceLine,
   type RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
-import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+import {
+  InvoiceStatus,
+  PaymentStatus
+} from '@modular-api/fastify-checkout/types'
 
 const currency = config.currency
 const host = config.apiHost
@@ -258,17 +261,74 @@ export const userCustomerDaycareSubscriptionRoutes = ({
               })
               if (result.success) {
                 invoice = result.invoice
-                await updateCustomerDaycareSubscription(
+                const linked = await updateCustomerDaycareSubscription(
                   { id: customerDaycareSubscription.id },
                   {
                     invoiceUuid: invoice.uuid
-                  }
+                  },
+                  { onlyIfInvoiceUuidNull: true }
                 )
+                if (linked) {
+                  // Re-read so the response carries the persisted invoiceUuid;
+                  // `customerDaycareSubscription` above was captured before the
+                  // link and would otherwise serialise as null.
+                  customerDaycareSubscription =
+                    (await findCustomerDaycareSubscription({
+                      criteria: { id: customerDaycareSubscription.id },
+                      fastify
+                    })) ?? customerDaycareSubscription
+                }
+                if (!linked) {
+                  // Lost a concurrent bill-creation race: cancel our orphan
+                  // bill (best-effort) and continue on the winner's bill.
+                  try {
+                    await fastify.slimfact.admin.setInvoiceStatus.mutate({
+                      id: invoice.id,
+                      status: InvoiceStatus.CANCELED
+                    })
+                  } catch (cancelError) {
+                    fastify.log.warn(
+                      cancelError,
+                      `daycare subscription ${customerDaycareSubscription.id}: failed to cancel orphan bill ${invoice.uuid}`
+                    )
+                  }
+                  const winner = await findCustomerDaycareSubscription({
+                    criteria: { id: customerDaycareSubscription.id },
+                    fastify
+                  })
+                  const winnerInvoice = winner?.invoiceUuid
+                    ? await fastify.slimfact.admin.getInvoice.query({
+                        uuid: winner.invoiceUuid
+                      })
+                    : null
+                  if (!winnerInvoice) {
+                    throw new Error(
+                      `Daycare subscription ${customerDaycareSubscription.id} invoice was linked concurrently but no invoice found`
+                    )
+                  }
+                  customerDaycareSubscription = winner
+                  invoice = winnerInvoice
+                }
               } else {
                 throw new Error(result.errorMessage)
               }
             }
             if (invoice) {
+              const reusablePayment = [...(invoice.payments ?? [])]
+                .filter(
+                  (payment) =>
+                    (payment.status === PaymentStatus.OPEN ||
+                      payment.status === PaymentStatus.PENDING) &&
+                    payment.checkoutUrl
+                )
+                .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+                .at(0)
+              if (reusablePayment?.checkoutUrl) {
+                return {
+                  customerDaycareSubscription,
+                  checkoutUrl: reusablePayment.checkoutUrl
+                }
+              }
               const payment =
                 await fastify.slimfact.admin.addPaymentToInvoice.mutate({
                   id: invoice.id,
