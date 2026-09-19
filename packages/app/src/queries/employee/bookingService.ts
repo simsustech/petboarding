@@ -3,14 +3,14 @@ import { trpc } from '../../trpc.js'
 import { ref } from 'vue'
 
 export const useEmployeeGetBookingServiceQuery = defineQuery(() => {
-  const id = ref(NaN)
+  const id = ref<number | null>(null)
 
   const { data: bookingService, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR && !!id.value && !Number.isNaN(id.value),
+    enabled: !import.meta.env.SSR && id.value != null,
     key: () => ['employeeGetBookingService', id.value],
     query: () =>
       trpc.employee.getBookingService.query({
-        id: id.value
+        id: id.value!
       })
   })
 

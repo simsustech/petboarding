@@ -261,8 +261,7 @@ const onClickDate = ({ scope }) => {
     // add the date if not outside
     if (selectedDates?.value && scope.outside !== true) {
       if (
-        maxNumberOfSelectedDates.value === void 0 ||
-        Number.isNaN(maxNumberOfSelectedDates.value) ||
+        maxNumberOfSelectedDates.value == null ||
         maxNumberOfSelectedDates.value > selectedDates.value.length
       )
         selectedDates.value.push(date)

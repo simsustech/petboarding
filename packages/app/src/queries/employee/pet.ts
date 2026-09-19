@@ -24,7 +24,7 @@ export const useEmployeeGetPetsQuery = defineQuery(() => {
 })
 
 export const useEmployeeGetPetQuery = defineQuery(() => {
-  const id = ref<number>(NaN)
+  const id = ref<number | null>(null)
 
   const { data: pet, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
@@ -61,7 +61,7 @@ export const useEmployeeSearchPetsQuery = defineQuery(() => {
 })
 
 export const useEmployeeGetPetsByCustomerId = defineQuery(() => {
-  const customerId = ref(NaN)
+  const customerId = ref<number | null>(null)
 
   const { data: pets, ...rest } = useQuery({
     enabled: !import.meta.env.SSR && !!customerId.value,

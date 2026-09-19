@@ -176,7 +176,7 @@ const maxNumberOfSelectedDates = computed(() => {
       return acc
     }, 0)
   }
-  return NaN
+  return null as number | null
 })
 
 const remainingDays = computed(() => {

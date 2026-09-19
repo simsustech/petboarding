@@ -86,7 +86,7 @@ const $q = useQuasar()
 const formRef = ref<QForm>()
 
 const initialValue = {
-  categoryId: NaN,
+  categoryId: null as number | null,
   date: new Date().toISOString().slice(0, 10),
   listPrice: 0
 }

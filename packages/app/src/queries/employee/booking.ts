@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
 
 export const useEmployeeGetBookingsQuery = defineQuery(() => {
-  const customerId = ref(NaN)
+  const customerId = ref<number | null>(null)
   const from = ref(
     dateUtil
       .subtractFromDate(new Date(), { years: 2 })
