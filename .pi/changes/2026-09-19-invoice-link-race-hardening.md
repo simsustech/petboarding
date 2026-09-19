@@ -39,9 +39,13 @@ a test that runs in CI.
 - **Duplicate payment on the winner's bill.** `customerDaycareSubscriptions.ts`
   near the end of the route: the reuse lookup for an `OPEN`/`PENDING` payment is
   a read-then-create, so two racers that both miss it each call
-  `addPaymentToInvoice` and the customer gets two checkout URLs. Also
-  `amount: invoice.totalIncludingTax` ignores `invoice.amountPaid`, so a loser
-  landing on a part-paid winner bill collects the full amount again.
+  `addPaymentToInvoice` and the customer gets two checkout URLs. Checkout 0.11.0
+  already implements that reuse server-side (`invoiceHandler.addPaymentToInvoice`)
+  while petboarding is on 0.10.0 — see
+  `.pi/changes/2026-09-19-handoff-slimfact-invoice-payments.md`; the local block
+  disappears with the version bump. The amount is not a concern: subscription
+  invoices are created with `requiredDownPaymentAmount: 0` and are paid in full
+  in one payment.
 - **`Invoice.payments` type gap.** The checkout package types `payments` as
   `Pick<Payment, 'id' | 'currency' | 'amount' | 'paidAt' | 'description' |
   'status' | 'uuid' | 'paymentServiceProvider'>` — no `checkoutUrl` and no

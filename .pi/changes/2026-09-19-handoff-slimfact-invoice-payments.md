@@ -136,6 +136,7 @@ package has no typecheck gate in CI:
 - Still open on our side: the subscription-creation race (read-then-create with
   no unique constraint on `(customerId, daycareSubscriptionId, period)` — two
   requests that both miss the read create two rows and `onlyIfInvoiceUuidNull`
-  never fires), the payment amount when a loser lands on a part-paid winner bill
-  (`amount: invoice.totalIncludingTax` ignores `amountPaid`), and the bookings
-  race e2e test that cannot fail on the pre-fix code.
+  never fires) and the bookings race e2e test that cannot fail on the pre-fix
+  code. A part-paid winner bill is *not* a case here: subscription invoices are
+  created with `requiredDownPaymentAmount: 0` and are settled in a single
+  payment, so `amount: invoice.totalIncludingTax` is the full amount due.
