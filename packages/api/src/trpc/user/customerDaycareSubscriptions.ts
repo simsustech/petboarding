@@ -28,6 +28,7 @@ import {
   InvoiceStatus,
   PaymentStatus
 } from '@modular-api/fastify-checkout/types'
+import { cancelOrphanAndFollowWinner } from '../admin/slimfactInvoice.js'
 
 const currency = config.currency
 const host = config.apiHost
@@ -65,7 +66,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
     companyDetails = await fastify.slimfact.admin.getCompany.query({
       id: Number(config.slimfactCompanyId)
     })
-  } catch (e) {
+  } catch {
     return {
       success: false,
       errorMessage: 'SlimFact not authorized.'
@@ -121,7 +122,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       success: true,
       invoice
     }
-  } catch (e) {
+  } catch {
     return {
       success: false,
       errorMessage: 'Could not create or update daycare subscription invoice.'
@@ -279,28 +280,18 @@ export const userCustomerDaycareSubscriptionRoutes = ({
                     })) ?? customerDaycareSubscription
                 }
                 if (!linked) {
-                  // Lost a concurrent bill-creation race: cancel our orphan
-                  // bill (best-effort) and continue on the winner's bill.
-                  try {
-                    await fastify.slimfact.admin.setInvoiceStatus.mutate({
-                      id: invoice.id,
-                      status: InvoiceStatus.CANCELED
-                    })
-                  } catch (cancelError) {
-                    fastify.log.warn(
-                      cancelError,
-                      `daycare subscription ${customerDaycareSubscription.id}: failed to cancel orphan bill ${invoice.uuid}`
-                    )
-                  }
+                  // Lost a concurrent bill-creation race: our bill is an orphan,
+                  // the winner's is linked, so continue on that one.
                   const winner = await findCustomerDaycareSubscription({
                     criteria: { id: customerDaycareSubscription.id },
                     fastify
                   })
-                  const winnerInvoice = winner?.invoiceUuid
-                    ? await fastify.slimfact.admin.getInvoice.query({
-                        uuid: winner.invoiceUuid
-                      })
-                    : null
+                  const winnerInvoice = await cancelOrphanAndFollowWinner({
+                    fastify,
+                    orphan: invoice,
+                    winnerInvoiceUuid: winner?.invoiceUuid,
+                    logLabel: `daycare subscription ${customerDaycareSubscription.id}`
+                  })
                   if (!winnerInvoice) {
                     throw new Error(
                       `Daycare subscription ${customerDaycareSubscription.id} invoice was linked concurrently but no invoice found`

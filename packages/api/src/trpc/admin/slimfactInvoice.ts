@@ -26,6 +26,49 @@ import {
   differenceInDays
 } from 'date-fns'
 
+/**
+ * Abandon the bill this request created after losing the invoice-link race, and
+ * hand back the winner's invoice instead.
+ *
+ * `updateBooking`/`updateCustomerDaycareSubscription` link conditionally
+ * (`WHERE invoiceUuid IS NULL`), so a `null` result means another caller linked
+ * this row first — nothing references the bill we just created. Cancel it
+ * (best-effort: a refused cancel must not turn a successful purchase into an
+ * error) and follow the uuid that won.
+ *
+ * Resolves to `null` when the row has no winning uuid or its invoice cannot be
+ * read; callers treat that as an inconsistent state and throw.
+ */
+export const cancelOrphanAndFollowWinner = async ({
+  fastify,
+  orphan,
+  winnerInvoiceUuid,
+  logLabel
+}: {
+  fastify: FastifyInstance
+  orphan: Pick<Invoice, 'id' | 'uuid'>
+  winnerInvoiceUuid?: string | null
+  logLabel: string
+}): Promise<Invoice | null> => {
+  if (!fastify.slimfact) return null
+
+  try {
+    await fastify.slimfact.admin.setInvoiceStatus.mutate({
+      id: orphan.id,
+      status: InvoiceStatus.CANCELED
+    })
+  } catch (cancelError) {
+    fastify.log.warn(
+      cancelError,
+      `${logLabel}: failed to cancel orphan bill ${orphan.uuid}`
+    )
+  }
+
+  if (!winnerInvoiceUuid) return null
+
+  return fastify.slimfact.admin.getInvoice.query({ uuid: winnerInvoiceUuid })
+}
+
 export const createOrUpdateSlimfactInvoice = async ({
   fastify,
   booking,
@@ -219,27 +262,15 @@ export const createOrUpdateSlimfactInvoice = async ({
       )
 
       if (!linkedBooking) {
-        // Lost a concurrent invoice-creation race: cancel our orphan bill
-        // (best-effort) and continue on the winner's invoice.
-        try {
-          await fastify.slimfact.admin.setInvoiceStatus.mutate({
-            id: invoice.id,
-            status: InvoiceStatus.CANCELED
-          })
-        } catch (cancelError) {
-          fastify.log.warn(
-            cancelError,
-            `slimfactInvoice: failed to cancel orphan bill ${invoice.uuid} for booking ${booking.id}`
-          )
-        }
-        const winner = await findBooking({
-          criteria: { id: booking.id }
+        // Lost a concurrent invoice-creation race: our bill is an orphan, the
+        // winner's invoice is linked, so continue on that one.
+        const winner = await findBooking({ criteria: { id: booking.id } })
+        const winnerInvoice = await cancelOrphanAndFollowWinner({
+          fastify,
+          orphan: invoice,
+          winnerInvoiceUuid: winner?.invoiceUuid,
+          logLabel: `slimfactInvoice: booking ${booking.id}`
         })
-        const winnerInvoice = winner?.invoiceUuid
-          ? await fastify.slimfact.admin.getInvoice.query({
-              uuid: winner.invoiceUuid
-            })
-          : null
         if (!winnerInvoice) {
           throw new Error(
             `Booking ${booking.id} invoice was linked concurrently but no invoice found`

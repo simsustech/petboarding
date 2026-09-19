@@ -380,11 +380,30 @@ export async function createCustomerDaycareSubscription(
     .executeTakeFirstOrThrow()
 }
 
+/**
+ * Update a subscription, optionally as a conditional write on the invoice link.
+ *
+ * With `onlyIfInvoiceUuidNull` the write only lands while the row is still
+ * unlinked (`WHERE invoiceUuid IS NULL`), which is how a concurrent
+ * bill-creation race is detected: the loser gets `null` back instead of
+ * overwriting the winner's `invoiceUuid` and orphaning the winner's bill.
+ *
+ * The conditional form must target exactly one row, so `criteria.id` is
+ * required — without it the `invoiceUuid IS NULL` predicate alone would link
+ * whichever unlinked row the planner picks (or trip the unique index on
+ * `invoice_uuid`).
+ */
 export async function updateCustomerDaycareSubscription(
   criteria: Partial<CustomerDaycareSubscription>,
   updateWith: CustomerDaycareSubscriptionUpdate,
   opts?: { onlyIfInvoiceUuidNull?: boolean }
 ) {
+  if (opts?.onlyIfInvoiceUuidNull && !criteria.id) {
+    throw new Error(
+      'updateCustomerDaycareSubscription: onlyIfInvoiceUuidNull requires criteria.id'
+    )
+  }
+
   let query = db.updateTable('customerDaycareSubscriptions')
 
   if (criteria.id) {
@@ -392,8 +411,12 @@ export async function updateCustomerDaycareSubscription(
   }
 
   if (opts?.onlyIfInvoiceUuidNull) {
-    query = query.where('invoiceUuid', 'is', null)
-    return query.set(updateWith).returningAll().executeTakeFirst()
+    const linked = await query
+      .set(updateWith)
+      .where('invoiceUuid', 'is', null)
+      .returningAll()
+      .executeTakeFirst()
+    return linked ?? null
   }
 
   return query.set(updateWith).returningAll().executeTakeFirstOrThrow()

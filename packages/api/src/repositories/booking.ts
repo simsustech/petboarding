@@ -1008,6 +1008,19 @@ export async function createBooking({
   return newBooking
 }
 
+/**
+ * Update a booking, optionally as a conditional write on the invoice link.
+ *
+ * `onlyIfInvoiceUuidNull` adds `WHERE invoiceUuid IS NULL` and resolves to
+ * `null` instead of writing when the row is already linked: that is how a
+ * request that lost a concurrent invoice-creation race is detected, rather than
+ * silently overwriting the winner's `invoiceUuid` and orphaning the winner's
+ * bill. Callers then cancel the bill they just created and continue on the
+ * winner's (see `cancelOrphanAndFollowWinner`).
+ *
+ * The guard lives in the primary-key branch, so `criteria.id` is required —
+ * the call is rejected instead of degrading to an unguarded update.
+ */
 export async function updateBooking(
   criteria: Partial<Booking>,
   updateWith: {
@@ -1047,6 +1060,10 @@ export async function updateBooking(
     onlyIfInvoiceUuidNull?: boolean
   }
 ) {
+  if (options?.onlyIfInvoiceUuidNull && !criteria.id) {
+    throw new Error('updateBooking: onlyIfInvoiceUuidNull requires criteria.id')
+  }
+
   let query = db.updateTable('bookings')
 
   if (criteria.id) {
