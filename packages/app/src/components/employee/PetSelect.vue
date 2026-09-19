@@ -77,12 +77,12 @@ const {
 const options = ref([])
 
 const filterFn = (val, update) => {
-  if (val === '') {
-    options.value = []
-  } else {
-    searchPhrase.value = val.toLowerCase()
-    execute().then(() => {
-      update(() => {
+  update(() => {
+    if (val === '') {
+      options.value = []
+    } else {
+      searchPhrase.value = val.toLowerCase()
+      execute().then(() => {
         options.value = data.value.map((pet) => ({
           label: `${pet.name} ${pet.lastName} - ${pet.breed} - ${
             lang.value.pet.genders[pet.gender]
@@ -92,7 +92,7 @@ const filterFn = (val, update) => {
           deceased: pet.deceased
         }))
       })
-    })
-  }
+    }
+  })
 }
 </script>

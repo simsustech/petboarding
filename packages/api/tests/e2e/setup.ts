@@ -60,7 +60,10 @@ export const initializePage = async ({ browser }: { browser: Browser }) => {
   })
 
   page.on('response', async (response) => {
-    if (!response.ok() && response.request().resourceType() === 'xhr') {
+    if (
+      !response.ok() &&
+      ['xhr', 'fetch'].includes(response.request().resourceType())
+    ) {
       try {
         const body = await response.text()
         console.log(

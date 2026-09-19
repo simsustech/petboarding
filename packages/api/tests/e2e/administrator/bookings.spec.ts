@@ -56,11 +56,11 @@ test.describe('Booking approve/reject', async () => {
     await page.goto('admin/bookings')
     await page.waitForLoadState('networkidle')
 
-    // Booking #8 (PENDING, pet "name2", CURRENT_YEAR dates) — visible in default filter
+    // Booking #5 (PENDING, pet "name5", CURRENT_YEAR dates) — visible after approve test
     const bookingItem = page
       .locator('.q-expansion-item')
       .filter({
-        hasText: 'name2'
+        hasText: 'name5'
       })
       .first()
     await expect(bookingItem).toBeVisible({ timeout: 5000 })

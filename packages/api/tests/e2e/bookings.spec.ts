@@ -61,7 +61,10 @@ test.describe('Booking invoice double-create guard', () => {
     browser,
     request
   }) => {
-    test.skip(!!process.env.CI, 'Requires SlimFact service')
+    test.skip(
+      !process.env.PLAYWRIGHT_SLIMFACT,
+      'Requires SlimFact service (set PLAYWRIGHT_SLIMFACT=1)'
+    )
     test.setTimeout(180000)
     const BASE =
       process.env.PETBOARDING_E2E_BASE_URL ?? 'https://petboarding.localhost'
