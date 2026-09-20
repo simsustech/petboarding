@@ -59,6 +59,16 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-item v-if="useComments">
+        <q-item-section>
+          <q-item-label overline>
+            {{ lang.customer.fields.comments }}
+          </q-item-label>
+          <q-item-label>
+            {{ modelValue.comments }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-list>
   </q-card>
 </template>
@@ -78,6 +88,7 @@ import { toRefs } from 'vue'
 export interface Props {
   modelValue: Customer
   showEditButton?: boolean
+  useComments?: boolean
 }
 const props = defineProps<Props>()
 

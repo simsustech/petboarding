@@ -23,6 +23,7 @@
         :model-value="data"
         show-edit-button
         use-rating
+        use-comments
         @update="openUpdateDialog"
       />
 
