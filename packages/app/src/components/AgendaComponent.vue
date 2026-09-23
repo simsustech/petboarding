@@ -178,9 +178,6 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarAgenda } from '@quasar/quasar-ui-qcalendar/QCalendarAgenda'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.scss'
 
 import AgendaChip from './AgendaChip.vue'
 import { ref, toRefs, watch, computed } from 'vue'

@@ -89,7 +89,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
-import '@quasar/quasar-ui-qmarkdown/dist/index.css'
 import { useLang } from '../../../lang/index.js'
 import { ref } from 'vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'

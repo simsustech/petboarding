@@ -130,12 +130,6 @@ import {
   parseTimestamp,
   today
 } from '@timestamp-js/core'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
-// import '../../css/q-calendar.scss'
-// import '../../css/calendar-month.scss'
-// import '../../css/calendar-month-mini.scss'
 
 import { QChip, QResizeObserver, date as dateUtil } from 'quasar'
 import { computed, ref, toRefs } from 'vue'

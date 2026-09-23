@@ -7,7 +7,8 @@ import {
 } from 'vitrify/plugins'
 import { certificateFor } from 'devcert'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
-import { QuasarPreset } from 'unocss-preset-quasar'
+import { QuasarPreset, quasarWind4Options } from 'unocss-preset-quasar'
+import presetWind4 from '@unocss/preset-wind4'
 import { MaterialDesign3 } from 'unocss-preset-quasar/styles'
 import { loadEnv } from 'vite'
 
@@ -164,7 +165,13 @@ const quasarConf: QuasarPluginOptions = {
   disableSass: true
 }
 
-export default async function ({ mode, command }): Promise<VitrifyConfig> {
+export default async function ({
+  mode,
+  command
+}: {
+  mode: string
+  command: string
+}): Promise<VitrifyConfig> {
   const env = loadEnv(mode, process.cwd(), '')
   const config: VitrifyConfig = {
     plugins: [QuasarComponentsPlugin()],
@@ -211,11 +218,18 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       },
       unocss: {
         presets: [
+          // The preset no longer nests wind4: consumers compose it, and
+          // `quasarWind4Options` keeps the two behaviours the nesting set up
+          // (reset off, and Quasar's .body--light/.body--dark dark mapping).
+          presetWind4(quasarWind4Options),
           QuasarPreset({
             style: MaterialDesign3,
             sourceColor: env.VITE_SOURCE_COLOR,
             plugins: quasarConf['framework']['plugins'],
-            iconSet: quasarConf['framework']['iconSet']
+            iconSet: quasarConf['framework']['iconSet'],
+            // The preset ships this CSS now (ADR 0005): opt the app extensions in
+            // instead of importing the libraries' own stylesheets per component.
+            appExtensions: ['qcalendar', 'qmarkdown']
           })
         ],
         theme: {},

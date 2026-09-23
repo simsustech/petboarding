@@ -5,7 +5,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
-import '@quasar/quasar-ui-qmarkdown/dist/index.css'
 import { usePublicGetPrivacyPolicyQuery } from 'src/queries/public'
 
 const { privacyPolicy, refetch: execute } = usePublicGetPrivacyPolicyQuery()
