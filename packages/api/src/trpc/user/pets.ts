@@ -36,29 +36,27 @@ export const userPetRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getPets: procedure.query(async ({ ctx }) => {
-    if (ctx.account?.id) {
-      const customer = await findCustomer({
-        criteria: {
-          accountId: Number(ctx.account.id)
-        }
-      })
+    // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
+    // customer profile is a valid state (staff accounts) — empty, not an error.
+    if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
 
-      if (customer?.id) {
-        const pets = await findPets({
-          criteria: {
-            customerId: customer.id,
-            deceased: false
-          },
-          select: ['image'],
-          relations: {
-            vaccinations: true
-          }
-        })
-
-        return pets
+    const customer = await findCustomer({
+      criteria: {
+        accountId: Number(ctx.account.id)
       }
-    }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+    if (!customer?.id) return []
+
+    return findPets({
+      criteria: {
+        customerId: customer.id,
+        deceased: false
+      },
+      select: ['image'],
+      relations: {
+        vaccinations: true
+      }
+    })
   }),
   createPet: procedure
     .input(userPetValidation)

@@ -1,5 +1,6 @@
 <template>
   <q-list>
+    <q-item-label header>{{ lang.service.title }}</q-item-label>
     <q-item v-for="service in modelValue" :key="service.id">
       <q-item-section>
         <q-item-label overline>

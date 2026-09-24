@@ -24,7 +24,13 @@
               <template #icon> </template>
             </login-button>
           </q-form>
-          <q-icon v-else name="i-mdi-check" color="green" />
+          <!-- The status must not be icon-only (audit): name it. -->
+          <div v-else class="row items-center">
+            <q-icon name="i-mdi-check" color="positive" />
+            <q-item-label caption class="q-ml-xs">
+              {{ lang.integrations.connected }}
+            </q-item-label>
+          </div>
         </q-item-section>
       </q-item>
     </q-list>
@@ -35,6 +41,8 @@
 import { LoginButton } from '@simsustech/quasar-components/authentication'
 import { onMounted } from 'vue'
 import { useAdminSlimfactHealthCheckQuery } from 'src/queries/admin/slimfact.js'
+import { useLang } from 'src/lang/index.js'
+const lang = useLang()
 
 const {
   data: slimfactData,

@@ -145,30 +145,29 @@ export const userCustomerDaycareSubscriptionRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getCustomerDaycareSubscriptions: procedure.query(async ({ ctx }) => {
-    if (ctx.account?.id) {
-      const customer = await findCustomer({
-        criteria: {
-          accountId: Number(ctx.account.id)
-        }
-      })
-      if (customer?.id) {
-        const customerDaycareSubscriptions =
-          await findCustomerDaycareSubscriptions({
-            criteria: {
-              customerId: customer.id,
-              expirationDate: new Date().toISOString().slice(0, 10),
-              // date: new Date().toISOString().slice(0, 10),
-              statuses: [
-                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
-                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
-              ]
-            },
-            fastify
-          })
-        return customerDaycareSubscriptions
+    // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
+    // customer profile is a valid state (staff accounts) — empty, not an error.
+    if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+    const customer = await findCustomer({
+      criteria: {
+        accountId: Number(ctx.account.id)
       }
-    }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+    if (!customer?.id) return []
+
+    return findCustomerDaycareSubscriptions({
+      criteria: {
+        customerId: customer.id,
+        expirationDate: new Date().toISOString().slice(0, 10),
+        // date: new Date().toISOString().slice(0, 10),
+        statuses: [
+          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+        ]
+      },
+      fastify
+    })
   }),
   createCustomerDaycareSubscription: procedure
     .input(userCustomerDaycareSubscriptionValidation)

@@ -1,5 +1,7 @@
 <template>
-  <div v-show="ready">
+  <!-- Deliberately shell-less: without pinned light tokens it inherits `body--dark`
+       and prints dark-on-dark (audit: frontend-audit-dark/print-privacypolicy.png). -->
+  <div v-show="ready" class="print-root">
     <router-view />
   </div>
 </template>
@@ -86,5 +88,17 @@ onMounted(async () => {
 <style>
 .wrapper {
   padding: 16px;
+}
+
+.print-root {
+  color-scheme: light;
+  /* Light scheme for everything reading the tokens from here down, so a dark
+     session still prints black-on-white (12g). */
+  --q-surface: #ffffff;
+  --q-background: #ffffff;
+  --q-on-surface: #1f1f1f;
+  --q-on-background: #1f1f1f;
+  background: var(--q-surface);
+  color: var(--q-on-surface);
 }
 </style>

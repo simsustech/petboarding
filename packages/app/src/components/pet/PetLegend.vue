@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row q-col-gutter-sm items-center">
     <div class="col-12 col-sm">
       <q-badge :color="PET_CHIP_BADGE_COLORS.food" rounded>
         <q-icon :name="PET_CHIP_BADGE_ICONS.food" size="0.8em" />

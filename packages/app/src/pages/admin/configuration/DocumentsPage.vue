@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <q-list>
+      <q-item-label header>{{ lang.document.title }}</q-item-label>
       <q-expansion-item :content-inset-level="1">
         <template #header>
           <q-item-section>

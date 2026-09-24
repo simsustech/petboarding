@@ -6,6 +6,11 @@
         class="col-12 col-md-4"
         :model-value="customerData"
       />
+      <!-- An account without a customer profile is a valid state; the page says what
+           to do instead of rendering empty (the create dialog opens from the FAB). -->
+      <div v-else class="q-pa-md text-body1">
+        {{ lang.contactPerson.messages.addCustomerDetails }}
+      </div>
     </div>
   </q-page>
 
@@ -48,6 +53,7 @@ import CustomerForm from '../../../components/customer/CustomerForm.vue'
 import CustomerCard from '../../../components/customer/CustomerCard.vue'
 import { inject } from 'vue'
 import { EventBus } from 'quasar'
+import { useLang } from '../../../lang/index.js'
 import { useAccountGetCustomerQuery } from '../../../queries/account/customer.js'
 import {
   useAccountCreateCustomerMutation,
@@ -68,7 +74,7 @@ bus.on('account-open-customer-update-dialog', () => {
     })
 })
 
-// const lang = useLang()
+const lang = useLang()
 // const { data: customerData, execute } = useQuery('user.getCustomer', {
 //   // immediate: true
 // })

@@ -5,7 +5,7 @@ import { ref, computed } from 'vue'
 export const useConfigurationGetKennelsQuery = defineQuery(() => {
   const page = ref(1)
   const rowsPerPage = ref(10)
-  const sortBy = ref<'name' | 'capacity' | 'order'>('name')
+  const sortBy = ref<'name' | 'capacity' | 'order'>('order')
   const descending = ref(false)
 
   const pagination = computed(() => ({

@@ -59,6 +59,7 @@ const lang: Language = {
     week: 'Week'
   },
   availability: {
+    selectDates: 'Kies aankomst en vertrek',
     title: 'Beschikbaarheid',
     messages: {
       doesNotApplyToApprovedBookings:
@@ -110,6 +111,8 @@ const lang: Language = {
     }
   },
   pet: {
+    editTitle: 'Dier bewerken',
+    addTitle: 'Dier toevoegen',
     title: 'Huisdieren',
     fields: {
       species: 'Soort',
@@ -166,6 +169,8 @@ const lang: Language = {
       fieldRequired: 'Veld is vereist'
     },
     messages: {
+      medicinesGiven: 'Medicatie toegediend',
+      medicinesNone: 'Geen medicatie',
       addCustomerDetails: 'Vul a.u.b. eerst uw klantgegevens in..',
       addContactPeople: 'Voeg a.u.b. eerst een contact persoon toe',
       chemicalSterilizationDate:
@@ -493,6 +498,7 @@ const lang: Language = {
     }
   },
   information: {
+    title: 'Informatie',
     messages: {
       termsAndConditions:
         'Zorg ervoor dat u op de hoogte bent van de algemene voorwaarden.',
@@ -515,8 +521,12 @@ const lang: Language = {
       listPrice: 'Prijs'
     },
     labels: {
+      year: 'Jaar',
       years: 'Jaren',
+      month: 'Maand',
       months: 'Maanden',
+
+      day: 'Dag',
       days: 'Dagen'
     },
     messages: {
@@ -611,6 +621,7 @@ const lang: Language = {
     }
   },
   financial: {
+    noUnpaidBookings: 'Geen openstaande boekingen in de afgelopen 90 dagen.',
     title: 'Financieel',
     total: 'Totaal',
     payment: {
@@ -635,7 +646,24 @@ const lang: Language = {
   },
   overview: {
     title: 'Overzicht'
-  }
+  },
+  listPages: {
+    searchCustomers: 'Typ om klanten te zoeken...',
+    searchPets: 'Typ om dieren te zoeken...',
+    emptyCustomers: 'Zoek een klant om de gegevens te zien.',
+    emptyPets: 'Zoek een dier om de gegevens te zien.'
+  },
+
+  administration: { title: 'Administratie' },
+  accounts: { title: 'Accounts' },
+  openingTimes: { title: 'Openingstijden' },
+  integrations: {
+    title: 'Integraties',
+    connected: 'Verbonden',
+    failed: 'Verbinding mislukt'
+  },
+  labelsPage: { title: 'Labels' },
+  document: { title: 'Documenten' }
 }
 
 export default lang

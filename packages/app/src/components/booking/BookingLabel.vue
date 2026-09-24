@@ -50,6 +50,7 @@
       </q-field>
 
       <q-field
+        v-if="modelValue.services?.length"
         :label="lang.service.title"
         stack-label
         dense

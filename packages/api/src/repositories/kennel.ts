@@ -58,15 +58,22 @@ function find({
     query = query.where('name', '=', criteria.name)
   }
 
+  let sorted = false
   if (pagination) {
-    if (pagination.sortBy)
+    if (pagination.sortBy) {
       query = query.orderBy(
         pagination.sortBy,
         pagination.descending ? 'desc' : 'asc'
       )
+      sorted = true
+    }
 
     query = query.limit(pagination.limit).offset(pagination.offset)
   }
+
+  // Without an explicit sort the list follows the kennels' configured order —
+  // never the incidental (lexical-by-name, `1,10,2`) row order.
+  if (!sorted) query = query.orderBy('order', 'asc')
 
   return query
     .select(select)

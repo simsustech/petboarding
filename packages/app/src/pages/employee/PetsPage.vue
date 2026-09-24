@@ -3,6 +3,7 @@
     <q-toolbar class="q-mb-lg">
       <pet-select
         style="flex: 1"
+        :hint="lang.listPages.searchPets"
         :model-value="ids"
         multiple
         clearable
@@ -14,6 +15,16 @@
         <template #prepend> <q-icon name="i-mdi-search" /> </template>
       </pet-select>
     </q-toolbar>
+
+    <!-- Nothing selected yet: the page is a search, so it says so instead of
+         rendering an empty list (audit: employee-pets.png). -->
+    <div
+      v-if="!data?.length"
+      class="q-pa-lg flex flex-center text-body1 text-grey-7"
+    >
+      {{ lang.listPages.emptyPets }}
+    </div>
+
     <div class="row q-col-gutter-md">
       <pet-card
         v-for="pet in data"
@@ -43,6 +54,7 @@
     persistent
     @submit="update"
   >
+    <template #title>{{ lang.pet.editTitle }}</template>
     <pet-form
       ref="updatePetFormRef"
       :categories="categories"

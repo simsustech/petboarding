@@ -155,6 +155,12 @@ const iconifyJsonIconSet = {
 }
 
 const quasarConf: QuasarPluginOptions = {
+  // Audit: toasts covered the mobile footer when they opened at the bottom.
+  config: {
+    notify: {
+      position: 'top'
+    }
+  },
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta', 'LocalStorage'],
     iconSet: iconifyJsonIconSet

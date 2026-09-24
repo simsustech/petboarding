@@ -350,7 +350,7 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item to="/admin/vacations">
+                  <q-item to="/admin/configuration/vacations">
                     <q-item-section>
                       <q-item-label> {{ lang.vacation.title }} </q-item-label>
                     </q-item-section>
@@ -462,8 +462,15 @@ const userRoute = {
 }
 
 const title = computed(() => {
-  // @ts-expect-error key might not exist
-  if (lang.value[route.meta?.lang]) return lang.value[route.meta.lang].title
+  // The header names the current page; a key without a title (or no key at all)
+  // falls back to the site name instead of rendering blank — the audit caught a
+  // blank header on /information and /admin/* this way.
+  const key = route.meta?.lang
+  const entry = key ? (lang.value as Record<string, unknown>)[key] : undefined
+  if (entry && typeof entry === 'object' && 'title' in entry) {
+    const value = (entry as { title?: string }).title
+    if (value) return value
+  }
   return configuration.value.TITLE
 })
 
@@ -574,3 +581,41 @@ onMounted(async () => {
   ready.value = true
 })
 </script>
+
+<style>
+/*
+ * 14e: the drawer container spans the header region, so at 375px its inner row
+ * intercepted every click on the header controls (Login / overflow / user menu —
+ * probed: elementFromPoint returned the row from q-drawer-container). The container
+ * itself must not take pointer events; its own drawer and backdrop still do.
+ */
+.q-drawer-container {
+  pointer-events: none;
+}
+.q-drawer-container .q-drawer,
+.q-drawer-container .q-drawer__backdrop {
+  pointer-events: auto;
+}
+
+/*
+ * Probe 2026-09-24: the blocking node chain ends at `aside.q-drawer` (L3) while the
+ * header button sits under it, so at 375px the open drawer covered the toolbar.
+ * Quasar's header is z-index 1000 and the drawer wins above it; keep the header on top.
+ */
+.q-header {
+  /* Quasar's drawer + backdrop live in the overlay layer (z-index 7000 — probed),
+     so a header at 1000/1100 stays behind them and its buttons never get clicks. */
+  z-index: 7100 !important;
+}
+
+/*
+ * At mobile the drawer renders open (translateX(0), z-index 7000 — probed) and spans
+ * 0..812, covering the header's buttons entirely. Start it below the header so both
+ * rows stay reachable (MD3: top app bar above the navigation drawer).
+ */
+@media (max-width: 599px) {
+  .q-drawer--fixed {
+    top: 50px !important;
+  }
+}
+</style>

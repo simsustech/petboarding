@@ -10,6 +10,11 @@ import {
 import type { QuasarTheme } from 'unocss-preset-quasar/theme'
 import type { Locales } from '@simsustech/quasar-components/form'
 
+// Audit: toasts opened at the bottom and covered the mobile footer.
+// Applied here (not vitrify's `config.notify`, which Quasar ignored) so every
+// Notify.create in the app inherits it.
+Notify.setDefaults({ position: 'top' })
+
 const lang = useLang()
 
 export type PetKennel = Pick<Pet, 'id' | 'name' | 'food' | 'medicines'> & {
@@ -86,8 +91,8 @@ export const BOOKING_ICON = ref({
 export const BOOKING_ICON_COLOR = ref({
   approved: 'green',
   rejected: 'red',
-  canceled: 'red',
-  canceledoutsideperiod: 'red',
+  canceled: 'deep-orange',
+  canceledoutsideperiod: 'deep-orange',
   pending: 'grey',
   standby: 'yellow',
   awaitingdownpayment: 'green'
@@ -96,7 +101,7 @@ export const BOOKING_ICON_COLOR = ref({
 export const DAYCARE_DATE_COLORS = {
   approved: 'green',
   rejected: 'red',
-  canceled: 'red',
+  canceled: 'deep-orange',
   pending: 'grey',
   standby: 'yellow',
   default: 'red-5'
@@ -105,7 +110,7 @@ export const DAYCARE_DATE_COLORS = {
 export const DAYCARE_DATE_BUTTON_BG_CLASSES = {
   approved: ['bg-green'],
   rejected: ['bg-red'],
-  canceled: ['bg-red'],
+  canceled: ['bg-deep-orange'],
   pending: ['bg-grey'],
   standby: ['bg-yellow'],
   default: ['bg-blue-5']

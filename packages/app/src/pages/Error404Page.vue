@@ -1,30 +1,26 @@
 <template>
-  <div
-    class="fullscreen bg-primary text-white text-center q-pa-md flex flex-center"
-  >
+  <!-- Rendered inside the app shell (no `fullscreen`), clamped so 375px does not
+       overflow, at full contrast, with the primary CTA (audit: error404.png). -->
+  <q-page class="bg-primary text-white text-center flex flex-center">
     <div>
-      <div style="font-size: 30vh">404</div>
+      <div style="font-size: clamp(6rem, 18vmin, 14rem); line-height: 1">
+        404
+      </div>
 
-      <div class="text-h2" style="opacity: 0.4">{{ lang[404] }}</div>
+      <div class="text-h2">{{ lang[404] }}</div>
 
       <q-btn
         class="q-mt-xl"
         color="white"
-        text-color="blue"
+        text-color="primary"
         unelevated
         to="/"
         :label="lang.goHome"
         no-caps
       />
     </div>
-  </div>
+  </q-page>
 </template>
-
-<scirpt lang="ts">
-export default {
-  name: 'Error404Page'
-}
-</scirpt>
 
 <script setup lang="ts">
 import { useLang } from '../lang/index.js'

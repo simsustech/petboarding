@@ -1,5 +1,6 @@
 <template>
   <q-list>
+    <q-item-label header>{{ lang.category.title }}</q-item-label>
     <q-expansion-item v-for="category in modelValue" :key="category.id">
       <template #header>
         <q-item-section>

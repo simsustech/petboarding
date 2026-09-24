@@ -57,6 +57,7 @@ export interface Language {
     week: string
   }
   availability: {
+    selectDates: string
     title: string
     messages: {
       doesNotApplyToApprovedBookings: string
@@ -106,6 +107,8 @@ export interface Language {
     }
   }
   pet: {
+    editTitle: string
+    addTitle: string
     title: string
     fields: {
       species: string
@@ -162,6 +165,8 @@ export interface Language {
       fieldRequired: string
     }
     messages: {
+      medicinesGiven: string
+      medicinesNone: string
       addCustomerDetails: string
       addContactPeople: string
       chemicalSterilizationDate: string
@@ -190,6 +195,19 @@ export interface Language {
     }
     relations: {
       relations: string
+    }
+    // Declared by en-US/nl since the pet alerts UI landed; the interface never
+    // caught up (the type-check surfaced it as an excess property on both files).
+    alerts: {
+      title: string
+      condition: string
+      startDate: string
+      endDate: string
+      addAlert: string
+      inHeat: string
+      needsRest: string
+      aggressive: string
+      diabetic: string
     }
   }
   booking: {
@@ -448,6 +466,7 @@ export interface Language {
     }
   }
   information: {
+    title: string
     messages: {
       termsAndConditions: string
       openingTimes: string
@@ -465,8 +484,12 @@ export interface Language {
       listPrice: string
     }
     labels: {
+      year: string
       years: string
+      month: string
       months: string
+
+      day: string
       days: string
     }
     messages: {
@@ -551,6 +574,7 @@ export interface Language {
     }
   }
   financial: {
+    noUnpaidBookings: string
     title: string
     total: string
     payment: {
@@ -574,6 +598,23 @@ export interface Language {
   overview: {
     title: string
   }
+  listPages: {
+    searchCustomers: string
+    searchPets: string
+    emptyCustomers: string
+    emptyPets: string
+  }
+
+  administration: { title: string }
+  accounts: { title: string }
+  openingTimes: { title: string }
+  integrations: {
+    title: string
+    connected: string
+    failed: string
+  }
+  labelsPage: { title: string }
+  document: { title: string }
 }
 
 import type { Ref } from 'vue'

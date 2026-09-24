@@ -1,5 +1,6 @@
 <template>
   <q-list>
+    <q-item-label header>{{ lang.configuration.openingTimes }}</q-item-label>
     <q-item
       v-for="openingTime in modelValue"
       :key="openingTime.id"

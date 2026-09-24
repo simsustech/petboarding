@@ -38,12 +38,6 @@
   </q-page>
 </template>
 
-<scirpt lang="ts">
-export default {
-  name: 'IndexPage'
-}
-</scirpt>
-
 <script setup lang="ts">
 import AnnouncementsList from '../components/announcement/AnnouncementsList.vue'
 import { useConfiguration } from '../configuration.js'

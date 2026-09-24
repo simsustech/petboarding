@@ -59,6 +59,7 @@ const lang: Language = {
     week: 'Week'
   },
   availability: {
+    selectDates: 'Select arrival and departure',
     title: 'Availability',
     messages: {
       doesNotApplyToApprovedBookings:
@@ -109,6 +110,8 @@ const lang: Language = {
     }
   },
   pet: {
+    editTitle: 'Edit pet',
+    addTitle: 'Add pet',
     title: 'Pets',
     fields: {
       species: 'Species',
@@ -165,6 +168,8 @@ const lang: Language = {
       fieldRequired: 'Field is required'
     },
     messages: {
+      medicinesGiven: 'Medicines given',
+      medicinesNone: 'No medicines',
       addCustomerDetails: 'Please enter your customer details first.',
       addContactPeople: 'Please add a contact person first.',
       chemicalSterilizationDate:
@@ -481,6 +486,7 @@ const lang: Language = {
     }
   },
   information: {
+    title: 'Information',
     messages: {
       termsAndConditions:
         'Make sure you have read and understand the terms and conditions.',
@@ -502,8 +508,12 @@ const lang: Language = {
       listPrice: 'Price'
     },
     labels: {
+      year: 'Year',
       years: 'Years',
+      month: 'Month',
       months: 'Months',
+
+      day: 'Day',
       days: 'Days'
     },
     messages: {
@@ -598,6 +608,7 @@ const lang: Language = {
     }
   },
   financial: {
+    noUnpaidBookings: 'No unpaid bookings in the last 90 days.',
     title: 'Financial',
     total: 'Total',
     payment: {
@@ -620,7 +631,27 @@ const lang: Language = {
   },
   overview: {
     title: 'Overview'
-  }
+  },
+  // Search-first list pages: the employee-facing Customers/Pets pages only hold a
+  // search field until something is selected, so they say so instead of rendering
+  // an empty shell (audit: employee-customers/employee-pets).
+  listPages: {
+    searchCustomers: 'Type to search customers...',
+    searchPets: 'Type to search pets...',
+    emptyCustomers: 'Search for a customer to see their details.',
+    emptyPets: 'Search for a pet to see its details.'
+  },
+
+  administration: { title: 'Administration' },
+  accounts: { title: 'Accounts' },
+  openingTimes: { title: 'Opening times' },
+  integrations: {
+    title: 'Integrations',
+    connected: 'Connected',
+    failed: 'Connection failed'
+  },
+  labelsPage: { title: 'Labels' },
+  document: { title: 'Documents' }
 }
 
 export default lang

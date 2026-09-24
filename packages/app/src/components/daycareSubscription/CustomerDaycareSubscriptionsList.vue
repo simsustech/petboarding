@@ -34,7 +34,7 @@
               CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
             "
             name="i-mdi-dollar"
-            color="green"
+            color="positive"
           />
         </q-item-section>
         <q-item-section>

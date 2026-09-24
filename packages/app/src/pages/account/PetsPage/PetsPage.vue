@@ -26,6 +26,7 @@
     persistent
     @submit="update"
   >
+    <template #title>{{ lang.pet.editTitle }}</template>
     <pet-form
       ref="updatePetFormRef"
       use-food
@@ -40,6 +41,7 @@
     persistent
     @submit="create"
   >
+    <template #title>{{ lang.pet.addTitle }}</template>
     <pet-form
       ref="createPetFormRef"
       use-food

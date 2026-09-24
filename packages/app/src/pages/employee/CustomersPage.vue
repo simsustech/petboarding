@@ -8,6 +8,7 @@
         rounded
         :filled="false"
         :label="lang.search"
+        :hint="lang.listPages.searchCustomers"
         :filtered-options="filteredCustomers"
         @update:model-value="setParam"
         @filter="onFilterCustomers"
@@ -15,6 +16,12 @@
         <template #prepend> <q-icon name="i-mdi-search" /> </template>
       </customer-select>
     </q-toolbar>
+
+    <!-- Nothing selected yet: the page is a search, so it says so instead of
+         rendering an empty grid (audit: employee-customers.png). -->
+    <div v-if="!data" class="q-pa-lg flex flex-center text-body1 text-grey-7">
+      {{ lang.listPages.emptyCustomers }}
+    </div>
 
     <div class="grid grid-cols-12 gap-3">
       <customer-card
@@ -80,7 +87,7 @@
             <q-item>
               <q-item-section>
                 <q-item-label header>{{
-                  `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
+                  `${lang.booking.title} ${todayFormatted} – ${untilFormatted}`
                 }}</q-item-label>
               </q-item-section>
               <!-- <q-item-section side>
@@ -103,7 +110,7 @@
             <template #header>
               <q-item-label header>
                 {{
-                  `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
+                  `${lang.booking.title} ${fromFormatted} – ${todayFormatted}`
                 }}
               </q-item-label>
             </template>

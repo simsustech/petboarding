@@ -89,16 +89,34 @@ async function setDark(page: Page) {
   await expect.poll(isDark, { timeout: 8000 }).toBe(true)
 }
 
+/**
+ * Log in at desktop width, then apply the requested viewport — at 375px the
+ * header's Login affordance is pointer-blocked by the drawer container's row
+ * (probed 2026-09-23; see the note in screenshots-audit.spec.ts). The mobile
+ * layout is still what the captures exercise, only the sign-in is desktop-sized.
+ */
+async function loginAtViewport(
+  page: Page,
+  email: string,
+  password: string,
+  viewport: { width: number; height: number }
+) {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email, password })
+  await page.setViewportSize({
+    width: viewport.width,
+    height: viewport.height
+  })
+}
+
 for (const viewport of VIEWPORTS) {
   test(`dark: admin + employee + account routes — ${viewport.name}`, async ({
     browser
   }) => {
+    // 23 routes × slowMo + networkidle exceeds the 30s default.
+    test.setTimeout(600000)
     const page = await initializePage({ browser })
-    await page.setViewportSize({
-      width: viewport.width,
-      height: viewport.height
-    })
-    await login({ page, email: ADMIN.email, password: ADMIN.password })
+    await loginAtViewport(page, ADMIN.email, ADMIN.password, viewport)
     await setDark(page)
     for (const [route, slug] of ROUTES) {
       await page.goto(route, { waitUntil: 'networkidle' }).catch(() => {})
@@ -114,12 +132,9 @@ for (const viewport of VIEWPORTS) {
   test(`dark: customer account routes — ${viewport.name}`, async ({
     browser
   }) => {
+    test.setTimeout(300000)
     const page = await initializePage({ browser })
-    await page.setViewportSize({
-      width: viewport.width,
-      height: viewport.height
-    })
-    await login({ page, email: CUSTOMER.email, password: CUSTOMER.password })
+    await loginAtViewport(page, CUSTOMER.email, CUSTOMER.password, viewport)
     await setDark(page)
     for (const [route, slug] of ROUTES.filter(
       ([r]) => r.startsWith('/account') || r === '/'

@@ -92,14 +92,33 @@ function find({
   if (pagination) {
     if (pagination.sortBy)
       query = query.orderBy(
-        pagination.sortBy,
+        pagination.sortBy === 'id' ? 'accounts.id' : pagination.sortBy,
         pagination.descending ? 'desc' : 'asc'
       )
 
     query = query.limit(pagination.limit).offset(pagination.offset)
   }
 
-  return query.select([]).select(select)
+  // `accounts` carries only email/roles, so the Name column was blank for every
+  // row (audit: admin-accounts.png). The customer's name stands in when the
+  // account has a profile. A correlated subquery rather than a join: joining
+  // customers would make every unqualified `id` reference ambiguous.
+  return query
+    .select([])
+    .select(select.filter((column) => column !== 'name'))
+    .select([
+      sql<string>`coalesce(
+        (
+          select nullif(
+            concat_ws(' ', c.first_name, c.last_name), ''
+          )
+          from customers c
+          where c.account_id = accounts.id
+          limit 1
+        ),
+        accounts.name
+      )`.as('name')
+    ])
 }
 
 export async function findAccount({
@@ -133,10 +152,9 @@ export async function findAccounts({
     select,
     pagination
   })
-  return query
-    .orderBy(sql`json_array_length(roles)`, 'desc')
-    .orderBy('id', 'asc')
-    .execute()
+  // Default order: ids ascending. The role-count ordering that used to sit here
+  // produced `1,6,2,3,4` on screen (audit: admin-accounts.png).
+  return query.orderBy('accounts.id', 'asc').execute()
 }
 
 export async function getAccountsCount({

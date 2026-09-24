@@ -35,24 +35,24 @@ export const userDaycareRoutes = ({
     )
     .query(async ({ input, ctx }) => {
       const { from, until } = input
-      if (ctx.account?.id) {
-        const customer = await findCustomer({
-          criteria: {
-            accountId: Number(ctx.account.id)
-          }
-        })
-        if (customer?.id) {
-          const daycareDates = await findDaycareDates({
-            criteria: {
-              customerId: customer.id,
-              from,
-              until
-            }
-          })
-          return daycareDates
+      // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
+      // customer profile is a valid state (staff accounts) — empty, not an error.
+      if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+      const customer = await findCustomer({
+        criteria: {
+          accountId: Number(ctx.account.id)
         }
-      }
-      throw new TRPCError({ code: 'BAD_REQUEST' })
+      })
+      if (!customer?.id) return []
+
+      return findDaycareDates({
+        criteria: {
+          customerId: customer.id,
+          from,
+          until
+        }
+      })
     }),
   createDaycareDates: procedure
     .input(userDaycareValidation.array())

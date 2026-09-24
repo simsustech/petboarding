@@ -57,23 +57,23 @@ export const userBookingRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getBookings: procedure.query(async ({ ctx }) => {
-    if (ctx.account?.id) {
-      const customer = await findCustomer({
-        criteria: {
-          accountId: Number(ctx.account.id)
-        }
-      })
-      if (customer?.id) {
-        const bookings = await findBookings({
-          criteria: {
-            customerId: customer.id
-          },
-          fastify
-        })
-        return bookings
+    // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
+    // customer profile is a valid state (staff accounts) — empty, not an error.
+    if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+    const customer = await findCustomer({
+      criteria: {
+        accountId: Number(ctx.account.id)
       }
-    }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+    if (!customer?.id) return []
+
+    return findBookings({
+      criteria: {
+        customerId: customer.id
+      },
+      fastify
+    })
   }),
   createBooking: procedure
     .input(userBookingValidation)

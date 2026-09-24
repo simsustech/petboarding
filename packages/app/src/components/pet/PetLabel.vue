@@ -16,12 +16,13 @@
           {{ modelValue.birthDate }}</span
         >
       </div>
+      <!-- The name owns a full-width row: a character limit cut names in code
+           (audit: `name2 lastNam...`), CSS truncation keeps the box intact. -->
+      <div class="col-span-24 text-h6 text-truncate" tabindex="0">
+        {{ `${modelValue.name} ${modelValue.customer?.lastName}` }}
+      </div>
+
       <div class="col-span-24 grid grid-cols-subgrid">
-        <div class="col-span-18 text-h6">
-          {{
-            truncate(`${modelValue.name} ${modelValue.customer?.lastName}`, 12)
-          }}
-        </div>
         <q-field
           :label="lang.pet.fields.gender"
           :filled="false"
@@ -42,7 +43,7 @@
         <q-field
           :label="lang.pet.fields.breed"
           :filled="false"
-          class="col-span-13"
+          class="col-span-18"
           stack-label
           dense
         >
@@ -60,7 +61,7 @@
           :label="lang.pet.fields.color"
           stack-label
           :filled="false"
-          class="col-span-6"
+          class="col-span-8"
           dense
         >
           <template #control>
@@ -77,19 +78,29 @@
           :label="lang.pet.fields.medicines"
           stack-label
           :filled="false"
-          class="col-span-4"
+          class="col-span-16"
           dense
         >
           <template #control>
+            <!-- The status is carried by text (colourblind-safe); a bare red ✕ for
+                 "no medicines" read as an error (audit: employee-labels-pets.png). -->
             <div
-              class="self-center text-h5 full-width no-outline q-ma-none"
+              class="self-center full-width no-outline q-ma-none flex items-center gap-x-0.25em"
               tabindex="0"
             >
               <q-icon
+                v-if="modelValue.medicines"
                 size="sm"
-                :color="modelValue.medicines ? 'green' : 'red'"
-                :name="modelValue.medicines ? 'i-mdi-check' : 'i-mdi-close'"
+                color="positive"
+                name="i-mdi-check"
               />
+              <span class="text-subtitle2 text-truncate full-width">
+                {{
+                  modelValue.medicines
+                    ? lang.pet.messages.medicinesGiven
+                    : lang.pet.messages.medicinesNone
+                }}
+              </span>
             </div>
           </template>
         </q-field>
@@ -114,6 +125,7 @@
       </q-field>
 
       <q-field
+        v-if="modelValue.particularities"
         :label="lang.pet.fields.particularities"
         stack-label
         :filled="false"
@@ -166,10 +178,6 @@ const {
 } = defineProps<Props>()
 
 const lang = useLang()
-
-function truncate(str: string, n: number) {
-  return str.length > n ? str.slice(0, n - 1) + '...' : str
-}
 
 const variables = ref({
   // header: lang.value.some.nested.prop

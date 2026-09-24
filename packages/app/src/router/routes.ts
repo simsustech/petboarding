@@ -45,25 +45,31 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'admin',
+        meta: { lang: 'administration' },
         children: [
           {
             path: '',
+            meta: { lang: 'administration' },
             component: () => import('../pages/AdminPage.vue')
           },
           {
             path: 'financial',
+            meta: { lang: 'financial' },
             children: [
               {
                 path: '',
+                meta: { lang: 'financial' },
                 component: () => import('../pages/admin/FinancialPage.vue')
               },
               {
                 path: 'overview',
+                meta: { lang: 'overview' },
                 component: () =>
                   import('../pages/admin/financial/FinancialOverviewPage.vue')
               },
               {
                 path: 'bookings',
+                meta: { lang: 'booking' },
                 component: () =>
                   import('../pages/admin/financial/FinancialBookingsPage.vue')
               }
@@ -71,18 +77,22 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'accounts',
+            meta: { lang: 'accounts' },
             component: () => import('../pages/admin/AccountsPage.vue')
           },
           {
             path: 'bookings',
+            meta: { lang: 'booking' },
             component: () => import('../pages/admin/BookingsPage.vue')
           },
           {
             path: 'daycare',
+            meta: { lang: 'daycare' },
             component: () => import('../pages/admin/DaycarePage.vue')
           },
           {
             path: 'occupancy/:date?',
+            meta: { lang: 'occupancy' },
             component: () => import('../pages/admin/OccupancyPage.vue'),
             beforeEnter: (route) => {
               if (!route.params.date) {
@@ -94,6 +104,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'announcements',
+            meta: { lang: 'announcement' },
             components: {
               default: () =>
                 import('../pages/admin/AnnouncementsPage/AnnouncementsPage.vue'),
@@ -103,6 +114,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'periods',
+            meta: { lang: 'period' },
             components: {
               default: () =>
                 import('../pages/admin/PeriodsPage/PeriodsPage.vue'),
@@ -112,13 +124,16 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'configuration',
+            meta: { lang: 'configuration' },
             children: [
               {
                 path: '',
+                meta: { lang: 'configuration' },
                 component: () => import('../pages/admin/ConfigurationPage.vue')
               },
               {
                 path: 'categories',
+                meta: { lang: 'category' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/CategoriesPage/CategoriesPage.vue'),
@@ -128,6 +143,7 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'services',
+                meta: { lang: 'service' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/ServicesPage/ServicesPage.vue'),
@@ -137,6 +153,7 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'openingtimes',
+                meta: { lang: 'openingTimes' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/OpeningTimesPage/OpeningTimesPage.vue'),
@@ -146,12 +163,14 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'integrations',
+                meta: { lang: 'integrations' },
                 name: 'integrations',
                 component: () =>
                   import('../pages/admin/configuration/IntegrationsPage.vue')
               },
               {
                 path: 'daycaresubscriptions',
+                meta: { lang: 'daycareSubscription' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/DaycareSubscriptionsPage/DaycareSubscriptionsPage.vue'),
@@ -161,6 +180,7 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'buildings',
+                meta: { lang: 'building' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/BuildingsPage/BuildingsPage.vue'),
@@ -170,6 +190,7 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'kennels',
+                meta: { lang: 'kennel' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/KennelsPage/KennelsPage.vue'),
@@ -179,11 +200,13 @@ const routes: RouteRecordRaw[] = [
               },
               {
                 path: 'documents',
+                meta: { lang: 'document' },
                 component: () =>
                   import('../pages/admin/configuration/DocumentsPage.vue')
               },
               {
                 path: 'vacations',
+                meta: { lang: 'vacation' },
                 components: {
                   default: () =>
                     import('../pages/admin/configuration/VacationsPage/VacationsPage.vue'),
@@ -197,9 +220,11 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'employee',
+        meta: { lang: 'overview' },
         children: [
           {
             path: '',
+            meta: { lang: 'overview' },
             component: () => import('../pages/EmployeePage.vue')
           },
           {
@@ -257,11 +282,13 @@ const routes: RouteRecordRaw[] = [
             children: [
               {
                 path: 'pets/:ids*',
+                meta: { lang: 'labelsPage' },
                 component: () =>
                   import('../pages/employee/labels/PetLabelsPage.vue')
               },
               {
                 path: 'bookings/:ids*',
+                meta: { lang: 'labelsPage' },
                 component: () =>
                   import('../pages/employee/labels/BookingLabelsPage.vue')
               }
@@ -286,6 +313,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'account',
+        meta: { lang: 'account' },
         beforeEnter: async () => {
           // oAuth doesn't work in SSR
           // return { path: '' }
@@ -297,6 +325,7 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             path: '',
+            meta: { lang: 'account' },
             component: () => import('../pages/AccountPage.vue')
           },
           {
