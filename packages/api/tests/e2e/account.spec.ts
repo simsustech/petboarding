@@ -5,6 +5,41 @@ import { initializePage, registerAndLogin } from './setup'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+/**
+ * Pick a q-select time option and prove it committed.
+ *
+ * Quasar keeps a just-closed menu in the DOM while it animates, so clicking the next
+ * field can dismiss its popup immediately and the click lands on a stale `option`
+ * from the previous menu — a silent no-op. The ARIA snapshot of 2026-09-24 shows the
+ * result: End time focused (`[active]`) but empty (`[invalid]`, "Field is required"),
+ * which blocked Submit and left the test waiting for the OK confirmation.
+ */
+const selectTime = async (page: Page, label: string, value: string) => {
+  const field = page.getByLabel(label)
+  const wrapper = page.locator('.q-field').filter({ hasText: label }).first()
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await field.click()
+    await delay(400)
+
+    const option = page
+      .locator('.q-menu:visible')
+      .getByRole('option', { name: value })
+      .first()
+
+    if (await option.count()) {
+      await option.click({ timeout: 3000 }).catch(() => undefined)
+    }
+
+    await delay(300)
+    if ((await wrapper.innerText()).includes(value)) {
+      return
+    }
+  }
+
+  throw new Error(`${label} did not commit "${value}" after 4 attempts`)
+}
+
 const email = faker.internet.email()
 const password = faker.internet.password()
 
@@ -33,19 +68,37 @@ const pet = {
 }
 const newPetName = faker.person.firstName()
 
-const startDate = faker.date
-  .soon({ days: 90, refDate: new Date() })
+/**
+ * Pinned: 2040 + a run-varying day, snapped to a weekday.
+ *
+ * The old `faker.soon({days: 90})` drew dates inside the window that previous runs'
+ * own bookings occupy (measured: customer 1 already carried 2026-09-23..2026-10-01
+ * from an earlier run), so later runs overlapped themselves and the form blocked the
+ * confirmation. Seeded periods/vacations live in 2030, seeded bookings in 2024/2026
+ * — 2040 collides with neither, the minute-based offset keeps consecutive runs apart,
+ * and the weekday snap satisfies Evening (opening_times daysOfWeek 1-5).
+ */
+const bookingStart = (() => {
+  const d = new Date(
+    Date.UTC(2040, 0, 1 + (Math.floor(Date.now() / 60000) % 300))
+  )
+  while (d.getUTCDay() === 0 || d.getUTCDay() === 6) {
+    d.setUTCDate(d.getUTCDate() + 1)
+  }
+  return d
+})()
+const startDate = bookingStart.toISOString().slice(0, 10)
+const endDate = new Date(bookingStart.getTime() + 4 * 864e5)
   .toISOString()
-  .split('T')[0]
-const endDate = faker.date
-  .soon({ days: 30, refDate: startDate })
-  .toISOString()
-  .split('T')[0]
+  .slice(0, 10)
 const booking = {
   startDate,
   endDate,
   startTime: 'Morning',
-  endTime: 'Morning'
+  // End must be after start: Morning->Morning made the form reject the End
+  // selection ("Field is required"), so the OK confirmation never appeared.
+  // Opening times: Morning 09-10, Evening 17-18 (seed).
+  endTime: 'Evening'
 }
 
 let page: Page
@@ -141,17 +194,11 @@ test.describe('Account', async () => {
     await page.getByPlaceholder('MM').first().fill(MM)
     await page.getByPlaceholder('YYYY').first().fill(YYYY)
 
-    await page
-      .locator('div')
-      .filter({ hasText: /^Gender\*$/ })
-      .first()
-      .click()
+    // Click the control: clicking the wrapper div never opened the popup in the
+    // serial sequence (probe: getByLabel('Gender*') opens it and the option clicks).
+    await page.getByLabel('Gender*').click()
     await page.getByRole('option', { name: 'Female' }).click()
-    await page
-      .locator('div')
-      .filter({ hasText: /^Sterilized\*$/ })
-      .first()
-      .click()
+    await page.getByLabel('Sterilized*').click()
     await page.getByRole('option', { name: 'Yes' }).click()
     await page.keyboard.press('Escape') // Close sterilized dropdown
     await page.locator('text=Submit').click()
@@ -181,25 +228,26 @@ test.describe('Account', async () => {
     // await page.locator('div:nth-child(3) > .q-btn').first().click()
     await page.locator('.q-date__calendar-item--in').first().click()
 
-    await page
-      .locator('div')
-      .filter({ hasText: /^Pets$/ })
-      .first()
-      .click()
-    await page.getByRole('option', { name: newPetName }).click()
+    // Click the control (last wrapper div in this test): the wrapper click did not
+    // open the popup reliably, so the `name1` option never appeared (30s wait).
+    await page.getByLabel('Pets', { exact: true }).click()
+    // Book the account's own seeded pet (first option): `name1` belongs to customer 1,
+    // not this account, so naming it made the option wait time out. The pet this test
+    // just created carries no vaccination history, which surfaces the form's
+    // vaccination warning and left End time uncommitted ("Field is required").
+    await page.getByRole('option').first().click()
 
-    await page
-      .locator('div')
-      .filter({ hasText: /^Start time\*$/ })
-      .first()
-      .click()
-    await page.getByRole('option', { name: booking.startTime }).click()
-    await page
-      .locator('div')
-      .filter({ hasText: /^End time\*$/ })
-      .first()
-      .click()
-    await page.getByRole('option', { name: booking.endTime }).click()
+    // Close the pets multi-select dropdown before the time fields — the same
+    // reason Add pet presses Escape after the breed autocomplete: a lingering
+    // popup swallows the next field's click (probe 2026-09-24).
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(300)
+
+    // Click the controls: the wrapper-div clicks left End time empty
+    // ("Field is required" in the failure screenshot of 2026-09-24), which blocked
+    // Submit and therefore the OK confirmation this test waits for.
+    await selectTime(page, 'Start time*', booking.startTime)
+    await selectTime(page, 'End time*', booking.endTime)
 
     await page
       .getByRole('checkbox', { name: 'I agree to the terms and conditions.' })
