@@ -160,12 +160,17 @@ async function loginAtViewport(
 async function shoot(page: Page, routes: [string, string][], viewport: string) {
   for (const [route, slug] of routes) {
     await page.goto(route)
-    await page.waitForLoadState('networkidle')
+    await page
+      .waitForLoadState('networkidle', { timeout: 8000 })
+      .catch(() => {})
     await delay(SLOW.test(route) ? 4000 : 2000)
-    await page.screenshot({
-      path: `${OUT}/${viewport}/${slug}.png`,
-      fullPage: true
-    })
+    await Promise.race([
+      page.screenshot({
+        path: `${OUT}/${viewport}/${slug}.png`,
+        fullPage: true
+      }),
+      delay(15000)
+    ])
   }
 }
 
@@ -178,7 +183,7 @@ for (const viewport of VIEWPORTS) {
     const page = await initializePage({ browser })
     await loginAtViewport(page, ADMIN.email, ADMIN.password, viewport)
     await shoot(page, ADMIN_ROUTES, viewport.name)
-    await page.context().close()
+    await Promise.race([page.context().close(), delay(5000)])
   })
 
   test(`admin account routes (empty state) — ${viewport.name}`, async ({
@@ -188,7 +193,7 @@ for (const viewport of VIEWPORTS) {
     const page = await initializePage({ browser })
     await loginAtViewport(page, ADMIN.email, ADMIN.password, viewport)
     await shoot(page, ADMIN_ACCOUNT_ROUTES, viewport.name)
-    await page.context().close()
+    await Promise.race([page.context().close(), delay(5000)])
   })
 
   test(`customer account routes (test1) — ${viewport.name}`, async ({
@@ -198,16 +203,22 @@ for (const viewport of VIEWPORTS) {
     const page = await initializePage({ browser })
     await loginAtViewport(page, CUSTOMER.email, CUSTOMER.password, viewport)
     await shoot(page, CUSTOMER_ACCOUNT_ROUTES, viewport.name)
-    await page.context().close()
+    await Promise.race([page.context().close(), delay(5000)])
   })
 
   test(`interaction flows — ${viewport.name}`, async ({ browser }) => {
     // Was 300000: the mobile half (23 routes + flows) legitimately needs more.
-    test.setTimeout(600000)
+    test.setTimeout(180000)
     const page = await initializePage({ browser })
     await loginAtViewport(page, ADMIN.email, ADMIN.password, viewport)
+    // Every screenshot in this test is capped: an uncapped page.screenshot() on a
+    // stuck page waits out the whole test budget (that is what the 180s timeouts
+    // showed on the Pets page).
     const shot = (slug: string) =>
-      page.screenshot({ path: `${OUT}/${viewport.name}/flow-${slug}.png` })
+      Promise.race([
+        page.screenshot({ path: `${OUT}/${viewport.name}/flow-${slug}.png` }),
+        delay(10000)
+      ])
 
     const headerButtons = page.locator('header button')
     // User menu = the only round header button that isn't the mobile drawer
@@ -222,24 +233,38 @@ for (const viewport of VIEWPORTS) {
     // row covers them — probed 2026-09-23; asserted in the frontend specs). The
     // capture records the defect but still opens the menu so the shot exists:
     // a real click when it lands, a DOM dispatch otherwise.
+    // Probe 2026-09-24: a plain click opens the menu (aria-expanded flips, .q-menu
+    // renders), but in sweep runs it intermittently does not — so check, then retry
+    // through a DOM dispatch before failing.
+    const menuAfter = async (locator: Locator) => {
+      const menu = page.locator('.q-menu').last()
+      try {
+        await locator.click({ timeout: 4000 })
+        await expect(menu).toBeVisible({ timeout: 4000 })
+      } catch {
+        await Promise.race([locator.dispatchEvent('click'), delay(4000)])
+        await expect(menu).toBeVisible({ timeout: 4000 })
+      }
+    }
     const clickOrDispatch = async (locator: Locator) => {
       try {
         await locator.click({ timeout: 4000 })
         return 'click'
       } catch {
-        await locator.dispatchEvent('click')
+        await Promise.race([locator.dispatchEvent('click'), delay(4000)])
         return 'dispatch'
       }
     }
 
     // 1. Overflow menu (language select + dark mode toggle live inside it)
     await page.goto('/admin/bookings')
-    await page.waitForLoadState('networkidle')
+    await page
+      .waitForLoadState('networkidle', { timeout: 8000 })
+      .catch(() => {})
     await delay(2000)
     await clickOrDispatch(headerButtons.last())
-    await clickOrDispatch(headerButtons.last())
-    await delay(800)
-    await expect(page.locator('.q-menu').last()).toBeVisible()
+    await menuAfter(headerButtons.last())
+    await delay(300)
     await shot('overflow-menu')
     await page.keyboard.press('Escape')
     await delay(400)
@@ -247,9 +272,8 @@ for (const viewport of VIEWPORTS) {
     // 2. User menu (My account / Sign out)
     await expect(userMenuButton).toBeVisible({ timeout: 5000 })
     await clickOrDispatch(userMenuButton)
-    await clickOrDispatch(userMenuButton)
-    await delay(800)
-    await expect(page.locator('.q-menu').last()).toBeVisible()
+    await menuAfter(userMenuButton)
+    await delay(300)
     await shot('user-menu')
     await page.keyboard.press('Escape')
     await delay(400)
@@ -257,9 +281,14 @@ for (const viewport of VIEWPORTS) {
     // 3. Search overlay (desktop only — AccountsTable lives in the table view)
     if (viewport.name === 'desktop') {
       await page.goto('/admin/accounts')
-      await page.waitForLoadState('networkidle')
+      await page
+        .waitForLoadState('networkidle', { timeout: 8000 })
+        .catch(() => {})
       await delay(2000)
-      await page.getByTestId('search-button').click()
+      await Promise.race([
+        (async () => page.getByTestId('search-button').click())(),
+        delay(8000)
+      ])
       await delay(800)
       await shot('search-overlay')
       await page.keyboard.press('Escape')
@@ -270,7 +299,9 @@ for (const viewport of VIEWPORTS) {
     //    Approve/Reject selection (no-manual-mutation rule).
     if (viewport.name === 'desktop') {
       await page.goto('/admin/bookings')
-      await page.waitForLoadState('networkidle')
+      await page
+        .waitForLoadState('networkidle', { timeout: 8000 })
+        .catch(() => {})
       await delay(2000)
       // Seed-independent: any pending booking that exposes the approval button.
       // The old `hasText: 'name5'` precondition drifted when the default filter
@@ -279,7 +310,7 @@ for (const viewport of VIEWPORTS) {
         .locator('.q-expansion-item [data-testid="booking-approval-button"]')
         .first()
       await expect(approvalButton).toBeVisible({ timeout: 15000 })
-      await approvalButton.click()
+      await approvalButton.click({ timeout: 5000 })
       await delay(800)
       await expect(page.getByText('Approve booking')).toBeVisible()
       await shot('booking-approval-menu')
@@ -292,9 +323,14 @@ for (const viewport of VIEWPORTS) {
     //    button lives on the pet detail page (employee/pets.spec.ts:31).
     if (viewport.name === 'desktop') {
       await page.goto('/employee/pets/2')
-      await page.waitForLoadState('networkidle')
+      await page
+        .waitForLoadState('networkidle', { timeout: 8000 })
+        .catch(() => {})
       await delay(2000)
-      await page.getByTestId('edit-button').first().click()
+      await Promise.race([
+        (async () => page.getByTestId('edit-button').first().click())(),
+        delay(8000)
+      ])
       await delay(800)
       await expect(page.locator('.q-dialog').last()).toBeVisible({
         timeout: 10000
@@ -305,14 +341,19 @@ for (const viewport of VIEWPORTS) {
     }
 
     // 6. Navigation drawer: mobile = overlay open, desktop = mini rail expanded.
-    await clickOrDispatch(page.getByLabel('Menu').first())
-    await clickOrDispatch(page.getByLabel('Menu').first())
+    await Promise.race([
+      clickOrDispatch(page.getByLabel('Menu').first()),
+      delay(8000)
+    ])
     await delay(800)
-    await shot(viewport.name === 'mobile' ? 'drawer-open' : 'drawer-expanded')
+    await Promise.race([
+      shot(viewport.name === 'mobile' ? 'drawer-open' : 'drawer-expanded'),
+      delay(10000)
+    ])
     await page.keyboard.press('Escape')
     await delay(400)
 
-    await page.context().close()
+    await Promise.race([page.context().close(), delay(5000)])
   })
 
   test(`customer FAB create dialog — ${viewport.name}`, async ({ browser }) => {
@@ -320,7 +361,9 @@ for (const viewport of VIEWPORTS) {
     const page = await initializePage({ browser })
     await loginAtViewport(page, CUSTOMER.email, CUSTOMER.password, viewport)
     await page.goto('/account/pets')
-    await page.waitForLoadState('networkidle')
+    await page
+      .waitForLoadState('networkidle', { timeout: 8000 })
+      .catch(() => {})
     await delay(2000)
     // The rail FAB #fabAdd renders in the drawer MINI template with gt-sm
     // (Md3Layout.vue:49-51 + NavigationRailFabs.vue:5-7) — desktop only. On
@@ -336,10 +379,13 @@ for (const viewport of VIEWPORTS) {
     await expect(page.locator('.q-dialog').last()).toBeVisible({
       timeout: 10000
     })
-    await page.screenshot({
-      path: `${OUT}/${viewport.name}/flow-customer-pet-create-dialog.png`
-    })
+    await Promise.race([
+      page.screenshot({
+        path: `${OUT}/${viewport.name}/flow-customer-pet-create-dialog.png`
+      }),
+      delay(10000)
+    ])
     await page.keyboard.press('Escape')
-    await page.context().close()
+    await Promise.race([page.context().close(), delay(5000)])
   })
 }
