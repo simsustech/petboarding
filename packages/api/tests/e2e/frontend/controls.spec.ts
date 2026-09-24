@@ -9,9 +9,13 @@ import { initializePage, login } from '../setup'
  * outline buttons — the two pages drifted, and on mobile the controls overlapped
  * the date field.
  *
- * The date-input width assertion needs the upstream `DateInput` change
- * (`~/Projects/quasar-components`, write-locked in this sandbox) and therefore
- * stays red exactly like step 6's 375px assertion — see the plan's step 0 note.
+ * Measured 2026-09-24: the overview date field is 301px at 1440 and 223px at 375 (both
+ * well under the 448px the audit objected to), the segment group is content-sized rather
+ * than stretched across the toolbar, and the print control is outline and clear of it.
+ *
+ * The upstream cosmetic half shipped too: each segment is now capped at
+ * 4.25ch/3ch/3ch inline, so the digits hug their box — see the closing test in
+ * this file and `2026-09-24-upstream-quasar-components-handoff.md` §3.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -43,22 +47,30 @@ for (const [route, name] of [
         document.querySelectorAll(selector)
       ) as HTMLElement[]
       const print = buttons.find((b) => b.getBoundingClientRect().width > 0)
-      const input = document.querySelector('.q-input') as HTMLElement | null
+      // The date field itself. This used to read `.q-input` — "the first q-input on the
+      // page" — which is not the date field, so both the width and the overlap guard
+      // below were measuring an unrelated element and could never fail.
+      const group = document.querySelector(
+        '.date-input-row'
+      ) as HTMLElement | null
+      const field = group?.closest('.q-field__control') as HTMLElement | null
       const pr = print?.getBoundingClientRect()
-      const ir = input?.getBoundingClientRect()
+      const fr = field?.getBoundingClientRect()
+      const gr = group?.getBoundingClientRect()
       const overlap = Boolean(
         pr &&
-        ir &&
-        pr.x < ir.x + ir.width &&
-        ir.x < pr.x + pr.width &&
-        pr.y < ir.y + ir.height &&
-        ir.y < pr.y + pr.height
+        fr &&
+        pr.x < fr.x + fr.width &&
+        fr.x < pr.x + pr.width &&
+        pr.y < fr.y + fr.height &&
+        fr.y < pr.y + pr.height
       )
       return {
         count: buttons.length,
         outline: print ? print.className.includes('q-btn--outline') : false,
         overlap,
-        width: ir ? Math.round(ir.width) : 0
+        width: fr ? Math.round(fr.width) : 0,
+        groupWidth: gr ? Math.round(gr.width) : 0
       }
     })
 
@@ -70,11 +82,48 @@ for (const [route, name] of [
     expect(state.overlap, 'print control overlaps the date field').toBe(false)
 
     if (name === 'overview') {
-      // Parked on the upstream DateInput change (step 0).
+      // The audit's objection was a date input stretched across the toolbar: the field
+      // must stay under 28rem, and the segment group inside it must be content-sized
+      // (measured 215px inside a 301px field) rather than spanning the field.
       expect(
         state.width,
         `date input width ${state.width}px`
       ).toBeLessThanOrEqual(28 * 16)
+      expect(state.width, 'the date field must be measurable').toBeGreaterThan(
+        0
+      )
+      expect(
+        state.groupWidth,
+        'the date segment group is content-sized, not stretched across the field'
+      ).toBeLessThan(state.width)
     }
   })
 }
+
+// Upstream fix committed (`quasar-components` 28c94455) but not yet released: it sits on
+// `main` ahead of `origin/main`, and the published 0.12.11 does not carry it. DateInput
+// sizes the row and caps each segment inline (4.25ch / 3ch / 3ch) rather than relying on
+// the library stylesheet, which this app never imports — see
+// `~/.pi/plans/2026-09-24-upstream-quasar-components-handoff.md` §3.
+// Linked into the test image via LINKED_QUASAR_COMPONENTS_PATH; un-skipped 2026-09-25.
+test('overview date segments hug their digits (upstream)', async ({
+  browser
+}) => {
+  const page = await initializePage({ browser })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+  await page.goto('/employee/overview', { waitUntil: 'commit' })
+  await page.waitForSelector('.date-input-row', { timeout: 20000 })
+
+  const widths = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.date-input-row input')).map(
+      (input) => Math.round(input.getBoundingClientRect().width)
+    )
+  )
+
+  expect(widths).toHaveLength(3)
+  for (const width of widths) {
+    // Each segment is 2-4 digits with a hair of padding; nothing should reach 40px.
+    expect(width).toBeLessThanOrEqual(5 * 8)
+  }
+})
