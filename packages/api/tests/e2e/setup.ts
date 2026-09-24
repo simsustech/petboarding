@@ -89,16 +89,20 @@ export const login = async ({
 }) => {
   await page.goto('/')
 
-  await page.click('text=Login')
+  // `page.click('text=Login')` resolved to two elements (a `<div>Login</div>` plus the
+  // affordance) and died in strict mode before any assertion ran — the reason two specs
+  // in the 2026-09-23 handoff never reached their own expectations (§4). `.first()` keeps
+  // today's resolution and stays strict-mode safe if the drawer renders at login time.
+  await page.locator('text=Login').first().click()
 
   await page.waitForLoadState('networkidle')
 
   await expect(page).toHaveURL(/.*login/)
 
-  await page.locator('text="Email"').fill(email)
-  await page.locator('text="Password"').fill(password)
+  await page.locator('text="Email"').first().fill(email)
+  await page.locator('text="Password"').first().fill(password)
 
-  await page.locator('button >> text=Login').click()
+  await page.locator('button >> text=Login').first().click()
 
   await page.waitForURL(/.*user/)
 
@@ -116,21 +120,21 @@ export const registerAndLogin = async ({
 }) => {
   await page.goto('/')
 
-  await page.click('text=Login')
+  await page.locator('text=Login').first().click()
 
   await page.waitForLoadState('networkidle')
   await page.click('text=Create account')
 
   await delay(200)
-  await page.locator('text="Email"').fill(email)
-  await page.locator('text="Password"').fill(password)
-  await page.locator('text="Repeat password"').fill(password)
+  await page.locator('text="Email"').first().fill(email)
+  await page.locator('text="Password"').first().fill(password)
+  await page.locator('text="Repeat password"').first().fill(password)
 
   const slider = page.locator('.q-slider__thumb')
 
   await dragAndDrop({ page, locatorToDrag: slider })
 
-  await page.locator('button >> text=Submit').click()
+  await page.locator('button >> text=Submit').first().click()
 
   const dialog = page.locator(
     'text="Your account has been sucessfully created. You can now login with your credentials."'
@@ -140,10 +144,10 @@ export const registerAndLogin = async ({
 
   await expect(page).toHaveURL(/.*login/)
 
-  await page.locator('text="Email"').fill(email)
-  await page.locator('text="Password"').fill(password)
+  await page.locator('text="Email"').first().fill(email)
+  await page.locator('text="Password"').first().fill(password)
 
-  await page.locator('button >> text=Login').click()
+  await page.locator('button >> text=Login').first().click()
 
   await page.waitForURL(/.*user/)
 
