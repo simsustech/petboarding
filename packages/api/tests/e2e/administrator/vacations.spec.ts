@@ -60,11 +60,32 @@ test.describe('Vacations', async () => {
 
     await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(vacation.name)
-    await page.locator('.q-date__calendar-item--in').first().click()
-    await page
-      .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
+    // A vacation needs a real range. Quoting only the first day submits
+    // `endDate: ""`, which the API rejects ("invalid input syntax for type date"),
+    // so the create never reaches the list. The old second click followed the month
+    // navigation immediately and was lost in the calendar's slide animation
+    // (2026-09-24: the trigger read "Sep 1 - ?" with no day pressed). Navigate to
+    // the next month, wait until it is really on screen, then pick two distinct days
+    // by their accessible names.
+    const dialog = page.locator('.q-dialog:visible').last()
+    const nextMonth = new Date(
+      Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, 1)
+    )
+    const monthName = nextMonth.toLocaleString('en-US', {
+      month: 'long',
+      timeZone: 'UTC'
+    })
+    const year = nextMonth.getUTCFullYear()
+    await dialog.getByRole('button', { name: 'Next month' }).click()
+    await expect(
+      dialog.getByRole('button', { name: `10 ${monthName} ${year}` })
+    ).toBeVisible()
+    await dialog
+      .getByRole('button', { name: `10 ${monthName} ${year}` })
       .click()
-    await page.locator('.q-date__calendar-item--in').first().click()
+    await dialog
+      .getByRole('button', { name: `15 ${monthName} ${year}` })
+      .click()
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${vacation.name}`)).toBeVisible()
