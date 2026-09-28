@@ -139,6 +139,8 @@ const options = (date: string) => {
 </script>
 
 <style scoped>
+/* Kept: app content injected into Quasar's date header (`--availability-hint`), keyed
+   off this app's own `.range-empty` state class — nothing generic to migrate. */
 .range-empty :deep(.q-date__header-title-label),
 .range-empty :deep(.q-date__header-subtitle) {
   display: none;

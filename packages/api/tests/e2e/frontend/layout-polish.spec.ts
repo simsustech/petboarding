@@ -183,3 +183,50 @@ test('pet legend fits its container at both viewports', async ({ browser }) => {
     )
   }
 })
+
+/**
+ * Reported 2026-09-28: "on petlabels the search bar and the search button are
+ * not aligned". The preset emitted `.q-field`/`.q-select` with
+ * `flex-direction: column`, but the root's children are `__before`, `__inner`,
+ * `__after` — siblings. `PetSelect` always forwards a `#before` slot, so Quasar
+ * renders the empty marginal and it stacked ABOVE the inner: the field grew to
+ * 112px, the control's centre fell 28px below the print button's, and the
+ * toolbar grew with it. Preset fix: `field-root-lays-out-as-row` changeset.
+ */
+test('the labels search field sits on the toolbar centre line', async ({
+  browser
+}) => {
+  const page = await initializePage({ browser })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+  await page.goto('/employee/labels/pets', { waitUntil: 'commit' })
+  await page.waitForSelector('.q-page .q-field__control', { timeout: 20000 })
+  await page.waitForTimeout(1200)
+
+  const state = await page.evaluate(() => {
+    const field = document.querySelector('.q-page .q-field') as HTMLElement
+    const control = field.querySelector('.q-field__control') as HTMLElement
+    const button = field.parentElement?.querySelector('.q-btn') ?? null
+    const centre = (el: Element) => {
+      const rect = el.getBoundingClientRect()
+      return rect.y + rect.height / 2
+    }
+    return {
+      direction: getComputedStyle(field).flexDirection,
+      fieldH: Math.round(field.getBoundingClientRect().height),
+      controlH: Math.round(control.getBoundingClientRect().height),
+      delta: button ? Math.round(centre(button) - centre(control)) : null
+    }
+  })
+
+  // One row: no marginal stacked above the control (was 112 vs 56).
+  expect(
+    state.fieldH,
+    `the field is ${state.fieldH}px for a ${state.controlH}px control (direction=${state.direction})`
+  ).toBeLessThanOrEqual(state.controlH + 1)
+  // The button and the input share a centre line (was 28px apart).
+  expect(
+    Math.abs(state.delta ?? 0),
+    `print button is ${state.delta}px off the search field's centre`
+  ).toBeLessThanOrEqual(1)
+})

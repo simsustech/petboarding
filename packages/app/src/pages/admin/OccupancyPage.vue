@@ -150,17 +150,3 @@ onMounted(async () => {
   await execute()
 })
 </script>
-
-<style scoped>
-/*
- * The preset ships q-calendar CSS behind appExtensions; the month grid still laid
- * out wider than the viewport with overflow hidden (audit: admin-daycare.png at
- * 375px). Scroll it, with an edge shadow as the affordance.
- */
-:deep(.q-calendar-month__body) {
-  overflow-x: auto !important;
-}
-:deep(.q-calendar-month__body):not(.q-calendar-month--container) {
-  scrollbar-width: thin;
-}
-</style>

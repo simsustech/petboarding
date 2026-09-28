@@ -8,6 +8,8 @@
       height: '100%'
     }"
   >
+    <!-- Kept: component-specific wrapping. The chip's label is user content, so the
+         `white-space: normal` is about this text, not a Quasar chip defect. -->
     <div
       :style="{
         'white-space': 'normal !important'

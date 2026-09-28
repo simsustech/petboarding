@@ -13,10 +13,10 @@
     @filter="filterFn"
     @update:model-value="$emit('update:model-value', $event)"
   >
-    <template #before>
-      <slot name="before" />
-    </template>
-    <template #prepend> <slot name="prepend" /> </template>
+    <!-- No `#before` passthrough: forwarding an unused slot makes Quasar render
+         the empty `.q-field__before` marginal anyway (12px of padding beside the
+         input, and — before the preset's field-root fix — a second stacked row).
+         Nothing in the app passes `#before`; `#prepend` below is the one in use. -->
     <template #option="{ itemProps, opt }">
       <q-item v-bind="itemProps" :class="{ 'bg-grey-5': opt.deceased }">
         <q-item-section>

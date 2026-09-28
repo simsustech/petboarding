@@ -30,6 +30,9 @@ const lang = useLang()
 </script>
 
 <style scoped>
+/* Kept — local, not migratable: Quasar ships no navigation-rail component, so no
+   generic Quasar selector describes this app's `.navigation-rail`. Its indicator
+   geometry and the active destination's colour roles are app policy. */
 .navigation-rail:deep(.q-tab__content) {
   min-width: 52px;
 }

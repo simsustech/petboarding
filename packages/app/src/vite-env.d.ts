@@ -1,5 +1,14 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-pwa/vue" />
+/**
+ * Side-effect CSS subpath export of `@simsustech/quasar-components`.
+ *
+ * `vite/client` only declares specifiers ending in `.css`, so the bare
+ * `@simsustech/quasar-components/css` export (imported by `src/App.vue`) had no
+ * type and `vue-tsc --noEmit` reported "Cannot find module". Types only: the
+ * build resolves the real `dist/quasar-components.css` through package exports.
+ */
+declare module '@simsustech/quasar-components/css'
 
 /**
  * Vue single-file component module declaration.

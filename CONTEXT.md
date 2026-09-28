@@ -35,7 +35,19 @@ say what selecting something will show (`lang.listPages.*`). Empty space with no
 explanation was the audit finding; the search-first shape is the accepted answer, not a
 defect to fill with default content.
 
+## Quasar and preset overrides live upstream, not in the app
+
+**A defect in Quasar or in `unocss-preset-quasar` is fixed there, with a changeset; the app
+keeps only what is app policy.** Restating a shared rule locally (`!important` z-index
+bumps, `:deep(.q-*)` overrides) duplicates it and forces the next one — the header→dialog
+z-index chain is the proof, and two byte-identical rule pairs in six files are the same
+shape. A new Quasar conflict is a hole in the preset's scale, not a local patch. The
+overrides that stay are enumerated with their reasons in
+`docs/adr/002-no-quasar-overrides-in-the-app.md`.
+
 ## Related
 
 - `docs/adr/001-customers-never-edit-category-or-comments.md` — why the first rule is an
   architectural constraint rather than a UI preference.
+- `docs/adr/002-no-quasar-overrides-in-the-app.md` — why a Quasar or preset defect is
+  fixed upstream with a changeset rather than re-stated in the app.

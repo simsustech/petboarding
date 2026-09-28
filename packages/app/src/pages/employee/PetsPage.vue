@@ -349,9 +349,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-:deep(.q-field__before:empty) {
-  display: none;
-}
-</style>

@@ -584,34 +584,27 @@ onMounted(async () => {
 
 <style>
 /*
- * 14e: the drawer container spans the header region, so at 375px its inner row
- * intercepted every click on the header controls (Login / overflow / user menu —
- * probed: elementFromPoint returned the row from q-drawer-container). The container
- * itself must not take pointer events; its own drawer and backdrop still do.
+ * Layering used to be restated here — `.q-header { z-index: 7100 !important }`
+ * and `.q-dialog { z-index: 7200 !important }` — because the preset's overlay
+ * drawer sat at 7000: above the app bar (2000) and above dialogs (6000), so
+ * raising the header covered dialogs and forced them up after it. Two bumps, each
+ * forcing the next (probes 2026-09-24: elementFromPoint at y=26 returned the
+ * drawer's row; Submit blockedBy the dialog toolbar under the header).
+ *
+ * The preset owns that ordering now — unocss-preset-quasar ADR 0007:
+ * overlay drawer 1500 < marginals 2000 < menus/dialogs 6000 — so both overrides
+ * are deleted. A new conflict here is a hole in the scale and belongs upstream,
+ * not another local patch.
  */
-.q-drawer-container {
-  pointer-events: none;
-}
-.q-drawer-container .q-drawer,
-.q-drawer-container .q-drawer__backdrop {
-  pointer-events: auto;
-}
 
 /*
- * Probe 2026-09-24: the blocking node chain ends at `aside.q-drawer` (L3) while the
- * header button sits under it, so at 375px the open drawer covered the toolbar.
- * Quasar's header is z-index 1000 and the drawer wins above it; keep the header on top.
- */
-.q-header {
-  /* Quasar's drawer + backdrop live in the overlay layer (z-index 7000 — probed),
-     so a header at 1000/1100 stays behind them and its buttons never get clicks. */
-  z-index: 7100 !important;
-}
-
-/*
- * At mobile the drawer renders open (translateX(0), z-index 7000 — probed) and spans
- * 0..812, covering the header's buttons entirely. Start it below the header so both
- * rows stay reachable (MD3: top app bar above the navigation drawer).
+ * Geometry, not layering — layering is upstream now (ADR 0007 puts the drawer at
+ * 1500, under the app bar's 2000, so the bar paints above it). At mobile the
+ * drawer renders open (translateX(0)) and its box still spans 0..812, so the top
+ * 50px of its list would sit behind the app bar. Start it below the header so
+ * both rows stay reachable (MD3: top app bar above the navigation drawer). The
+ * 50px is this app's toolbar height: if this rule becomes universal it belongs in
+ * the preset, expressed against the toolbar token, not as a literal here.
  */
 @media (max-width: 599px) {
   .q-drawer--fixed {
