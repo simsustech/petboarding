@@ -50,4 +50,18 @@ const lang = useLang()
 .body--dark .navigation-rail:deep(.q-tab__indicator) {
   color: var(--dark-secondary-container);
 }
+
+/*
+ * md3 navigation rail: the active destination's icon and label take
+ * `on-secondary-container`, because they sit on the secondary-container
+ * indicator (m3.material.io/components/navigation-rail/specs — color roles
+ * 2/3; same pairing the preset's own md3-lists.json records for selected
+ * text). The preset's generic `.q-tab--active { color: primary }` is correct
+ * for md3 *tabs* — the selected tab label is primary — and wrong for a rail,
+ * so the correction is scoped here rather than applied to the shared rule.
+ * Both tokens switch on `.body--dark`, so one declaration covers both themes.
+ */
+.navigation-rail:deep(.q-tab--active) {
+  color: var(--q-on-secondary-container);
+}
 </style>
