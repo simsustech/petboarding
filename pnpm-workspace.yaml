@@ -84,5 +84,6 @@ allowBuilds:
 
 overrides:
   # the preset worktree under test (ADR 0005 app extensions live here)
-  unocss-preset-quasar: link:../unocss-preset-quasar/.worktrees/rules/packages/preset
+  unocss-preset-quasar: "link:../unocss-preset-quasar/.worktrees/rules/\
+    packages/preset"
   'typescript': '6.0.3'
