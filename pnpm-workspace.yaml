@@ -45,8 +45,26 @@ minimumReleaseAgeExclude:
   - '@oxlint/binding-win32-ia32-msvc@1.82.0'
   - '@oxlint/binding-win32-x64-msvc@1.82.0'
   - '@types/node@26.5.0 || 26.6.2'
+  - '@types/ws@8.18.2'
   - oxfmt@0.67.0
   - oxlint@1.82.0
+  - '@nodable/entities@3.1.0'
+  - fast-xml-parser@5.11.2
+  # typescript-eslint 8.71.0 (published 2026-09-28 17:0x UTC): the
+  # container's re-resolution (the Dockerfile rewrites the linked
+  # overrides, so install cannot be frozen) picks the newest 8.x, hours
+  # before the 24h maturity cutoff; the host lockfile predates it.
+  - typescript-eslint@8.71.0
+  - '@typescript-eslint/eslint-plugin@8.71.0'
+  - '@typescript-eslint/parser@8.71.0'
+  - '@typescript-eslint/project-service@8.71.0'
+  - '@typescript-eslint/scope-manager@8.71.0'
+  - '@typescript-eslint/tsconfig-utils@8.71.0'
+  - '@typescript-eslint/type-utils@8.71.0'
+  - '@typescript-eslint/types@8.71.0'
+  - '@typescript-eslint/typescript-estree@8.71.0'
+  - '@typescript-eslint/utils@8.71.0'
+  - '@typescript-eslint/visitor-keys@8.71.0'
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
