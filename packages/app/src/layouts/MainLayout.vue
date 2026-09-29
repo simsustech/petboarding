@@ -5,13 +5,14 @@
 
       <user-menu-button
         v-if="user"
+        :aria-label="lang.account.title"
         color="accent"
         :user-route="userRoute"
         :icons="{ person: 'i-mdi-person' }"
         @sign-out="logout"
       />
       <login-button v-else color="accent" @click="login" />
-      <q-btn icon="i-mdi-more-vert" flat>
+      <q-btn icon="i-mdi-more-vert" flat :aria-label="lang.moreOptions">
         <q-menu>
           <q-list>
             <q-item clickable href="/print/termsandconditions" target="_blank">
@@ -83,6 +84,13 @@
           </q-list>
         </q-menu>
       </q-btn>
+    </template>
+
+    <template #heading>
+      <!-- One h1 per routed page, from the same title map the header reads;
+           skipped where a page renders its own (IndexPage) or the route has no
+           mapped title (print/OAuth/redirect, cf. titles.test.ts exemptions). -->
+      <h1 v-if="route.meta?.lang" class="sr-only">{{ title }}</h1>
     </template>
 
     <template #drawer-mini-navigation>

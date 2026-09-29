@@ -90,7 +90,11 @@ test.describe('tables order and read correctly', () => {
     await expect(page.locator('table tbody tr').first()).toBeVisible({
       timeout: 15000
     })
-    await expect(page.getByText('Administrator').first()).toBeVisible()
+    // Scoped to the table: the mobile bottom-tab bar carries its own hidden
+    // "Administrator" label, which a page-wide .first() would hit first.
+    await expect(
+      page.locator('table tbody').getByText('Administrator')
+    ).toBeVisible()
 
     // The table is ~611px wide on a 375px viewport, so the guarantee is reachability.
     // The page itself must stay inside the viewport and the overflow must live in the

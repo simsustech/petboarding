@@ -28,6 +28,7 @@ export interface Language {
   documentation: string
   add: string
   darkMode: string
+  moreOptions: string
   language: string
   termsAndConditions: string
   redirecting: string
@@ -55,6 +56,7 @@ export interface Language {
     title: string
     day: string
     week: string
+    empty: string
   }
   availability: {
     selectDates: string
@@ -361,6 +363,9 @@ export interface Language {
   }
   occupancy: {
     title: string
+    labels: {
+      date: string
+    }
   }
   openingTime: {
     fields: {

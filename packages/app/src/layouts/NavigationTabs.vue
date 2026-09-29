@@ -36,6 +36,18 @@ const lang = useLang()
 .navigation-rail:deep(.q-tab__content) {
   min-width: 52px;
 }
+/*
+ * md3 rail: the label truncates deliberately inside the 80px rail — a
+ * single-line ellipsis, never a layout resize (audit: "Administrato"
+ * hard-clipped mid-word). max-width ties the label to its content box so
+ * no label can overflow the tab at any translation length.
+ */
+.navigation-rail:deep(.q-tab__label) {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .navigation-rail:deep(.q-tab__indicator) {
   color: var(--light-secondary-container);
   position: absolute;

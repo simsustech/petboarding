@@ -30,6 +30,7 @@ const lang: Language = {
   documentation: 'Documentatie',
   add: 'Toevoegen',
   darkMode: 'Donkere modus',
+  moreOptions: 'Meer opties',
   language: 'Taal',
   termsAndConditions: 'Algemene voorwaarden',
   redirecting: 'Omleiden',
@@ -56,7 +57,8 @@ const lang: Language = {
   agenda: {
     title: 'Agenda',
     day: 'Dag',
-    week: 'Week'
+    week: 'Week',
+    empty: 'Geen boekingen of dagopvang deze week.'
   },
   availability: {
     selectDates: 'Kies aankomst en vertrek',
@@ -383,7 +385,10 @@ const lang: Language = {
     }
   },
   occupancy: {
-    title: 'Bezetting'
+    title: 'Bezetting',
+    labels: {
+      date: 'Datum'
+    }
   },
   openingTime: {
     fields: {

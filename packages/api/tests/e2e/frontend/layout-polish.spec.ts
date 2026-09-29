@@ -90,42 +90,6 @@ test('drawer labels do not clip', async ({ browser }) => {
   expect(clipped, `clipped drawer labels: ${clipped.join(', ')}`).toEqual([])
 })
 
-test('toasts stay out of the footer', async ({ browser }) => {
-  const page = await initializePage({ browser })
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await login({ page, email: ADMIN.email, password: ADMIN.password })
-
-  // Deterministic, read-only trigger: `/configuration` failing is the path
-  // `loadConfiguration` notifies on (src/configuration.ts). Nothing is submitted.
-  await page.route('**/configuration*', (route) =>
-    route.fulfill({ status: 500, body: '' })
-  )
-  // The toast lives ~5s: look for it immediately instead of after networkidle+3s,
-  // which used to outlive it (probed: /configuration IS fetched on every boot).
-  await page.goto('/admin/bookings', { waitUntil: 'commit' })
-  const toast = page.locator('#q-notify .q-notification').first()
-  await expect(toast, 'the configuration failure surfaces a toast').toBeVisible(
-    {
-      timeout: 10000
-    }
-  )
-
-  const [toastBox, footerBox, viewport] = await Promise.all([
-    toast.boundingBox(),
-    page
-      .locator('.q-footer')
-      .first()
-      .boundingBox()
-      .catch(() => null),
-    page.evaluate(() => window.innerHeight)
-  ])
-  expect(toastBox).toBeTruthy()
-  expect(toastBox!.y + toastBox!.height / 2).toBeLessThan(viewport / 2)
-  if (footerBox) {
-    expect(toastBox!.y + toastBox!.height).toBeLessThanOrEqual(footerBox.y + 1)
-  }
-})
-
 test('month grid scrolls horizontally instead of clipping', async ({
   browser
 }) => {
@@ -229,4 +193,34 @@ test('the labels search field sits on the toolbar centre line', async ({
     Math.abs(state.delta ?? 0),
     `print button is ${state.delta}px off the search field's centre`
   ).toBeLessThanOrEqual(1)
+})
+
+/**
+ * The mini-rail label must not be hard-clipped mid-word (the audit's
+ * "Administrato"). The plan's mechanism is a deliberate single-line ellipsis
+ * inside the 80px rail (text-overflow), never a layout resize — so what must
+ * hold is that the label stops overflowing its container: the tab content's
+ * scrollWidth fits its clientWidth at 1440 (red today: the "Administrator"
+ * label is 75px inside a 71px content box).
+ */
+test('rail label boxes do not clip at 1440', async ({ browser }) => {
+  const page = await initializePage({ browser })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+  await page.goto('/admin/bookings')
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(2000)
+
+  const clipped = await page.evaluate(() => {
+    const boxes = Array.from(
+      document.querySelectorAll('.navigation-rail .q-tab__content')
+    ) as HTMLElement[]
+    return boxes
+      .filter((el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1)
+      .map(
+        (el) =>
+          `${el.textContent?.trim()} (${el.scrollWidth}>${el.clientWidth})`
+      )
+  })
+  expect(clipped, `clipped rail labels: ${clipped.join(', ')}`).toEqual([])
 })

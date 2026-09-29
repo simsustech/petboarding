@@ -30,6 +30,7 @@ const lang: Language = {
   documentation: 'Documentation',
   add: 'Add',
   darkMode: 'Dark mode',
+  moreOptions: 'More options',
   language: 'Language',
   termsAndConditions: 'Terms and conditions',
   redirecting: 'Redirecting',
@@ -56,7 +57,8 @@ const lang: Language = {
   agenda: {
     title: 'Agenda',
     day: 'Day',
-    week: 'Week'
+    week: 'Week',
+    empty: 'No bookings or daycare this week.'
   },
   availability: {
     selectDates: 'Select arrival and departure',
@@ -376,7 +378,10 @@ const lang: Language = {
     }
   },
   occupancy: {
-    title: 'Occupancy'
+    title: 'Occupancy',
+    labels: {
+      date: 'Date'
+    }
   },
   openingTime: {
     fields: {

@@ -127,3 +127,59 @@ test('overview date segments hug their digits (upstream)', async ({
     expect(width).toBeLessThanOrEqual(5 * 8)
   }
 })
+
+/**
+ * Accessible names at the two seams the audit counted (296 unnamed icon
+ * controls): the header's icon buttons and the row ⋮ menus. Row menus must
+ * also carry the row's identity — "More options" alone does not say *which*
+ * row (plan step 5).
+ */
+test('header icon buttons carry accessible names', async ({ browser }) => {
+  const page = await initializePage({ browser })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+  await page.goto('/information')
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(1500)
+
+  const buttons = page.locator('.q-header button')
+  const count = await buttons.count()
+  expect(count, 'the header renders icon buttons').toBeGreaterThan(0)
+  for (let i = 0; i < count; i++) {
+    await expect(buttons.nth(i), `header button ${i}`).toHaveAccessibleName(
+      /\S/
+    )
+  }
+})
+
+test('row menu buttons carry the row identity', async ({ browser }) => {
+  const page = await initializePage({ browser })
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+  await page.goto('/admin/accounts')
+  await page.waitForLoadState('networkidle')
+  await expect(page.locator('table tbody tr').first()).toBeVisible({
+    timeout: 15000
+  })
+
+  const rows = page.locator('table tbody tr')
+  const count = await rows.count()
+  expect(count, 'the accounts table renders rows').toBeGreaterThan(0)
+  for (let i = 0; i < count; i++) {
+    const row = rows.nth(i)
+    const menu = row.locator('button').last()
+    await expect(menu, `row ${i} menu`).toHaveAccessibleName(/\S/)
+    if (i === 0) {
+      // The menu names its own row: first data cell after the index is the name.
+      const identity = (
+        (await row.locator('td').nth(1).textContent()) ?? ''
+      ).trim()
+      expect(identity, 'the row has an identity to name').not.toBe('')
+      await expect(menu).toHaveAccessibleName(
+        new RegExp(identity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      )
+    }
+  }
+})

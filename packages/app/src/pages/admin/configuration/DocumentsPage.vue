@@ -10,7 +10,11 @@
             </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-btn icon="i-mdi-more-vert" flat>
+            <q-btn
+              icon="i-mdi-more-vert"
+              flat
+              :aria-label="`${lang.moreOptions} — ${lang.termsAndConditions}`"
+            >
               <q-menu>
                 <q-list>
                   <q-item
@@ -41,7 +45,11 @@
             </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-btn icon="i-mdi-more-vert" flat>
+            <q-btn
+              icon="i-mdi-more-vert"
+              flat
+              :aria-label="`${lang.moreOptions} — ${lang.privacyPolicy}`"
+            >
               <q-menu>
                 <q-list>
                   <q-item

@@ -15,7 +15,12 @@
         </q-item-label> -->
         </q-item-section>
         <q-item-section side>
-          <q-btn flat icon="i-mdi-more-vert" data-testid="item-menu-button">
+          <q-btn
+            flat
+            icon="i-mdi-more-vert"
+            data-testid="item-menu-button"
+            :aria-label="`${lang.moreOptions} — ${category.name}`"
+          >
             <q-menu>
               <q-list>
                 <q-item

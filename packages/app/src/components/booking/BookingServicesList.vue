@@ -16,7 +16,15 @@
         </q-item-label>
       </q-item-section>
       <q-item-section side>
-        <q-btn flat icon="i-mdi-more-vert">
+        <q-btn
+          flat
+          icon="i-mdi-more-vert"
+          :aria-label="
+            service.service?.name
+              ? `${lang.moreOptions} — ${service.service.name}`
+              : lang.moreOptions
+          "
+        >
           <q-menu>
             <q-list>
               <q-item

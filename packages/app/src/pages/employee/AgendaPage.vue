@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <agenda-component
+      v-if="!emptyAgenda"
       ref="agendaComponentRef"
       :bookings="bookingsData"
       :daycare-dates="daycareDatesData"
@@ -16,6 +17,15 @@
         />
       </template>
     </agenda-component>
+    <!-- One state for an empty week, instead of seven per-day
+         "Bookings 0 / Daycare 0" repeats (audit). -->
+    <q-list v-else>
+      <q-item>
+        <q-item-section>
+          <q-item-label>{{ lang.agenda.empty }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-list>
   </q-page>
 </template>
 
@@ -28,7 +38,7 @@ export default {
 <script setup lang="ts">
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
 import AgendaComponent from '../../components/AgendaComponent.vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BookingStatusSelect from '../../components/booking/BookingStatusSelect.vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useLang } from '../../lang/index.js'
@@ -71,6 +81,19 @@ const {
   endDate,
   status
 } = useEmployeeGetAgendaQuery()
+
+// The week carries nothing when both range-scoped queries have resolved
+// empty (undefined while loading keeps the calendar up during the first fetch).
+const emptyAgenda = computed(() => {
+  const bookings = bookingsData.value
+  const daycare = daycareDatesData.value
+  return (
+    bookings !== undefined &&
+    daycare !== undefined &&
+    bookings.length === 0 &&
+    daycare.length === 0
+  )
+})
 
 // const startDate = ref('')
 // const endDate = ref('')

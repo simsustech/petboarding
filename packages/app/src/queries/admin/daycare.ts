@@ -1,6 +1,7 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
-import { ref } from 'vue'
+import { user } from '../../oauth.js'
+import { computed, ref } from 'vue'
 import { DAYCARE_DATE_STATUS } from '@petboarding/tools/constants'
 
 export const useAdminGetDaycareDatesQuery = defineQuery(() => {
@@ -56,9 +57,13 @@ export const useAdminGetDaycareDatesByIdQuery = defineQuery(() => {
 
 export const useAdminGetDaycareCount = defineQuery(() => {
   const daycareStatus = ref<DAYCARE_DATE_STATUS>(DAYCARE_DATE_STATUS.PENDING)
+  // Same session source MainLayout.vue:519's watch reads: arm only for admins.
+  const isAdmin = computed(
+    () => user.value?.roles?.includes('administrator') ?? false
+  )
 
   const { data: daycareCount, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR,
+    enabled: !import.meta.env.SSR && isAdmin,
     key: () => ['adminGetDaycareCount', daycareStatus.value],
     query: () =>
       trpc.admin.getDaycareCount.query({

@@ -3,9 +3,7 @@
     <div class="grid grid-cols-12 gap-3">
       <q-card class="col-span-12 md:col-span-4">
         <q-card-section>
-          <div class="text-center">
-            {{ title }}
-          </div>
+          <h1 class="text-center">{{ title }}</h1>
         </q-card-section>
         <q-card-section>
           <div class="text-center">
@@ -14,6 +12,7 @@
               style="max-width: 100px"
               :img-style="{ overflow: 'visible', width: '100%' }"
               :src="logo"
+              :alt="title"
             />
           </div>
         </q-card-section>

@@ -135,13 +135,13 @@ const CUSTOMER_ACCOUNT_ROUTES: [string, string][] = [
 const SLOW = /agenda|kennellayout|occupancy|overview/
 
 /**
- * Log in at desktop width, then apply the requested viewport.
+ * Apply the requested viewport, then log in at that width.
  *
- * At 375px the header's Login affordance is pointer-blocked — probed 2026-09-23:
- * `text=Login` resolves to the header button and the home card's item, and both
- * have an overlaying element at their centre (the drawer container's row covers
- * the header one). Capturing mobile therefore logs in at desktop width first;
- * the mobile layout is what the screenshots then exercise.
+ * This used to log in at 1440 first (the header's Login affordance was
+ * pointer-blocked at 375px by the drawer container's row — a symptom of the
+ * screen-breakpoint defect). The defect is fixed and
+ * `frontend/mobile-shell.spec.ts` guards login at 375, so the capture logs in
+ * where it shoots.
  */
 async function loginAtViewport(
   page: Page,
@@ -149,12 +149,8 @@ async function loginAtViewport(
   password: string,
   viewport: { width: number; height: number }
 ) {
-  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.setViewportSize({ width: viewport.width, height: viewport.height })
   await login({ page, email, password })
-  await page.setViewportSize({
-    width: viewport.width,
-    height: viewport.height
-  })
 }
 
 async function shoot(page: Page, routes: [string, string][], viewport: string) {

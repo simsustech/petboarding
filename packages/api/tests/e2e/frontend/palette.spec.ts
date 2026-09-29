@@ -222,4 +222,90 @@ test.describe('palette and contrast', () => {
     expect(contrast.length).toBeGreaterThan(0)
     expect(Math.min(...contrast)).toBeGreaterThan(20)
   })
+
+  test('past booking rows stay readable in a dark scheme', async ({
+    browser
+  }) => {
+    const page = await initializePage({ browser })
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+    await page.goto('/admin/bookings')
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(3000)
+
+    // Under the default filter the one past booking that renders is the seeded
+    // February one (seeds/test.ts: CURRENT_YEAR-02-01..02-11, endDate < today →
+    // BookingExpansionItem/BookingItem paint the "past" surface on it).
+    const feb1 = new Date(new Date().getFullYear(), 1, 1).toLocaleDateString(
+      'en-US',
+      { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
+    )
+    const row = page.locator('.q-item').filter({ hasText: feb1 }).first()
+    await expect(row).toBeVisible({ timeout: 10000 })
+
+    const lightBg = await row.evaluate(
+      (el: Element) => getComputedStyle(el).backgroundColor
+    )
+    expect(lightBg, 'the past marker still paints in light mode').not.toBe(
+      'rgba(0, 0, 0, 0)'
+    )
+
+    // The dark sweep's setDark path (same as the print test above).
+    await page.evaluate(() => document.body.classList.add('body--dark'))
+    await page.waitForTimeout(800)
+
+    const state = await row.evaluate((el: Element) => {
+      const bg = getComputedStyle(el).backgroundColor
+      const text = getComputedStyle(
+        el.querySelector('.q-item__section') ?? el
+      ).color
+      const lum = (c: string) => {
+        const [r, g, b] = (c.match(/[\d.]+/g) ?? ['0', '0', '0']).map(Number)
+        const f = (v: number) => {
+          const s = v / 255
+          return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
+        }
+        return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+      }
+      const [l1, l2] = [lum(bg), lum(text)].sort((a, b) => b - a)
+      return { bg, text, ratio: (l1 + 0.05) / (l2 + 0.05) }
+    })
+
+    // Known-good literals from the defect: the row stayed rgb(238,238,238)
+    // with rgb(195,198,207) text → 1.16–1.47:1 on a dark page.
+    expect(
+      state.bg,
+      'past row must not stay light-grey rgb(238,238,238) under body--dark'
+    ).not.toBe('rgb(238, 238, 238)')
+    expect(
+      state.ratio,
+      `past row text ${state.text} on ${state.bg}`
+    ).toBeGreaterThanOrEqual(4.5)
+  })
+
+  test('the empty-state link wears a theme colour', async ({ browser }) => {
+    const page = await initializePage({ browser })
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+    // The profileless admin has no contact people, so PetsPage renders its
+    // empty-state router-link (PetsPage.vue).
+    await page.goto('/account/pets')
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
+    const link = page.locator('a[href="/account/contactpeople"]')
+    await expect(link).toBeVisible({ timeout: 10000 })
+
+    await page.evaluate(() => document.body.classList.add('body--dark'))
+    await page.waitForTimeout(800)
+    const color = await link.evaluate(
+      (el: Element) => getComputedStyle(el).color
+    )
+    // Known-good literal from the defect: the raw UA link computed
+    // rgb(0,0,238) on rgb(26,28,30) → 1.82:1.
+    expect(color, 'the link must wear a theme colour, not UA default').not.toBe(
+      'rgb(0, 0, 238)'
+    )
+  })
 })

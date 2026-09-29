@@ -64,6 +64,13 @@
             round
             icon="i-mdi-dots-vertical"
             data-testid="daycare-subscription-more-button"
+            :aria-label="
+              customerDaycareSubscription.daycareSubscription?.description
+                ? `${lang.moreOptions} — ${
+                    customerDaycareSubscription.daycareSubscription.description
+                  }`
+                : lang.moreOptions
+            "
           >
             <q-menu>
               <q-list style="min-width: 120px">

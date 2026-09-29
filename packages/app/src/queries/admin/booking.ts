@@ -1,5 +1,6 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
+import { user } from '../../oauth.js'
 import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
@@ -95,9 +96,15 @@ export const useAdminGetBookingEmailQuery = defineQuery(() => {
 
 export const useAdminGetBookingsCount = defineQuery(() => {
   const bookingStatus = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+  // Same session source MainLayout.vue:519's watch reads: the query arms only
+  // once the role is known, so sessions without `administrator` never issue it
+  // (the 401 flood), while the untouched watch still delivers an admin's count.
+  const isAdmin = computed(
+    () => user.value?.roles?.includes('administrator') ?? false
+  )
 
   const { data: bookingsCount, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR,
+    enabled: !import.meta.env.SSR && isAdmin,
     key: () => ['adminGetBookingsCount', bookingStatus.value],
     query: () =>
       trpc.admin.getBookingsCount.query({

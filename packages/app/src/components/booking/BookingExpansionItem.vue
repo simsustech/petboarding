@@ -1,7 +1,8 @@
 <template>
   <q-expansion-item
     :header-class="{
-      'bg-grey-3': modelValue.endDate < currentDate
+      'bg-$light-surface-container-high dark:bg-$dark-surface-container-high':
+        modelValue.endDate < currentDate
     }"
   >
     <template #header>
