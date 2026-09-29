@@ -155,12 +155,9 @@ const iconifyJsonIconSet = {
 }
 
 const quasarConf: QuasarPluginOptions = {
-  // Audit: toasts covered the mobile footer when they opened at the bottom.
-  config: {
-    notify: {
-      position: 'top'
-    }
-  },
+  // Toast position lives in `src/configuration.ts` (`Notify.setDefaults`):
+  // Quasar ignored this `config.notify` block and `QuasarPluginOptions`
+  // does not even declare a `config` key (TS2353).
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta', 'LocalStorage'],
     iconSet: iconifyJsonIconSet
@@ -202,7 +199,12 @@ export default async function ({
       ssr: {
         serverModules: []
       },
-      manualChunks: ['zod'],
+      // `manualChunks: ['zod']` lived here since the initial commit but was
+      // never read: vitrify 0.28.1's config has no such key (excess-property
+      // error) and its dist references it nowhere, so the zod chunk never
+      // existed. A real chunking opt-in belongs in vite's top-level
+      // `build.rollupOptions.output.manualChunks` (VitrifyConfig extends
+      // ViteUserConfig) — added deliberately, with a build to prove it.
       pwa: {
         manifest: {
           name: 'Petboarding',

@@ -1,11 +1,11 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { Loading, Notify } from 'quasar'
 import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
 import {
   type PET_SPECIES,
   PET_ALERTS,
-  type PET_ALERT_CONDITIONS
+  PET_ALERT_CONDITIONS
 } from '@petboarding/tools/constants'
 import type { QuasarTheme } from 'unocss-preset-quasar/theme'
 import type { Locales } from '@simsustech/quasar-components/form'
@@ -41,9 +41,27 @@ export const PET_ALERT_COLORS = Object.fromEntries(
   PET_ALERTS.map((a) => [a.value, a.color])
 ) as Record<string, string>
 
-export const PET_ALERT_ICONS = Object.fromEntries(
-  PET_ALERTS.map((a) => [a.value, a.icon])
-) as Record<string, string>
+/**
+ * The alert icons, written as literals instead of derived from `PET_ALERTS`.
+ *
+ * UnoCSS's content scan reaches this file — `src/**\/configuration.ts` is an
+ * entry in `vitrify.config.ts`'s `content.pipeline.include` — but it does not
+ * reach `@petboarding/tools`, where `PET_ALERTS` declares the icon values. A
+ * class that exists only as a value there is never generated, and `i-mdi-bed` is
+ * named in no other file, so the "needs rest" alert rendered an empty box in
+ * every legend while its three siblings (all mentioned somewhere else) worked.
+ * The other `PET_ALERT_*` maps keep their derivation: they are consumed at
+ * runtime, not compiled into class names.
+ *
+ * `Record<PET_ALERT_CONDITIONS, …>` keeps the map exhaustive, so a condition
+ * added to the enum fails to compile until its icon is listed here too.
+ */
+export const PET_ALERT_ICONS: Record<PET_ALERT_CONDITIONS, string> = {
+  [PET_ALERT_CONDITIONS.IN_HEAT]: 'i-mdi-paw',
+  [PET_ALERT_CONDITIONS.NEEDS_REST]: 'i-mdi-bed',
+  [PET_ALERT_CONDITIONS.AGGRESSIVE]: 'i-mdi-alert',
+  [PET_ALERT_CONDITIONS.DIABETIC]: 'i-mdi-needle'
+}
 
 export interface PETBOARDING_CLIENT_CONFIGURATION {
   API_HOST?: string
