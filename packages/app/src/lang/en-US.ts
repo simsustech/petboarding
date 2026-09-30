@@ -26,6 +26,7 @@ const lang: Language = {
   page: 'Page',
   next: 'Next',
   previous: 'Previous',
+  today: 'Today',
   delete: 'Delete',
   documentation: 'Documentation',
   add: 'Add',
@@ -349,7 +350,8 @@ const lang: Language = {
       status: 'Status'
     },
     labels: {
-      addDaycare: 'Add daycare'
+      addDaycare: 'Add daycare',
+      selectedDates: 'Selected days'
     },
     messages: {
       addPets: 'Please add one or more pets first.',
@@ -362,7 +364,9 @@ const lang: Language = {
       submitted:
         'The dates have been submitted. Check the status on this page, you will not receive an email.',
       openPets: 'Open pets',
-      addDaycareDates: 'Use the + button at the top to add dates.'
+      addDaycareDates: 'Use the + button at the top to add dates.',
+      selectDaysHint:
+        'Click a day to select it. Use the month buttons to move to another month.'
     },
     replies: {
       approve: 'Approve dates',

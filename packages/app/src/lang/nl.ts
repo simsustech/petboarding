@@ -26,6 +26,7 @@ const lang: Language = {
   page: 'Pagina',
   next: 'Volgende',
   previous: 'Vorige',
+  today: 'Vandaag',
   delete: 'Verwijderen',
   documentation: 'Documentatie',
   add: 'Toevoegen',
@@ -355,7 +356,8 @@ const lang: Language = {
       status: 'Status'
     },
     labels: {
-      addDaycare: 'Dagopvang toevoegen'
+      addDaycare: 'Dagopvang toevoegen',
+      selectedDates: 'Geselecteerde dagen'
     },
     messages: {
       addPets: 'Voeg a.u.b. eerst één of meerdere huisdieren toe.',
@@ -369,7 +371,9 @@ const lang: Language = {
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.',
       openPets: 'Huisdieren openen',
-      addDaycareDates: 'Gebruik de + knop bovenaan om datums toe te voegen.'
+      addDaycareDates: 'Gebruik de + knop bovenaan om datums toe te voegen.',
+      selectDaysHint:
+        'Klik op een dag om deze te selecteren. Gebruik de maandknoppen om naar een andere maand te gaan.'
     },
     replies: {
       approve: 'Datumns goedkeuren',

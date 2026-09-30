@@ -24,6 +24,7 @@ export interface Language {
   page: string
   next: string
   previous: string
+  today: string
   delete: string
   documentation: string
   add: string
@@ -336,6 +337,7 @@ export interface Language {
     }
     labels: {
       addDaycare: string
+      selectedDates: string
     }
     messages: {
       addPets: string
@@ -347,6 +349,7 @@ export interface Language {
       submitted: string
       openPets: string
       addDaycareDates: string
+      selectDaysHint: string
     }
     replies: {
       approve: string

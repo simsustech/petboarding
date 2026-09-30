@@ -31,10 +31,35 @@
       ]"
     />
   </div>
-  <div class="row justify-center">
-    <a class="col text-center">
-      {{ getMonthYear(selectedDate) }}
-    </a>
+  <div class="row items-center justify-center q-gutter-sm q-mb-sm">
+    <q-btn
+      dense
+      flat
+      icon="i-mdi-chevron-left"
+      :aria-label="lang.previous"
+      @click="onPrev"
+    />
+    <div
+      class="text-subtitle1 text-weight-medium text-center"
+      style="min-width: 13rem"
+    >
+      {{ rangeLabel }}
+    </div>
+    <q-btn
+      dense
+      flat
+      icon="i-mdi-chevron-right"
+      :aria-label="lang.next"
+      @click="onNext"
+    />
+    <q-btn
+      dense
+      flat
+      no-caps
+      icon="i-mdi-calendar-today"
+      :label="lang.today"
+      @click="onToday"
+    />
   </div>
   <agenda-legend />
   <pet-legend />
@@ -178,6 +203,7 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarAgenda } from '@quasar/quasar-ui-qcalendar/QCalendarAgenda'
+import type { QCalendarAgenda as QCalendarAgendaInstance } from '@quasar/quasar-ui-qcalendar'
 
 import AgendaChip from './AgendaChip.vue'
 import { ref, toRefs, watch, computed } from 'vue'
@@ -230,7 +256,7 @@ const router = useRouter()
 const lang = useLang()
 
 const selectedDate = ref(
-  !Array.isArray(route.params.date)
+  !Array.isArray(route.params.date) && route.params.date
     ? route.params.date
     : new Date().toISOString().slice(0, 10)
 )
@@ -238,6 +264,12 @@ const date = ref(selectedDate.value)
 watch(selectedDate, (val) => {
   if (dateUtil.isValid(val)) {
     date.value = val
+  }
+})
+// keep the date picker in step when the calendar itself moves
+watch(date, (val) => {
+  if (dateUtil.isValid(val) && val !== selectedDate.value) {
+    selectedDate.value = val
   }
 })
 
@@ -248,6 +280,7 @@ const setDate = (newDate: string) => {
 }
 
 const view = ref('week')
+const calendar = ref<QCalendarAgendaInstance>()
 
 const agendaMaps = computed(() => {
   const servicesMap: Record<string, Booking[]> = {}
@@ -363,7 +396,41 @@ const onChange = (data) => {
   })
 }
 
-const getMonthYear = (date: string) => dateUtil.formatDate(date, 'MMMM YYYY')
+const parseLocalDate = (value: string) => {
+  const [year, month, day] = (value || '').slice(0, 10).split('-').map(Number)
+  if (!year || !month || month < 1 || month > 12 || !day || day > 31) {
+    return null
+  }
+  return new Date(year, month - 1, day)
+}
+
+const onPrev = () => calendar.value?.prev()
+const onNext = () => calendar.value?.next()
+const onToday = () => calendar.value?.moveToToday()
+
+const rangeLabel = computed(() => {
+  const start = parseLocalDate(date.value)
+  if (!start) return ''
+  if (view.value === 'day') {
+    return dateUtil.formatDate(start, 'dddd D MMMM YYYY')
+  }
+  // week view: Monday through Sunday
+  const offsetToMonday = (start.getDay() + 6) % 7
+  const weekStart = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate() - offsetToMonday
+  )
+  const weekEnd = new Date(
+    weekStart.getFullYear(),
+    weekStart.getMonth(),
+    weekStart.getDate() + 6
+  )
+  const sameYear = weekStart.getFullYear() === weekEnd.getFullYear()
+  return sameYear
+    ? `${dateUtil.formatDate(weekStart, 'D MMM')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
+    : `${dateUtil.formatDate(weekStart, 'D MMM YYYY')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
+})
 
 const contentSize = ref({
   width: '100%',

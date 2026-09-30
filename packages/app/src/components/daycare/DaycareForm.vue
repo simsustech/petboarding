@@ -19,6 +19,11 @@
       />
     </div>
   </q-form>
+  <div v-show="modelValue.petIds.length" class="row justify-center">
+    <span class="text-caption q-mb-xs">
+      {{ lang.daycare.messages.selectDaysHint }}
+    </span>
+  </div>
   <daycare-calendar-month
     v-show="modelValue.petIds.length"
     :selected-dates="selectedDates"
@@ -30,6 +35,24 @@
     @update:selected-dates="($event) => (selectedDates = $event)"
     @change-date="onChangeDate"
   ></daycare-calendar-month>
+  <div
+    v-if="selectedDates.length"
+    class="row items-center justify-center q-gutter-xs q-mt-sm"
+  >
+    <span class="text-body2">{{ lang.daycare.labels.selectedDates }}:</span>
+    <q-chip
+      v-for="date in sortedSelectedDates"
+      :key="date"
+      removable
+      dense
+      size="sm"
+      color="primary"
+      text-color="white"
+      @remove="removeSelectedDate(date)"
+    >
+      {{ formatSelectedDate(date) }}
+    </q-chip>
+  </div>
   <div
     v-if="modelValue.petIds.length && useCustomerDaycareSubscriptions"
     class="row justify-center"
@@ -68,7 +91,7 @@ import { ref, useAttrs, computed, toRefs } from 'vue'
 import DaycareCalendarMonth from './DaycareCalendarMonth.vue'
 import { useLang } from '../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { QForm, QSelect } from 'quasar'
+import { QForm, QSelect, date as dateUtil } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
 import { Timestamp } from '@timestamp-js/core'
@@ -187,6 +210,19 @@ const remainingDays = computed(() => {
   }
   return 0
 })
+
+const sortedSelectedDates = computed(() => [...selectedDates.value].sort())
+
+const formatSelectedDate = (value: string) => {
+  const [year, month, day] = value.split('-').map(Number)
+  if (!year || !month || !day) return value
+  return dateUtil.formatDate(new Date(year, month - 1, day), 'ddd D MMM')
+}
+
+const removeSelectedDate = (value: string) => {
+  const index = selectedDates.value.indexOf(value)
+  if (index !== -1) selectedDates.value.splice(index, 1)
+}
 
 const updateSelectedPets: QSelect['$props']['onUpdate:modelValue'] = (
   value

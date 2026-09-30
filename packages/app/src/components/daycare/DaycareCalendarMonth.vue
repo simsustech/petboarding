@@ -2,11 +2,29 @@
   <div class="column col">
     <slot name="navigation" />
     <div class="row justify-center">
-      <a>{{ `${lang.daycare.title} - ${getSelectedMonthName()}` }} </a>
+      <a class="text-subtitle1 text-weight-medium">{{
+        `${lang.daycare.title} - ${getSelectedMonthName()}`
+      }}</a>
     </div>
-    <div class="row justify-center">
-      <q-btn icon="i-mdi-arrow-left" @click="onPrev" />
-      <q-btn icon="i-mdi-arrow-right" @click="onNext" />
+    <div class="row items-center justify-between q-px-sm q-mb-xs">
+      <q-btn
+        dense
+        flat
+        no-caps
+        icon="i-mdi-chevron-left"
+        :label="prevMonth.label"
+        :aria-label="`${lang.previous}: ${prevMonth.aria}`"
+        @click="onPrev"
+      />
+      <q-btn
+        dense
+        flat
+        no-caps
+        icon-right="i-mdi-chevron-right"
+        :label="nextMonth.label"
+        :aria-label="`${lang.next}: ${nextMonth.aria}`"
+        @click="onNext"
+      />
     </div>
     <div class="row q-mt-sm">
       <q-scroll-area :style="contentSize">
@@ -123,6 +141,7 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
+import type { QCalendarMonth as QCalendarMonthInstance } from '@quasar/quasar-ui-qcalendar'
 import {
   type Timestamp,
   addToDate,
@@ -192,7 +211,7 @@ const emit = defineEmits<{
 const lang = useLang()
 const $q = useQuasar()
 
-const calendarRef = ref<QCalendarMonth>()
+const calendarRef = ref<QCalendarMonthInstance>()
 const selectedDate = ref(today())
 const {
   events,
@@ -251,16 +270,25 @@ const onClickDate = ({ scope }) => {
         break
       }
     }
-  } else {
-    // add the date if not outside
-    if (selectedDates?.value && scope.outside !== true) {
-      if (
-        maxNumberOfSelectedDates.value == null ||
-        maxNumberOfSelectedDates.value > selectedDates.value.length
-      )
-        selectedDates.value.push(date)
-    }
+    return
   }
+  if (!selectedDates?.value) return
+  if (
+    scope.timestamp.disabled === true ||
+    props.disabledDates?.includes(date) ||
+    (maxNumberOfSelectedDates.value != null &&
+      maxNumberOfSelectedDates.value <= selectedDates.value.length)
+  ) {
+    return
+  }
+  // Clicking a day from the previous or next month moves the calendar
+  // there first, so adjacent days are a doorway instead of a dead end.
+  if (scope.outside === true) {
+    const diff = monthIndex(date) - monthIndex(selectedDate.value)
+    if (diff > 0) calendarRef.value?.next()
+    else if (diff < 0) calendarRef.value?.prev()
+  }
+  selectedDates.value.push(date)
 }
 
 const onClickWorkweek = (data) => {
@@ -291,8 +319,37 @@ const disabledAfter = computed(() => {
 // const getMonthName = (date: string) =>
 //   dateUtil.formatDate(new Date(date), 'MMMM')
 
-const getSelectedMonthName = () =>
-  dateUtil.formatDate(new Date(selectedDate.value), 'MMMM YYYY')
+const parseLocalDate = (value: string) => {
+  const [year, month, day] = (value || '').slice(0, 10).split('-').map(Number)
+  if (!year || !month || month < 1 || month > 12 || !day || day > 31) {
+    return null
+  }
+  return new Date(year, month - 1, day)
+}
+
+const monthIndex = (value: string) => {
+  const [year, month] = value.slice(0, 7).split('-').map(Number)
+  return year * 12 + month
+}
+
+const adjacentMonth = (offset: number) => {
+  const current = parseLocalDate(selectedDate.value)
+  if (!current) return { label: '', aria: '' }
+  const target = new Date(current.getFullYear(), current.getMonth() + offset, 1)
+  return {
+    label: dateUtil.formatDate(target, 'MMMM'),
+    aria: dateUtil.formatDate(target, 'MMMM YYYY')
+  }
+}
+
+const prevMonth = computed(() => adjacentMonth(-1))
+const nextMonth = computed(() => adjacentMonth(1))
+
+const getSelectedMonthName = () => {
+  const current = parseLocalDate(selectedDate.value)
+  if (!current) return ''
+  return dateUtil.formatDate(current, 'MMMM YYYY')
+}
 
 const contentSize = ref({
   width: '100%',
