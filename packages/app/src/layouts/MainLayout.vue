@@ -87,10 +87,13 @@
     </template>
 
     <template #heading>
-      <!-- One h1 per routed page, from the same title map the header reads;
-           skipped where a page renders its own (IndexPage) or the route has no
-           mapped title (print/OAuth/redirect, cf. titles.test.ts exemptions). -->
-      <h1 v-if="route.meta?.lang" class="sr-only">{{ title }}</h1>
+      <!-- One h1 per routed page, from the same title map the header reads.
+           No page renders its own anymore — home's visible duplicate went with
+           "the title is in the toolbar" — so the root joins the condition: its
+           title falls back to the site name, the same string the bar shows. -->
+      <h1 v-if="route.meta?.lang || route.path === '/'" class="sr-only">
+        {{ title }}
+      </h1>
     </template>
 
     <template #drawer-mini-navigation>

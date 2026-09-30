@@ -3,9 +3,6 @@
     <div class="grid grid-cols-12 gap-3">
       <q-card class="col-span-12 md:col-span-4">
         <q-card-section>
-          <h1 class="text-center">{{ title }}</h1>
-        </q-card-section>
-        <q-card-section>
           <div class="text-center">
             <q-img
               loading="eager"
