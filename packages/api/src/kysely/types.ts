@@ -141,7 +141,6 @@ export interface Customers {
   accountId: number | null
   comments: string | null
   createdAt: Generated<string>
-  fulltext: Generated<string | null>
 }
 
 export interface DaycareDatePetKennel {
@@ -254,7 +253,6 @@ export interface Pets {
   customerId: number
   categoryId: number | null
   createdAt: Generated<string>
-  fulltext: Generated<string | null>
 }
 
 export interface Services {

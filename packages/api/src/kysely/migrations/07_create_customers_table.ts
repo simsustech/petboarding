@@ -23,17 +23,31 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .execute()
 
-  await sql`ALTER TABLE customers
-    ADD COLUMN fulltext tsvector
-      GENERATED ALWAYS AS 
-      (to_tsvector('english', 
-      coalesce(first_name, '') || ' ' || 
-      coalesce(last_name, '') || ' ' ||
-      coalesce(city, '' || ' ' ||
-      coalesce(address, '') || ' '))) STORED;
-  CREATE INDEX customers_fulltext_idx ON customers USING GIN (fulltext);`.execute(
-    db
-  )
+  // Language-neutral full-text search. `unaccented` is the stock `simple` parser
+  // plus the stock `unaccent` dictionary: it folds accents/diacritics so that
+  // "Madel" finds "Mädel", but deliberately does NOT stem or drop stopwords —
+  // the query layer owns both (see src/repositories/search.ts).
+  await sql`
+    CREATE EXTENSION IF NOT EXISTS unaccent;
+    CREATE TEXT SEARCH CONFIGURATION unaccented (copy = pg_catalog.simple);
+    ALTER TEXT SEARCH CONFIGURATION unaccented
+      ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, word, hword, hword_part
+      WITH unaccent, simple;
+  `.execute(db)
+
+  // A functional GIN index rather than a STORED generated column, so the
+  // searchable vector can change later without a table rewrite. The expression
+  // MUST stay in sync with customerSearchVector() in src/repositories/search.ts,
+  // or Postgres will not use this index.
+  await sql`
+    CREATE INDEX customers_search_idx ON customers USING GIN (
+      to_tsvector('unaccented',
+        coalesce(first_name, '') || ' ' ||
+        coalesce(last_name, '') || ' ' ||
+        coalesce(city, '') || ' ' ||
+        coalesce(address, ''))
+    );
+  `.execute(db)
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {

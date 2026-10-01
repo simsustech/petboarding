@@ -11,6 +11,11 @@ import {
   type ExpressionBuilder,
   sql
 } from 'kysely'
+import {
+  buildSearchTsQuery,
+  customerSearchVector,
+  petSearchVector
+} from './search.js'
 import type { Vaccination } from '../zod/index.js'
 import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
@@ -336,32 +341,9 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
 }
 
 export async function searchPets(searchPhrase: string) {
-  if (!searchPhrase || typeof searchPhrase !== 'string') {
-    return []
-  }
-
-  const sanitizedPhrase = searchPhrase.replace(/[^\w\s-]/g, '').trim()
-  if (!sanitizedPhrase) {
-    return []
-  }
-
-  const searchTerms = sanitizedPhrase
-    .split(/\s+/)
-    .filter((term) => term.length > 0)
-  if (searchTerms.length === 0) {
-    return []
-  }
-
-  const tsQueryString = searchTerms
-    .map((term) => {
-      const safeTerm = term.replace(/[^a-zA-Z0-9]/g, '')
-      return safeTerm.length > 0
-        ? `${safeTerm}${safeTerm.length > 3 ? ':*' : ''}`
-        : null
-    })
-    .filter(Boolean)
-    .join(' | ')
-
+  // The database config folds accents; this builder owns stopword removal and
+  // term joining (AND). See ./search.ts for the rationale.
+  const tsQueryString = buildSearchTsQuery(searchPhrase)
   if (!tsQueryString) {
     return []
   }
@@ -393,9 +375,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       p.deceased = false
-      and p.fulltext @@ to_tsquery(
-        'english', ${sql.val(tsQueryString)}
-        )
+      and ${sql.raw(petSearchVector('p.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   ), relation as (
     select 
       p.id,
@@ -421,9 +401,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       p.deceased = false
-      and c.fulltext @@ to_tsquery(
-        'english', ${sql.val(tsQueryString)}
-      )
+      and ${sql.raw(customerSearchVector('c.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   )
   select distinct on (id) * from main union select * from relation;
   `
