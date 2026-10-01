@@ -59,7 +59,10 @@ const lang: Language = {
     title: 'Agenda',
     day: 'Dag',
     week: 'Week',
-    empty: 'Geen boekingen of dagopvang deze week.'
+    empty: 'Geen boekingen of dagopvang deze week.',
+    emptyDay: 'Geen boekingen of dagopvang deze dag.',
+    swipeHint: 'Veeg om de rest van de week te zien.',
+    legend: 'Legenda'
   },
   availability: {
     selectDates: 'Kies aankomst en vertrek',

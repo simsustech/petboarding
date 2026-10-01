@@ -59,7 +59,10 @@ const lang: Language = {
     title: 'Agenda',
     day: 'Day',
     week: 'Week',
-    empty: 'No bookings or daycare this week.'
+    empty: 'No bookings or daycare this week.',
+    emptyDay: 'No bookings or daycare on this day.',
+    swipeHint: 'Swipe to see the rest of the week.',
+    legend: 'Legend'
   },
   availability: {
     selectDates: 'Select arrival and departure',

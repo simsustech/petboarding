@@ -58,6 +58,9 @@ export interface Language {
     day: string
     week: string
     empty: string
+    emptyDay: string
+    swipeHint: string
+    legend: string
   }
   availability: {
     selectDates: string

@@ -19,6 +19,77 @@
       <div>{{ label }}</div>
       <div class="text-caption">{{ food }}</div>
       <div v-if="caption" class="text-caption">{{ caption }}</div>
+      <div
+        v-if="showBadge || $slots['badge']"
+        class="row items-center q-gutter-xs"
+      >
+        <q-badge
+          v-if="modelValue.food?.timesADay > 2"
+          :style="{
+            padding: '0px',
+            'padding-left': '3px',
+            'padding-right': '3px'
+          }"
+          :color="PET_CHIP_BADGE_COLORS.food"
+          rounded
+        >
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="PET_CHIP_BADGE_ICONS.food"
+            size="0.8em"
+          />
+        </q-badge>
+        <q-badge
+          v-if="modelValue.medicines"
+          :style="{
+            padding: '0px',
+            'padding-left': '3px',
+            'padding-right': '3px'
+          }"
+          :color="PET_CHIP_BADGE_COLORS.medicines"
+          rounded
+        >
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="PET_CHIP_BADGE_ICONS.medicines"
+            size="0.8em"
+          />
+        </q-badge>
+        <q-badge
+          v-if="!modelValue.hasMandatoryVaccinations"
+          :style="{
+            padding: '0px',
+            'padding-left': '3px',
+            'padding-right': '3px'
+          }"
+          :color="PET_CHIP_BADGE_COLORS.vaccinations"
+          rounded
+        >
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="PET_CHIP_BADGE_ICONS.vaccinations"
+            size="0.8em"
+          />
+        </q-badge>
+        <q-badge
+          v-for="alert in modelValue.alerts"
+          :key="alert.condition"
+          :style="{
+            padding: '0px',
+            'padding-left': '3px',
+            'padding-right': '3px'
+          }"
+          :color="PET_ALERT_COLORS[alert.condition]"
+          rounded
+        >
+          <q-icon
+            class="q-ma-none q-pa-none"
+            :name="PET_ALERT_ICONS[alert.condition]"
+            size="0.8em"
+          />
+        </q-badge>
+        <slot name="badge"></slot>
+      </div>
     </div>
     <q-icon
       v-if="showImage && modelValue.image"
@@ -51,80 +122,6 @@
       </q-item>
       <slot name="menu-items"></slot>
     </q-menu>
-
-    <q-badge
-      v-if="showBadge || $slots['badge']"
-      style="top: -10px"
-      floating
-      color="transparent"
-    >
-      <q-badge
-        v-if="modelValue.food?.timesADay > 2"
-        :style="{
-          padding: '0px',
-          'padding-left': '3px',
-          'padding-right': '3px'
-        }"
-        :color="PET_CHIP_BADGE_COLORS.food"
-        rounded
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="PET_CHIP_BADGE_ICONS.food"
-          size="0.8em"
-        />
-      </q-badge>
-      <q-badge
-        v-if="modelValue.medicines"
-        :style="{
-          padding: '0px',
-          'padding-left': '3px',
-          'padding-right': '3px'
-        }"
-        :color="PET_CHIP_BADGE_COLORS.medicines"
-        rounded
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="PET_CHIP_BADGE_ICONS.medicines"
-          size="0.8em"
-        />
-      </q-badge>
-      <q-badge
-        v-if="!modelValue.hasMandatoryVaccinations"
-        :style="{
-          padding: '0px',
-          'padding-left': '3px',
-          'padding-right': '3px'
-        }"
-        :color="PET_CHIP_BADGE_COLORS.vaccinations"
-        rounded
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="PET_CHIP_BADGE_ICONS.vaccinations"
-          size="0.8em"
-        />
-      </q-badge>
-      <q-badge
-        v-for="alert in modelValue.alerts"
-        :key="alert.condition"
-        :style="{
-          padding: '0px',
-          'padding-left': '3px',
-          'padding-right': '3px'
-        }"
-        :color="PET_ALERT_COLORS[alert.condition]"
-        rounded
-      >
-        <q-icon
-          class="q-ma-none q-pa-none"
-          :name="PET_ALERT_ICONS[alert.condition]"
-          size="0.8em"
-        />
-      </q-badge>
-      <slot name="badge"></slot>
-    </q-badge>
 
     <q-badge
       v-if="$slots['bottom-badge']"

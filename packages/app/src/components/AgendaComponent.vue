@@ -61,31 +61,52 @@
       @click="onToday"
     />
   </div>
-  <agenda-legend />
-  <pet-legend />
+  <q-btn
+    class="q-mb-sm"
+    outline
+    dense
+    icon="i-mdi-information-outline"
+    :label="lang.agenda.legend"
+    aria-haspopup="menu"
+  >
+    <q-menu>
+      <div class="q-pa-sm column q-gutter-sm">
+        <agenda-legend />
+        <q-separator />
+        <pet-legend />
+      </div>
+    </q-menu>
+  </q-btn>
   <div class="row q-mb-md">
     <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   </div>
-  <q-scroll-area :style="contentSize">
-    <q-resize-observer @resize="onResize" />
-    <q-calendar-agenda
-      ref="calendar"
-      v-model="date"
-      :view="view"
-      :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-      column-options-id="id"
-      column-options-label="label"
-      :day-min-height="200"
-      :locale="$q.lang.isoName"
-      :style="{
-        height: '100%',
-        'min-width': '600px'
-      }"
-      animated
-      bordered
-      @change="onChange"
-    >
-      <template #day="{ scope: { timestamp } }">
+  <div
+    v-if="view === 'week'"
+    class="lt-md text-caption text-grey q-px-sm q-pt-xs"
+  >
+    {{ lang.agenda.swipeHint }}
+  </div>
+  <q-calendar-agenda
+    class="col"
+    ref="calendar"
+    v-model="date"
+    :view="view"
+    :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+    column-options-id="id"
+    column-options-label="label"
+    :day-min-height="200"
+    :locale="$q.lang.isoName"
+    :style="{
+      height: '100%',
+      'min-width': '600px',
+      'min-height': '20rem'
+    }"
+    animated
+    bordered
+    @change="onChange"
+  >
+    <template #day="{ scope: { timestamp } }">
+      <div class="q-mx-auto" style="max-width: 48rem">
         <q-list>
           <q-item
             v-for="booking in agendaMaps.servicesMap[timestamp.date] || []"
@@ -115,12 +136,22 @@
             </q-item-section>
           </q-item>
         </q-list>
-        <q-separator class="q-pt-none" inset />
-        <a class="text-center text-subtitle-1"
+        <q-separator
+          v-if="getNumberOfBookingPets(timestamp.date) > 0"
+          class="q-pt-none"
+          inset
+        />
+        <a
+          v-if="getNumberOfBookingPets(timestamp.date) > 0"
+          class="text-center text-subtitle-1"
           >{{ lang.booking.title }}
           {{ getNumberOfBookingPets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none q-mb-md" inset />
+        <q-separator
+          v-if="getNumberOfBookingPets(timestamp.date) > 0"
+          class="q-pt-none q-mb-md"
+          inset
+        />
         <div
           v-for="booking in agendaMaps.arrivalsMap[timestamp.date] || []"
           :key="booking.id"
@@ -172,11 +203,17 @@
           </agenda-chip>
         </div>
 
-        <a class="text-center text-subtitle-1"
+        <a
+          v-if="getNumberOfDaycarePets(timestamp.date) > 0"
+          class="text-center text-subtitle-1"
           >{{ lang.daycare.title }}
           {{ getNumberOfDaycarePets(timestamp.date) }}</a
         >
-        <q-separator class="q-pt-none q-mb-md" inset />
+        <q-separator
+          v-if="getNumberOfDaycarePets(timestamp.date) > 0"
+          class="q-pt-none q-mb-md"
+          inset
+        />
         <div
           v-for="daycareDate in agendaMaps.daycareMap[timestamp.date] || []"
           :key="daycareDate.id"
@@ -190,9 +227,20 @@
           >
           </agenda-chip>
         </div>
-      </template>
-    </q-calendar-agenda>
-  </q-scroll-area>
+      </div>
+    </template>
+    <template #day-container>
+      <div
+        v-if="emptyPeriod"
+        class="column items-center justify-center text-center q-pa-md"
+        style="position: absolute; top: 0; right: 0; bottom: 0; left: 0"
+      >
+        <span>{{
+          view === 'day' ? lang.agenda.emptyDay : lang.agenda.empty
+        }}</span>
+      </div>
+    </template>
+  </q-calendar-agenda>
 </template>
 
 <script lang="ts">
@@ -207,7 +255,7 @@ import type { QCalendarAgenda as QCalendarAgendaInstance } from '@quasar/quasar-
 
 import AgendaChip from './AgendaChip.vue'
 import { ref, toRefs, watch, computed } from 'vue'
-import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
+import { date as dateUtil, useQuasar } from 'quasar'
 import type { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
@@ -364,6 +412,16 @@ const daycarePetCounts = computed(() => {
 const getNumberOfDaycarePets = (date: string) =>
   daycarePetCounts.value[date] || 0
 
+// The period's emptiness is part of this surface: the page must not have to
+// re-derive it from the same two arrays.
+const emptyPeriod = computed(
+  () =>
+    bookings?.value !== undefined &&
+    daycareDates?.value !== undefined &&
+    bookings.value.length === 0 &&
+    daycareDates.value.length === 0
+)
+
 const formatBooking = (booking: Booking) =>
   formatBookingDates({
     startDate: booking.startDate,
@@ -431,17 +489,6 @@ const rangeLabel = computed(() => {
     ? `${dateUtil.formatDate(weekStart, 'D MMM')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
     : `${dateUtil.formatDate(weekStart, 'D MMM YYYY')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
 })
-
-const contentSize = ref({
-  width: '100%',
-  height: '200px'
-})
-const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
-  size
-) => {
-  contentSize.value.width = '100%'
-  contentSize.value.height = `${size.height}px`
-}
 
 const showLastNames = ref(false)
 
