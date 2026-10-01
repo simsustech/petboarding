@@ -106,7 +106,7 @@
     @change="onChange"
   >
     <template #day="{ scope: { timestamp } }">
-      <div class="q-mx-auto" style="max-width: 48rem">
+      <div class="q-mx-auto" style="max-width: 48rem; width: 100%">
         <q-list>
           <q-item
             v-for="booking in agendaMaps.servicesMap[timestamp.date] || []"

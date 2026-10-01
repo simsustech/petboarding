@@ -32,3 +32,16 @@ step 5's (d1) clause amended 2026-10-01 with the plan owner's authorization — 
 - `pnpm run lint`, `pnpm run format:check`, `PI_RTK_BYPASS=1 pnpm run build` all pass.
 - `impeccable detect` on the three touched components: exit 0, no findings.
 - Captures: `packages/api/test-results/ux-verify/step6-final-{desktop,mobile}-{week,day,quiet}.png`.
+
+## Follow-up (same day): day-view measure uses the full 48rem
+
+The visual round caught that the `#day` wrapper hugged content (135px) instead of
+filling the measure: `.q-calendar-agenda__day` is `display: flex`, and `q-mx-auto`'s
+auto margins disable cross-axis stretch. Fixed by adding `width: 100%` to the wrapper
+(same tactic, flex-correct); the step-5 test gained a floor assertion
+(`≥ 48rem − 24px`, plan (d1) row amended with the same authorization) — red at 134.8px
+before the fix, green at 768px / gaps 203-203 after.
+
+Re-verified: lint/format/build pass; fresh-stack full suite **92 passed / 6 failed /
+4 skipped / 2 did not run** — same expected set (baseline 4 + the two HEAD-A/B-proven
+date-bombs); all 7 agenda guards green. Day captures re-taken.

@@ -214,6 +214,10 @@ test('day view lays content on a readable measure', async ({ browser }) => {
     `day content is ${Math.round(geo!.width)}px wide`
   ).toBeLessThanOrEqual(48 * 16 + 24)
   expect(
+    geo!.width,
+    `day content uses the measure — ${Math.round(geo!.width)}px is a content hug, not 48rem`
+  ).toBeGreaterThanOrEqual(48 * 16 - 24)
+  expect(
     Math.abs(geo!.leftGap - geo!.rightGap),
     'the day content is centred in the band'
   ).toBeLessThanOrEqual(4)
