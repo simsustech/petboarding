@@ -57,7 +57,7 @@ export const useAdminGetDaycareDatesByIdQuery = defineQuery(() => {
 
 export const useAdminGetDaycareCount = defineQuery(() => {
   const daycareStatus = ref<DAYCARE_DATE_STATUS>(DAYCARE_DATE_STATUS.PENDING)
-  // Same session source MainLayout.vue:519's watch reads: arm only for admins.
+  // Arm only for admins (the same session source MainLayout's watch reads).
   const isAdmin = computed(
     () => user.value?.roles?.includes('administrator') ?? false
   )

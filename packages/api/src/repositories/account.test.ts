@@ -2,14 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { findAccounts } from './account.js'
 
 /**
- * `/admin/accounts` (the lib AccountsTable) had no meaningful order and an empty
- * Name column: the default sort put the role-count first, so the seeded ids came
- * back `1,6,2,3,4` (observed in `frontend-audit/desktop/admin-accounts.png`), and
- * `accounts` only carries email/roles, so `row.name` was null for every row.
- *
- * The repository owns both: ids ascending, and the customer's name standing in for
- * `name` when the account has a profile. Runs against the test stack's database
- * (packages/api/.env → localhost), like the e2e suite does.
+ * Guards the account-list ordering and Name column: ids ascending, and the
+ * customer's name standing in for `name` when the account has a profile.
  */
 
 describe('findAccounts default ordering and display name', () => {

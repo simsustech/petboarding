@@ -2,17 +2,9 @@ import { test, expect, type Page } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * `/account/*` for an account without a customer profile — the seeded admin.
- *
- * Before the fix every `user.*` query threw BAD_REQUEST, so each page raised a red
- * "BAD_REQUEST" toast and rendered nothing (captured in
- * `test-results/frontend-audit/desktop/admin-account-pets.png` and the request log's
- * `user.getPets`/`user.getBookings`/`user.getCustomerDaycareSubscriptions`/
- * `user.getDaycareDates` 400s). The profileless state is empty, not broken:
- *
- *   - no error toast,
- *   - `/account/customer` says what to do instead of rendering blank,
- *   - and a customer *with* a profile still gets real data (no over-emptying).
+ * `/account/*` for the seeded admin (no customer profile): the profileless state is
+ * empty, not broken — no error toast, `/account/customer` guides instead of rendering
+ * blank, and a customer *with* a profile still gets real data.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -27,14 +19,9 @@ const PROFILELESS_ROUTES = [
 ]
 
 /**
- * Observe the admin-procedure traffic MainLayout's count queries generate,
- * purely at the HTTP boundary (the test must not care *how* the gate is
- * expressed):
- *
- *   - no `/trpc/admin.*` response may be 401 — the UNAUTHORIZED flood the plan
- *     documents is 20× per sweep for admin *and* customer sessions;
- *   - an administrator must still receive both counts (the watch path at
- *     MainLayout.vue:519 that refetches once the role resolves).
+ * Observe the admin-procedure traffic MainLayout's count queries generate, at the HTTP
+ * boundary: no `/trpc/admin.*` response may be 401, and an admin still receives both
+ * counts.
  */
 const trackAdminTraffic = (page: Page) => {
   const unauthorized: string[] = []
@@ -46,8 +33,7 @@ const trackAdminTraffic = (page: Page) => {
       unauthorized.push(url)
       return
     }
-    // tRPC batches answer 200 (all ok) or 207 (mixed — each item carries its
-    // own result|error), so read the items instead of trusting the HTTP code.
+    // Read the batch items, not the HTTP code: tRPC answers 200 (all ok) or 207 (mixed).
     if (res.status() !== 200 && res.status() !== 207) return
     let items: unknown
     try {

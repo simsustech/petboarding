@@ -202,8 +202,7 @@ export interface Language {
     relations: {
       relations: string
     }
-    // Declared by en-US/nl since the pet alerts UI landed; the interface never
-    // caught up (the type-check surfaced it as an excess property on both files).
+    // Declared by en-US/nl but never added to the interface (excess-property error).
     alerts: {
       title: string
       condition: string

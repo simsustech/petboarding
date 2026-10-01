@@ -2,14 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Tables: two ordering defects and one Name defect, all observed in the audit
- * captures (`admin-accounts.png`, `admin-config-kennels.png`,
- * mobile `admin-accounts.png`):
- *
- *   - accounts came back `1,6,2,3,4` because `findAccounts` ordered by role count,
- *   - kennels rendered `1,10,2,…` because the query's default sort was `'name'`,
- *   - the Name column was blank because `accounts` only carries email/roles,
- *   - and at 375px the table clipped, hiding Roles and the row menu.
+ * Tables read and order correctly: account ids ascending with a display name, kennels
+ * in configured order, and the 375px table reachable rather than clipped.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -28,8 +22,7 @@ test.describe('tables order and read correctly', () => {
       timeout: 15000
     })
 
-    // Ids in ascending order (seeded accounts 1..6 on page one) — first cell of
-    // each row is the id column.
+    // Ids ascending (seeded accounts 1..6 on page one); first cell is the id column.
     const ids = await page
       .locator('table tbody tr td:first-child')
       .allTextContents()
@@ -79,8 +72,7 @@ test.describe('tables order and read correctly', () => {
 
   test('accounts stay reachable at 375px', async ({ browser }) => {
     const page = await initializePage({ browser })
-    // Sign in at desktop, then resize (at 375px the drawer container's row covers the
-    // header's Login affordance — the pattern the capture specs use).
+    // Sign in at desktop, then resize (at 375px the drawer covers the header's Login).
     await page.setViewportSize({ width: 1440, height: 900 })
     await login({ page, email: ADMIN.email, password: ADMIN.password })
     await page.setViewportSize({ width: 375, height: 812 })
@@ -96,11 +88,9 @@ test.describe('tables order and read correctly', () => {
       page.locator('table tbody').getByText('Administrator')
     ).toBeVisible()
 
-    // The table is ~611px wide on a 375px viewport, so the guarantee is reachability.
-    // The page itself must stay inside the viewport and the overflow must live in the
-    // table's own scroll area (measured: .q-table__middle client 351 / scroll 611).
-    // The earlier assertion read the menu *unscrolled* at 607px, i.e. it reported a
-    // defect where the table was simply scrolled to the left.
+    // The table (~611px) overflows a 375px viewport, so the guarantee is reachability: the
+    // page stays in the viewport and the overflow lives in the table's own scroll area.
+    // (A prior assertion read the menu unscrolled and mis-reported a defect.)
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth - window.innerWidth
@@ -129,10 +119,8 @@ test.describe('tables order and read correctly', () => {
     expect(box, 'row menu should be rendered').toBeTruthy()
 
     // Reachable: after scrolling the table's own area the row menu is inside the
-    // viewport and inside that area. The mobile nav drawer overlays the content at this
-    // width by design — the plan's 14e resolution for it was layering (`.q-header` at
-    // z-index 7100 above the drawer's 7000), not dismissal, and no control closes it at
-    // 375px (probed 2026-09-24: header toggle, Escape and backdrop are all no-ops).
+    // viewport. The mobile drawer overlays content by design (layering, not dismissal);
+    // no control closes it at 375px.
     expect(box!.x + box!.width).toBeLessThanOrEqual(375)
     const middleBox = await middle.boundingBox()
     expect(middleBox, 'scroll area should be rendered').toBeTruthy()

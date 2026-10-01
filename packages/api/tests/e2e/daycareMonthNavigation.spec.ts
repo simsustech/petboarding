@@ -64,8 +64,7 @@ test('agenda moves between periods with prev, next and today', async ({
 
   const label = page.locator('text=/\\d{1,2} \\S{3}.*\\d{1,2} \\S{3}/').first()
   await expect(label).toBeVisible({ timeout: 20000 })
-  // count()-guarded read: never block on a detached label (the agenda swaps
-  // to its empty state when the visible period has no bookings)
+  // count()-guarded read: the agenda swaps to its empty state when the period has no bookings.
   const readLabel = async () =>
     (await label.count()) > 0 ? await label.textContent() : null
   const before = (await readLabel()) || ''
@@ -85,10 +84,8 @@ test('agenda moves between periods with prev, next and today', async ({
   await delay(750)
   expect((await readLabel()) || '').toBe(before)
 
-  // Today jumps to the current week; the test seed has no bookings there, so
-  // the agenda may swap to its empty state (label detached) — either way the
-  // label no longer shows the original period. Use count() to avoid blocking
-  // on a detached element.
+  // Today jumps to the current week (no seed bookings there), so the label no longer
+  // shows the original period — use count() to avoid blocking on a detached element.
   await page
     .getByRole('button', { name: 'Today' })
     .first()

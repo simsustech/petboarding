@@ -135,7 +135,7 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Kept: a display variant this app chose (transparent standard-field control), not a
+/* A display variant this app chose (transparent standard-field control), not a
    Quasar defect — making standard controls transparent by default would change every
    consumer of the preset. */
 :deep(.q-field--standard) .q-field__control {

@@ -2,20 +2,10 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Print controls + date field on `/employee/overview` and `/employee/kennellayout`
- * (audit: `employee-overview.png`, `mobile/employee-overview.png`,
- * `employee-kennellayout.png`): the overview print control was a filled dropdown
- * next to a date input stretched across the toolbar, while the kennel layout used
- * outline buttons — the two pages drifted, and on mobile the controls overlapped
- * the date field.
- *
- * Measured 2026-09-24: the overview date field is 301px at 1440 and 223px at 375 (both
- * well under the 448px the audit objected to), the segment group is content-sized rather
- * than stretched across the toolbar, and the print control is outline and clear of it.
- *
- * The upstream cosmetic half shipped too: each segment is now capped at
- * 4.25ch/3ch/3ch inline, so the digits hug their box — see the closing test in
- * this file and `2026-09-24-upstream-quasar-components-handoff.md` §3.
+ * Print controls + date field on `/employee/overview` and `/employee/kennellayout`.
+ * The two pages had drifted (a filled dropdown vs outline buttons) and overlapped the
+ * date field on mobile; this pins the outline control, its clearance from the date
+ * field, and the field's content-sized segment group.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -31,15 +21,12 @@ for (const [route, name] of [
     await page.setViewportSize({ width: 1440, height: 900 })
     await login({ page, email: ADMIN.email, password: ADMIN.password })
 
-    // `load`/`networkidle` never settle for this page's resources; commit + the page
-    // element settles in ~160ms (probed 2026-09-24).
+    // `load`/`networkidle` never settle here; commit + wait for `.q-page`.
     await page.goto(route, { waitUntil: 'commit' })
     await page.waitForSelector('.q-page', { timeout: 20000 })
     await page.waitForTimeout(1500)
 
-    // One atomic read: Playwright's per-element awaits were stalling on this page
-    // (90s budget burnt while the page was already rendered — error-context proved
-    // the header "Overview"), so boxes/classes come straight from the DOM.
+    // One atomic DOM read: per-element awaits were stalling on this page.
     const state = await page.evaluate(() => {
       const selector =
         'a[href^="/print/"], .q-btn-dropdown, button[aria-label*=rint], button:has(.i-mdi-printer)'
@@ -47,9 +34,7 @@ for (const [route, name] of [
         document.querySelectorAll(selector)
       ) as HTMLElement[]
       const print = buttons.find((b) => b.getBoundingClientRect().width > 0)
-      // The date field itself. This used to read `.q-input` — "the first q-input on the
-      // page" — which is not the date field, so both the width and the overlap guard
-      // below were measuring an unrelated element and could never fail.
+      // Read the real date field's wrapper (`.q-input` measured an unrelated element).
       const group = document.querySelector(
         '.date-input-row'
       ) as HTMLElement | null
@@ -82,9 +67,7 @@ for (const [route, name] of [
     expect(state.overlap, 'print control overlaps the date field').toBe(false)
 
     if (name === 'overview') {
-      // The audit's objection was a date input stretched across the toolbar: the field
-      // must stay under 28rem, and the segment group inside it must be content-sized
-      // (measured 215px inside a 301px field) rather than spanning the field.
+      // The field stays under 28rem with a content-sized segment group, not a stretched input.
       expect(
         state.width,
         `date input width ${state.width}px`
@@ -100,12 +83,8 @@ for (const [route, name] of [
   })
 }
 
-// Upstream fix committed (`quasar-components` 28c94455) but not yet released: it sits on
-// `main` ahead of `origin/main`, and the published 0.12.11 does not carry it. DateInput
-// sizes the row and caps each segment inline (4.25ch / 3ch / 3ch) rather than relying on
-// the library stylesheet, which this app never imports — see
-// `~/.pi/plans/2026-09-24-upstream-quasar-components-handoff.md` §3.
-// Linked into the test image via LINKED_QUASAR_COMPONENTS_PATH; un-skipped 2026-09-25.
+// Upstream DateInput fix (quasar-components) sizes the row and caps each segment inline;
+// linked into the test image via LINKED_QUASAR_COMPONENTS_PATH.
 test('overview date segments hug their digits (upstream)', async ({
   browser
 }) => {
@@ -129,10 +108,8 @@ test('overview date segments hug their digits (upstream)', async ({
 })
 
 /**
- * Accessible names at the two seams the audit counted (296 unnamed icon
- * controls): the header's icon buttons and the row ⋮ menus. Row menus must
- * also carry the row's identity — "More options" alone does not say *which*
- * row (plan step 5).
+ * Accessible names at the header's icon buttons and the row ⋮ menus, which must carry
+ * the row's identity — not just "More options".
  */
 test('header icon buttons carry accessible names', async ({ browser }) => {
   const page = await initializePage({ browser })

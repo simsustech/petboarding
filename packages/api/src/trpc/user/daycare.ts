@@ -35,8 +35,8 @@ export const userDaycareRoutes = ({
     )
     .query(async ({ input, ctx }) => {
       const { from, until } = input
-      // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
-      // customer profile is a valid state (staff accounts) — empty, not an error.
+      // A staff account has no customer profile — that is valid, so return empty;
+      // BAD_REQUEST is only for unauthenticated callers.
       if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
 
       const customer = await findCustomer({

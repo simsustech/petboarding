@@ -155,9 +155,7 @@ const iconifyJsonIconSet = {
 }
 
 const quasarConf: QuasarPluginOptions = {
-  // Toast position lives in `src/configuration.ts` (`Notify.setDefaults`):
-  // Quasar ignored this `config.notify` block and `QuasarPluginOptions`
-  // does not even declare a `config` key (TS2353).
+  // Toast position is set in `src/configuration.ts` (`Notify.setDefaults`); Quasar ignores this block.
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta', 'LocalStorage'],
     iconSet: iconifyJsonIconSet
@@ -199,12 +197,8 @@ export default async function ({
       ssr: {
         serverModules: []
       },
-      // `manualChunks: ['zod']` lived here since the initial commit but was
-      // never read: vitrify 0.28.1's config has no such key (excess-property
-      // error) and its dist references it nowhere, so the zod chunk never
-      // existed. A real chunking opt-in belongs in vite's top-level
-      // `build.rollupOptions.output.manualChunks` (VitrifyConfig extends
-      // ViteUserConfig) — added deliberately, with a build to prove it.
+      // `manualChunks: ['zod']` lived here but vitrify's config has no such key; a real
+      // chunking opt-in belongs in vite's `build.rollupOptions.output.manualChunks`.
       pwa: {
         manifest: {
           name: 'Petboarding',
@@ -226,17 +220,14 @@ export default async function ({
       },
       unocss: {
         presets: [
-          // The preset no longer nests wind4: consumers compose it, and
-          // `quasarWind4Options` keeps the two behaviours the nesting set up
-          // (reset off, and Quasar's .body--light/.body--dark dark mapping).
+          // wind4 is composed by the consumer here (`quasarWind4Options`: reset off, Quasar dark mapping).
           presetWind4(quasarWind4Options),
           QuasarPreset({
             style: MaterialDesign3,
             sourceColor: env.VITE_SOURCE_COLOR,
             plugins: quasarConf['framework']['plugins'],
             iconSet: quasarConf['framework']['iconSet'],
-            // The preset ships this CSS now (ADR 0005): opt the app extensions in
-            // instead of importing the libraries' own stylesheets per component.
+            // ADR 0005: the preset ships this CSS; opt the extensions in here.
             appExtensions: ['qcalendar', 'qmarkdown']
           })
         ],
@@ -247,8 +238,7 @@ export default async function ({
               'src/**/configuration.ts',
               /@simsustech\/quasar-components/,
               /@modular-api\/quasar-components/,
-              // Linked/overlay installs resolve scoped packages to a local path
-              // that does NOT contain the scoped name — match the dir name too.
+              // Linked/overlay installs resolve to a path without the scoped name — match the dir too.
               /quasar-components\//,
               /modular-api\//
             ]

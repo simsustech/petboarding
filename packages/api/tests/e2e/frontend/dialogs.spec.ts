@@ -2,13 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Dialog titles (all `<responsive-dialog>` instances render an empty toolbar: the
- * `#title` slot exists in the lib, nobody fills it — audit: `flow-pet-edit-dialog.png`,
- * `flow-customer-pet-create-dialog.png`), plus the domain rule that customers may
- * never edit a pet's category or see comments — employees only.
- *
- * The second test is the guard: it asserts ABSENCE, so a future "parity fix" that
- * hands customers the category/comments fields fails here first.
+ * `<responsive-dialog>` titles (the `#title` slot exists in the lib but nobody fills
+ * it), plus the domain rule that customers may never edit a pet's category or see
+ * comments — employees only. The second test asserts that absence.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

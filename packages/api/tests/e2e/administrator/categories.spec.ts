@@ -18,11 +18,9 @@ const category = {
 }
 
 /**
- * The categories query has no ORDER BY, so `.last()` resolves to whatever the heap
- * returned last — measured 2026-09-24: Update+Delete via `.last()` renamed and then
- * deleted the SEEDED `Small` category (repro: 4/4 green, `Small` gone, all five pets
- * left with category_id NULL, and admin.approveBooking later answering 400 "Not all
- * pets … assigned to a cateogry"). Always address the row this spec owns.
+ * The categories query has no ORDER BY, so `.last()` is whatever the heap returned
+ * last — it once renamed and then deleted the seeded `Small` category. Always address
+ * the row this spec owns.
  */
 const rowOwnedBy = (name: string) =>
   page.locator('.q-item', { hasText: name }).first()

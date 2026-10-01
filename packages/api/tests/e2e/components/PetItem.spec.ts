@@ -4,14 +4,8 @@ import { login as loginShared } from '../setup'
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
 
 /**
- * Sign in through the shared helper rather than a local copy.
- *
- * This spec used to click `text=Login` directly, which resolves to two elements
- * (a `<div>Login</div>` plus the affordance) and is not strict-mode safe — the
- * fix `test(e2e): make the shared login helper strict-mode safe` already applied
- * to `setup.ts`. The local copy also skipped the `networkidle` wait that lets
- * boot finish, so the click landed on the `q-loading` backdrop while
- * `/configuration` was still in flight and the run died on a 30s timeout.
+ * Sign in through the shared helper: a local `text=Login` click resolved to two
+ * elements (not strict-mode safe) and skipped the `networkidle` wait.
  */
 const login = (page: import('@playwright/test').Page) =>
   loginShared({ page, ...ADMIN })

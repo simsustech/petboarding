@@ -2,24 +2,15 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Layout and overlay polish (audit + this session's probes):
- *   - at 375px the drawer container's row covers the header's buttons, so Login /
- *     overflow / user menu take no clicks (probed: elementFromPoint returns
- *     `div.row` from `q-drawer-container`) — the reason the mobile capture needed
- *     a dispatch fallback;
- *   - drawer labels clip (`Administratc`);
- *   - the notify default position must keep toasts out of the footer;
- *   - month grids need a horizontal-scroll affordance (clipped in `admin-daycare.png`);
- *   - the pet legend must fit its container at both viewports.
+ * Layout and overlay polish (audit + probes): the mobile drawer container's row
+ * covering the header buttons, clipped drawer labels, the notify position vs the
+ * footer, the month grids' horizontal-scroll affordance, and the pet legend fitting
+ * its container at both viewports.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
 
-/**
- * At 375px the drawer container's row covers the header's Login affordance (the
- * 14e defect this file asserts), so signing in at 1440 first and then resizing is
- * the pattern the capture specs already use.
- */
+/** Sign in at 1440, then resize — at 375px the drawer covers the header's Login affordance. */
 async function loginAtMobile(
   page: import('@playwright/test').Page,
   email: string,
@@ -74,8 +65,7 @@ test('drawer labels do not clip', async ({ browser }) => {
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(2000)
 
-  // The audit saw `Administrato` clipped in the desktop mini-rail. Measure every
-  // visible rail/drawer label: text must not be cut off inside its own box.
+  // Measure every visible rail/drawer label: text must not be cut off in its box.
   const clipped = await page.evaluate(() => {
     const labels = Array.from(
       document.querySelectorAll('.q-drawer .q-item__label')
@@ -149,13 +139,10 @@ test('pet legend fits its container at both viewports', async ({ browser }) => {
 })
 
 /**
- * Reported 2026-09-28: "on petlabels the search bar and the search button are
- * not aligned". The preset emitted `.q-field`/`.q-select` with
- * `flex-direction: column`, but the root's children are `__before`, `__inner`,
- * `__after` — siblings. `PetSelect` always forwards a `#before` slot, so Quasar
- * renders the empty marginal and it stacked ABOVE the inner: the field grew to
- * 112px, the control's centre fell 28px below the print button's, and the
- * toolbar grew with it. Preset fix: `field-root-lays-out-as-row` changeset.
+ * Reported: on pet labels the search bar and print button were misaligned — the preset
+ * emitted `.q-field`/`.q-select` with `flex-direction: column`, but the field's children
+ * are siblings, so `PetSelect`'s `#before` marginal stacked above the inner and the field
+ * grew to 112px. Preset fix: `field-root-lays-out-as-row`.
  */
 test('the labels search field sits on the toolbar centre line', async ({
   browser
@@ -196,12 +183,8 @@ test('the labels search field sits on the toolbar centre line', async ({
 })
 
 /**
- * The mini-rail label must not be hard-clipped mid-word (the audit's
- * "Administrato"). The plan's mechanism is a deliberate single-line ellipsis
- * inside the 80px rail (text-overflow), never a layout resize — so what must
- * hold is that the label stops overflowing its container: the tab content's
- * scrollWidth fits its clientWidth at 1440 (red today: the "Administrator"
- * label is 75px inside a 71px content box).
+ * The mini-rail label truncates with a single-line ellipsis (never a layout resize), so
+ * its tab content's scrollWidth must fit its clientWidth.
  */
 test('rail label boxes do not clip at 1440', async ({ browser }) => {
   const page = await initializePage({ browser })

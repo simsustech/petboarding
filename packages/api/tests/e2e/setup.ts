@@ -89,10 +89,8 @@ export const login = async ({
 }) => {
   await page.goto('/')
 
-  // `page.click('text=Login')` resolved to two elements (a `<div>Login</div>` plus the
-  // affordance) and died in strict mode before any assertion ran — the reason two specs
-  // in the 2026-09-23 handoff never reached their own expectations (§4). `.first()` keeps
-  // today's resolution and stays strict-mode safe if the drawer renders at login time.
+  // `.first()`: a bare `text=Login` click resolved to two elements and died in strict
+  // mode before any assertion ran. Stays safe if the drawer renders at login time.
   await page.locator('text=Login').first().click()
 
   await page.waitForLoadState('networkidle')

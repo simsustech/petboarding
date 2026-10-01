@@ -7,14 +7,8 @@ import { userDaycareRoutes } from './daycare.js'
 import { userCustomerDaycareSubscriptionRoutes } from './customerDaycareSubscriptions.js'
 
 /**
- * An authenticated account without a customer profile (staff accounts: the seeded
- * admin, for instance) used to make every `user.*` query throw BAD_REQUEST — the
- * audit captured the resulting red toasts on `/account/pets`, `/account/bookings`,
- * `/account/daycare` and the `user.getDaycareDates` 400 in the request log.
- *
- * A profileless account is a valid state, so the queries return empty results;
- * BAD_REQUEST stays reserved for unauthenticated callers. Exercised through each
- * router's public procedure — the repositories are the only thing mocked.
+ * A profileless account (staff) is a valid state: the `user.*` queries must return
+ * empty results, with BAD_REQUEST reserved for unauthenticated callers.
  */
 
 vi.mock('../../repositories/customer.js', () => ({

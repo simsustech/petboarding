@@ -92,8 +92,7 @@ onMounted(async () => {
 
 .print-root {
   color-scheme: light;
-  /* Light scheme for everything reading the tokens from here down, so a dark
-     session still prints black-on-white (12g). */
+  /* Force light tokens below so a dark session still prints black-on-white. */
   --q-surface: #ffffff;
   --q-background: #ffffff;
   --q-on-surface: #1f1f1f;

@@ -2,10 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * `/admin/financial/overview` groups the unpaid bookings of the last 90 days under a
- * header. With no unpaid bookings (the seeded state — the sibling
- * `admin-financial-bookings.png` shows "No data available") the page was the header
- * and nothing else, so it read as a broken page rather than an empty one.
+ * `/admin/financial/overview` groups the unpaid bookings of the last 90 days; with
+ * none (the seeded state) the page read as broken rather than empty, so it now says
+ * why the list is empty.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

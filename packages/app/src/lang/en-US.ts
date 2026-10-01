@@ -644,9 +644,7 @@ const lang: Language = {
   overview: {
     title: 'Overview'
   },
-  // Search-first list pages: the employee-facing Customers/Pets pages only hold a
-  // search field until something is selected, so they say so instead of rendering
-  // an empty shell (audit: employee-customers/employee-pets).
+  // Search-first pages still name the search until something is selected.
   listPages: {
     searchCustomers: 'Type to search customers...',
     searchPets: 'Type to search pets...',

@@ -2,13 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Presentation strings & hygiene (audit findings, plan step 15):
- *   - config lists without a section header (categories/openingtimes/services/
- *     documents) next to buildings/kennels/periods/vacations which have one;
- *   - the account customer card had no identity line (pets card has one);
- *   - `1 Months` grammar in the daycare subscription validity;
- *   - raw `->` in the customer detail booking range (audit:
- *     `employee-customer-detail.png`: `…2026 -> Thursday…`).
+ * Presentation strings & hygiene: config lists without a section header, the account
+ * customer card's missing identity line, `1 Months` grammar, and raw `->` in the
+ * customer detail booking range.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

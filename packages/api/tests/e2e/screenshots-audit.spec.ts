@@ -3,18 +3,13 @@ import type { Locator, Page } from '@playwright/test'
 import { initializePage, login } from './setup'
 
 /**
- * Frontend visual audit capture.
+ * Frontend visual audit capture: every renderable route in
+ * packages/app/src/router/routes.ts (minus the OAuth redirects) at desktop
+ * (1440x900) and mobile (375x812), fullPage, in a fresh English context, plus a set
+ * of interaction flows that only OPEN UI and close with Escape (nothing submitted).
  *
- * Shoots every renderable route in packages/app/src/router/routes.ts (minus the
- * OAuth redirects) at desktop (1440x900) and mobile (375x812), fullPage, in a
- * fresh English browser context, plus a fixed set of key interaction flows.
- *
- *   /account/* is shot twice: once as admin (no seeded customer profile →
- *   empty state) and once as test1@petboarding.app (seeded customer 1 → real
- *   content).
- *
- * Flows only OPEN UI state (menus/dialogs) and close again with Escape —
- * nothing is submitted, per the no-manual-mutation rule.
+ * /account/* is shot twice: as admin (no seed → empty state) and as
+ * test1@petboarding.app (seeded customer 1 → real content).
  *
  * Run (test stack up, default base URL https://petboarding.localhost):
  *   cd packages/api
@@ -22,19 +17,6 @@ import { initializePage, login } from './setup'
  *     tests/e2e/screenshots-audit.spec.ts --reporter=list
  *
  * Screenshots land in packages/api/test-results/frontend-audit/<viewport>/.
- *
- * Selector provenance (all observed in the repo, none invented):
- *   - search button        data-testid="search-button"  (AccountsTable.vue:20)
- *   - booking approval     data-testid="booking-approval-button"
- *                                                          (bookings.spec.ts:36)
- *   - pet edit             data-testid="edit-button"
- *                            (employee/pets.spec.ts:31 — on /employee/pets/2)
- *   - account FAB          #fabAdd                      (account.spec.ts:83)
- *   - drawer toggle        aria-label="Menu"             (Md3Layout.vue:10,44)
- *   - overflow menu        header button last            (screenshots-admin.spec.ts:21)
- *   - user menu            header round button minus the mobile Menu toggle
- *                            (MainLayout.vue:6; Md3Layout.vue:5-12 prepends a
- *                             round aria-label="Menu" button on small screens)
  */
 
 const OUT = 'test-results/frontend-audit'
@@ -134,15 +116,7 @@ const CUSTOMER_ACCOUNT_ROUTES: [string, string][] = [
 /** Routes that render calendars/charts and need longer to settle. */
 const SLOW = /agenda|kennellayout|occupancy|overview/
 
-/**
- * Apply the requested viewport, then log in at that width.
- *
- * This used to log in at 1440 first (the header's Login affordance was
- * pointer-blocked at 375px by the drawer container's row — a symptom of the
- * screen-breakpoint defect). The defect is fixed and
- * `frontend/mobile-shell.spec.ts` guards login at 375, so the capture logs in
- * where it shoots.
- */
+/** Apply the requested viewport, then log in at that width (login works at 375px now). */
 async function loginAtViewport(
   page: Page,
   email: string,
@@ -170,8 +144,7 @@ async function shoot(page: Page, routes: [string, string][], viewport: string) {
   }
 }
 
-// Not serial: a single failing capture must not skip the remaining viewports
-// (workers: 1 already keeps the runs sequential).
+// Not serial: one failing capture must not skip the other viewports (workers: 1).
 
 for (const viewport of VIEWPORTS) {
   test(`admin routes — ${viewport.name}`, async ({ browser }) => {
@@ -203,13 +176,11 @@ for (const viewport of VIEWPORTS) {
   })
 
   test(`interaction flows — ${viewport.name}`, async ({ browser }) => {
-    // Was 300000: the mobile half (23 routes + flows) legitimately needs more.
+    // 180s: the mobile half (23 routes + flows) needs more than the default.
     test.setTimeout(180000)
     const page = await initializePage({ browser })
     await loginAtViewport(page, ADMIN.email, ADMIN.password, viewport)
-    // Every screenshot in this test is capped: an uncapped page.screenshot() on a
-    // stuck page waits out the whole test budget (that is what the 180s timeouts
-    // showed on the Pets page).
+    // Cap every screenshot: an uncapped page.screenshot() on a stuck page waits out the budget.
     const shot = (slug: string) =>
       Promise.race([
         page.screenshot({ path: `${OUT}/${viewport.name}/flow-${slug}.png` }),
@@ -217,21 +188,13 @@ for (const viewport of VIEWPORTS) {
       ])
 
     const headerButtons = page.locator('header button')
-    // User menu = the only round header button that isn't the mobile drawer
-    // toggle (Md3Layout.vue:5-12 prepends a round aria-label Menu button on
-    // small screens; Quasar renders the round prop as .q-btn--round; the
-    // overflow button is flat).
+    // User menu = the only round header button that isn't the mobile drawer toggle.
     const userMenuButton = page.locator(
       'header button.q-btn--round:not([aria-label=Menu])'
     )
 
-    // At 375px the header's buttons are pointer-blocked (the drawer container's
-    // row covers them — probed 2026-09-23; asserted in the frontend specs). The
-    // capture records the defect but still opens the menu so the shot exists:
-    // a real click when it lands, a DOM dispatch otherwise.
-    // Probe 2026-09-24: a plain click opens the menu (aria-expanded flips, .q-menu
-    // renders), but in sweep runs it intermittently does not — so check, then retry
-    // through a DOM dispatch before failing.
+    // At 375px the header buttons are pointer-blocked, so click when it lands and fall back
+    // to a DOM dispatch so the shot still exists.
     const menuAfter = async (locator: Locator) => {
       const menu = page.locator('.q-menu').last()
       try {
@@ -291,8 +254,7 @@ for (const viewport of VIEWPORTS) {
       await delay(400)
     }
 
-    // 4. Booking approval menu — open the menu only, Escape before any
-    //    Approve/Reject selection (no-manual-mutation rule).
+    // 4. Booking approval menu — open only, Escape before any Approve/Reject.
     if (viewport.name === 'desktop') {
       await page.goto('/admin/bookings')
       await page
@@ -300,8 +262,6 @@ for (const viewport of VIEWPORTS) {
         .catch(() => {})
       await delay(2000)
       // Seed-independent: any pending booking that exposes the approval button.
-      // The old `hasText: 'name5'` precondition drifted when the default filter
-      // stopped listing bookings 1-7 (only the February booking renders).
       const approvalButton = page
         .locator('.q-expansion-item [data-testid="booking-approval-button"]')
         .first()
@@ -315,8 +275,7 @@ for (const viewport of VIEWPORTS) {
       await delay(400)
     }
 
-    // 5. Pet edit dialog — open only, Escape without submitting. The edit
-    //    button lives on the pet detail page (employee/pets.spec.ts:31).
+    // 5. Pet edit dialog — open only, Escape without submitting.
     if (viewport.name === 'desktop') {
       await page.goto('/employee/pets/2')
       await page
@@ -361,10 +320,7 @@ for (const viewport of VIEWPORTS) {
       .waitForLoadState('networkidle', { timeout: 8000 })
       .catch(() => {})
     await delay(2000)
-    // The rail FAB #fabAdd renders in the drawer MINI template with gt-sm
-    // (Md3Layout.vue:49-51 + NavigationRailFabs.vue:5-7) — desktop only. On
-    // mobile the create button is the id-less sticky FAB (lines 41-55), the
-    // only button inside the q-page-sticky outlet.
+    // #fabAdd is the desktop rail FAB; on mobile the create button is the id-less sticky FAB.
     const fab =
       viewport.name === 'desktop'
         ? page.locator('#fabAdd')

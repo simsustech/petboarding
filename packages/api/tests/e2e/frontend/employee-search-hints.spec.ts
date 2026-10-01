@@ -2,12 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * `/employee/customers` and `/employee/pets` are search-first: the seeded audit
- * captures (`employee-customers.png`, `employee-pets.png`) show a toolbar with a
- * search field and an otherwise empty page, with nothing saying why.
- *
- * The pages now name the search ("Type to search ...") and, while nothing is
- * selected, say what selecting something will show.
+ * `/employee/customers` and `/employee/pets` are search-first: the pages name the
+ * search and, while nothing is selected, say what selecting will show.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

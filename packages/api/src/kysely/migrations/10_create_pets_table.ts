@@ -33,8 +33,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .execute()
 
-  // Functional GIN index for pet search — see the note in migration 07. The
-  // `unaccented` configuration is created there; the expression MUST stay in
+  // Pet search GIN index; `unaccented` is created in migration 07. MUST stay in
   // sync with petSearchVector() in src/repositories/search.ts.
   await sql`
     CREATE INDEX pets_search_idx ON pets USING GIN (

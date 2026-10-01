@@ -5,15 +5,9 @@ import { searchCustomers } from './customer.js'
 import { buildSearchTsQuery } from './search.js'
 
 /**
- * Regression cover for the two customer/pet search defects:
- *
- *   1. articles/particles (`van`, `de`, `het`, `een`, …) acted as match criteria,
- *      so `van Huppeldepup` matched everyone whose name contained `van`.
- *   2. accents were not folded, so `Madel` did not find `Mädel`.
- *
- * Runs against the test stack's database (packages/api/.env → localhost), like
- * the sibling repository tests. `searchCustomers` only returns customers that
- * have at least one pet (the query inner-joins pets), so every fixture gets one.
+ * Regression cover for the two customer/pet search defects: articles/particles
+ * (`van`, `de`, `het`, …) acting as match criteria, and accents not being folded
+ * (`Madel` not finding `Mädel`).
  */
 
 const FIRST_PREFIX = 'Searchtest'

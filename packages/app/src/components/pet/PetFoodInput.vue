@@ -106,8 +106,8 @@ const updateKey = (key: string, value: unknown) =>
 </script>
 
 <style scoped>
-/* Kept: one component's compact inline number+select combo. Every rule below is scoped
-   to `.pet-food-input` or its internal row, so nothing here generalises to Quasar. */
+/* One component's compact inline number+select combo; every rule below is scoped to
+   `.pet-food-input`. */
 :deep(input[type='number']) {
   -moz-appearance: textfield;
 }

@@ -4,13 +4,8 @@ import { initializePage, login } from '../setup'
 
 /**
  * Nav drift: the drawer's Vacations item pointed at `/admin/vacations`, which no
- * route defines (routes.ts only has `/admin/configuration/vacations`), so the nav
- * dropped the user on the 404 page. Screenshot provenance:
- * `test-results/frontend-audit/desktop/admin-vacations-drawer-target.png`.
- *
- * The item sits inside two collapsed groups (Administrator → Configuration), so the
- * test opens them the way a user does and then asserts the item's href before
- * clicking through — the href is the drift.
+ * route defines. The item sits inside two collapsed groups, so the test opens them
+ * like a user and asserts the href before clicking through.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

@@ -30,17 +30,14 @@ const lang = useLang()
 </script>
 
 <style scoped>
-/* Kept — local, not migratable: Quasar ships no navigation-rail component, so no
-   generic Quasar selector describes this app's `.navigation-rail`. Its indicator
-   geometry and the active destination's colour roles are app policy. */
+/* Local, not migratable: Quasar ships no navigation-rail component, so no generic
+   Quasar selector describes this app's `.navigation-rail`. */
 .navigation-rail:deep(.q-tab__content) {
   min-width: 52px;
 }
 /*
- * md3 rail: the label truncates deliberately inside the 80px rail — a
- * single-line ellipsis, never a layout resize (audit: "Administrato"
- * hard-clipped mid-word). max-width ties the label to its content box so
- * no label can overflow the tab at any translation length.
+ * Truncate the label with a single-line ellipsis inside the 80px rail (never a
+ * layout resize); max-width ties it to its content box at any translation length.
  */
 .navigation-rail:deep(.q-tab__label) {
   max-width: 100%;
@@ -64,14 +61,10 @@ const lang = useLang()
 }
 
 /*
- * md3 navigation rail: the active destination's icon and label take
- * `on-secondary-container`, because they sit on the secondary-container
- * indicator (m3.material.io/components/navigation-rail/specs — color roles
- * 2/3; same pairing the preset's own md3-lists.json records for selected
- * text). The preset's generic `.q-tab--active { color: primary }` is correct
- * for md3 *tabs* — the selected tab label is primary — and wrong for a rail,
- * so the correction is scoped here rather than applied to the shared rule.
- * Both tokens switch on `.body--dark`, so one declaration covers both themes.
+ * The active destination sits on the secondary-container indicator, so its icon
+ * and label take `on-secondary-container` (md3 rail colour roles), overriding the
+ * preset's `.q-tab--active { color: primary }` tab rule. Both tokens switch on
+ * `.body--dark`, so one declaration covers both themes.
  */
 .navigation-rail:deep(.q-tab--active) {
   color: var(--q-on-secondary-container);

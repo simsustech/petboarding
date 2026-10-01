@@ -145,8 +145,8 @@ export const userCustomerDaycareSubscriptionRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getCustomerDaycareSubscriptions: procedure.query(async ({ ctx }) => {
-    // Unauthenticated callers get BAD_REQUEST; an authenticated account without a
-    // customer profile is a valid state (staff accounts) — empty, not an error.
+    // A staff account has no customer profile — that is valid, so return empty;
+    // BAD_REQUEST is only for unauthenticated callers.
     if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
 
     const customer = await findCustomer({
@@ -160,7 +160,6 @@ export const userCustomerDaycareSubscriptionRoutes = ({
       criteria: {
         customerId: customer.id,
         expirationDate: new Date().toISOString().slice(0, 10),
-        // date: new Date().toISOString().slice(0, 10),
         statuses: [
           CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
           CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN

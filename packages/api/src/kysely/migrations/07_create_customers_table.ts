@@ -23,10 +23,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .execute()
 
-  // Language-neutral full-text search. `unaccented` is the stock `simple` parser
-  // plus the stock `unaccent` dictionary: it folds accents/diacritics so that
-  // "Madel" finds "Mädel", but deliberately does NOT stem or drop stopwords —
-  // the query layer owns both (see src/repositories/search.ts).
+  // Language-neutral search: `unaccented` = the stock `simple` parser plus the
+  // `unaccent` dictionary. It folds accents but does not stem or drop stopwords
+  // — the query layer owns those (see src/repositories/search.ts).
   await sql`
     CREATE EXTENSION IF NOT EXISTS unaccent;
     CREATE TEXT SEARCH CONFIGURATION unaccented (copy = pg_catalog.simple);
@@ -35,10 +34,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
       WITH unaccent, simple;
   `.execute(db)
 
-  // A functional GIN index rather than a STORED generated column, so the
-  // searchable vector can change later without a table rewrite. The expression
-  // MUST stay in sync with customerSearchVector() in src/repositories/search.ts,
-  // or Postgres will not use this index.
+  // Functional GIN index (not a STORED generated column) so the vector can change
+  // without a table rewrite. MUST stay in sync with customerSearchVector() in
+  // src/repositories/search.ts or Postgres will not use it.
   await sql`
     CREATE INDEX customers_search_idx ON customers USING GIN (
       to_tsvector('unaccented',

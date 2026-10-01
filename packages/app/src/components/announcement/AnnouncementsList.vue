@@ -69,10 +69,8 @@ export default {
 
 <style scoped>
 /*
- * Readable in place: Quasar's q-item__label is nowrap+hidden, which
- * hard-clipped long announcements with no way to read them (audit).
- * Unlayered scoped CSS outranks the preset's layered list rules; no
- * colours involved, so dark mode is untouched.
+ * Quasar's `q-item__label` is nowrap+hidden and clipped long announcements. Unlayered
+ * scoped CSS outranks the preset's layered list rules.
  */
 .announcement-message {
   white-space: normal;

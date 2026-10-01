@@ -5,13 +5,8 @@ import { db } from '../../kysely/index.js'
 import { employeePetRoutes } from './pets.js'
 
 /**
- * The employee `searchPets` procedure owns the minimum query length. It is the
- * second seam for this change (the repository `searchPets` is the first): the
- * floor lives here, above the repository, so it is only observable through the
- * procedure.
- *
- * A 1-character query is red-capable because the seeded pet token (`xena`)
- * matches the prefix `x:*` — without the floor the procedure would return it.
+ * The `searchPets` procedure owns the minimum query length: a 1-character query
+ * would otherwise match the seeded `xena` token via the `x:*` prefix.
  */
 
 const t = initTRPC.create()

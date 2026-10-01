@@ -10,9 +10,8 @@ import {
 import type { QuasarTheme } from 'unocss-preset-quasar/theme'
 import type { Locales } from '@simsustech/quasar-components/form'
 
-// Audit: toasts opened at the bottom and covered the mobile footer.
-// Applied here (not vitrify's `config.notify`, which Quasar ignored) so every
-// Notify.create in the app inherits it.
+// Top, not bottom (the bottom covered the mobile footer). Set here rather than in
+// vitrify's `config.notify`, which Quasar ignored.
 Notify.setDefaults({ position: 'top' })
 
 const lang = useLang()
@@ -42,19 +41,10 @@ export const PET_ALERT_COLORS = Object.fromEntries(
 ) as Record<string, string>
 
 /**
- * The alert icons, written as literals instead of derived from `PET_ALERTS`.
- *
- * UnoCSS's content scan reaches this file — `src/**\/configuration.ts` is an
- * entry in `vitrify.config.ts`'s `content.pipeline.include` — but it does not
- * reach `@petboarding/tools`, where `PET_ALERTS` declares the icon values. A
- * class that exists only as a value there is never generated, and `i-mdi-bed` is
- * named in no other file, so the "needs rest" alert rendered an empty box in
- * every legend while its three siblings (all mentioned somewhere else) worked.
- * The other `PET_ALERT_*` maps keep their derivation: they are consumed at
- * runtime, not compiled into class names.
- *
- * `Record<PET_ALERT_CONDITIONS, …>` keeps the map exhaustive, so a condition
- * added to the enum fails to compile until its icon is listed here too.
+ * Icons as literals, not derived from `PET_ALERTS`: UnoCSS's content scan reaches
+ * this file but not `@petboarding/tools`, where the icon values live — a class that
+ * exists only as a value there is never generated. `Record<…>` keeps the map
+ * exhaustive, so a new condition fails to compile until its icon is listed.
  */
 export const PET_ALERT_ICONS: Record<PET_ALERT_CONDITIONS, string> = {
   [PET_ALERT_CONDITIONS.IN_HEAT]: 'i-mdi-paw',

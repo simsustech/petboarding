@@ -2,16 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Stock labels (62×100 mm boxes, `VITE_LABEL_WIDTH/HEIGHT`, minus 4mm padding).
- * Observed in `employee-labels-pets.png` / `print-pets-labels.png`:
- *
- *   - the name was cut in code (`truncate(..., 12)` → `name2 lastNam...`),
- *   - "Medicines" rendered a bare red ✕ for "no medicines" (reads as an error),
- *   - an empty Particularities row and an empty Services row each rendered a
- *     dangling `-`.
- *
- * The layout must stay inside the mm-sized box: content never spills past the box
- * and the print `@page` never clips or grows a second page.
+ * Stock labels (62×100 mm boxes, `VITE_LABEL_WIDTH/HEIGHT`, minus 4mm padding) fit
+ * their box and read correctly: the full name is not truncated in code, a "no
+ * medicines" status is captioned rather than a bare red ✕, and empty rows are gone.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

@@ -6,13 +6,9 @@ import { initializePage, registerAndLogin } from './setup'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
- * Pick a q-select time option and prove it committed.
- *
- * Quasar keeps a just-closed menu in the DOM while it animates, so clicking the next
- * field can dismiss its popup immediately and the click lands on a stale `option`
- * from the previous menu — a silent no-op. The ARIA snapshot of 2026-09-24 shows the
- * result: End time focused (`[active]`) but empty (`[invalid]`, "Field is required"),
- * which blocked Submit and left the test waiting for the OK confirmation.
+ * Pick a q-select time option and prove it committed. Quasar keeps a just-closed menu
+ * in the DOM while it animates, so a next-field click can land on a stale `option`
+ * from the previous menu, silently leaving the field empty and blocking Submit.
  */
 const selectTime = async (page: Page, label: string, value: string) => {
   const field = page.getByLabel(label)
@@ -69,14 +65,9 @@ const pet = {
 const newPetName = faker.person.firstName()
 
 /**
- * Pinned: 2040 + a run-varying day, snapped to a weekday.
- *
- * The old `faker.soon({days: 90})` drew dates inside the window that previous runs'
- * own bookings occupy (measured: customer 1 already carried 2026-09-23..2026-10-01
- * from an earlier run), so later runs overlapped themselves and the form blocked the
- * confirmation. Seeded periods/vacations live in 2030, seeded bookings in 2024/2026
- * — 2040 collides with neither, the minute-based offset keeps consecutive runs apart,
- * and the weekday snap satisfies Evening (opening_times daysOfWeek 1-5).
+ * 2040 + a run-varying day, snapped to a weekday: `faker.soon` drew dates inside the
+ * window previous runs occupy, so runs overlapped themselves and blocked the
+ * confirmation. 2040 collides with no seeded data, and the weekday satisfies Evening.
  */
 const bookingStart = (() => {
   const d = new Date(
@@ -221,31 +212,36 @@ test.describe('Account', async () => {
     await page.locator('#fabAdd').waitFor()
     await page.locator('#fabAdd').click()
 
-    await page.locator('.q-date__calendar-item--in').first().click()
+    // Pick a range as: click a day, advance a month, click the end. Gate on the day cell
+    // (not the month label, which re-renders first) so the second click lands in the new
+    // month — otherwise from===to, the range resets, and the time selects stay disabled.
+    const dayCell = page.locator('.q-date__calendar-item--in').first()
+    const dayCellLabel = dayCell.locator('button')
+    await dayCell.click()
+    const startCellLabel = await dayCellLabel.getAttribute('aria-label')
     await page
       .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
       .click()
     // await page.locator('div:nth-child(3) > .q-btn').first().click()
-    await page.locator('.q-date__calendar-item--in').first().click()
+    // Gate on the cell we are about to click: it must belong to the new month.
+    await expect(dayCellLabel).not.toHaveAttribute(
+      'aria-label',
+      startCellLabel!
+    )
 
-    // Click the control (last wrapper div in this test): the wrapper click did not
-    // open the popup reliably, so the `name1` option never appeared (30s wait).
+    await dayCell.click()
+
+    // Click the control: the wrapper click did not reliably open the popup.
     await page.getByLabel('Pets', { exact: true }).click()
-    // Book the account's own seeded pet (first option): `name1` belongs to customer 1,
-    // not this account, so naming it made the option wait time out. The pet this test
-    // just created carries no vaccination history, which surfaces the form's
-    // vaccination warning and left End time uncommitted ("Field is required").
+    // Book the account's own pet (first option): `name1` belongs to another customer,
+    // and this pet has no vaccination history.
     await page.getByRole('option').first().click()
 
-    // Close the pets multi-select dropdown before the time fields — the same
-    // reason Add pet presses Escape after the breed autocomplete: a lingering
-    // popup swallows the next field's click (probe 2026-09-24).
+    // Close the pets dropdown before the time fields: a lingering popup swallows the next click.
     await page.keyboard.press('Escape')
     await page.waitForTimeout(300)
 
-    // Click the controls: the wrapper-div clicks left End time empty
-    // ("Field is required" in the failure screenshot of 2026-09-24), which blocked
-    // Submit and therefore the OK confirmation this test waits for.
+    // Click the controls: wrapper-div clicks left End time empty and blocked Submit.
     await selectTime(page, 'Start time*', booking.startTime)
     await selectTime(page, 'End time*', booking.endTime)
 

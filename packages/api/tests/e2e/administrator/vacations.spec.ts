@@ -60,13 +60,9 @@ test.describe('Vacations', async () => {
 
     await page.locator('#fabAdd').click()
     await page.getByLabel('Name').fill(vacation.name)
-    // A vacation needs a real range. Quoting only the first day submits
-    // `endDate: ""`, which the API rejects ("invalid input syntax for type date"),
-    // so the create never reaches the list. The old second click followed the month
-    // navigation immediately and was lost in the calendar's slide animation
-    // (2026-09-24: the trigger read "Sep 1 - ?" with no day pressed). Navigate to
-    // the next month, wait until it is really on screen, then pick two distinct days
-    // by their accessible names.
+    // A vacation needs a real range: quoting only the first day submits `endDate: ""`,
+    // which the API rejects. Navigate to the next month, wait until it is on screen,
+    // then pick two distinct days by name.
     const dialog = page.locator('.q-dialog:visible').last()
     const nextMonth = new Date(
       Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, 1)

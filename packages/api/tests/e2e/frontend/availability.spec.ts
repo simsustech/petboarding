@@ -2,11 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * `/availability` opens with an empty range `{from:'', to:''}`, so Quasar's q-date
- * header renders two em-dashes where the selected range should be (observed in
- * `frontend-audit/desktop/availability.png`, and probed live: `.q-date__header-title-label`
- * and `.q-date__header-subtitle` both contain `—`). The card now says what is
- * expected instead, and drops back to real dates once a range is chosen.
+ * `/availability` opens with an empty range, so Quasar's q-date header would render
+ * two em-dashes; the card shows a hint instead and drops back to real dates once a
+ * range is chosen.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -26,9 +24,7 @@ test.describe('availability range header', () => {
     const header = page.locator('.q-date__header').first()
     await expect(header).toBeVisible({ timeout: 10000 })
 
-    // CSS hides the two placeholder labels and prints the hint as ::after content,
-    // so both assertions have to read computed style — the dashes are still in
-    // textContent (hidden), and pseudo-element text is invisible to getByText.
+    // The dashes are hidden in CSS and the hint is `::after` content, so assert computed style.
     const state = await page.evaluate(() => {
       const visibleDash = (selector: string) => {
         const el = document.querySelector(selector)
@@ -51,11 +47,8 @@ test.describe('availability range header', () => {
     expect(state.after).toContain('Select arrival and departure')
   })
 
-  // Measured 2026-09-24: every `.q-date__day` in the seeded window carries
-  // `q-date__day--disabled`, so the populated branch of the CSS cannot be reached
-  // without changing the seed (periods/bookings block the calendar). Left as an
-  // explicit fixme rather than a passing-but-empty assertion; needs a seed with an
-  // open availability window to run.
+  // Fixme: every day in the seeded window is disabled, so the populated CSS branch is
+  // unreachable without a seed with an open availability window.
   test.fixme('shows the real dates once a range is selected', async ({
     browser
   }) => {

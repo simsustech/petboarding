@@ -89,8 +89,7 @@ const dateRange = ref({
   to: ''
 })
 
-// An empty range makes q-date print two em-dashes where the selection should be
-// (audit: availability.png). Scoped CSS swaps them for one explanatory hint.
+// An empty range makes q-date print two em-dashes; scoped CSS swaps them for one hint.
 const rangeEmpty = computed(() => !dateRange.value.from || !dateRange.value.to)
 const hintStyle = computed(() => ({
   '--availability-hint': JSON.stringify(lang.value.availability.selectDates)
@@ -139,8 +138,8 @@ const options = (date: string) => {
 </script>
 
 <style scoped>
-/* Kept: app content injected into Quasar's date header (`--availability-hint`), keyed
-   off this app's own `.range-empty` state class — nothing generic to migrate. */
+/* App content injected into Quasar's date header (`--availability-hint`), keyed off
+   this app's own `.range-empty` state — nothing generic to migrate. */
 .range-empty :deep(.q-date__header-title-label),
 .range-empty :deep(.q-date__header-subtitle) {
   display: none;

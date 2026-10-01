@@ -2,17 +2,10 @@ import { test, expect, type Page } from '@playwright/test'
 import { initializePage, login } from './setup'
 
 /**
- * Dark-mode visual capture.
- *
- * The light-mode sweep lives in `screenshots-audit.spec.ts`; this one exists
- * because dark is a *second* styling path: Quasar switches on `body.body--dark`,
- * and the preset's wind4 fragment maps wind4's `dark:` variant to that class
- * (`quasarWind4Options` — wind4's Tailwind default is `.dark`, which Quasar never
- * sets, so every `dark:*` utility would be dead CSS without it).
- *
- * App extensions are the other reason: QCalendar/QMarkdown/QMediaPlayer CSS now
- * ships *only* from the preset (ADR 0005), so this run is what proves their dark
- * tokens resolve rather than falling back to light values.
+ * Dark-mode visual capture. Dark is a second styling path: Quasar switches on
+ * `body.body--dark`, which the preset's wind4 fragment maps wind4's `dark:` variant
+ * to, and the app extensions' CSS ships only from the preset — so this run proves
+ * their dark tokens resolve rather than falling back to light values.
  *
  * Run (test stack up):
  *   cd packages/api

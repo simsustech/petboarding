@@ -2,11 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { findKennels } from './kennel.js'
 
 /**
- * The kennel list sorted nowhere by default (`find` only ordered when the caller
- * passed `sortBy`), so Postgres handed rows back in a lexical-by-name order and the
- * config screen rendered `1,10,2,3…` (observed in
- * `frontend-audit/desktop/admin-config-kennels.png`). Kennels carry an `order`
- * column for exactly this purpose.
+ * Guards the kennel list's default order: the configured `order` column, not
+ * Postgres's incidental lexical-by-name row order.
  */
 
 describe('findKennels default ordering', () => {
@@ -15,7 +12,7 @@ describe('findKennels default ordering', () => {
     const names = kennels.map((kennel) => kennel.name)
     expect(names.length).toBeGreaterThan(1)
     expect(names).toEqual(kennels.map((kennel) => String(kennel.id)))
-    const byOrder = [...kennels].sort((a, b) => a.order - b.order)
+    const byOrder = [...kennels].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     expect(names).toEqual(byOrder.map((kennel) => kennel.name))
   })
 })

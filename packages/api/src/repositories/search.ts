@@ -1,25 +1,12 @@
 /**
  * Shared free-text search helpers for the customer and pet repositories.
  *
- * The database indexes a *language-neutral* tsvector (config `unaccented` = the
- * `simple` parser + the `unaccent` dictionary — no stemmer and no stopwords; see
- * migrations 07/10). Accent folding therefore happens in the database, but two
- * responsibilities deliberately stay on the query side:
- *
- *   - stopwords: articles/particles (`de`, `het`, `van`, `the`, `le`, …) must
- *     never act as match criteria, so a query made only of them returns nothing
- *     instead of every row that happens to contain one.
- *   - AND between terms: `van Huppeldepup` must narrow to the one person, not
- *     widen (via OR) to everyone whose name contains `van`.
- *
- * The caller's original spelling is passed through untouched — `unaccent` folds
- * it on the database side.
+ * The database folds accents (the `unaccented` tsvector config, see migrations
+ * 07/10); stopword removal and AND-joining stay on the query side.
  */
 export const SEARCH_CONFIG = 'unaccented'
 
-// Function words that must never be searched on, across the app's Latin-script
-// data (Dutch first, then the common German/French/Spanish/English particles).
-// This is tunable policy, not fixed truth — extend as the customer base grows.
+// Function words that must never be match criteria. Tunable: extend as needed.
 const SEARCH_STOPWORDS = new Set<string>([
   // nl
   'de',
@@ -112,14 +99,9 @@ const stopwordKey = (term: string): string =>
     .replace(/\p{Diacritic}/gu, '')
 
 /**
- * Turn a raw search phrase into a safe tsquery string for the `unaccented`
- * config: unicode letters/numbers are preserved (the database folds accents),
- * stopwords are dropped, the remaining terms are AND-joined, and every term is
- * prefix-matched (`:*`). Returns '' when nothing searchable remains, which
- * callers treat as "no rows".
- *
- * Only `\p{L}\p{N}` characters survive, so no tsquery operator the caller typed
- * (`&`, `|`, `!`, parentheses) can leak into the query text.
+ * Build a safe tsquery: drop stopwords, AND-join and prefix-match (`:*`) the
+ * rest, keeping only `\p{L}\p{N}` so no caller-typed operator can leak in.
+ * Returns '' when nothing is searchable.
  */
 export function buildSearchTsQuery(searchPhrase: string): string {
   if (!searchPhrase || typeof searchPhrase !== 'string') return ''
@@ -139,12 +121,8 @@ export function buildSearchTsQuery(searchPhrase: string): string {
 }
 
 /**
- * The indexed tsvector expression for a customer row.
- *
- * MUST stay structurally identical to the expression in migration 07
- * (`customers_search_idx`) or Postgres will not use the index. `alias` is the
- * query's table alias (`'c.'`); the empty string is the unqualified form used in
- * the index definition.
+ * Indexed tsvector expression for a customer row. MUST stay identical to the
+ * one in migration 07 (`customers_search_idx`) or Postgres will not use it.
  */
 export function customerSearchVector(alias = ''): string {
   return (
@@ -156,10 +134,7 @@ export function customerSearchVector(alias = ''): string {
   )
 }
 
-/**
- * The indexed tsvector expression for a pet row. Must stay in sync with
- * migration 10 (`pets_search_idx`). See {@link customerSearchVector}.
- */
+/** Indexed tsvector expression for a pet row (migration 10, `pets_search_idx`). */
 export function petSearchVector(alias = ''): string {
   return (
     `to_tsvector('${SEARCH_CONFIG}', ` +

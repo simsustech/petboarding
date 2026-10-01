@@ -2,16 +2,9 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * The seeded documents are what the print routes render. Two defects, both visible
- * in the audit captures:
- *
- *   - `/print/termsandconditions` showed the heading and nothing else, because the
- *     seed's `content` was the literal string `# Terms and conditions`
- *     (`seeds/test.ts:348`) — the renderer was fine, the content was empty.
- *   - `/print/privacypolicy` put the product name in the H1 and the document title in
- *     a body line, so the page's heading read "Petboarding".
- *
- * Provenance: `test-results/frontend-audit/desktop/print-termsandconditions.png`.
+ * The seeded documents are what the print routes render: the terms content must not
+ * be just the heading, and the privacy page's H1 must be the document title, not the
+ * product name.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }

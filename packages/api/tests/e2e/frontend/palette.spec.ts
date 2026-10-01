@@ -2,15 +2,12 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Palette and contrast probes against the preset that ships the app's CSS
- * (precedent: `screenshots-rewrite.spec.ts` asserted computed styles this way).
+ * Palette and contrast probes against the preset that ships the app's CSS.
  *
- * Measured facts that shaped these assertions:
- *   - `.text-info` → `var(--q-info)` = `#4ec8fd` (preset-harmonized, NOT stock
- *     Quasar `#31CCEC`) → the info icons are already themed: guard, not a fix.
- *   - `.text-green` → `rgb(74 222 128)` (wind4's raw green-500) while the themed
- *     success role is `.text-positive` → `var(--q-positive)` = `#00b879`.
- *   - print pages inherit a dark session (handoff §1): black-on-black body text.
+ * Measured facts: `.text-info` resolves to the preset role `#4ec8fd` (not stock
+ * Quasar `#31CCEC`); `.text-green` is wind4's raw green-500 while the themed success
+ * role is `.text-positive`; and print pages inherit a dark session, so their body
+ * text must be forced light.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -63,8 +60,7 @@ test.describe('palette and contrast', () => {
       password: 'qjiNWdT8L'
     })
 
-    // The paid subscription renders on the customer's daycare page
-    // (CustomerDaycareSubscriptionsList.vue:37 — the `color="green"` site).
+    // The paid subscription renders on the customer's daycare page (`color="green"` site).
     await page.goto('/account/daycare')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2500)
@@ -106,8 +102,7 @@ test.describe('palette and contrast', () => {
     await page.waitForTimeout(1000)
 
     const state = await page.evaluate(() => {
-      // PrintLayout mounts under #app (not #q-app) and pins the scheme on
-      // `.print-root` — measure that element directly.
+      // PrintLayout mounts under #app and pins the scheme on `.print-root`.
       const root = document.querySelector('.print-root') as HTMLElement | null
       const target = root ?? document.body
       const bg = getComputedStyle(target).backgroundColor
@@ -132,11 +127,8 @@ test.describe('palette and contrast', () => {
     await page.waitForTimeout(3000)
 
     const state = await page.evaluate(() => {
-      // The ring is preset-owned (app-extensions/qcalendar/variables.ts declares
-      // `--q-calendar-current-color: var(--q-primary)` and
-      // `--q-calendar-border-current: var(--q-primary) 2px solid`). Today's cell is
-      // disabled in the seed, so no ring element renders — verify the token wiring
-      // itself, which is what the ring is painted from.
+      // Verify the preset's calendar token wiring (`--q-calendar-current-color` etc.);
+      // today's cell is disabled in the seed, so no ring element renders.
       const cell =
         document.querySelector('.q-calendar-month__day') ?? document.body
       const cs = getComputedStyle(cell)
@@ -234,9 +226,7 @@ test.describe('palette and contrast', () => {
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(3000)
 
-    // Under the default filter the one past booking that renders is the seeded
-    // February one (seeds/test.ts: CURRENT_YEAR-02-01..02-11, endDate < today →
-    // BookingExpansionItem/BookingItem paint the "past" surface on it).
+    // The one past booking under the default filter is the seeded February one.
     const feb1 = new Date(new Date().getFullYear(), 1, 1).toLocaleDateString(
       'en-US',
       { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }
@@ -272,8 +262,7 @@ test.describe('palette and contrast', () => {
       return { bg, text, ratio: (l1 + 0.05) / (l2 + 0.05) }
     })
 
-    // Known-good literals from the defect: the row stayed rgb(238,238,238)
-    // with rgb(195,198,207) text → 1.16–1.47:1 on a dark page.
+    // Defect literals: the row stayed rgb(238,238,238) with rgb(195,198,207) text.
     expect(
       state.bg,
       'past row must not stay light-grey rgb(238,238,238) under body--dark'
@@ -289,8 +278,7 @@ test.describe('palette and contrast', () => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await login({ page, email: ADMIN.email, password: ADMIN.password })
 
-    // The profileless admin has no contact people, so PetsPage renders its
-    // empty-state router-link (PetsPage.vue).
+    // The profileless admin has no contact people, so PetsPage renders its empty-state link.
     await page.goto('/account/pets')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)
@@ -302,8 +290,7 @@ test.describe('palette and contrast', () => {
     const color = await link.evaluate(
       (el: Element) => getComputedStyle(el).color
     )
-    // Known-good literal from the defect: the raw UA link computed
-    // rgb(0,0,238) on rgb(26,28,30) → 1.82:1.
+    // Defect literal: the raw UA link computed rgb(0,0,238) on rgb(26,28,30).
     expect(color, 'the link must wear a theme colour, not UA default').not.toBe(
       'rgb(0, 0, 238)'
     )

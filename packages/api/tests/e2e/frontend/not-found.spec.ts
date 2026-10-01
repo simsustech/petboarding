@@ -2,11 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage } from '../setup'
 
 /**
- * The 404 page rendered `fullscreen` (own layout, no header/footer) with `30vh`
- * digits and a 40% opacity subtitle, which overflowed 375px and was near-invisible
- * (observed in `frontend-audit/mobile/error404.png` + `desktop/error404.png`).
- * It now renders in the shell, at a clamped size, full contrast, with the primary
- * CTA — and the dead `<scirpt>` block is gone.
+ * The 404 used to render `fullscreen` with oversized digits and a faded subtitle,
+ * overflowing 375px. It now renders in the shell at a clamped size and full contrast.
  */
 
 const VIEWPORTS = [

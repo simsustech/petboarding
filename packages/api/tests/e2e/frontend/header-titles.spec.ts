@@ -2,11 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Header title spot-check (the unit guard in `src/router/titles.test.ts` walks the
- * whole route tree; this one proves the rendered string, not just the data):
- * `/admin/bookings` showed the site name (`Petboarding`) and `/information` a
- * blank header, because `meta.lang` was missing / the language key had no `title`
- * (audit: `admin-bookings.png`, `information.png`).
+ * Header title spot-check: the unit guard in `src/router/titles.test.ts` walks the
+ * whole route tree; this one proves the rendered string.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -24,8 +21,7 @@ test('header title names the current page, with one h1 per route', async ({
   await page.setViewportSize({ width: 1440, height: 900 })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
 
-  // The md3 layout's header title is not a `.q-toolbar-title`; assert the text
-  // the user actually reads in the bar.
+  // The md3 header title is not a `.q-toolbar-title`; assert the text the user reads in the bar.
   const headerTitle = page.locator('.q-header').first()
 
   for (const [route, expected] of ROUTES) {
@@ -37,8 +33,7 @@ test('header title names the current page, with one h1 per route', async ({
     // Exactly one h1 per visited route (the audit found 0 on 43/43 routes).
     const h1s = page.locator('h1')
     await expect(h1s, `${route} must render exactly one h1`).toHaveCount(1)
-    // textContent, not innerText: the h1 is visually hidden (sr-only), so the
-    // rendered-text accessor may report it empty.
+    // textContent, not innerText: the h1 is visually hidden (sr-only).
     expect(
       ((await h1s.textContent()) ?? '').trim(),
       `${route} h1 carries the mapped route title`

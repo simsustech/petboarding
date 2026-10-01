@@ -1,26 +1,14 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-pwa/vue" />
 /**
- * Side-effect CSS subpath export of `@simsustech/quasar-components`.
- *
- * `vite/client` only declares specifiers ending in `.css`, so the bare
- * `@simsustech/quasar-components/css` export (imported by `src/App.vue`) had no
- * type and `vue-tsc --noEmit` reported "Cannot find module". Types only: the
- * build resolves the real `dist/quasar-components.css` through package exports.
+ * Side-effect CSS subpath export of `@simsustech/quasar-components` — `vite/client`
+ * only types specifiers ending in `.css`. Types only; the build resolves the real file.
  */
 declare module '@simsustech/quasar-components/css'
 
 /**
- * Vue single-file component module declaration.
- *
- * `vue-tsc` supplies this implicitly, but plain TypeScript language servers (editors,
- * and the pi-lens check) do not — so `src/router/routes.ts`, which imports every page
- * from `../pages/*.vue`, reported 65 "Cannot find module" errors under the lens while
- * `vue-tsc --noEmit` stayed clean. Types only: no runtime or build behaviour.
- *
- * Added with the owner's approval during the /implement run of
- * `2026-09-23-playwright-screenshot-every.md` (file outside plan §(a)) — see the
- * sibling `.evaluation.md`.
+ * Vue SFC module declaration: `vue-tsc` supplies it implicitly, but plain TypeScript
+ * language servers (editors, the pi-lens check) do not. Types only.
  */
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'

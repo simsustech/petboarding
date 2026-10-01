@@ -4,14 +4,8 @@ import enUS from '../lang/en-US.js'
 import nl from '../lang/nl.js'
 
 /**
- * Nav-sync: the header title is `lang[route.meta.lang].title`, so a route without
- * `meta.lang` (or whose language key has no `title`) renders the site name instead
- * of where you are — observed as a blank/`Petboarding` header on `/information`,
- * every `/admin/*` route and `/employee/labels` in the audit captures.
- *
- * MainLayout hardened too: `lang.value[route.meta?.lang]?.title ?? configuration.TITLE`
- * (it used `lang.value[route.meta.lang].title` guarded only by the key existing,
- * which is why a key *without* a title rendered blank).
+ * Nav-sync guard: a route whose `meta.lang` is missing — or whose language key has no
+ * `title` — must fall back to the site name, not render blank.
  */
 
 interface RouteNode {
@@ -58,10 +52,12 @@ describe('nav-sync: every route declares a language title', () => {
         problems.push(`${route.full}: no meta.lang`)
         continue
       }
-      const enTitle = (enUS as Record<string, { title?: string }>)[route.lang]
-        ?.title
-      const nlTitle = (nl as Record<string, { title?: string }>)[route.lang]
-        ?.title
+      const enTitle = (enUS as unknown as Record<string, { title?: string }>)[
+        route.lang
+      ]?.title
+      const nlTitle = (nl as unknown as Record<string, { title?: string }>)[
+        route.lang
+      ]?.title
       if (!enTitle)
         problems.push(`${route.full}: en-US.${route.lang}.title missing`)
       if (!nlTitle)

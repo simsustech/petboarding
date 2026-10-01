@@ -473,9 +473,7 @@ const userRoute = {
 }
 
 const title = computed(() => {
-  // The header names the current page; a key without a title (or no key at all)
-  // falls back to the site name instead of rendering blank — the audit caught a
-  // blank header on /information and /admin/* this way.
+  // A key without a title (or no key at all) falls back to the site name, never blank.
   const key = route.meta?.lang
   const entry = key ? (lang.value as Record<string, unknown>)[key] : undefined
   if (entry && typeof entry === 'object' && 'title' in entry) {
@@ -595,27 +593,15 @@ onMounted(async () => {
 
 <style>
 /*
- * Layering used to be restated here — `.q-header { z-index: 7100 !important }`
- * and `.q-dialog { z-index: 7200 !important }` — because the preset's overlay
- * drawer sat at 7000: above the app bar (2000) and above dialogs (6000), so
- * raising the header covered dialogs and forced them up after it. Two bumps, each
- * forcing the next (probes 2026-09-24: elementFromPoint at y=26 returned the
- * drawer's row; Submit blockedBy the dialog toolbar under the header).
- *
- * The preset owns that ordering now — unocss-preset-quasar ADR 0007:
- * overlay drawer 1500 < marginals 2000 < menus/dialogs 6000 — so both overrides
- * are deleted. A new conflict here is a hole in the scale and belongs upstream,
- * not another local patch.
+ * Layering is owned upstream now — unocss-preset-quasar ADR 0007 orders
+ * overlay drawer 1500 < marginals 2000 < menus/dialogs 6000. Do not re-add
+ * z-index overrides here; a new conflict belongs upstream.
  */
 
 /*
- * Geometry, not layering — layering is upstream now (ADR 0007 puts the drawer at
- * 1500, under the app bar's 2000, so the bar paints above it). At mobile the
- * drawer renders open (translateX(0)) and its box still spans 0..812, so the top
- * 50px of its list would sit behind the app bar. Start it below the header so
- * both rows stay reachable (MD3: top app bar above the navigation drawer). The
- * 50px is this app's toolbar height: if this rule becomes universal it belongs in
- * the preset, expressed against the toolbar token, not as a literal here.
+ * Geometry, not layering: at mobile the drawer renders open and spans 0..812, so
+ * start it below the 50px app bar to keep both rows reachable (MD3: top app bar
+ * above the navigation drawer).
  */
 @media (max-width: 599px) {
   .q-drawer--fixed {

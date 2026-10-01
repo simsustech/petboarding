@@ -2,14 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Agenda calendar UX pass guards (plan 2026-09-30), one test per finding:
- *
- * Step 1 — `quiet week keeps its controls`: a quiet period used to swap the whole
- * AgendaComponent for one sentence (`AgendaPage.vue`'s `v-if="!emptyAgenda"`), so
- * the date picker, Status filter, Day/Week toggle, prev/next/Today and all 7
- * weekday headers vanished and the page landed on today's week. Red here means
- * the empty state regressed to a page-level swap: the agenda must keep its chrome
- * and show the quiet message inside the grid instead.
+ * Agenda calendar UX pass guards (plan 2026-09-30), one test per finding; each doc
+ * block below states the defect its test pins.
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
@@ -63,12 +57,7 @@ test('quiet week keeps its controls', async ({ browser }) => {
     .not.toBe(before)
 })
 
-/**
- * Step 2 — `grid fills the page`: the agenda grid used to be 258px tall inside an
- * 850px page (~590px dead space) because the outer `q-scroll-area` was sized from
- * content via a resize observer. Red here means the grid stopped filling its
- * page-height column.
- */
+/** Step 2 — the agenda grid fills its page-height column (it used to size to content). */
 test('grid fills the page', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -88,11 +77,7 @@ test('grid fills the page', async ({ browser }) => {
   ).toBeLessThanOrEqual(24)
 })
 
-/**
- * Step 2 — `mobile reachability`: the week's horizontal scroll needs an affordance
- * (`lt-md` swipe hint) and the fill-height grid must keep its last day row above
- * the fixed 80px `q-footer` — everything stays reachable on a phone.
- */
+/** Step 2 — mobile: the overflowing week shows a swipe hint and the last day row stays above the footer. */
 test('mobile reachability', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -125,12 +110,7 @@ test('mobile reachability', async ({ browser }) => {
   ).toBeLessThanOrEqual(footerBox!.y)
 })
 
-/**
- * Step 3 — `zero counts are silent`: every cell used to render `Bookings 0` +
- * `Daycare 0` with two separators even when both were 0 (finding 3). Red here
- * means empty cells are noisy again. A day with data must keep its non-zero
- * count and its chips.
- */
+/** Step 3 — a cell with both counts at zero renders no labels; a day with data keeps its count and chips. */
 test('zero counts are silent', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -148,12 +128,7 @@ test('zero counts are silent', async ({ browser }) => {
   await expect(page.getByText('name2').first()).toBeVisible()
 })
 
-/**
- * Step 4 — `legend lives behind a button`: both legends plus the 9-entry block
- * used to render inline and push the grid below the fold on a phone (finding 4).
- * Red here means the legends are back inline. The Last-name toggle must stay
- * outside the menu.
- */
+/** Step 4 — both legends live behind a button; the Last-name toggle stays inline. */
 test('legend lives behind a button', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -174,14 +149,7 @@ test('legend lives behind a button', async ({ browser }) => {
   await expect(page.getByText('In heat')).toBeVisible()
 })
 
-/**
- * Step 5 — `day view lays its content on a readable measure`: the day band used
- * to run its content full-width (1174px measured) with the chips as 12em islands
- * and no centred measure (finding 5). Red here means the 48rem centred container
- * is gone. The name guard keeps chip names readable. (Amended 2026-10-01: the
- * plan's original `chip wider than 12em` clause was unachievable — PetChip's
- * `max-width: 12em` is kept through step 6.)
- */
+/** Step 5 — the day view centres its content on a readable 48rem measure; chip names stay readable. */
 test('day view lays content on a readable measure', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -236,13 +204,7 @@ test('day view lays content on a readable measure', async ({ browser }) => {
   expect(clipped, 'the chip name is not clipped').toBe(false)
 })
 
-/**
- * Step 6 — `badges do not overlap the name`: the badge set (food / medicines /
- * vaccinations / pet alerts / #badge) used to float at `top: -10px` over the
- * chip's label — on the seeded stays chips all 3 badges intersect the name's box
- * (probed: 5 of 6 alert chips hit). Red here means badges paint over the name
- * again. Every alert chip must keep its badges and an unclipped name.
- */
+/** Step 6 — badges never overlap the chip's name; every alert chip keeps its badges and an unclipped name. */
 test('badges do not overlap the name', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })

@@ -412,8 +412,7 @@ const daycarePetCounts = computed(() => {
 const getNumberOfDaycarePets = (date: string) =>
   daycarePetCounts.value[date] || 0
 
-// The period's emptiness is part of this surface: the page must not have to
-// re-derive it from the same two arrays.
+// The period's emptiness belongs to this surface; the page must not re-derive it.
 const emptyPeriod = computed(
   () =>
     bookings?.value !== undefined &&

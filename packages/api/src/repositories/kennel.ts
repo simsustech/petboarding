@@ -71,8 +71,7 @@ function find({
     query = query.limit(pagination.limit).offset(pagination.offset)
   }
 
-  // Without an explicit sort the list follows the kennels' configured order —
-  // never the incidental (lexical-by-name, `1,10,2`) row order.
+  // Fall back to the configured `order` when the caller gave no sort.
   if (!sorted) query = query.orderBy('order', 'asc')
 
   return query

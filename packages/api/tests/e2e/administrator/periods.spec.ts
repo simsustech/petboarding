@@ -59,11 +59,23 @@ test.describe('Periods', async () => {
     await page.waitForLoadState('networkidle')
 
     await page.locator('#fabAdd').click()
-    await page.locator('.q-date__calendar-item--in').first().click()
+
+    // Pick a range as: click a day, advance a month, click the end. Gate on the cell
+    // (not the month label, which re-renders first) so from!==to and the range sticks.
+    const dayCell = page.locator('.q-date__calendar-item--in').first()
+    const dayCellLabel = dayCell.locator('button')
+    await dayCell.click()
+    const startCellLabel = await dayCellLabel.getAttribute('aria-label')
     await page
       .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
       .click()
-    await page.locator('.q-date__calendar-item--in').first().click()
+    // Gate on the cell we are about to click: it must belong to the new month.
+    await expect(dayCellLabel).not.toHaveAttribute(
+      'aria-label',
+      startCellLabel!
+    )
+
+    await dayCell.click()
     await page.getByLabel('Comments').fill(`${period.comments}`)
     await page.locator('text=Submit').click()
 
@@ -71,7 +83,14 @@ test.describe('Periods', async () => {
   })
 
   test('Update period', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
+    // Target the period this spec created — not the last seeded row — so the
+    // Update/Delete pair cleans up after itself instead of mutating seed data.
+    await page
+      .getByRole('listitem')
+      .filter({ hasText: period.comments })
+      .getByRole('button')
+      .first()
+      .click()
     await page.getByTestId('edit-button').last().click()
     const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
@@ -82,7 +101,12 @@ test.describe('Periods', async () => {
   })
 
   test('Delete period', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
+    await page
+      .getByRole('listitem')
+      .filter({ hasText: 'UpdatedComments' })
+      .getByRole('button')
+      .first()
+      .click()
     await page.getByTestId('delete-button').last().click()
     const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()

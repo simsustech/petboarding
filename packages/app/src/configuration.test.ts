@@ -7,14 +7,9 @@ import {
 } from './configuration.js'
 
 /**
- * Status hue split: `canceled` and `rejected` were the same red in every map, so the
- * agenda/daycare legend showed two identical swatches for two different states —
- * indistinguishable, and especially so for red-green colour-blind readers (audit:
- * the legend screenshots where Canceled and Rejected read as one colour).
- *
- * The pair now differs (red vs deep-orange), the other three hues stay exactly as
- * they were: approved green, pending grey, standby yellow (user decision to keep the
- * established approval palette).
+ * `canceled` and `rejected` used to be the same red in every map, so the legend
+ * showed two identical swatches; they now differ (red vs deep-orange). The other hues
+ * stay as established: approved green, pending grey, standby yellow.
  */
 /** `BOOKING_ICON_COLOR` is a Vue ref; the day maps are plain objects. */
 const BOOKING_COLOR = BOOKING_ICON_COLOR.value

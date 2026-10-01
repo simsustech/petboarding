@@ -178,8 +178,7 @@ export async function updateCustomer(
 }
 
 export async function searchCustomers(searchPhrase: string) {
-  // The database config folds accents; this builder owns stopword removal and
-  // term joining (AND). See ./search.ts for the rationale.
+  // The database folds accents; this builder drops stopwords and AND-joins.
   const tsQueryString = buildSearchTsQuery(searchPhrase)
   if (!tsQueryString) {
     return []
