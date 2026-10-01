@@ -13,8 +13,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     test: {
-      include: ['src/**/*.test.ts'],
-      exclude: ['node_modules', 'dist', 'tests/e2e/**']
+      include: ['src/**/*.test.ts', 'tests/e2e/**/*.test.ts'],
+      // Playwright specs are collected by playwright.config.ts, never vitest.
+      exclude: ['node_modules', 'dist', 'tests/e2e/**/*.spec.ts']
     }
   }
 })

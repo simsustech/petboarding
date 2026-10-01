@@ -1,20 +1,12 @@
-name: Release staging build
+name: Release production build
 
 on:
-  workflow_run:
-    workflows: ["Test staging build"]
-    branches:
-      - staging
-    types:
-      - completed
+  push:
+    tags:
+      - "v*.*.*"
 
-# workflow_run always executes THIS file as it exists on the default branch
-# (main), no matter which branch triggered it. The checkouts below still use the
-# the staging branch, so this file's job graph and LINKED_BUILD_CONTEXTS
-# have to stay in sync with the staging Dockerfile via main.
-# in sync with the staging Dockerfile via main.
 concurrency:
-  group: release-staging
+  group: release-production
   cancel-in-progress: false
 
 env:
@@ -36,7 +28,6 @@ env:
 
 jobs:
   verify-build-contexts:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          ref: staging
+          ref: main
           persist-credentials: false
 
       - name: Verify Dockerfile build contexts
@@ -61,7 +52,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          ref: staging
+          ref: main
           persist-credentials: false
 
       - name: Log in to the Container registry
@@ -77,7 +68,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=staging
+            type=raw,value=latest
+            type=semver,pattern={{version}}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -87,6 +79,7 @@ jobs:
         with:
           context: .
           push: true
+          target: api
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |

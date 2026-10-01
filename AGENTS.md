@@ -19,12 +19,11 @@ cd packages/app && pnpm run dev                                          # App (
 pnpm run lint || pnpm run lint:fix
 pnpm run format:check || pnpm run format:write
 pnpm run build
-export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN) \
-  && docker compose -f docker-compose.dev.yaml down \
-  && docker compose -f docker-compose.test.yaml down --volumes \
-  && docker compose -f docker-compose.test.yaml build --no-cache \
-  && docker compose -f docker-compose.test.yaml up --force-recreate
-cd packages/api && pnpm run test:e2e   # mandatory — never skip
+export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN)
+cd packages/api && pnpm run test:e2e   # mandatory — never skip; global-setup owns the stack
+# packages/api/tests/e2e/global-setup.ts resets the volumes, builds the image and
+# brings the stack up. PLAYWRIGHT_SLIMFACT=true or PLAYWRIGHT_ALLOW_SCREENSHOTS
+# skips that guard when the run brings its own stack.
 ```
 
 ## Playwright E2E tests

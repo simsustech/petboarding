@@ -5,6 +5,10 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './tests/e2e',
+  // Vitest owns *.test.ts under tests/e2e (see vitest.config.ts); Playwright
+  // only ever collects the .spec.ts specs.
+  testMatch: '**/*.spec.ts',
+  globalSetup: './tests/e2e/global-setup.ts',
   testIgnore: [
     process.env.PLAYWRIGHT_TEST_FEATURES ? [] : ['**/features/**/*.spec.ts'],
     process.env.PLAYWRIGHT_ALLOW_SCREENSHOTS ? [] : ['**/screenshots*.spec.ts'],
@@ -13,6 +17,9 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
+  // Default per-test timeout. (`use.timeout` is not a Playwright option — it was
+  // inert here, so tests silently ran on the 30s built-in default.)
+  timeout: 60000,
   reporter: [['html'], ['json', { outputFile: './test-results.json' }]],
   use: {
     launchOptions: {
@@ -27,8 +34,7 @@ export default defineConfig({
     // shared login helper's `page.goto('/')`) hit the same origin the session
     // was established on. Defaults to the .localhost dev host.
     baseURL:
-      process.env.PETBOARDING_E2E_BASE_URL ?? 'https://petboarding.localhost',
-    timeout: 60000
+      process.env.PETBOARDING_E2E_BASE_URL ?? 'https://petboarding.localhost'
   },
 
   projects: [
