@@ -403,7 +403,8 @@ export async function searchPets(searchPhrase: string) {
       p.deceased = false
       and ${sql.raw(customerSearchVector('c.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   )
-  select distinct on (id) * from main union select * from relation;
+  select distinct on (id) * from main union select * from relation
+  order by name asc;
   `
 
     const results = await query.execute(db)

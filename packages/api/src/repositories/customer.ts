@@ -232,7 +232,8 @@ export async function searchCustomers(searchPhrase: string) {
       where 
         ${sql.raw(petSearchVector('p.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
     )
-    select distinct on (id) * from main union select * from relation;`
+    select distinct on (id) * from main union select * from relation
+    order by last_name asc, first_name asc;`
 
     const results = await query.execute(db)
     return results.rows

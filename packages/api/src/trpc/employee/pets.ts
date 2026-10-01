@@ -50,7 +50,7 @@ export const employeePetRoutes = ({
 }) => ({
   searchPets: procedure.input(z.string()).query(async ({ input }) => {
     const searchPhrase = input
-    if (input) {
+    if (input && input.length > 1) {
       const pets = searchPets(searchPhrase)
       return pets
     }

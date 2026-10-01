@@ -40,6 +40,11 @@ describe('buildSearchTsQuery', () => {
     expect(buildSearchTsQuery('Mädel')).toBe('Mädel:*')
     expect(buildSearchTsQuery('García')).toBe('García:*')
   })
+
+  it('prefix-matches short terms too (no min-4 gate)', () => {
+    expect(buildSearchTsQuery('jan')).toBe('jan:*')
+    expect(buildSearchTsQuery('ja')).toBe('ja:*')
+  })
 })
 
 // --- database behaviour (accent folding + stopwords + AND) ------------------
@@ -105,5 +110,27 @@ describe('searchCustomers', () => {
   it('returns nothing for a query made only of stopwords', async () => {
     expect(await searchCustomers('van')).toEqual([])
     expect(await searchCustomers('de')).toEqual([])
+  })
+
+  it('finds a surname from a short prefix, without returning everything', async () => {
+    await seedCustomerWithPet(`${FIRST_PREFIX}J`, 'Jansen', 'Utrecht')
+    await seedCustomerWithPet(`${FIRST_PREFIX}K`, 'Kowalski', 'Krakau')
+
+    const names = (await searchCustomers('jan')).map((r) =>
+      lastNameOf(r as Record<string, unknown>)
+    )
+    expect(names).toContain('Jansen')
+    // issue-#2 guard: a 3-char prefix must match on the prefix, not everything
+    expect(names).not.toContain('Kowalski')
+  })
+
+  it('returns matches in a deterministic alphabetical order', async () => {
+    await seedCustomerWithPet(`${FIRST_PREFIX}M`, 'Zwart', 'Orderstad')
+    await seedCustomerWithPet(`${FIRST_PREFIX}N`, 'Aarhus', 'Orderstad')
+
+    const names = (await searchCustomers('Orderstad')).map((r) =>
+      lastNameOf(r as unknown as Record<string, unknown>)
+    )
+    expect(names).toEqual(['Aarhus', 'Zwart'])
   })
 })

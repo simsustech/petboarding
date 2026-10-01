@@ -114,8 +114,8 @@ const stopwordKey = (term: string): string =>
 /**
  * Turn a raw search phrase into a safe tsquery string for the `unaccented`
  * config: unicode letters/numbers are preserved (the database folds accents),
- * stopwords are dropped, the remaining terms are AND-joined, and 4+-character
- * terms get prefix matching. Returns '' when nothing searchable remains, which
+ * stopwords are dropped, the remaining terms are AND-joined, and every term is
+ * prefix-matched (`:*`). Returns '' when nothing searchable remains, which
  * callers treat as "no rows".
  *
  * Only `\p{L}\p{N}` characters survive, so no tsquery operator the caller typed
@@ -135,9 +135,7 @@ export function buildSearchTsQuery(searchPhrase: string): string {
 
   if (terms.length === 0) return ''
 
-  return terms
-    .map((term) => `${term}${term.length > 3 ? ':*' : ''}`)
-    .join(' & ')
+  return terms.map((term) => `${term}:*`).join(' & ')
 }
 
 /**

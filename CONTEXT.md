@@ -35,6 +35,17 @@ say what selecting something will show (`lang.listPages.*`). Empty space with no
 explanation was the audit finding; the search-first shape is the accepted answer, not a
 defect to fill with default content.
 
+## Search prefix-matches from two characters
+
+Employee customer/pet search runs Postgres full-text search over an `unaccented` vector:
+terms are stopword-filtered and AND-joined, and **every** term prefix-matches (`:*`). The
+old min-4 gate is gone, so `Jan` finds `Jansen`. Both tRPC procedures require at least two
+characters, so a one-character prefix never reaches the database; results are ordered
+deterministically (`last_name, first_name` / pet `name`).
+
+*Avoid*: "minimum 4 characters", "exact match for short terms" — both name the removed
+behaviour.
+
 ## Quasar and preset overrides live upstream, not in the app
 
 **A defect in Quasar or in `unocss-preset-quasar` is fixed there, with a changeset; the app
@@ -51,3 +62,5 @@ overrides that stay are enumerated with their reasons in
   architectural constraint rather than a UI preference.
 - `docs/adr/002-no-quasar-overrides-in-the-app.md` — why a Quasar or preset defect is
   fixed upstream with a changeset rather than re-stated in the app.
+- `docs/adr/003-remove-min-4-search-gate.md` — why short search terms prefix-match from
+  two characters (the 2024 min-4 gate is removed).
