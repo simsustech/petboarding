@@ -1,18 +1,20 @@
 import { test, expect } from '@playwright/test'
+import { login as loginShared } from '../setup'
 
-const email = 'admin@petboarding.app'
-const password = 'qjiNWdT8L'
+const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
 
-const login = async (page: any) => {
-  await page.goto('/')
-  await page.click('text=Login')
-  await page.waitForLoadState('networkidle')
-  await expect(page).toHaveURL(/.*login/)
-  await page.locator('text="Email"').fill(email)
-  await page.locator('text="Password"').fill(password)
-  await page.locator('button >> text=Login').click()
-  await page.waitForURL(/.*user/)
-}
+/**
+ * Sign in through the shared helper rather than a local copy.
+ *
+ * This spec used to click `text=Login` directly, which resolves to two elements
+ * (a `<div>Login</div>` plus the affordance) and is not strict-mode safe — the
+ * fix `test(e2e): make the shared login helper strict-mode safe` already applied
+ * to `setup.ts`. The local copy also skipped the `networkidle` wait that lets
+ * boot finish, so the click landed on the `q-loading` backdrop while
+ * `/configuration` was still in flight and the run died on a 30s timeout.
+ */
+const login = (page: import('@playwright/test').Page) =>
+  loginShared({ page, ...ADMIN })
 
 test.describe('PetItem on mobile viewport', () => {
   test('PetItem: q-rating in separate label below name, no overlap', async ({
