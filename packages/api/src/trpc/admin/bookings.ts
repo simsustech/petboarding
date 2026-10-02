@@ -12,7 +12,8 @@ import {
   getBookingsCount,
   updateBookingService,
   cancelBooking,
-  updateBooking
+  updateBooking,
+  calculateBookingCostsForStatus
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer.js'
@@ -231,9 +232,17 @@ export const adminBookingRoutes = ({
 
           let requiredDownPaymentAmount, invoiceUrl
           if (customer && fastify.slimfact && booking.costs) {
+            // Sync the invoice against the booking's post-approval costs, so a
+            // modification inside the cancelation period is billed on approval.
+            const approvedCosts =
+              (await calculateBookingCostsForStatus(
+                booking,
+                BOOKING_STATUS.APPROVED
+              )) ?? booking.costs
+
             const result = await createOrUpdateSlimfactInvoice({
               fastify,
-              booking,
+              booking: { ...booking, costs: approvedCosts },
               customer
             })
             if (!result.success) {
@@ -247,7 +256,7 @@ export const adminBookingRoutes = ({
             if (result.success) {
               invoiceUrl = `https://${config.slimfactHost}/invoice/${result.invoice.uuid}`
               requiredDownPaymentAmount =
-                (booking.costs?.requiredDownPaymentAmount || 0) -
+                (approvedCosts?.requiredDownPaymentAmount || 0) -
                 (booking.invoice?.amountPaid || 0)
 
               if (skipDownPayment) requiredDownPaymentAmount = 0

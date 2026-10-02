@@ -361,7 +361,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
   }
 
   if (
-    bookingStatus === ctx?.BOOKING_STATUS.APPROVED &&
+    (bookingStatus === ctx?.BOOKING_STATUS.APPROVED ||
+      bookingStatus === ctx?.BOOKING_STATUS.AWAITING_DOWNPAYMENT) &&
     lastApprovedBooking &&
     computeInvoiceCostsFn &&
     ctx

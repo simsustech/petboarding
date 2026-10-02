@@ -363,6 +363,31 @@ export async function calculateBookingCosts({
   }
 }
 
+/**
+ * Compute a booking's costs as if it held `status`. Used at approval so the
+ * invoice syncs to the approved costs — a modification inside the cancelation
+ * period adds its cancelation fee — instead of the pre-approval pending costs.
+ */
+export async function calculateBookingCostsForStatus(
+  booking: any,
+  status: BOOKING_STATUS | string | undefined,
+  categories?: ParsedCategory[]
+): Promise<BookingCosts | null> {
+  categories ??= await findCategories({ criteria: {} })
+  const days = calculateBookingDays(booking)
+  const lastApprovedBooking = await getCancelationReferenceForBooking(
+    booking,
+    categories
+  )
+  return calculateBookingCosts({
+    booking: { ...booking, days },
+    categories,
+    withServices: true,
+    bookingStatus: status,
+    lastApprovedBooking
+  })
+}
+
 async function getBookingInvoice({
   booking,
   fastify
@@ -808,8 +833,6 @@ export async function findBooking({
   const result = await query.executeTakeFirst()
 
   if (result) {
-    const days = calculateBookingDays(result)
-
     result.pets = result.pets.map((pet) => {
       return {
         ...pet,
@@ -824,20 +847,13 @@ export async function findBooking({
       criteria: {}
     })
 
-    const lastApprovedBooking = await getHighestDaysApprovedForBooking(
-      result,
-      categories
-    )
-
     return {
       ...result,
-      costs: await calculateBookingCosts({
-        booking: { ...result, days },
-        categories,
-        withServices: true,
-        bookingStatus: result.status?.status,
-        lastApprovedBooking
-      }),
+      costs: await calculateBookingCostsForStatus(
+        result,
+        result.status?.status,
+        categories
+      ),
       invoice: await getBookingInvoice({ booking: result, fastify })
     }
   } else {
@@ -894,20 +910,11 @@ export async function findBookings({
   }
   const parsedResults = await Promise.all(
     results.map(async (result) => {
-      const days = calculateBookingDays(result)
-
-      const lastApprovedBooking = await getHighestDaysApprovedForBooking(
+      const costs = await calculateBookingCostsForStatus(
         result,
+        result.status?.status,
         categories
       )
-
-      const costs = await calculateBookingCosts({
-        booking: { ...result, days },
-        categories,
-        withServices: true,
-        bookingStatus: result.status?.status,
-        lastApprovedBooking
-      })
 
       const invoice = await getBookingInvoice({ booking: result, fastify })
 
@@ -1465,28 +1472,72 @@ export async function getLastApprovedForBooking(booking: ParsedBooking) {
   return booking
 }
 
-async function getHighestDaysApprovedForBooking(
+/**
+ * The approved version a modification is billed against: the booking state in
+ * effect when the cancelation period began. Anything removed before that point
+ * was free (the change fell outside the period) and must not be charged again.
+ *
+ * `periodStart` is the start of the cancelation window for the booking
+ * (startDate minus 2 months, or 4 during the summer vacation). Returns the
+ * latest approved status at or before it, or the earliest approved status when
+ * the booking was created inside the period.
+ */
+export function pickCancelationReferenceStatus(
+  statuses: { status: string; modifiedAt: string }[],
+  periodStart: Date
+): any {
+  const approved = statuses
+    .filter((s) => s.status === BOOKING_STATUS.APPROVED)
+    .sort((a, b) =>
+      a.modifiedAt < b.modifiedAt ? -1 : a.modifiedAt > b.modifiedAt ? 1 : 0
+    )
+
+  if (!approved.length) return undefined
+
+  return (
+    approved.filter((s) => new Date(s.modifiedAt) <= periodStart).at(-1) ??
+    approved[0]
+  )
+}
+
+async function getCancelationReferenceForBooking(
   result: any,
   categories: ParsedCategory[]
 ) {
   if (!result.statuses?.length) return undefined
 
-  const approvedStatuses = result.statuses
-    .filter((s: any) => s.status === BOOKING_STATUS.APPROVED)
-    .sort((a: any, b: any) => {
-      const aDays = calculateBookingDays(a)
-      const bDays = calculateBookingDays(b)
-      return bDays - aDays
-    })
+  const vacations = await findVacations({
+    from: result.startDate,
+    until: result.endDate
+  })
+  const start = parse(result.startDate, 'yyyy-MM-dd', new Date())
+  const end = parse(result.endDate, 'yyyy-MM-dd', new Date())
+  const isInSummerVacation = vacations
+    .filter((vacation) => vacation.name === 'Zomervakantie')
+    .some(
+      (vacation) =>
+        isWithinInterval(start, {
+          start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+          end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+        }) ||
+        isWithinInterval(end, {
+          start: parse(vacation.startDate, 'yyyy-MM-dd', new Date()),
+          end: parse(vacation.endDate, 'yyyy-MM-dd', new Date())
+        })
+    )
+  const periodStart = subMonths(
+    parseISO(result.startDate),
+    isInSummerVacation ? 4 : 2
+  )
 
+  const refStatus = pickCancelationReferenceStatus(result.statuses, periodStart)
+  if (!refStatus) return undefined
   if (
-    !approvedStatuses.length ||
-    (approvedStatuses[0].startDate === result.startDate &&
-      approvedStatuses[0].endDate === result.endDate)
+    refStatus.startDate === result.startDate &&
+    refStatus.endDate === result.endDate
   )
     return undefined
 
-  const refStatus = approvedStatuses[0]
   const refDays = calculateBookingDays(refStatus)
   const refCosts = await calculateBookingCosts({
     booking: {

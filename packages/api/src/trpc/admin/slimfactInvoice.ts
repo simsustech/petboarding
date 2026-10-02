@@ -1,30 +1,10 @@
 import type { FastifyInstance } from 'fastify'
-import {
-  updateBooking,
-  findBooking,
-  getLastApprovedForBooking
-} from '../../repositories/booking.js'
+import { updateBooking, findBooking } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { config } from '../../env.js'
-import { findVacations } from '../../repositories/vacation.js'
-import { findCategories } from '../../repositories/category.js'
-import { getLang } from '../../lang/index.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
-import {
-  computeInvoiceCosts,
-  type Invoice
-} from '@modular-api/fastify-checkout'
-import {
-  isBefore,
-  isAfter,
-  isWithinInterval,
-  parse,
-  parseISO,
-  subMonths,
-  subDays,
-  differenceInDays
-} from 'date-fns'
+import { type Invoice } from '@modular-api/fastify-checkout'
 
 /**
  * Abandon the bill this request created after losing the invoice-link race, and
@@ -95,7 +75,6 @@ export const createOrUpdateSlimfactInvoice = async ({
   if (!customer.account) throw new Error('Customer is not linked to an account')
 
   if (!locale) locale = config.lang
-  const lang = await getLang(locale)
 
   const dateFormatter = (date: Date) =>
     new Intl.DateTimeFormat(locale, {
@@ -121,76 +100,14 @@ export const createOrUpdateSlimfactInvoice = async ({
     contactPersonName: [customer.firstName, customer.lastName].join(' ')
   }
 
-  // ── Compute costs via bookingCostsHandler (includes cancellation/modification branches) ──
-  let bookingCostsHandler: import('../../petboarding.d.ts').BookingCostsHandler
-  try {
-    ;({ bookingCostsHandler } = await import('../../api.config.js'))
-  } catch (e) {
-    fastify.log.debug(e)
-    console.error('Unable to load API config')
-    throw new Error('Unable to load API config')
-  }
-
-  const lastApprovedBooking = await getLastApprovedForBooking(booking)
-  const pets = booking.pets.map((pet) => ({
-    ...pet,
-    // calculateBookingCosts stores categoryId on the pet in the costs context
-    categoryId: pet.categoryId
-  }))
-  const categories = await findCategories({
-    criteria: {
-      date: booking.startDate
-    }
-  })
-
-  const vacations = await findVacations({
-    from: booking.startDate,
-    until: booking.endDate
-  })
-
-  const costsResult = bookingCostsHandler({
-    period: {
-      startDate: booking.startDate,
-      endDate: booking.endDate,
-      days: booking.days,
-      startDayCounted: booking.startTime?.startDayCounted,
-      endDayCounted: booking.endTime?.endDayCounted
-    },
-    pets,
-    categories,
-    services: booking.services || [],
-    withServices: true,
-    dateFns: {
-      getOverlappingDaysInIntervals: (await import('date-fns'))
-        .getOverlappingDaysInIntervals,
-      parse,
-      isWithinInterval,
-      isBefore,
-      isAfter,
-      parseISO,
-      subMonths,
-      subDays,
-      differenceInDays
-    },
-    computeInvoiceCosts,
-    vacations,
-    bookingStatus: booking.status?.status,
-    lastApprovedBooking: lastApprovedBooking.days
-      ? {
-          costs: lastApprovedBooking.costs,
-          startDate: lastApprovedBooking.startDate,
-          endDate: lastApprovedBooking.endDate,
-          days: lastApprovedBooking.days
-        }
-      : undefined,
-    ctx: {
-      BOOKING_STATUS: (await import('../../zod/booking.js')).BOOKING_STATUS,
-      lang
-    }
-  })
-
-  const { lines, surcharges, discounts, requiredDownPaymentAmount } =
-    costsResult
+  // Bill exactly what the booking view shows. `booking.costs` is the same
+  // computation the UI renders — including a modification's cancelation costs
+  // — so the invoice can never drift from the displayed costs.
+  const costs = booking.costs
+  const lines = costs?.lines ?? []
+  const discounts = costs?.discounts ?? []
+  const surcharges = costs?.surcharges ?? []
+  const requiredDownPaymentAmount = costs?.requiredDownPaymentAmount ?? 0
 
   const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
   →

@@ -2265,6 +2265,58 @@ describe('bookingCostsHandler — modification surcharge via handler', () => {
     expect(delta).toBe(4000)
   })
 
+  it('appends the surcharge when the booking awaits its down payment', () => {
+    // AWAITING_DOWNPAYMENT is the post-approval state while the deposit is
+    // outstanding; a modification made inside the period must still be billed.
+    const plain10 = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts
+    })
+
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-16', days: 8 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      computeInvoiceCosts,
+      ctx: {
+        BOOKING_STATUS,
+        lang: { booking: { cancelationCosts: 'Cancelation costs' } }
+      },
+      bookingStatus: BOOKING_STATUS.AWAITING_DOWNPAYMENT,
+      lastApprovedBooking: {
+        costs: {
+          totalIncludingTax: computeInvoiceCosts(plain10).totalIncludingTax
+        },
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      }
+    } as any)
+
+    const surchargeLines = result.lines.filter(
+      (l) => l.description === 'Cancelation costs'
+    )
+    expect(surchargeLines).toHaveLength(1)
+  })
+
   it('does not append surcharge without lastApprovedBooking', () => {
     const result = bookingCostsHandler({
       ...buildParams({
