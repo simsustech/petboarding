@@ -139,3 +139,87 @@ test.describe('mobile shell at 375px', () => {
     await page.context().close()
   })
 })
+
+/**
+ * The shell owns no scroll: a route that widens the document past the viewport makes the
+ * phone's layout viewport pan, and the fixed header/footer slide along with the content.
+ * Every mobile destination must keep the document at viewport width; a wide data surface
+ * (the agenda's 600px canvas) scrolls inside a container it owns instead.
+ */
+const WIDTH_ROUTES = [
+  '/employee/agenda',
+  '/employee/overview',
+  '/employee/bookings',
+  '/employee/pets',
+  '/employee/customers',
+  '/admin/bookings',
+  '/admin/daycare',
+  '/admin/occupancy',
+  '/admin/configuration',
+  '/account'
+]
+
+test.describe('no route widens the document at 375px', () => {
+  test('every mobile destination keeps its width', async ({ browser }) => {
+    const page = await initializePage({ browser })
+    await page.setViewportSize({ width: MOBILE.width, height: MOBILE.height })
+    await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+    const widened: string[] = []
+    for (const route of WIDTH_ROUTES) {
+      await page.goto(route)
+      await page.waitForLoadState('networkidle')
+      const measured = await page.evaluate(() => ({
+        hasPage: Boolean(document.querySelector('.q-page')),
+        scrollWidth: document.scrollingElement!.scrollWidth,
+        innerWidth: window.innerWidth
+      }))
+      expect(
+        measured.hasPage,
+        `E-stop: ${route} rendered no .q-page — ask, do not assert a negative`
+      ).toBe(true)
+      if (measured.scrollWidth > measured.innerWidth + 1) {
+        widened.push(
+          `${route} → ${measured.scrollWidth}px on a ${measured.innerWidth}px viewport`
+        )
+      }
+    }
+
+    expect(
+      widened,
+      `routes widening the document:\n${widened.join('\n')}`
+    ).toEqual([])
+  })
+
+  test('the agenda scrolls its canvas inside a container it owns', async ({
+    browser
+  }) => {
+    const page = await initializePage({ browser })
+    await page.setViewportSize({ width: MOBILE.width, height: MOBILE.height })
+    await login({ page, email: ADMIN.email, password: ADMIN.password })
+    await page.goto('/employee/agenda/2030-01-01')
+    await page.waitForLoadState('networkidle')
+
+    const container = await page.evaluate(() => {
+      const el = document.querySelector('.agenda-scroll')
+      if (!el) return null
+      return {
+        scrollWidth: el.scrollWidth,
+        clientWidth: el.clientWidth,
+        tabindex: el.getAttribute('tabindex')
+      }
+    })
+    expect(
+      container,
+      'E-stop: .agenda-scroll is missing — ask, do not assert a negative'
+    ).not.toBe(null)
+    expect(
+      container!.scrollWidth,
+      'the 600px canvas stays wider than the phone'
+    ).toBeGreaterThan(container!.clientWidth)
+    expect(
+      container!.tabindex,
+      'the scroll container is keyboard-reachable'
+    ).toBe('0')
+  })
+})

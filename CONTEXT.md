@@ -66,6 +66,23 @@ boots for customer screenshot tests. The generator `seed:demo:generate` (run by
 *Avoid*: "fake seed", "test seed" — `seed:test` is a separate, non-idempotent fixture for
 the e2e stack, not the demo app.
 
+## A wide data surface scrolls inside a container it owns
+
+A surface whose canvas cannot shrink below legibility — the month calendar, the agenda's week
+view (`DESIGN.md`, Layout: a `min-width: 600px` canvas **inside horizontal scroll**) — keeps
+that canvas inside a scroll container **owned by that surface**. The shell never pans: a
+document wider than the viewport makes a phone pan the layout viewport, which drags the fixed
+header and footer along with the content.
+
+Concretely: `.agenda-scroll` in `AgendaComponent.vue` is the container, its `col column`
+classes are both load-bearing (`col` brings `max-width: 100%`, `column` lets the grid be
+flex-grown), and the canvas is view-scoped — the week scrolls, the day view fits the phone.
+Guarded by `packages/api/tests/e2e/frontend/agenda.spec.ts` and the route matrix in
+`mobile-shell.spec.ts`.
+
+*Avoid*: "let the page scroll sideways", "shrink the grid below legibility" — both name the
+behaviour this rule replaced.
+
 ## Related
 
 - `docs/adr/001-customers-never-edit-category-or-comments.md` — why the first rule is an
@@ -74,3 +91,5 @@ the e2e stack, not the demo app.
   fixed upstream with a changeset rather than re-stated in the app.
 - `docs/adr/003-remove-min-4-search-gate.md` — why short search terms prefix-match from
   two characters (the 2024 min-4 gate is removed).
+- `docs/adr/004-wide-surface-scroll-container.md` — why the wide canvas's scroll container
+  belongs to its surface rather than the shell, with the measurements behind it.

@@ -77,7 +77,11 @@ test('grid fills the page', async ({ browser }) => {
   ).toBeLessThanOrEqual(24)
 })
 
-/** Step 2 — mobile: the overflowing week shows a swipe hint and the last day row stays above the footer. */
+/**
+ * Step 2 — mobile: the overflowing week shows a swipe hint and the last day row stays above the footer.
+ * The 600px canvas must scroll inside a container the agenda itself owns: widening the document
+ * makes the phone's layout viewport pan, which drags the fixed header/footer along with it.
+ */
 test('mobile reachability', async ({ browser }) => {
   const page = await initializePage({ browser })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
@@ -90,6 +94,63 @@ test('mobile reachability', async ({ browser }) => {
   await expect(
     page.getByText('Swipe to see the rest of the week.')
   ).toBeVisible()
+
+  // The canvas must not widen the document — on a phone that pans the fixed bars.
+  const width = await page.evaluate(() => ({
+    scrollWidth: document.scrollingElement!.scrollWidth,
+    innerWidth: window.innerWidth
+  }))
+  expect(
+    width.scrollWidth,
+    `the agenda widens the document to ${width.scrollWidth}px on a ${width.innerWidth}px viewport`
+  ).toBeLessThanOrEqual(width.innerWidth + 1)
+
+  // …the 600px canvas scrolls inside that container instead.
+  const canvas = await page.evaluate(() => {
+    const scroll = document.querySelector('.agenda-scroll')
+    const head = document.querySelector(
+      '.q-calendar-agenda__head--days__weekdays'
+    )
+    const day = document.querySelector('.q-calendar-agenda__day')
+    if (!scroll || !head || !day) return null
+    const snap = () => ({
+      head: head.getBoundingClientRect().x,
+      day: day.getBoundingClientRect().x
+    })
+    const before = snap()
+    scroll.scrollLeft = scroll.scrollWidth
+    const reached = scroll.scrollLeft
+    const after = snap()
+    scroll.scrollLeft = 0
+    return {
+      scrollWidth: scroll.scrollWidth,
+      clientWidth: scroll.clientWidth,
+      reached,
+      max: scroll.scrollWidth - scroll.clientWidth,
+      headDelta: after.head - before.head,
+      dayDelta: after.day - before.day
+    }
+  })
+  expect(
+    canvas,
+    'E-stop: .agenda-scroll is missing — ask, do not assert a negative'
+  ).not.toBe(null)
+  expect(canvas!.scrollWidth, 'the week keeps its 600px canvas').toBe(600)
+  expect(
+    canvas!.clientWidth,
+    `the container is ${canvas!.clientWidth}px wide — narrower than the canvas`
+  ).toBeLessThan(600)
+  expect(
+    canvas!.reached,
+    'the canvas is reachable by swiping, not clipped'
+  ).toBe(canvas!.max)
+  expect(canvas!.dayDelta, 'the day columns scroll horizontally').toBeLessThan(
+    0
+  )
+  expect(
+    Math.abs(canvas!.headDelta - canvas!.dayDelta),
+    'the weekday header scrolls with the day columns'
+  ).toBeLessThanOrEqual(1)
 
   // The page itself scrolls (the library's internal scroll must not trap it)…
   await page.evaluate(() =>
@@ -108,6 +169,49 @@ test('mobile reachability', async ({ browser }) => {
     rowBox!.y + rowBox!.height,
     'the last day row must not sit under the footer'
   ).toBeLessThanOrEqual(footerBox!.y)
+})
+
+/**
+ * Step 2 — mobile: the day view is a single column, so it fits the phone instead of keeping the
+ * 600px week canvas (which would force it to scroll sideways with no affordance to say so).
+ */
+test('day view fits the phone', async ({ browser }) => {
+  const page = await initializePage({ browser })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+  await page.setViewportSize({ width: 412, height: 915 })
+
+  await page.goto('/employee/agenda/2030-01-01')
+  await page.waitForLoadState('networkidle')
+  await page.getByRole('button', { name: 'Day', exact: true }).click()
+  await page.waitForTimeout(1000)
+
+  const day = await page.evaluate(() => {
+    const scroll = document.querySelector('.agenda-scroll')
+    const calendar = document.querySelector('.q-calendar')
+    if (!scroll || !calendar) return null
+    return {
+      docScrollWidth: document.scrollingElement!.scrollWidth,
+      innerWidth: window.innerWidth,
+      calendarWidth: calendar.getBoundingClientRect().width,
+      scrollWidth: scroll.scrollWidth,
+      clientWidth: scroll.clientWidth
+    }
+  })
+  expect(
+    day,
+    'E-stop: the day view renders no canvas or scroll container — ask, do not assert a negative'
+  ).not.toBe(null)
+  expect(
+    day!.docScrollWidth,
+    `the day view widens the document to ${day!.docScrollWidth}px on a ${day!.innerWidth}px viewport`
+  ).toBeLessThanOrEqual(day!.innerWidth + 1)
+  expect(
+    day!.calendarWidth,
+    `the day canvas is ${Math.round(day!.calendarWidth)}px wide`
+  ).toBeLessThanOrEqual(day!.innerWidth)
+  expect(day!.scrollWidth, 'the day view needs no horizontal scroll').toBe(
+    day!.clientWidth
+  )
 })
 
 /** Step 3 — a cell with both counts at zero renders no labels; a day with data keeps its count and chips. */
