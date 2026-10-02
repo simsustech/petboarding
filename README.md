@@ -105,7 +105,7 @@ pnpm i
 docker compose -f docker-compose.dev.yaml up
 cd packages/api
 POSTGRES_PASSWORD=your_password POSTGRES_DB=petboarding pnpm run migrate:latest
-POSTGRES_PASSWORD=your_password POSTGRES_DB=petboarding pnpm run seed:fake
+POSTGRES_PASSWORD=your_password POSTGRES_DB=petboarding pnpm run seed:demo
 pnpm run dev
 ```
 

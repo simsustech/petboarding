@@ -1,4 +1,4 @@
-// import generateData from './fake/generateData.js'
+// import generateData from './demo/generateData.js'
 import { hashPassword } from '@vitrify/tools/scrypt'
 import { db } from '../index.js'
 import { sql } from 'kysely'
@@ -12,7 +12,7 @@ import { getAllVacations } from './vacations/index.js'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const chunk = (arr: any[], size: number) =>
-  Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (_v, i) =>
     arr.slice(i * size, i * size + size)
   )
 
@@ -33,13 +33,13 @@ const seed = async () => {
     try {
       return JSON.parse(
         readFileSync(
-          new URL('./fake/data.json', import.meta.url).pathname,
+          new URL('./demo/data.json', import.meta.url).pathname,
           'utf-8'
         )
       )
     } catch (e) {
       throw new Error(
-        `[seeds/fake] could not read seeds/fake/data.json: ${(e as Error).message}`
+        `[seeds/demo] could not read seeds/demo/data.json: ${(e as Error).message}`
       )
     }
   })()

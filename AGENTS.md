@@ -12,7 +12,7 @@ pnpm run format:check # oxfmt (run `format:write` to fix)
 
 # Dev environment
 docker compose -f docker-compose.dev.yaml up -d                          # Start PG + Caddy
-cd packages/api && pnpm run migrate:latest && pnpm run seed:fake && pnpm run dev  # API
+cd packages/api && pnpm run migrate:latest && pnpm run seed:demo && pnpm run dev  # API
 cd packages/app && pnpm run dev                                          # App (separate terminal)
 
 # Full quality check (mandatory after every change batch)

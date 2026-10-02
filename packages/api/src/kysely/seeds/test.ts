@@ -11,7 +11,7 @@ import {
   PET_ALERT_CONDITIONS,
   SERVICE_TYPE
 } from '@petboarding/tools/constants'
-import { getRandomInt } from './fake/index.js'
+import { getRandomInt } from './demo/index.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 

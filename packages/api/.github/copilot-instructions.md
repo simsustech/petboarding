@@ -22,7 +22,7 @@ Always run `sigmap ask` (or `sigmap --query`) before searching for files relevan
 ## deps
 ```
 src/kysely/index.ts ← config/postgres, types.d
-src/kysely/seeds/fake/generateData.ts ← index
+src/kysely/seeds/demo/generateData.ts ← index
 src/kysely/seeds/vacations/index.ts ← nl/vacations-2024, nl/vacations-2025, nl/vacations-2026, nl/vacations-2027, nl/vacations-2028
 src/petboarding.d.ts ← zod/category, repositories/booking, zod/booking, tools
 src/pgboss.ts ← kysely/index, repositories/booking, repositories/customerDaycareSubscription, config/env
@@ -499,12 +499,12 @@ export async function up(db) → Promise<void>  :3-12
 export async function down(db) → Promise<void>  :14-16
 ```
 
-### src/kysely/seeds/fake/generateData.ts
+### src/kysely/seeds/demo/generateData.ts
 ```
 export const createPet = ({ name, customerId }) =>  :36-74
 ```
 
-### src/kysely/seeds/fake/index.ts
+### src/kysely/seeds/demo/index.ts
 ```
 export const getRandomInt = (max) =>  :1-3
 ```

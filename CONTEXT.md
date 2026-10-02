@@ -56,6 +56,16 @@ shape. A new Quasar conflict is a hole in the preset's scale, not a local patch.
 overrides that stay are enumerated with their reasons in
 `docs/adr/002-no-quasar-overrides-in-the-app.md`.
 
+## The demo seed is called `seed:demo`
+
+**`seed:demo` (formerly `seed:fake`) provisions the public demo dataset** — demo/admin
+accounts, the "public demo" announcement, and the rows `docker-compose.test.demo.yaml`
+boots for customer screenshot tests. The generator `seed:demo:generate` (run by
+`build`/`build:debug`) writes the `dist/` fixture it reads.
+
+*Avoid*: "fake seed", "test seed" — `seed:test` is a separate, non-idempotent fixture for
+the e2e stack, not the demo app.
+
 ## Related
 
 - `docs/adr/001-customers-never-edit-category-or-comments.md` — why the first rule is an
