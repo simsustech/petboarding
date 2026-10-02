@@ -12,15 +12,17 @@ import {
   getBookingsCount,
   updateBookingService,
   cancelBooking,
-  updateBooking,
-  calculateBookingCostsForStatus
+  updateBooking
 } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
 import { findCustomer } from '../../repositories/customer.js'
 import { config } from '../../env.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
-import { createOrUpdateSlimfactInvoice } from './slimfactInvoice.js'
+import {
+  createOrUpdateSlimfactInvoice,
+  syncBookingInvoice
+} from './slimfactInvoice.js'
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 const downPaymentPaymentTermDays = config.downPaymentPaymentTermDays
@@ -232,43 +234,39 @@ export const adminBookingRoutes = ({
 
           let requiredDownPaymentAmount, invoiceUrl
           if (customer && fastify.slimfact && booking.costs) {
-            // Sync the invoice against the booking's post-approval costs, so a
-            // modification inside the cancelation period is billed on approval.
-            const approvedCosts =
-              (await calculateBookingCostsForStatus(
-                booking,
-                BOOKING_STATUS.APPROVED
-              )) ?? booking.costs
+            requiredDownPaymentAmount =
+              (booking.costs.requiredDownPaymentAmount || 0) -
+              (booking.invoice?.amountPaid || 0)
+            if (skipDownPayment) requiredDownPaymentAmount = 0
 
-            const result = await createOrUpdateSlimfactInvoice({
-              fastify,
-              booking: { ...booking, costs: approvedCosts },
-              customer
+            // Approve first, then sync the invoice against the booking's own
+            // costs for the new status — a modification inside the cancelation
+            // period is billed here with its cancelation fee rather than the
+            // pre-approval pending costs.
+            const approvedStatus =
+              requiredDownPaymentAmount > 0
+                ? BOOKING_STATUS.AWAITING_DOWNPAYMENT
+                : BOOKING_STATUS.APPROVED
+            await createBookingStatus({
+              booking,
+              status: approvedStatus,
+              petIds: booking.pets.map((pet) => pet.id)
             })
-            if (!result.success) {
-              fastify.log.debug(result.errorMessage)
-              await createBookingStatus({
-                booking,
-                status: BOOKING_STATUS.APPROVED,
-                petIds: booking.pets.map((pet) => pet.id)
-              })
-            }
-            if (result.success) {
-              invoiceUrl = `https://${config.slimfactHost}/invoice/${result.invoice.uuid}`
-              requiredDownPaymentAmount =
-                (approvedCosts?.requiredDownPaymentAmount || 0) -
-                (booking.invoice?.amountPaid || 0)
 
-              if (skipDownPayment) requiredDownPaymentAmount = 0
-
-              await createBookingStatus({
-                booking,
-                status:
-                  requiredDownPaymentAmount > 0
-                    ? BOOKING_STATUS.AWAITING_DOWNPAYMENT
-                    : BOOKING_STATUS.APPROVED,
-                petIds: booking.pets.map((pet) => pet.id)
-              })
+            const invoice = await syncBookingInvoice({ fastify, bookingId: id })
+            if (invoice) {
+              invoiceUrl = `https://${config.slimfactHost}/invoice/${invoice.uuid}`
+            } else {
+              // No invoice could be opened — approve outright rather than leave
+              // the booking awaiting a payment it cannot make.
+              requiredDownPaymentAmount = undefined
+              if (approvedStatus !== BOOKING_STATUS.APPROVED) {
+                await createBookingStatus({
+                  booking,
+                  status: BOOKING_STATUS.APPROVED,
+                  petIds: booking.pets.map((pet) => pet.id)
+                })
+              }
             }
           }
 
@@ -317,6 +315,7 @@ export const adminBookingRoutes = ({
           status: BOOKING_STATUS.REJECTED,
           petIds: booking.pets.map((pet) => pet.id)
         })
+        await syncBookingInvoice({ fastify, bookingId: id })
         if (booking?.customerId) {
           const customer = await findCustomer({
             criteria: {
@@ -362,6 +361,7 @@ export const adminBookingRoutes = ({
           status: BOOKING_STATUS.STANDBY,
           petIds: booking.pets.map((pet) => pet.id)
         })
+        await syncBookingInvoice({ fastify, bookingId: id })
         if (booking?.customerId) {
           const customer = await findCustomer({
             criteria: {
@@ -525,7 +525,10 @@ export const adminBookingRoutes = ({
     .mutation(async ({ input }) => {
       const { id } = input
       const success = await cancelBooking({ id }, '', true)
-      if (success) return true
+      if (success) {
+        await syncBookingInvoice({ fastify, bookingId: id })
+        return true
+      }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     }),
   getUnpaidBookings: procedure

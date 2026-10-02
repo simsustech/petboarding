@@ -1,7 +1,9 @@
 import type { FastifyInstance } from 'fastify'
 import { updateBooking, findBooking } from '../../repositories/booking.js'
 import type { ParsedBooking } from '../../repositories/booking.js'
+import { findCustomer } from '../../repositories/customer.js'
 import { config } from '../../env.js'
+import { BOOKING_STATUS } from '../../zod/booking.js'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
 import type { Customer } from '../../zod/customer.js'
 import { type Invoice } from '@modular-api/fastify-checkout'
@@ -206,4 +208,49 @@ export const createOrUpdateSlimfactInvoice = async ({
       errorMessage: 'Could not create or update booking invoice.'
     }
   }
+}
+
+/**
+ * Keep a booking's SlimFact invoice in step with its own costs after a status
+ * change (approve / reject / cancel / standby). Only bookings that were approved
+ * — and therefore billed, or awaiting their deposit — have an invoice worth
+ * syncing; a booking that is still pending is never invoiced. Guarding on the
+ * booking's own status keeps every status transition consistent: the invoice
+ * always mirrors the costs the booking view shows.
+ *
+ * Returns the synced invoice, or null when there was nothing to sync or the
+ * sync failed (the failure is logged, never thrown).
+ */
+export const syncBookingInvoice = async ({
+  fastify,
+  bookingId
+}: {
+  fastify: FastifyInstance
+  bookingId: number
+}): Promise<Invoice | null> => {
+  if (!fastify.slimfact) return null
+
+  const booking = await findBooking({ criteria: { id: bookingId }, fastify })
+  if (!booking?.costs) return null
+
+  const wasApproved = booking.statuses?.some(
+    (status) =>
+      status.status === BOOKING_STATUS.APPROVED ||
+      status.status === BOOKING_STATUS.AWAITING_DOWNPAYMENT
+  )
+  if (!booking.invoiceUuid && !wasApproved) return null
+
+  const customer = await findCustomer({ criteria: { id: booking.customerId } })
+  if (!customer?.account) return null
+
+  const result = await createOrUpdateSlimfactInvoice({
+    fastify,
+    booking,
+    customer
+  })
+  if (!result.success) {
+    fastify.log.debug(result.errorMessage)
+    return null
+  }
+  return result.invoice
 }

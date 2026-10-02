@@ -13,6 +13,7 @@ fee for the removed portion.
   (outside the period) is never charged again — only the portion removed inside the
   period is billed.
 - Applies the cancellation tier percentage (100%/75%/50%) to that removed portion.
-- The invoice is generated from the booking's own costs and is re-synced on approval,
-  so the fee is billed at approval and can no longer drift from the displayed costs.
+- The invoice is generated from the booking's own costs, and every status change
+  (approve, reject, standby, cancel — admin, employee and customer) re-syncs it through
+  one helper, so the invoice can no longer drift from the displayed costs.
 - Modifications outside the free-cancel window do not accumulate a fee.
