@@ -27,7 +27,7 @@ minimumReleaseAgeExclude:
   - '@rolldown/binding-openharmony-arm64@1.2.12'
   - '@rolldown/binding-win32-arm64-msvc@1.2.12'
   - '@rolldown/binding-win32-x64-msvc@1.2.12'
-  - '@simsustech/quasar-components@0.12.12'
+  - '@simsustech/quasar-components@0.12.12 || 0.12.13'
   - '@vitrify/tools@0.5.5'
   - pg-boss@12.35.1
   - pg-cloudflare@1.4.1
@@ -36,9 +36,49 @@ minimumReleaseAgeExclude:
   - pg@8.23.1
   - rolldown@1.2.12
   - stripe@23.0.0
-  - unocss-preset-quasar@0.6.0
+  - unocss-preset-quasar@0.6.0 || 0.6.1
   - vite@8.3.2
   - vitrify@0.28.2
+  - '@oxfmt/binding-android-arm-eabi@0.72.0'
+  - '@oxfmt/binding-android-arm64@0.72.0'
+  - '@oxfmt/binding-darwin-arm64@0.72.0'
+  - '@oxfmt/binding-darwin-x64@0.72.0'
+  - '@oxfmt/binding-freebsd-x64@0.72.0'
+  - '@oxfmt/binding-linux-arm-gnueabihf@0.72.0'
+  - '@oxfmt/binding-linux-arm-musleabihf@0.72.0'
+  - '@oxfmt/binding-linux-arm64-gnu@0.72.0'
+  - '@oxfmt/binding-linux-arm64-musl@0.72.0'
+  - '@oxfmt/binding-linux-ppc64-gnu@0.72.0'
+  - '@oxfmt/binding-linux-riscv64-gnu@0.72.0'
+  - '@oxfmt/binding-linux-riscv64-musl@0.72.0'
+  - '@oxfmt/binding-linux-s390x-gnu@0.72.0'
+  - '@oxfmt/binding-linux-x64-gnu@0.72.0'
+  - '@oxfmt/binding-linux-x64-musl@0.72.0'
+  - '@oxfmt/binding-openharmony-arm64@0.72.0'
+  - '@oxfmt/binding-win32-arm64-msvc@0.72.0'
+  - '@oxfmt/binding-win32-ia32-msvc@0.72.0'
+  - '@oxfmt/binding-win32-x64-msvc@0.72.0'
+  - '@oxlint/binding-android-arm-eabi@1.87.0'
+  - '@oxlint/binding-android-arm64@1.87.0'
+  - '@oxlint/binding-darwin-arm64@1.87.0'
+  - '@oxlint/binding-darwin-x64@1.87.0'
+  - '@oxlint/binding-freebsd-x64@1.87.0'
+  - '@oxlint/binding-linux-arm-gnueabihf@1.87.0'
+  - '@oxlint/binding-linux-arm-musleabihf@1.87.0'
+  - '@oxlint/binding-linux-arm64-gnu@1.87.0'
+  - '@oxlint/binding-linux-arm64-musl@1.87.0'
+  - '@oxlint/binding-linux-ppc64-gnu@1.87.0'
+  - '@oxlint/binding-linux-riscv64-gnu@1.87.0'
+  - '@oxlint/binding-linux-riscv64-musl@1.87.0'
+  - '@oxlint/binding-linux-s390x-gnu@1.87.0'
+  - '@oxlint/binding-linux-x64-gnu@1.87.0'
+  - '@oxlint/binding-linux-x64-musl@1.87.0'
+  - '@oxlint/binding-openharmony-arm64@1.87.0'
+  - '@oxlint/binding-win32-arm64-msvc@1.87.0'
+  - '@oxlint/binding-win32-ia32-msvc@1.87.0'
+  - '@oxlint/binding-win32-x64-msvc@1.87.0'
+  - oxfmt@0.72.0
+  - oxlint@1.87.0
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
