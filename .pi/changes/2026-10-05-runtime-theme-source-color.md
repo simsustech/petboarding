@@ -30,3 +30,11 @@ the pin from `0.6.1` to `0.6.2`.
 | `packages/app/package.json` | 1 | `unocss-preset-quasar`: `0.6.1` → `0.6.2`. |
 | `packages/api/package.json` | 1 | `unocss-preset-quasar`: `^0.6.1` → `^0.6.2`. |
 | `pnpm-workspace.yaml` | 1 | `minimumReleaseAgeExclude` covers `0.6.2`. |
+| `packages/api/tests/e2e/frontend/palette.spec.ts` | +40 | Regression test: `--q-primary` equals `/configuration`'s `THEME_COLORS.light.primary` (light) and `dark.primary` under `body.body--dark`. Red on 0.6.1, green on 0.6.2. |
+| `pnpm-lock.yaml` | — | Resolves `unocss-preset-quasar@0.6.2`. |
+
+## Verification
+
+- Regression test red against the 0.6.1 stack (`Expected #00696d, Received #005faf`),
+  green after rebuilding the image with 0.6.2.
+- Full `frontend/palette.spec.ts`: 8 passed.
