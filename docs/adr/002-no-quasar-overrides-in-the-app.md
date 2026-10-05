@@ -65,8 +65,10 @@ two copies drift, and the shared defect stays unowned upstream.
     `:deep(.q-field--standard) .q-field__control { background: transparent }`: a display
     variant this app chose; making standard controls transparent by default would change
     every consumer of the preset.
-  - `components/pet/PetFoodInput.vue` — 7 `!important` padding/appearance resets, all
-    scoped to `.pet-food-input`: one component's compact inline number+select combo.
+  - `components/pet/PetFoodInput.vue` — **no longer overrides Quasar.** The field now
+    renders native `<input>`/`<select>` controls inside the outer `q-field`, so its two
+    remaining rules (the stacked-label band height and the zeroed native padding) are the
+    component's own geometry, not restatements of a preset rule.
   - `components/pet/PetChip.vue` — inline `white-space: normal !important`: this label's
     content needs to wrap.
   - `components/AvailabilityCard.vue` — `.q-date__header*` rules plus `--availability-hint`:

@@ -38,7 +38,7 @@ test.describe('Employee Pets', async () => {
 
     await dialog.getByLabel('Name*').fill(newPetName)
     await dialog.getByLabel('Category*').click()
-    await page.getByRole('option').first().click()
+    await page.getByRole('listbox').getByRole('option').first().click()
     await dialog.locator('text=Submit').click()
 
     await dialog.waitFor({ state: 'hidden' })
@@ -58,7 +58,7 @@ test.describe('Employee Pets', async () => {
 
     await dialog.getByLabel('Name*').fill('name2')
     await dialog.getByLabel('Category*').click()
-    await page.getByRole('option').first().click()
+    await page.getByRole('listbox').getByRole('option').first().click()
     await dialog.locator('text=Submit').click()
 
     await dialog.waitFor({ state: 'hidden' })

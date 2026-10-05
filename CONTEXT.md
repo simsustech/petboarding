@@ -54,7 +54,8 @@ bumps, `:deep(.q-*)` overrides) duplicates it and forces the next one — the he
 z-index chain is the proof, and two byte-identical rule pairs in six files are the same
 shape. A new Quasar conflict is a hole in the preset's scale, not a local patch. The
 overrides that stay are enumerated with their reasons in
-`docs/adr/002-no-quasar-overrides-in-the-app.md`.
+`docs/adr/002-no-quasar-overrides-in-the-app.md`. `components/pet/PetFoodInput.vue` was
+rewritten to native inputs and no longer appears in that enumeration.
 
 ## The demo seed is called `seed:demo`
 
