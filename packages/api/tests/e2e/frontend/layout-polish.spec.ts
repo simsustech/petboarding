@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * Layout and overlay polish (audit + probes): the mobile drawer container's row
- * covering the header buttons, clipped drawer labels, the notify position vs the
+ * Layout and overlay polish (audit + probes): the app bar's reachability against
+ * an open drawer (ADR 0007's amendment), the notify position vs the
  * footer, the month grids' horizontal-scroll affordance, and the pet legend fitting
  * its container at both viewports.
  */
@@ -21,40 +21,142 @@ async function loginAtMobile(
   await page.setViewportSize({ width: 375, height: 812 })
 }
 
-test('header controls are hittable at 375px', async ({ browser }) => {
+/**
+ * Which of the app bar's buttons the pointer actually reaches: `elementFromPoint`
+ * at each one's centre. Scoped to the header of the layout that owns the drawer —
+ * both carry `.q-header` wherever the shell is nested.
+ */
+const headerControlHits = async (page: import('@playwright/test').Page) => {
+  // A Quasar loading backdrop would answer the probe instead of the layout, and
+  // the app shows one after every navigation — wait it out before measuring.
+  await page
+    .waitForSelector('.q-loading__backdrop', {
+      state: 'detached',
+      timeout: 15_000
+    })
+    .catch(() => undefined)
+  return page.evaluate(() => {
+    const layout = document.querySelector('.q-drawer')?.closest('.q-layout')
+    const buttons = Array.from(
+      layout?.querySelectorAll('.q-header button') ?? []
+    ) as HTMLElement[]
+    const hittable: string[] = []
+    const blocked: string[] = []
+    let checked = 0
+    for (const [i, el] of buttons.entries()) {
+      const rect = el.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) continue
+      checked++
+      const hit = document.elementFromPoint(
+        rect.x + rect.width / 2,
+        rect.y + rect.height / 2
+      )
+      const reached = Boolean(
+        hit && (hit === el || el.contains(hit) || hit.contains(el))
+      )
+      const label =
+        el.getAttribute('aria-label') ?? el.textContent?.trim() ?? `#${i}`
+      if (reached) hittable.push(label)
+      else {
+        // Name what is on top: the assertion's message has to diagnose itself.
+        const over = hit
+          ? `${hit.tagName.toLowerCase()}.${String(hit.className)
+              .split(' ')
+              .slice(0, 2)
+              .join('.')}`
+          : 'nothing (outside the viewport)'
+        blocked.push(`${label} <- ${over}`)
+      }
+    }
+    return { checked, hittable, blocked }
+  })
+}
+
+/** The drawer closes by translating off to the left, so its box tells the state. */
+const drawerIsOpen = (page: import('@playwright/test').Page) =>
+  page.evaluate(() => {
+    const drawer = document.querySelector('.q-drawer')
+    return drawer ? drawer.getBoundingClientRect().right > 1 : false
+  })
+
+const openDrawer = async (page: import('@playwright/test').Page) => {
+  if (await drawerIsOpen(page)) return
+  await page.locator('button[aria-label="Menu"]').first().click()
+  await page.waitForFunction(
+    () => {
+      const drawer = document.querySelector('.q-drawer')
+      return !!drawer && drawer.getBoundingClientRect().right > 1
+    },
+    undefined,
+    { timeout: 10_000 }
+  )
+}
+
+const closeDrawer = async (page: import('@playwright/test').Page) => {
+  if (!(await drawerIsOpen(page))) return
+  await page.locator('[aria-label="Close"]').first().click()
+  await page.waitForFunction(
+    () => {
+      const drawer = document.querySelector('.q-drawer')
+      return !drawer || drawer.getBoundingClientRect().right <= 1
+    },
+    undefined,
+    { timeout: 10_000 }
+  )
+}
+
+/**
+ * ADR 0007, amended 2026-10-05: the overlay drawer sits above both marginals —
+ * `.q-drawer--on-top` 3000 and its scrim 2999 against `.q-header` 2000 — so while
+ * the drawer is open the app bar behind it is dimmed and yields the pointer, and
+ * is reachable again the moment it shuts.
+ *
+ * This is the same rule `quasar-testing-harness/tests/md3-layout.spec.ts`
+ * asserts against the shell itself. Both flip the gate this test used to be —
+ * "header controls are hittable at 375px" pinned the opposite ordering, which is
+ * exactly what the amendment reversed.
+ *
+ * Goes red until `unocss-preset-quasar` is bumped past the changeset that ships
+ * the amendment; the installed 0.6.0 still has the drawer at 1500.
+ */
+test('an open drawer owns the pointer over the header at 375px', async ({
+  browser
+}) => {
   const page = await initializePage({ browser })
-  await loginAtMobile(page, ADMIN.email, ADMIN.password)
+
+  // Sign in at 1440, then resize — at 375px the drawer is open and its scrim
+  // owns the pointer, so the header's Login affordance is not clickable there.
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await login({ page, email: ADMIN.email, password: ADMIN.password })
+
+  const desktop = await headerControlHits(page)
+  expect(desktop.checked, 'the header renders its controls').toBeGreaterThan(0)
+  expect(
+    desktop.blocked,
+    `header controls blocked without a drawer: ${desktop.blocked.join(', ')}`
+  ).toEqual([])
+
+  await page.setViewportSize({ width: 375, height: 812 })
   await page.goto('/admin/bookings')
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(2000)
 
-  const buttons = page.locator('.q-header button')
-  const count = await buttons.count()
-  expect(count, 'the header renders its controls').toBeGreaterThan(0)
+  // Drive both states instead of trusting the default: the rule is about the
+  // drawer, not about where the app happens to start.
+  await openDrawer(page)
+  const open = await headerControlHits(page)
+  expect(open.checked, 'the header renders its controls').toBeGreaterThan(0)
+  expect(
+    open.hittable,
+    `reachable behind the open drawer: ${open.hittable.join(', ')}`
+  ).toEqual([])
 
-  const blocked: string[] = []
-  for (let i = 0; i < count; i++) {
-    const button = buttons.nth(i)
-    const info = await button.evaluate((el: Element) => {
-      const rect = el.getBoundingClientRect()
-      if (rect.width === 0 || rect.height === 0) return { empty: true }
-      const top = document.elementFromPoint(
-        rect.x + rect.width / 2,
-        rect.y + rect.height / 2
-      )
-      const hittable = Boolean(
-        top && (top === el || el.contains(top) || top.contains(el))
-      )
-      return {
-        empty: false,
-        hittable,
-        label:
-          el.getAttribute('aria-label') ?? el.textContent?.trim() ?? `#${i}`
-      }
-    })
-    if (!info.empty && !info.hittable) blocked.push(String(info.label))
-  }
-  expect(blocked, `header controls blocked: ${blocked.join(', ')}`).toEqual([])
+  await closeDrawer(page)
+  const shut = await headerControlHits(page)
+  expect(
+    shut.blocked,
+    `still blocked with the drawer shut: ${shut.blocked.join(', ')}`
+  ).toEqual([])
 })
 
 test('drawer labels do not clip', async ({ browser }) => {

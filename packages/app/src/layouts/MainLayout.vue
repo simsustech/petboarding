@@ -594,8 +594,9 @@ onMounted(async () => {
 <style>
 /*
  * Layering is owned upstream now — unocss-preset-quasar ADR 0007 orders
- * overlay drawer 1500 < marginals 2000 < menus/dialogs 6000. Do not re-add
- * z-index overrides here; a new conflict belongs upstream.
+ * marginals 2000 < overlay drawer 3000 (scrim 2999) < menus/dialogs 6000, so an
+ * open drawer dims the app bar rather than sitting under it (ADR 0007, amended
+ * 2026-10-05). Do not re-add z-index overrides here; a conflict belongs upstream.
  */
 
 /*
