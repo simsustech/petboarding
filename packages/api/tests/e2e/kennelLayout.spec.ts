@@ -48,6 +48,60 @@ test.describe('KennelLayout', () => {
     await expect(page.locator('.drop-target').first()).toBeVisible()
   })
 
+  test('pet chips size to content height, not their container', async () => {
+    // Regression guard for the PetChip full-height bug: unocss-preset-quasar
+    // used to give .q-card an invented display:flex, which made the section a
+    // flex item and resolved descendants' percentage heights (PetChip's
+    // deliberate inline height:100%) against it, so chips filled their
+    // container instead of deferring to content height.
+    const pageChips = page.locator('.q-chip')
+    if ((await pageChips.count()) === 0) {
+      // Plan E-stop: zero chips page-wide means the seeded date has no chip
+      // data — ask the plan owner for a date that does; do not improvise.
+      test.skip(
+        true,
+        'no .q-chip on 2024-01-02 — E-stop: ask plan owner for a seeded date'
+      )
+      return
+    }
+
+    // Prefer a chip inside a kennel section; fall back to the waitlist.
+    const kennelChip = page.locator('.drop-target .q-chip').first()
+    const chip =
+      (await kennelChip.count()) > 0
+        ? kennelChip
+        : page.locator('#waitlist .q-chip').first()
+    await expect(chip).toBeVisible()
+
+    const section = chip.locator(
+      'xpath=ancestor::*[contains(@class, "drop-target") or @id="waitlist"][1]'
+    )
+    const chipBox = await chip.boundingBox()
+    const sectionBox = await section.boundingBox()
+    expect(chipBox, 'chip box').toBeTruthy()
+    expect(sectionBox, 'section box').toBeTruthy()
+    expect(chipBox!.height, 'chip must not fill its section').toBeLessThan(
+      sectionBox!.height
+    )
+    // Content parity (steering-fixed 2026-10-05): the chip must be exactly as
+    // tall as its own content. A resolved height:100% — the original bug —
+    // makes it taller than its content. Replaces the plan's fixed `<= 64`
+    // canary, which misfits multi-line chips (the seeded pet2 chip is a
+    // legitimate 88px of 4-line content).
+    const contentH = await chip.evaluate((el) => {
+      const node = el as HTMLElement
+      const prev = node.style.height
+      node.style.height = 'auto'
+      const h = node.getBoundingClientRect().height
+      node.style.height = prev
+      return h
+    })
+    expect(
+      chipBox!.height,
+      'chip must equal its content height, not its container'
+    ).toBeLessThanOrEqual(contentH + 1)
+  })
+
   test('should drag a pet from waitlist into a kennel', async () => {
     const petsInWaitlist = page.locator(
       '#waitlist .q-chip, #waitlist [id^="pet"]'
@@ -195,7 +249,6 @@ test.describe('KennelLayout', () => {
   })
 
   test('should change date and reload pets', async () => {
-    const today = '2024-01-02'
     const tomorrow = '2024-01-03'
 
     const [Y, M, D] = tomorrow.split('-')
