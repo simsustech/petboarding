@@ -295,4 +295,44 @@ test.describe('palette and contrast', () => {
       'rgb(0, 0, 238)'
     )
   })
+
+  test('the configured source color reaches the semantic --q-* tokens', async ({
+    browser
+  }) => {
+    const page = await initializePage({ browser })
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(2000)
+
+    // `/configuration` derives these from the deployment's VITE_SOURCE_COLOR, and
+    // App.vue hands them to `setThemeColors(...)`. Regression: that call only
+    // wrote the `--light-*`/`--dark-*` primitives, which no component reads, so
+    // `--q-primary` stayed on the preset's build-time default and the configured
+    // source color never rendered.
+    const configuration = await page.evaluate(() =>
+      fetch('/configuration').then((res) => res.json())
+    )
+    const expectedLight = configuration.THEME_COLORS.light.primary as string
+    const expectedDark = configuration.THEME_COLORS.dark.primary as string
+
+    const read = () =>
+      page.evaluate(() => ({
+        root: getComputedStyle(document.documentElement)
+          .getPropertyValue('--q-primary')
+          .trim(),
+        body: getComputedStyle(document.body)
+          .getPropertyValue('--q-primary')
+          .trim()
+      }))
+
+    const light = await read()
+    expect(light.root.toLowerCase()).toBe(expectedLight.toLowerCase())
+    // The preset's build-time default for the unconfigured palette.
+    expect(light.root.toLowerCase()).not.toBe('#005faf')
+
+    await page.evaluate(() => document.body.classList.add('body--dark'))
+    await page.waitForTimeout(300)
+    const dark = await read()
+    expect(dark.body.toLowerCase()).toBe(expectedDark.toLowerCase())
+  })
 })
