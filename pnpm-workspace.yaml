@@ -6,11 +6,11 @@ packages:
 minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
-  - '@modular-api/api@0.6.39'
+  - '@modular-api/api@0.6.39 || 0.6.41'
   - '@modular-api/fastify-cart@0.3.23'
   - '@modular-api/fastify-checkout@0.11.1'
-  - '@modular-api/fastify-oidc@0.9.29'
-  - '@modular-api/oidc-interactions@0.7.25'
+  - '@modular-api/fastify-oidc@0.9.29 || 0.9.30'
+  - '@modular-api/oidc-interactions@0.7.25 || 0.7.26'
   - '@modular-api/quasar-components@0.3.44'
   - '@rolldown/binding-android-arm-eabi@1.2.12'
   - '@rolldown/binding-android-arm64@1.2.12'
@@ -79,6 +79,7 @@ minimumReleaseAgeExclude:
   - '@oxlint/binding-win32-x64-msvc@1.87.0'
   - oxfmt@0.72.0
   - oxlint@1.87.0
+  - nodemailer@10.0.15
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
