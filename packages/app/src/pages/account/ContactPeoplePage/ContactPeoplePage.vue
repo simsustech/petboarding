@@ -2,7 +2,7 @@
   <q-page padding>
     <div v-if="ready">
       <div v-if="customerData">
-        <div class="row">
+        <div class="row q-col-gutter-md">
           <contact-person-card
             v-for="contactPerson in data"
             :key="contactPerson.id"
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div v-else>
-        <router-link to="/account/customer">{{
+        <router-link class="q-link text-primary" to="/account/customer">{{
           lang.contactPerson.messages.addCustomerDetails
         }}</router-link>
       </div>

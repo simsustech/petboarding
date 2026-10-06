@@ -18,8 +18,12 @@
     </q-toolbar>
 
     <!-- Nothing selected yet: the page is a search, so it says so instead of
-         rendering an empty grid (audit: employee-customers.png). -->
-    <div v-if="!data" class="q-pa-lg flex flex-center text-body1 text-grey-7">
+         rendering an empty grid (audit: employee-customers.png). The token flips
+         with the scheme — `text-grey-7` measured 3.71:1 on the dark surface. -->
+    <div
+      v-if="!data"
+      class="q-pa-lg flex flex-center text-body1 text-on-surface-variant"
+    >
       {{ lang.listPages.emptyCustomers }}
     </div>
 

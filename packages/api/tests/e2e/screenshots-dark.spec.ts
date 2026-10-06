@@ -22,8 +22,11 @@ const OUT = 'test-results/frontend-audit-dark'
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
 const CUSTOMER = { email: 'test1@petboarding.app', password: 'qjiNWdT8L' }
 
+const today = new Date().toISOString().slice(0, 10)
+
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
+  { name: 'tablet', width: 768, height: 1024 },
   { name: 'mobile', width: 375, height: 812 }
 ]
 
@@ -39,8 +42,10 @@ const ROUTES: [string, string][] = [
   ['/admin/bookings', 'admin-bookings'],
   ['/admin/accounts', 'admin-accounts'],
   ['/admin/daycare', 'admin-daycare'],
-  ['/admin/config/openingtimes', 'admin-config-openingtimes'],
-  ['/admin/config/documents', 'admin-config-documents'],
+  // `configuration`, not `config`: the short form 404s into the catch-all, so
+  // these two captures used to show the error page under a config slug.
+  ['/admin/configuration/openingtimes', 'admin-config-openingtimes'],
+  ['/admin/configuration/documents', 'admin-config-documents'],
   ['/admin/configuration', 'admin-configuration'],
   ['/admin/financial/overview', 'admin-financial-overview'],
   ['/employee', 'employee-home'],
@@ -52,7 +57,9 @@ const ROUTES: [string, string][] = [
   ['/account/pets', 'account-pets'],
   ['/print/privacypolicy', 'print-privacypolicy'],
   ['/print/termsandconditions', 'print-termsandconditions'],
-  ['/print/overview', 'print-overview']
+  // `/print/overview/:date` has no optional param — without it the route does
+  // not match at all, so the capture needs the same dated URL the audit uses.
+  [`/print/overview/${today}`, 'print-overview']
 ]
 
 /**

@@ -6,6 +6,7 @@
         class="q-pb-none"
         filled
         mask="date"
+        :label="lang.occupancy.labels.date"
         :aria-label="lang.occupancy.labels.date"
         :rules="['date']"
         @update:model-value="updateDate"

@@ -13,11 +13,9 @@
       </div>
 
       <div v-else>
-        <router-link
-          class="text-$light-primary dark:text-$dark-primary"
-          to="/account/contactpeople"
-          >{{ lang.pet.messages.addContactPeople }}</router-link
-        >
+        <router-link class="q-link text-primary" to="/account/contactpeople">{{
+          lang.pet.messages.addContactPeople
+        }}</router-link>
       </div>
     </div>
   </q-page>

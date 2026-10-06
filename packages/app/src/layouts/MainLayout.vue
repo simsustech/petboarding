@@ -104,7 +104,14 @@
 
     <template #drawer>
       <q-scroll-area class="fit">
-        <div class="q-px-md">
+        <!--
+          No q-px-md here: the preset already states
+          `.q-drawer__content > * { padding-inline: 28px }` (reference parity),
+          so this wrapper's own 16px charged every drawer row 44px a side
+          before the row's own item padding — the label column lost the width
+          and "Administrator" needed 86px at 375px but got 60 (ellipsised).
+        -->
+        <div>
           <div class="text-overline">{{ title }}</div>
           <q-list>
             <q-item to="/" exact>
@@ -412,7 +419,7 @@
 
     <template #footer>
       <div class="column fit items-center justify-center">
-        <navigation-tabs dense class="col-12 lt-md" />
+        <navigation-tabs dense class="col-12 lt-md navigation-tabs-footer" />
       </div>
     </template>
 

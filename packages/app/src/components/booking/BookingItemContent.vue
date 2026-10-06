@@ -20,7 +20,7 @@
         {{ modelValue.customer?.lastName ? modelValue.customer.lastName : '' }}
       </a>
     </q-item-label>
-    <q-item-label>
+    <q-item-label class="whitespace-normal overflow-visible">
       <a
         >{{
           formatDates(

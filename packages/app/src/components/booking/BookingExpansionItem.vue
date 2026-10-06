@@ -30,7 +30,7 @@
     <q-list>
       <q-item :inset-level="1">
         <q-item-section>
-          <q-item-label>
+          <q-item-label class="whitespace-normal overflow-visible">
             <a
               >{{
                 formatDates(

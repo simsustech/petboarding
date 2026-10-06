@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div class="row">
+    <div class="row q-col-gutter-md">
       <customer-card
         v-if="customerData"
         class="col-12 col-md-4"

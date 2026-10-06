@@ -81,8 +81,8 @@
     <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   </div>
   <div
-    v-if="view === 'week'"
-    class="lt-md text-caption text-grey q-px-sm q-pt-xs"
+    v-if="view === 'week' && swipeHint"
+    class="text-caption text-grey q-px-sm q-pt-xs"
   >
     {{ lang.agenda.swipeHint }}
   </div>
@@ -260,7 +260,7 @@ import { QCalendarAgenda } from '@quasar/quasar-ui-qcalendar/QCalendarAgenda'
 import type { QCalendarAgenda as QCalendarAgendaInstance } from '@quasar/quasar-ui-qcalendar'
 
 import AgendaChip from './AgendaChip.vue'
-import { ref, toRefs, watch, computed } from 'vue'
+import { ref, toRefs, watch, computed, onMounted, onUnmounted } from 'vue'
 import { date as dateUtil, useQuasar } from 'quasar'
 import type { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
@@ -342,6 +342,36 @@ const calendarStyle = computed(() => ({
   minHeight: '20rem'
 }))
 const calendar = ref<QCalendarAgendaInstance>()
+
+/**
+ * The swipe hint is a statement about geometry, so it is gated on geometry:
+ * it shows only while the week canvas is actually wider than its container.
+ * A fixed `lt-md` (the previous form) claimed "swipe to see the rest of the
+ * week" at 768px, where all seven columns fit (scrollWidth 744 == clientWidth
+ * 744, measured 2026-10-06) and at 1440px where the canvas fits too
+ * (1336 == 1336). ResizeObserver covers the cases a resize event misses:
+ * the view switch and the calendar growing as its data lands.
+ */
+const swipeHint = ref(false)
+const updateSwipeHint = () => {
+  const el = document.querySelector<HTMLElement>('.agenda-scroll')
+  swipeHint.value = Boolean(el && el.scrollWidth > el.clientWidth + 1)
+}
+let hintObserver: ResizeObserver | undefined
+onMounted(() => {
+  updateSwipeHint()
+  window.addEventListener('resize', updateSwipeHint)
+  const el = document.querySelector<HTMLElement>('.agenda-scroll')
+  if (el && typeof ResizeObserver !== 'undefined') {
+    hintObserver = new ResizeObserver(() => updateSwipeHint())
+    hintObserver.observe(el)
+    if (el.firstElementChild) hintObserver.observe(el.firstElementChild)
+  }
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSwipeHint)
+  hintObserver?.disconnect()
+})
 
 const agendaMaps = computed(() => {
   const servicesMap: Record<string, Booking[]> = {}

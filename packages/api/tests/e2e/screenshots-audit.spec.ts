@@ -26,6 +26,9 @@ const CUSTOMER = { email: 'test1@petboarding.app', password: 'qjiNWdT8L' }
 
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
+  // 768 is the app's `md:` split (DESIGN.md: col-span stacks below it), so the
+  // tablet capture lands exactly on the breakpoint where reorder/collapse happens.
+  { name: 'tablet', width: 768, height: 1024 },
   { name: 'mobile', width: 375, height: 812 }
 ] as const
 
@@ -195,15 +198,29 @@ for (const viewport of VIEWPORTS) {
 
     // At 375px the header buttons are pointer-blocked, so click when it lands and fall back
     // to a DOM dispatch so the shot still exists.
-    const menuAfter = async (locator: Locator) => {
+    //
+    // Exactly one toggle per menu: clicking an open menu closes it, and a
+    // .q-menu still in its leave transition reports visible for a few hundred
+    // ms — which is how the first capture pass produced menu shots with no menu
+    // in them (measured 2026-10-06). So: only click when no menu is showing,
+    // and re-assert immediately before the shot.
+    const openMenu = async (locator: Locator) => {
       const menu = page.locator('.q-menu').last()
-      try {
-        await locator.click({ timeout: 4000 })
-        await expect(menu).toBeVisible({ timeout: 4000 })
-      } catch {
-        await Promise.race([locator.dispatchEvent('click'), delay(4000)])
-        await expect(menu).toBeVisible({ timeout: 4000 })
+      const showing = async () =>
+        (await menu.count()) > 0 && (await menu.last().isVisible())
+      if (!(await showing())) {
+        try {
+          await locator.click({ timeout: 4000 })
+        } catch {
+          await Promise.race([locator.dispatchEvent('click'), delay(4000)])
+        }
       }
+      await expect(menu).toBeVisible({ timeout: 4000 })
+      await delay(300)
+      await expect(
+        menu,
+        'the menu is still open when the shot is taken'
+      ).toBeVisible()
     }
     const clickOrDispatch = async (locator: Locator) => {
       try {
@@ -221,18 +238,14 @@ for (const viewport of VIEWPORTS) {
       .waitForLoadState('networkidle', { timeout: 8000 })
       .catch(() => {})
     await delay(2000)
-    await clickOrDispatch(headerButtons.last())
-    await menuAfter(headerButtons.last())
-    await delay(300)
+    await openMenu(headerButtons.last())
     await shot('overflow-menu')
     await page.keyboard.press('Escape')
     await delay(400)
 
     // 2. User menu (My account / Sign out)
     await expect(userMenuButton).toBeVisible({ timeout: 5000 })
-    await clickOrDispatch(userMenuButton)
-    await menuAfter(userMenuButton)
-    await delay(300)
+    await openMenu(userMenuButton)
     await shot('user-menu')
     await page.keyboard.press('Escape')
     await delay(400)
@@ -275,7 +288,7 @@ for (const viewport of VIEWPORTS) {
       await delay(400)
     }
 
-    // 5. Pet edit dialog — open only, Escape without submitting.
+    // 5. Pet edit dialog — open only, closed without submitting.
     if (viewport.name === 'desktop') {
       await page.goto('/employee/pets/2')
       await page
@@ -287,11 +300,15 @@ for (const viewport of VIEWPORTS) {
         delay(8000)
       ])
       await delay(800)
-      await expect(page.locator('.q-dialog').last()).toBeVisible({
-        timeout: 10000
-      })
+      const dialog = page.locator('.q-dialog').last()
+      await expect(dialog).toBeVisible({ timeout: 10000 })
       await shot('pet-edit-dialog')
-      await page.keyboard.press('Escape')
+      // `persistent` dialogs ignore Escape (QDialog shakes instead of hiding,
+      // see QDialog.js onEscapeKey), so Escape left this dialog open and the
+      // drawer shot that followed was taken over it. Close through the header's
+      // ✕ — the first button inside the dialog — and prove it went.
+      await dialog.locator('button').first().click({ timeout: 5000 })
+      await expect(dialog).toBeHidden({ timeout: 5000 })
       await delay(400)
     }
 

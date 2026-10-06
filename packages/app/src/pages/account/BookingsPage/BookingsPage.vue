@@ -51,7 +51,7 @@
         </div>
       </div>
       <div v-else>
-        <router-link to="/account/pets">{{
+        <router-link class="q-link text-primary" to="/account/pets">{{
           lang.booking.messages.addPets
         }}</router-link>
       </div>
