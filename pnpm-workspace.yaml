@@ -29,15 +29,15 @@ minimumReleaseAgeExclude:
   - '@rolldown/binding-win32-x64-msvc@1.2.12'
   - '@simsustech/quasar-components@0.12.12 || 0.12.13'
   - '@vitrify/tools@0.5.5'
-  - pg-boss@12.35.1
+  - pg-boss@12.35.1 || 12.37.0
   - pg-cloudflare@1.4.1
   - pg-connection-string@2.14.1
   - pg-protocol@1.16.1
   - pg@8.23.1
   - rolldown@1.2.12
   - stripe@23.0.0
-  - unocss-preset-quasar@0.6.0 || 0.6.1 || 0.6.2
-  - vite@8.3.2
+  - unocss-preset-quasar@0.6.0 || 0.6.1 || 0.6.2 || 0.6.3
+  - vite@8.3.2 || 8.3.3
   - vitrify@0.28.2
   - '@oxfmt/binding-android-arm-eabi@0.72.0'
   - '@oxfmt/binding-android-arm64@0.72.0'
@@ -80,6 +80,7 @@ minimumReleaseAgeExclude:
   - oxfmt@0.72.0
   - oxlint@1.87.0
   - nodemailer@10.0.15
+  - handlebars@4.7.10
 
 onlyBuiltDependencies:
   - '@parcel/watcher'

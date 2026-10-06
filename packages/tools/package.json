@@ -33,7 +33,7 @@
     "@rgrove/parse-xml": "^5.0.0",
     "export-to-csv": "^1.5.0",
     "fast-xml-parser": "^5.11.2",
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "ibantools": "^4.5.4"
   },
   "devDependencies": {
