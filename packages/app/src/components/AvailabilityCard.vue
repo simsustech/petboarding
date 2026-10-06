@@ -24,7 +24,7 @@
     <q-card-section>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
       <br />
-      <router-link class="q-link text-primary" to="/account/bookings">{{
+      <router-link class="q-link" to="/account/bookings">{{
         lang.availability.messages.addBooking
       }}</router-link>
     </q-card-section>

@@ -138,7 +138,14 @@ test.describe('Account', async () => {
 
     await page.locator('text=Submit').click()
 
-    expect(page.locator(`text=${customer.firstName}`)).toBeVisible()
+    // `text=${name}` is a case-insensitive substring match: with a first name
+    // like "Al" it also hits "Male" (the gender row and the still-mounted
+    // select) and "Postal code", so strict mode rejected the locator before the
+    // dialog had unmounted (2026-10-06, after the 0.6.5 bump shifted the timing).
+    // The details list states the name on its own, so match it exactly.
+    await expect(
+      page.getByText(customer.firstName, { exact: true })
+    ).toBeVisible()
 
     await page.locator('#fabEdit').click()
     const dialog = page.locator('.q-dialog').last()

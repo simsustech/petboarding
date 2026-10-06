@@ -16,10 +16,16 @@
 
       <div class="text-h2">{{ lang[404] }}</div>
 
+      <!-- Flat, primary-coloured label. A filled `bg-primary` button cannot be
+           relied on here: Quasar's own `.q-btn { background-color: transparent }`
+           is loaded after the preset's utilities and only loses in dark mode,
+           where `.body--dark .bg-primary` out-specifies it — a `color="primary"`
+           button measured transparent in light (2026-10-06). The label reads at
+           6.5:1 in light and 10:1 in dark. -->
       <q-btn
         class="q-mt-xl"
         color="primary"
-        unelevated
+        flat
         to="/"
         :label="lang.goHome"
         no-caps

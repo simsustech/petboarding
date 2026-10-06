@@ -412,9 +412,11 @@ test('the plain gutter class carries both axes', async ({ browser }) => {
   const page = await initializePage({ browser })
   await page.setViewportSize({ width: 1440, height: 900 })
   await login({ page, email: ADMIN.email, password: ADMIN.password })
-  await page.goto('/account/contactpeople')
+  // The pet grid is the reliable gutter row: `/account/contactpeople` renders an
+  // empty state for this account, so it has no `q-col-gutter-md` row to measure.
+  await page.goto('/employee/pets/1/2/3/4')
   await page.waitForLoadState('networkidle').catch(() => {})
-  await page.waitForTimeout(2000)
+  await page.waitForTimeout(3000)
   test.skip(await twinRulePresent(page), UPSTREAM_PRESET_SKIP)
 
   const gutter = await page.evaluate(() => {

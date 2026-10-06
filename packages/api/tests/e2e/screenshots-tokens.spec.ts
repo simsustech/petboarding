@@ -68,7 +68,7 @@ test('token probe — dark mode suspects', async ({ browser }) => {
         '.q-date__calendar-item span.block'
       ]
     ],
-    ['/_audit-not-a-route', ['.q-page', '.q-page .text-h2', '.q-page .q-btn']],
+    ['/_audit-not-a-route', ['.q-page .q-btn', '.q-page .text-primary']],
     ['/information', ['a[href="/print/termsandconditions"]']],
     ['/employee/pets', ['.q-pa-lg.flex.flex-center']]
   ]

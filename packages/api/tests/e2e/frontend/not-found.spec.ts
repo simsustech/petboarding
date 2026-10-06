@@ -45,16 +45,17 @@ for (const viewport of VIEWPORTS) {
     )
     expect(opacity).toBe('1')
 
-    // The CTA uses the primary role rather than a hard-coded blue.
+    // The CTA uses the primary role rather than a hard-coded blue, as a flat
+    // button (see Error404Page.vue for why it is not filled: Quasar's own
+    // `.q-btn { background-color: transparent }` is loaded after the preset's
+    // utilities and only loses in dark mode).
     const button = page.locator('.q-page .q-btn').first()
-    const [bg, primary] = await Promise.all([
-      button.evaluate((el: Element) => getComputedStyle(el).color),
-      page.evaluate(() =>
-        getComputedStyle(document.documentElement).getPropertyValue(
-          '--q-primary'
-        )
-      )
-    ])
+    const measured = await button.evaluate((el: Element) => ({
+      label: getComputedStyle(el).color,
+      primary: getComputedStyle(document.body)
+        .getPropertyValue('--q-primary')
+        .trim()
+    }))
     const toRgb = (hex: string) => {
       const h = hex.trim().replace('#', '')
       const full =
@@ -67,6 +68,9 @@ for (const viewport of VIEWPORTS) {
       const n = parseInt(full || '000000', 16)
       return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`
     }
-    expect(toRgb(primary), 'CTA label must use the primary colour').toBe(bg)
+    expect(
+      toRgb(measured.primary),
+      'CTA label must use the primary colour'
+    ).toBe(measured.label)
   })
 }

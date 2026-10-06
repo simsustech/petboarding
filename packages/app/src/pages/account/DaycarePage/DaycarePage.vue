@@ -95,7 +95,7 @@
         </div>
       </div>
       <div v-else>
-        <router-link class="q-link text-primary" to="/account/pets">{{
+        <router-link class="q-link" to="/account/pets">{{
           lang.daycare.messages.addPets
         }}</router-link>
       </div>

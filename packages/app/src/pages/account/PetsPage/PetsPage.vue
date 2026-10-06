@@ -13,7 +13,7 @@
       </div>
 
       <div v-else>
-        <router-link class="q-link text-primary" to="/account/contactpeople">{{
+        <router-link class="q-link" to="/account/contactpeople">{{
           lang.pet.messages.addContactPeople
         }}</router-link>
       </div>
