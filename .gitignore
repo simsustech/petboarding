@@ -23,3 +23,6 @@ packages/**/AGENTS.md
 
 # Local review/scratch artifacts (not for commit)
 .scratch/
+# Showcase screenshots — keep README/spec, ignore PNG artifacts
+showcase/*/*.png
+showcase/*/!(*.md)

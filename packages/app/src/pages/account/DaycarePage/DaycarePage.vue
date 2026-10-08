@@ -59,13 +59,60 @@
           </q-card>
 
           <q-card class="col-span-12">
-            <q-card-section class="text-right">
+            <!-- 1a: empty state when user has pets but no daycare dates -->
+            <q-card-section
+              v-if="petsData?.length && !data?.length"
+              class="text-center q-py-xl"
+            >
+              <q-icon
+                name="i-mdi-calendar-plus"
+                size="3em"
+                color="primary"
+                class="q-mb-md"
+              />
+              <div class="text-h6 q-mb-sm">
+                {{ lang.daycare.messages.noDaycareDates }}
+              </div>
+              <div class="text-body-2 text-grey-7 q-mb-lg">
+                {{ lang.daycare.messages.addFirstDaycareDates }}
+              </div>
               <q-btn
-                outline
-                icon="i-mdi-add"
-                :label="lang.add"
+                color="primary"
+                size="lg"
+                icon-right="i-mdi-add"
+                :label="lang.daycare.labels.addDaycare"
                 @click="openCreateDialog"
               />
+            </q-card-section>
+            <!-- 1b: prominent CTA bar when dates exist -->
+            <q-card-section
+              v-else-if="data?.length"
+              class="row items-center q-gutter-md cta-bar q-py-md"
+            >
+              <div class="col-auto">
+                <q-icon
+                  name="i-mdi-calendar-plus"
+                  color="primary"
+                  size="1.5em"
+                />
+              </div>
+              <div class="col">
+                <div class="text-weight-medium">
+                  {{ lang.daycare.messages.addMoreDaycareDates }}
+                </div>
+                <div class="text-caption text-grey-7">
+                  {{ lang.daycare.messages.selectDatesThenSave }}
+                </div>
+              </div>
+              <div class="col-auto">
+                <q-btn
+                  color="primary"
+                  size="md"
+                  icon-right="i-mdi-add"
+                  :label="lang.daycare.labels.addDaycare"
+                  @click="openCreateDialog"
+                />
+              </div>
             </q-card-section>
             <q-card-section>
               <daycare-legend />
@@ -79,7 +126,7 @@
                 @change-date="onChangeDate"
               >
                 <template #head-day-button-tooltip>
-                  {{ lang.daycare.messages.addDaycareDates }}
+                  {{ lang.daycare.messages.selectDateForDaycare }}
                 </template>
               </daycare-calendar-month>
               <div class="row justify-center min-h-36px q-pt-md">
@@ -105,10 +152,14 @@
   <responsive-dialog
     ref="createDialogRef"
     padding
+    :display="true"
     :icons="{ close: 'i-mdi-close' }"
     persistent
     @submit="create"
   >
+    <template #title>
+      <span>{{ lang.daycare.labels.addDaycare }}</span>
+    </template>
     <daycare-form
       ref="createDaycareFormRef"
       :pets="petsData"
@@ -119,6 +170,7 @@
       :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
       :current-daycare-dates="data"
       :disabled-dates="disabledDates"
+      :submitting="submitting"
       @submit="createDaycare"
       @change-date="onChangeDate"
     ></daycare-form>
@@ -263,6 +315,7 @@ const missingVaccinations = computed(() =>
 )
 const createDaycareFormRef = ref<typeof DaycareForm>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
+const submitting = ref(false)
 
 const openCreateDialog: InstanceType<
   typeof ResourcePage
@@ -283,7 +336,9 @@ const openCreateDialog: InstanceType<
 const create: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
+  submitting.value = true
   const afterCreate = (success?: boolean) => {
+    submitting.value = false
     done(success)
   }
   createDaycareFormRef.value?.functions.submit({ done: afterCreate })
@@ -295,18 +350,49 @@ const create: InstanceType<
 
 const createDaycare: InstanceType<
   typeof DaycareForm
->['$props']['onSubmit'] = async ({ data, done }) => {
+>['$props']['onSubmit'] = async ({ data: daycareDates, done }) => {
+  submitting.value = true
   try {
-    await createDaycareDatesMutation(data)
+    await createDaycareDatesMutation(daycareDates)
 
     done()
+
+    // 2a: success dialog shows count + pet names
+    const petNames =
+      petsData.value
+        ?.filter((p) => daycareDates[0]?.petIds.includes(p.id))
+        .map((p) => p.name)
+        .join(', ') ?? ''
+
     $q.dialog({
-      message: lang.value.daycare.messages.submitted
+      title: lang.value.daycare.messages.datesAdded,
+      // One template per locale, and `html: false`: the old message split a
+      // sentence across three keys ('2 dates were' + 'for pets' + names) and
+      // injected user-controlled pet names into an `html: true` string.
+      message: lang.value.daycare.messages.datesAddedSummary(
+        daycareDates.length,
+        petNames
+      )
     })
+
     await execute()
     await executeCustomerDaycareSubscriptions()
   } catch (e) {
+    // 2b: show error without closing dialog
     console.error(e)
+    $q.notify({
+      type: 'negative',
+      message:
+        e instanceof Error
+          ? e.message
+          : lang.value.errors.invalid_type({
+              path: 'daycare',
+              expected: 'valid days'
+            }),
+      timeout: 8000
+    })
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -429,3 +515,17 @@ onMounted(async () => {
   ready.value = true
 })
 </script>
+
+<style scoped>
+/* The "add more dates" bar. Was `bg-grey-1` (#fafafa), which is nearly invisible
+   against the white card, so the primary call to action read as a disabled band.
+   Use the M3 container token instead, paired light/dark the way NavigationTabs
+   does. */
+.cta-bar {
+  background: var(--light-primary-container);
+}
+
+.body--dark .cta-bar {
+  background: var(--dark-primary-container);
+}
+</style>

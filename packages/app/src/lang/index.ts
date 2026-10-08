@@ -350,8 +350,18 @@ export interface Language {
       verifyStandby: string
       submitted: string
       openPets: string
-      addDaycareDates: string
       selectDaysHint: string
+      selectDateForDaycare: string
+      noDaycareDates: string
+      addFirstDaycareDates: string
+      addMoreDaycareDates: string
+      selectDatesThenSave: string
+      clickDateToSelect: string
+      selectPetToStart: string
+      selectedDatesCount: (n: number) => string
+      datesAdded: string
+      datesAddedSummary: (n: number, pets: string) => string
+      datesSelected: string
     }
     replies: {
       approve: string

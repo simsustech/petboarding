@@ -374,9 +374,25 @@ const lang: Language = {
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.',
       openPets: 'Huisdieren openen',
-      addDaycareDates: 'Gebruik de + knop bovenaan om datums toe te voegen.',
       selectDaysHint:
-        'Klik op een dag om deze te selecteren. Gebruik de maandknoppen om naar een andere maand te gaan.'
+        'Klik op een dag om deze te selecteren. Gebruik de maandknoppen om naar een andere maand te gaan.',
+      selectDateForDaycare: 'Voeg deze datum toe aan de dagopvang aanvraag.',
+      noDaycareDates: 'Nog geen dagopvang datums',
+      addFirstDaycareDates:
+        'Klik op de knop hieronder om je eerste dagopvang datums toe te voegen.',
+      addMoreDaycareDates: 'Meer dagopvang datums toevoegen',
+      selectDatesThenSave:
+        'Selecteer datums in de kalender, klik dan op Toevoegen.',
+      clickDateToSelect: 'Klik op een datum om te selecteren.',
+      selectPetToStart: 'Selecteer hierboven een huisdier om datums te kiezen.',
+      selectedDatesCount: (n: number) =>
+        n === 1 ? '1 datum geselecteerd' : `${n} datums geselecteerd`,
+      datesAdded: 'Dagopvang datums toegevoegd',
+      datesAddedSummary: (n: number, pets: string) =>
+        n === 1
+          ? `1 dagopvang datum is toegevoegd voor ${pets}.`
+          : `${n} dagopvang datums zijn toegevoegd voor ${pets}.`,
+      datesSelected: 'datums geselecteerd'
     },
     replies: {
       approve: 'Datumns goedkeuren',

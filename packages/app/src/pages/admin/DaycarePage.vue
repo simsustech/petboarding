@@ -4,7 +4,20 @@
       <daycare-status-select v-model="status" />
     </q-toolbar>
     <daycare-legend />
-    <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
+    <div class="row items-center q-gutter-md q-mb-md">
+      <q-toggle
+        v-model="showLastNames"
+        :label="lang.customer.fields.lastName"
+      />
+      <q-chip
+        v-if="selectedEventIds.length"
+        color="primary"
+        text-color="white"
+        icon="i-mdi-calendar-check"
+      >
+        {{ selectedEventIds.length }} {{ lang.daycare.messages.datesSelected }}
+      </q-chip>
+    </div>
     <daycare-calendar-month
       :events="events"
       :selected-events="selectedEventIds"

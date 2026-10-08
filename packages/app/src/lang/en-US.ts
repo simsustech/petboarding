@@ -367,9 +367,24 @@ const lang: Language = {
       submitted:
         'The dates have been submitted. Check the status on this page, you will not receive an email.',
       openPets: 'Open pets',
-      addDaycareDates: 'Use the + button at the top to add dates.',
       selectDaysHint:
-        'Click a day to select it. Use the month buttons to move to another month.'
+        'Click a day to select it. Use the month buttons to move to another month.',
+      selectDateForDaycare: 'Add this date to the daycare request.',
+      noDaycareDates: 'No daycare dates yet',
+      addFirstDaycareDates:
+        'Tap the button below to add your first daycare dates.',
+      addMoreDaycareDates: 'Add more daycare dates',
+      selectDatesThenSave: 'Select dates in the calendar, then tap Add.',
+      clickDateToSelect: 'Click a date to select it.',
+      selectPetToStart: 'Select a pet above to start picking dates.',
+      selectedDatesCount: (n: number) =>
+        n === 1 ? '1 date selected' : `${n} dates selected`,
+      datesAdded: 'Daycare dates added',
+      datesAddedSummary: (n: number, pets: string) =>
+        n === 1
+          ? `1 daycare date was added for ${pets}.`
+          : `${n} daycare dates were added for ${pets}.`,
+      datesSelected: 'dates selected'
     },
     replies: {
       approve: 'Approve dates',

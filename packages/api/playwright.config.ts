@@ -36,7 +36,6 @@ export default defineConfig({
     baseURL:
       process.env.PETBOARDING_E2E_BASE_URL ?? 'https://petboarding.localhost'
   },
-
   projects: [
     {
       name: 'chromium',

@@ -1,5 +1,10 @@
 <template>
-  <q-form v-bind="attrs" ref="formRef" class="row justtify-center">
+  <q-form
+    v-bind="attrs"
+    ref="formRef"
+    class="row justtify-center"
+    @submit.prevent="submit"
+  >
     <div class="col-12 col-md-6">
       <q-select
         :model-value="modelValue.petIds"
@@ -18,14 +23,41 @@
         :ignore-terms-and-conditions="ignoreTermsAndConditions"
       />
     </div>
+
+    <!-- Primary submit. Deliberately INSIDE the form: outside it `type="submit"`
+         is inert and Enter never submits, which made the commit action
+         mouse-only. The class is real, not the phantom `sticky-bottom-buttons`
+         that had no stylesheet definition. -->
+    <div class="col-12 row justify-center q-mt-lg q-gutter-sm">
+      <q-btn
+        type="submit"
+        color="primary"
+        size="lg"
+        icon="i-mdi-calendar-plus"
+        :label="lang.daycare.labels.addDaycare"
+        :loading="submitting"
+        :disable="!selectedDates.length"
+      >
+        <q-tooltip v-if="!selectedDates.length">
+          {{ lang.daycare.messages.clickDateToSelect }}
+        </q-tooltip>
+        <span v-if="selectedDates.length" class="q-ml-sm text-caption">
+          ({{ selectedDates.length }})
+        </span>
+      </q-btn>
+    </div>
   </q-form>
-  <div v-show="modelValue.petIds.length" class="row justify-center">
+  <!-- The calendar is only meaningful once a pet is chosen. `v-if`, not
+       `v-show`: the scroll-area inside keeps its last measured height, so a
+       hidden calendar reserved ~600px of empty dialog and the create dialog
+       opened as a mostly-blank panel. -->
+  <div v-if="modelValue.petIds.length" class="row justify-center">
     <span class="text-caption q-mb-xs">
       {{ lang.daycare.messages.selectDaysHint }}
     </span>
   </div>
   <daycare-calendar-month
-    v-show="modelValue.petIds.length"
+    v-if="modelValue.petIds.length"
     :selected-dates="selectedDates"
     :disabled-weekdays="configuration.DAYCARE_DISABLED_WEEKDAYS"
     :max-number-of-selected-dates="maxNumberOfSelectedDates"
@@ -35,6 +67,39 @@
     @update:selected-dates="($event) => (selectedDates = $event)"
     @change-date="onChangeDate"
   ></daycare-calendar-month>
+
+  <!-- Instead of an empty void: say what the first step is. -->
+  <div
+    v-else
+    class="column items-center justify-center text-center q-py-xl text-grey-7"
+  >
+    <q-icon name="i-mdi-paw" size="3em" class="q-mb-md text-grey-5" />
+    <div class="text-body-1">
+      {{ lang.daycare.messages.selectPetToStart }}
+    </div>
+  </div>
+
+  <!-- 1d: live date counter -->
+  <div v-if="modelValue.petIds.length" class="row justify-center q-mt-md">
+    <q-chip
+      v-if="selectedDates.length"
+      color="primary"
+      text-color="white"
+      icon="i-mdi-calendar-check"
+      class="text-body-1 q-py-sm q-px-md"
+    >
+      {{ lang.daycare.messages.selectedDatesCount(selectedDates.length) }}
+    </q-chip>
+    <q-chip
+      v-else
+      color="grey-3"
+      text-color="grey-7"
+      icon="i-mdi-help-circle-outline"
+    >
+      {{ lang.daycare.messages.clickDateToSelect }}
+    </q-chip>
+  </div>
+
   <div
     v-if="selectedDates.length"
     class="row items-center justify-center q-gutter-xs q-mt-sm"
@@ -105,6 +170,7 @@ export interface Props {
   currentDaycareDates?: DaycareDate[]
   allowPastDates?: boolean
   disabledDates?: string[]
+  submitting?: boolean
 }
 
 const props = defineProps<Props>()

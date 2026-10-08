@@ -4,6 +4,7 @@
     :bus-emits="busEmits"
     :icons="icons"
     type="add"
+    :seek-attention="!bookings?.length"
   />
 </template>
 
@@ -11,6 +12,7 @@
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { onMounted, ref } from 'vue'
 import { useAccountGetPetsQuery } from 'src/queries/account/pet.js'
+import { useAccountGetBookingsQuery } from 'src/queries/account/booking.js'
 
 const busEmits = ref({
   add: 'account-open-bookings-create-dialog'
@@ -22,8 +24,10 @@ const icons = ref({
 })
 
 const { pets, refetch: executePets } = useAccountGetPetsQuery()
+const { bookings, refetch: executeBookings } = useAccountGetBookingsQuery()
 
 onMounted(async () => {
   await executePets()
+  await executeBookings()
 })
 </script>

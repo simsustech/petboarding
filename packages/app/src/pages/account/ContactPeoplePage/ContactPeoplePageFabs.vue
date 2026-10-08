@@ -4,12 +4,14 @@
     :bus-emits="busEmits"
     :icons="icons"
     type="add"
+    :seek-attention="!contactPeople?.length"
   />
 </template>
 
 <script lang="ts" setup>
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { useAccountGetCustomerQuery } from 'src/queries/account/customer'
+import { useAccountGetContactPeopleQuery } from 'src/queries/account/contactperson'
 import { onMounted, ref } from 'vue'
 
 const busEmits = ref({
@@ -22,8 +24,11 @@ const icons = ref({
 })
 
 const { customer, refetch: executeCustomer } = useAccountGetCustomerQuery()
+const { contactPeople, refetch: executeContactPeople } =
+  useAccountGetContactPeopleQuery()
 
 onMounted(async () => {
   await executeCustomer()
+  await executeContactPeople()
 })
 </script>
