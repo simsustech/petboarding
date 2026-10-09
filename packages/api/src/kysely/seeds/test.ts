@@ -622,6 +622,81 @@ kan annuleringskosten factureren in de gevallen die de klant publiceert.`
 
   const admin = adminAccounts[0]
 
+  const [adminCustomer] = await db
+    .insertInto('customers')
+    .values({
+      gender: 'other',
+      firstName: 'Alex',
+      lastName: 'Administrator',
+      address: '1 Test Street',
+      city: 'Testville',
+      postalCode: '1234 AB',
+      veterinarian: 'Dr. Example',
+      telephoneNumber: '+31 20 123 4567',
+      accountId: admin.id
+    })
+    .returning('id')
+    .execute()
+
+  await db
+    .insertInto('customerDaycareSubscriptions')
+    .values({
+      effectiveDate: `${CURRENT_YEAR}-01-01`,
+      expirationDate: `${CURRENT_YEAR + 1}-12-31`,
+      status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+      daycareSubscriptionId: 1,
+      customerId: adminCustomer.id
+    })
+    .execute()
+
+  await db
+    .insertInto('contactPeople')
+    .values({
+      firstName: 'Sam',
+      lastName: 'Contact',
+      telephoneNumber: '+31 20 123 4568',
+      customerId: adminCustomer.id
+    })
+    .execute()
+
+  await db
+    .insertInto('pets')
+    .values([
+      {
+        species: 'dog',
+        name: 'Buddy',
+        breed: 'Labrador Retriever',
+        categoryId: 1,
+        birthDate: '2021-04-12',
+        gender: 'male',
+        sterilized: true,
+        customerId: adminCustomer.id,
+        food: {
+          timesADay: 2,
+          amount: 250,
+          amountUnit: 'gram' as const,
+          kind: 'Adult kibble'
+        }
+      },
+      {
+        species: 'cat',
+        name: 'Milo',
+        breed: 'European Shorthair',
+        categoryId: 1,
+        birthDate: '2022-09-03',
+        gender: 'male',
+        sterilized: true,
+        customerId: adminCustomer.id,
+        food: {
+          timesADay: 2,
+          amount: 80,
+          amountUnit: 'gram' as const,
+          kind: 'Indoor cat food'
+        }
+      }
+    ])
+    .execute()
+
   await db
     .insertInto('authenticationMethods')
     .values([

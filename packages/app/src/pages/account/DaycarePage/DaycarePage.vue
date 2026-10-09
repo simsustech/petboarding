@@ -73,16 +73,9 @@
               <div class="text-h6 q-mb-sm">
                 {{ lang.daycare.messages.noDaycareDates }}
               </div>
-              <div class="text-body-2 text-grey-7 q-mb-lg">
+              <div class="text-body-2 text-grey-7">
                 {{ lang.daycare.messages.addFirstDaycareDates }}
               </div>
-              <q-btn
-                color="primary"
-                size="lg"
-                icon-right="i-mdi-add"
-                :label="lang.daycare.labels.addDaycare"
-                @click="openCreateDialog"
-              />
             </q-card-section>
             <!-- 1b: prominent CTA bar when dates exist -->
             <q-card-section
@@ -103,15 +96,6 @@
                 <div class="text-caption text-grey-7">
                   {{ lang.daycare.messages.selectDatesThenSave }}
                 </div>
-              </div>
-              <div class="col-auto">
-                <q-btn
-                  color="primary"
-                  size="md"
-                  icon-right="i-mdi-add"
-                  :label="lang.daycare.labels.addDaycare"
-                  @click="openCreateDialog"
-                />
               </div>
             </q-card-section>
             <q-card-section>
