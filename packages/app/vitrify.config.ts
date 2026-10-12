@@ -5,160 +5,35 @@ import {
   QuasarPlugin,
   type QuasarPluginOptions
 } from 'vitrify/plugins'
-import { certificateFor } from 'devcert'
+import { getCertificate } from '@vitejs/plugin-basic-ssl'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
-import { QuasarPreset, quasarWind4Options } from 'unocss-preset-quasar'
+import {
+  QuasarPreset,
+  quasarIconSet,
+  quasarWind4Options
+} from 'unocss-preset-quasar'
 import presetWind4 from '@unocss/preset-wind4'
 import { MaterialDesign3 } from 'unocss-preset-quasar/styles'
 import { loadEnv } from 'vite'
+import type { QuasarIconSet } from 'quasar'
 
-const iconifyJsonIconSet = {
-  name: 'iconify-json-mdi',
-  type: {
-    positive: 'i-mdi-check-circle',
-    negative: 'i-mdi-alert',
-    info: 'i-mdi-information',
-    warning: 'i-mdi-exclamation'
-  },
-  arrow: {
-    up: 'i-mdi-arrow-up',
-    right: 'i-mdi-arrow-right',
-    down: 'i-mdi-arrow-down',
-    left: 'i-mdi-arrow-left',
-    dropdown: 'i-mdi-menu-down'
-  },
-  chevron: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right'
-  },
-  colorPicker: {
-    spectrum: 'i-mdi-gradient-vertical',
-    tune: 'i-mdi-tune',
-    palette: 'i-mdi-palette-swatch'
-  },
-  pullToRefresh: {
-    icon: 'i-mdi-refresh'
-  },
-  carousel: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right',
-    up: 'i-mdi-chevron-up',
-    down: 'i-mdi-chevron-down',
-    navigationIcon: 'i-mdi-circle'
-  },
-  chip: {
-    remove: 'i-mdi-close-circle',
-    selected: 'i-mdi-check'
-  },
-  datetime: {
-    arrowLeft: 'i-mdi-chevron-left',
-    arrowRight: 'i-mdi-chevron-right',
-    now: 'i-mdi-clock-outline',
-    today: 'i-mdi-calendar-today'
-  },
-  editor: {
-    bold: 'i-mdi-format-bold',
-    italic: 'i-mdi-format-italic',
-    strikethrough: 'i-mdi-format-strikethrough-variant',
-    underline: 'i-mdi-format-underline',
-    unorderedList: 'i-mdi-format-list-bulleted',
-    orderedList: 'i-mdi-format-list-numbered',
-    subscript: 'i-mdi-format-subscript',
-    superscript: 'i-mdi-format-superscript',
-    hyperlink: 'i-mdi-link',
-    toggleFullscreen: 'i-mdi-fullscreen',
-    quote: 'i-mdi-format-quote-close',
-    left: 'i-mdi-format-align-left',
-    center: 'i-mdi-format-align-center',
-    right: 'i-mdi-format-align-right',
-    justify: 'i-mdi-format-align-justify',
-    print: 'i-mdi-printer',
-    outdent: 'i-mdi-format-indent-decrease',
-    indent: 'i-mdi-format-indent-increase',
-    removeFormat: 'i-mdi-format-clear',
-    formatting: 'i-mdi-format-color-text',
-    fontSize: 'i-mdi-format-size',
-    align: 'i-mdi-format-align-left',
-    hr: 'i-mdi-minus',
-    undo: 'i-mdi-undo',
-    redo: 'i-mdi-redo',
-    heading: 'i-mdi-format-size',
-    heading1: 'i-mdi-format-header-1',
-    heading2: 'i-mdi-format-header-2',
-    heading3: 'i-mdi-format-header-3',
-    heading4: 'i-mdi-format-header-4',
-    heading5: 'i-mdi-format-header-5',
-    heading6: 'i-mdi-format-header-6',
-    code: 'i-mdi-code-tags',
-    size: 'i-mdi-format-size',
-    size1: 'i-mdi-numeric-1-box',
-    size2: 'i-mdi-numeric-2-box',
-    size3: 'i-mdi-numeric-3-box',
-    size4: 'i-mdi-numeric-4-box',
-    size5: 'i-mdi-numeric-5-box',
-    size6: 'i-mdi-numeric-6-box',
-    size7: 'i-mdi-numeric-7-box',
-    font: 'i-mdi-format-font',
-    viewSource: 'i-mdi-code-tags'
-  },
-  expansionItem: {
-    icon: 'i-mdi-chevron-down',
-    denseIcon: 'i-mdi-menu-down'
-  },
-  fab: {
-    icon: 'i-mdi-plus',
-    activeIcon: 'i-mdi-close'
-  },
-  field: {
-    clear: 'i-mdi-close-circle',
-    error: 'i-mdi-alert-circle'
-  },
-  pagination: {
-    first: 'i-mdi-chevron-double-left',
-    prev: 'i-mdi-chevron-left',
-    next: 'i-mdi-chevron-right',
-    last: 'i-mdi-chevron-double-right'
-  },
-  rating: {
-    icon: 'i-mdi-star'
-  },
-  stepper: {
-    done: 'i-mdi-check',
-    active: 'i-mdi-pencil',
-    error: 'i-mdi-alert'
-  },
-  tabs: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right',
-    up: 'i-mdi-chevron-up',
-    down: 'i-mdi-chevron-down'
-  },
-  table: {
-    arrowUp: 'i-mdi-arrow-up',
-    warning: 'i-mdi-alert',
-    firstPage: 'i-mdi-chevron-double-left',
-    prevPage: 'i-mdi-chevron-left',
-    nextPage: 'i-mdi-chevron-right',
-    lastPage: 'i-mdi-chevron-double-right'
-  },
-  tree: {
-    icon: 'i-mdi-play'
-  },
-  uploader: {
-    done: 'i-mdi-check',
-    clear: 'i-mdi-close',
-    add: 'i-mdi-plus-box',
-    upload: 'i-mdi-cloud-upload',
-    removeQueue: 'i-mdi-notification-clear-all',
-    removeUploaded: 'i-mdi-check-all'
-  }
-}
+// The icon set comes from the preset's provider (BUG-003), derived from
+// Quasar's own icon-set data — no hand-written copy that can drift.
+const provider = quasarIconSet('mdi-v7')
 
 const quasarConf: QuasarPluginOptions = {
   // Toast position is set in `src/configuration.ts` (`Notify.setDefaults`); Quasar ignores this block.
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta', 'LocalStorage'],
-    iconSet: iconifyJsonIconSet
+    iconSet: provider.iconSet as QuasarIconSet,
+    // vitrify serialises framework.iconMapFn with `.toString()` into a bare
+    // virtual module (no imports, no closed-over bindings), so it must be
+    // self-contained. It mirrors provider.iconMapFn's idempotency: Quasar calls
+    // it on values that are already iconify classes, so re-prefixing them would
+    // produce `i-mdi-i-mdi-*` classes with no CSS.
+    iconMapFn: (name) => ({
+      icon: name.startsWith('i-') ? name : `i-mdi-${name.replace(/^mdi-/, '')}`
+    })
   },
   /*
    * Disable SASS if you use UnoCSS
@@ -167,11 +42,9 @@ const quasarConf: QuasarPluginOptions = {
 }
 
 export default async function ({
-  mode,
-  command
+  mode
 }: {
   mode: string
-  command: string
 }): Promise<VitrifyConfig> {
   const env = loadEnv(mode, process.cwd(), '')
   const config: VitrifyConfig = {
@@ -226,7 +99,7 @@ export default async function ({
             style: MaterialDesign3,
             sourceColor: env.VITE_SOURCE_COLOR,
             plugins: quasarConf['framework']['plugins'],
-            iconSet: quasarConf['framework']['iconSet'],
+            iconSet: 'mdi-v7',
             // ADR 0005: the preset ships this CSS; opt the extensions in here.
             appExtensions: ['qcalendar', 'qmarkdown']
           })
@@ -250,8 +123,16 @@ export default async function ({
     // quasar: quasarConf
   }
   if (mode === 'development') {
+    const certificate = await getCertificate(
+      'node_modules/.vite/basic-ssl',
+      '',
+      ['vitrify.test']
+    )
     config.server = {
-      https: await certificateFor('vitrify.local')
+      https: {
+        cert: certificate,
+        key: certificate
+      }
     }
   }
   return config
