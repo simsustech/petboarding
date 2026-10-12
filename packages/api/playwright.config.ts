@@ -11,7 +11,12 @@ export default defineConfig({
   globalSetup: './tests/e2e/global-setup.ts',
   testIgnore: [
     process.env.PLAYWRIGHT_TEST_FEATURES ? [] : ['**/features/**/*.spec.ts'],
-    process.env.PLAYWRIGHT_ALLOW_SCREENSHOTS ? [] : ['**/screenshots*.spec.ts'],
+    // Screenshot/showcase specs write image files and are opt-in via
+    // PLAYWRIGHT_ALLOW_SCREENSHOTS. CI never sets the flag, so they are skipped
+    // there; run them locally with PLAYWRIGHT_ALLOW_SCREENSHOTS=1.
+    process.env.PLAYWRIGHT_ALLOW_SCREENSHOTS
+      ? []
+      : ['**/screenshots*.spec.ts', '**/showcase-*.spec.ts'],
     process.env.PLAYWRIGHT_SLIMFACT ? [] : ['**/slimfact.spec.ts']
   ].flat(),
   fullyParallel: false,
