@@ -15,6 +15,10 @@ import { initializePage, login } from '../setup'
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
+const PROFILELESS_ADMIN = {
+  email: 'admin-profileless@petboarding.app',
+  password: 'qjiNWdT8L'
+}
 
 const at = async (
   page: import('@playwright/test').Page,
@@ -173,7 +177,11 @@ test('content links render in the theme, not the browser default blue', async ({
 }) => {
   const page = await initializePage({ browser })
   await page.setViewportSize({ width: 1440, height: 900 })
-  await login({ page, email: ADMIN.email, password: ADMIN.password })
+  await login({
+    page,
+    email: PROFILELESS_ADMIN.email,
+    password: PROFILELESS_ADMIN.password
+  })
 
   const cases: [string, string][] = [
     ['/availability', 'add a booking'],

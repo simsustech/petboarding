@@ -11,6 +11,8 @@ clients
 **/stats.html
 **/components.d.ts
 test-results.json
+# Reusable e2e logins captured by tests/e2e/global-setup.ts
+packages/api/tests/e2e/.auth/
 docker-compose.*.override.yaml
 
 **/.pnpm-store/**

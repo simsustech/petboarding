@@ -723,6 +723,27 @@ kan annuleringskosten factureren in de gevallen die de klant publiceert.`
     .set({ roles: '["administrator","employee"]' })
     .where('id', '=', 1)
     .execute()
+
+  // A profileless administrator for the empty-state specs. admin@petboarding.app
+  // now always ships with a customer profile, contact people and pets, so those
+  // specs need an account that genuinely has none.
+  const [profilelessAdmin] = await db
+    .insertInto('accounts')
+    .values({
+      email: 'admin-profileless@petboarding.app',
+      roles: `["administrator", "employee"]`
+    })
+    .returning('id')
+    .execute()
+
+  await db
+    .insertInto('authenticationMethods')
+    .values({
+      accountId: profilelessAdmin.id,
+      provider: 'native',
+      password: await hashPassword('qjiNWdT8L')
+    })
+    .execute()
 }
 
 seed()

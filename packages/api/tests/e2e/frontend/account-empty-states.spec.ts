@@ -2,13 +2,18 @@ import { test, expect, type Page } from '@playwright/test'
 import { initializePage, login } from '../setup'
 
 /**
- * `/account/*` for the seeded admin (no customer profile): the profileless state is
- * empty, not broken — no error toast, `/account/customer` guides instead of rendering
- * blank, and a customer *with* a profile still gets real data.
+ * `/account/*` for a profileless account: the profileless state is empty, not
+ * broken — no error toast, `/account/customer` guides instead of rendering blank,
+ * and a customer *with* a profile still gets real data. Uses the seeded
+ * `admin-profileless@petboarding.app`, because admin@petboarding.app now always
+ * ships with a customer profile.
  */
 
-const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
 const CUSTOMER = { email: 'test1@petboarding.app', password: 'qjiNWdT8L' }
+const PROFILELESS_ADMIN = {
+  email: 'admin-profileless@petboarding.app',
+  password: 'qjiNWdT8L'
+}
 
 const PROFILELESS_ROUTES = [
   '/account/customer',
@@ -60,7 +65,11 @@ test.describe('profileless account pages', () => {
     const page = await initializePage({ browser })
     const { unauthorized, countsReceived } = trackAdminTraffic(page)
     await page.setViewportSize({ width: 1440, height: 900 })
-    await login({ page, email: ADMIN.email, password: ADMIN.password })
+    await login({
+      page,
+      email: PROFILELESS_ADMIN.email,
+      password: PROFILELESS_ADMIN.password
+    })
 
     for (const route of PROFILELESS_ROUTES) {
       await page.goto(route)

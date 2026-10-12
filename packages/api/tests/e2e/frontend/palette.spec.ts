@@ -11,6 +11,10 @@ import { initializePage, login } from '../setup'
  */
 
 const ADMIN = { email: 'admin@petboarding.app', password: 'qjiNWdT8L' }
+const PROFILELESS_ADMIN = {
+  email: 'admin-profileless@petboarding.app',
+  password: 'qjiNWdT8L'
+}
 
 const parseColor = (value: string) => value.match(/[\d.]+/g)?.map(Number) ?? []
 
@@ -276,9 +280,13 @@ test.describe('palette and contrast', () => {
   test('the empty-state link wears a theme colour', async ({ browser }) => {
     const page = await initializePage({ browser })
     await page.setViewportSize({ width: 1440, height: 900 })
-    await login({ page, email: ADMIN.email, password: ADMIN.password })
+    await login({
+      page,
+      email: PROFILELESS_ADMIN.email,
+      password: PROFILELESS_ADMIN.password
+    })
 
-    // The profileless admin has no contact people, so PetsPage renders its empty-state link.
+    // The profileless account has no contact people, so PetsPage renders its empty-state link.
     await page.goto('/account/pets')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(2000)

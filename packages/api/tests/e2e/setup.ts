@@ -1,4 +1,5 @@
 import { type Browser, expect, Locator, Page } from '@playwright/test'
+import { applyAuthState, readAuthState } from './auth-state'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -87,17 +88,27 @@ export const login = async ({
   email: string
   password: string
 }) => {
+  // Replay the state `global-setup` captured for this role (auth-state.ts); the
+  // full OIDC round-trip below is only the fallback when it is missing.
+  const state = readAuthState(email)
+  if (state) {
+    await applyAuthState(page, state)
+    return
+  }
   await page.goto('/')
 
   // `.first()`: a bare `text=Login` click resolved to two elements and died in strict
   // mode before any assertion ran. Stays safe if the drawer renders at login time.
   await page.locator('text=Login').first().click()
 
-  await page.waitForLoadState('networkidle')
+  // Wait for the login form itself instead of `networkidle`: the field is the
+  // real precondition, and networkidle adds its full 500ms floor to every test.
+  const emailField = page.locator('text="Email"').first()
+  await emailField.waitFor({ state: 'visible', timeout: 15000 })
 
   await expect(page).toHaveURL(/.*login/)
 
-  await page.locator('text="Email"').first().fill(email)
+  await emailField.fill(email)
   await page.locator('text="Password"').first().fill(password)
 
   await page.locator('button >> text=Login').first().click()

@@ -12,7 +12,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: main
           token: ${{ secrets.GH_RELEASE_TOKEN }}
@@ -28,10 +28,10 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: 11.5
+          version: 12.5.1
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -46,11 +46,11 @@ jobs:
       # so the PR and its branch carry the right access.
       - name: Create release PR
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          title: "chore: release"
-          commit: "chore: version packages"
-          version: pnpm changeset version
+          pr-title: "chore: release"
+          commit-message: "chore: version packages"
+          version-script: pnpm changeset version
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
 
