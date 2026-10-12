@@ -52,7 +52,8 @@ services:
         - SIMSUSTECH_NPM_TOKEN
       dockerfile: Dockerfile
       target: api
-      network: 'host'
+      # default bridge; host networking needs a BuildKit entitlement
+      network: default
       additional_contexts:
         linked-quasar-components: >-
           ${LINKED_QUASAR_COMPONENTS_PATH:-.docker/empty}
