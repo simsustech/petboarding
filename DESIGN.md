@@ -35,6 +35,16 @@ colors:
   status-canceled: "#ff5722"
   status-pending: "#9e9e9e"
   status-standby: "#facc15"
+  rating-1: "#dc2626"
+  rating-2: "#ef4444"
+  rating-3: "#f97316"
+  rating-4: "#fb923c"
+  rating-5: "#eab308"
+  rating-6: "#facc15"
+  rating-7: "#a3e635"
+  rating-8: "#4ade80"
+  rating-9: "#22c55e"
+  rating-10: "#059669"
 typography:
   display:
     fontFamily: "Roboto, -apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif"
@@ -216,6 +226,16 @@ reads `primary`, `surface-container-*`, `on-surface`; it does not paste a color.
 **The Status Meanings Rule.** The five status colors mean exactly one thing each
 across calendar, agenda, list, and legend. Green never decorates; grey never
 means success; yellow always means "reserve".
+
+**The Compatibility Scale Rule.** Pet-to-pet compatibility is a ten-step scale
+(`rating-1` … `rating-10`, red → emerald) and it is the one place a red-to-green
+ramp is legitimate: it encodes a rating, not a status. It appears only where the
+rating is shown — the picker's occupant chips and their legend — and always
+paired with the number and a band word (Poor / Fair / OK / Good / Great), never
+as colour alone. The steps are the Tailwind values below (the chip carries
+`bg-red-600` … `bg-emerald-600`); dark mode keeps them unchanged by design,
+because a rating's hue must not shift with the theme, and these tokens are the
+single source any re-theming updates.
 
 ## Typography
 

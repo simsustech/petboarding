@@ -2,6 +2,7 @@ export interface Language {
   isoName: string
   edit: string
   cancel: string
+  undo: string
   serverError: string
   search: string
   open: string
@@ -589,8 +590,28 @@ export interface Language {
       today: string
       tomorrow: string
     }
+    dialog: {
+      waitlist: string
+      back: string
+      placeTitle: string
+      rating: string
+      ratingBands: {
+        poor: string
+        fair: string
+        ok: string
+        good: string
+        great: string
+      }
+      legend: string
+      free: string
+      freeSummary: string
+      noKennels: string
+      moreOccupants: string
+      assignDone: string
+      assignFailed: string
+    }
     messages: {
-      dragAndDrop: string
+      selectKennel: string
     }
   }
   financial: {

@@ -4,6 +4,7 @@ const lang: Language = {
   isoName: 'nl',
   edit: 'Wijzigen',
   cancel: 'Annuleren',
+  undo: 'Ongedaan maken',
   serverError: 'Er ging iets fout...',
   search: 'Zoeken...',
   open: 'Openen',
@@ -644,8 +645,30 @@ const lang: Language = {
       today: 'Vandaag',
       tomorrow: 'Morgen'
     },
+    dialog: {
+      waitlist: 'Wachtlijst',
+      back: 'Terug',
+      placeTitle: 'Plaats {pet}',
+      rating: '{n} · {band}',
+      ratingBands: {
+        poor: 'Slecht',
+        fair: 'Matig',
+        ok: 'Redelijk',
+        good: 'Goed',
+        great: 'Uitstekend'
+      },
+      legend:
+        'Compatibiliteit met de huisdieren die al in een kennel staan:  {poor} (1-2) · {fair} (3-4) · {ok} (5-6) · {good} (7-8) · {great} (9-10)',
+      free: 'Vrij',
+      freeSummary: '{free} van {total} vrij',
+      noKennels: 'Geen kennels in dit gebouw.',
+      moreOccupants: '+{n} meer',
+      assignDone: '{pet} geplaatst in {kennel}.',
+      assignFailed: 'Kon dit huisdier niet plaatsen. Er is niets gewijzigd.'
+    },
     messages: {
-      dragAndDrop: 'Sleep de huisdieren naar de kennels.'
+      selectKennel:
+        'Klik op een huisdier en kies daarna een kennel of de wachtlijst.'
     }
   },
   financial: {

@@ -84,6 +84,15 @@ Guarded by `packages/api/tests/e2e/frontend/agenda.spec.ts` and the route matrix
 *Avoid*: "let the page scroll sideways", "shrink the grid below legibility" — both name the
 behaviour this rule replaced.
 
+## Kennel assignment is tap→picker, not drag & drop
+
+Assigning a pet to a kennel on `/employee/kennellayout` goes through the two-level
+kennel picker dialog (tap chip → waitlist/building rows → kennel row). Drag & drop
+was removed in 2026-10 (touch support, WCAG 2.5.7, drop-crash history — ADR 005).
+
+*Avoid*: "drag and drop" as the name of the assignment mechanism; "kennel dialog",
+"assignment modal" for the picker.
+
 ## Related
 
 - `docs/adr/001-customers-never-edit-category-or-comments.md` — why the first rule is an

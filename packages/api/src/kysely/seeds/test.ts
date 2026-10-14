@@ -15,6 +15,13 @@ import { getRandomInt } from './demo/index.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
+// Fixture pet photos: 64x64 solid-colour JPEGs, committed as base64 so the e2e
+// seed stays hermetic (no network, unlike the demo seed's `fetch(...)`).
+const PET_PHOTO_TEAL_B64 =
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABAAEADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAUG/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8ArAKLJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/9k='
+const PET_PHOTO_ORANGE_B64 =
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABAAEADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAb/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwC0BELwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB//2Q=='
+
 const seed = async () => {
   // Guard: if any test data already exists, skip reseeding
   // Guard: if any accounts already exist, skip reseeding to make seed idempotent
@@ -59,6 +66,14 @@ const seed = async () => {
     sterilized: true,
     customerId: nr,
     rating: nr === 2 ? 4 : 0,
+    // Pet photo. The layout/picker show a camera icon (and preview on hover)
+    // only when `image` is non-empty, so the fixture supplies one per pet; the
+    // demo seed fetches bytes over the network, which a hermetic e2e seed must
+    // not do, so these are two committed 64x64 JPEGs (teal / orange), cycled.
+    image: Buffer.from(
+      nr % 2 === 0 ? PET_PHOTO_TEAL_B64 : PET_PHOTO_ORANGE_B64,
+      'base64'
+    ),
     food: {
       timesADay: 2,
       amount: getRandomInt(300),
@@ -218,6 +233,177 @@ const seed = async () => {
     modifiedAt: new Date().toISOString(),
     customerId: undefined
   })
+
+  // Bookings 9 + 10 (kennel-picker tint fixture, plan step 4): on
+  // 2024-03-01 → 2024-03-10 pet 3 sits in kennel 1 and pet 4 in kennel 2, so
+  // the picker's compatibility tint has a picked pet and an occupant on one
+  // date — deliberately WITHOUT touching pet 2's relations, which
+  // tests/e2e/features/deceased-pet-relations.spec.ts asserts stay empty in
+  // pet 2's relations dialog select.
+  bookings.push({
+    startDate: '2024-03-01',
+    endDate: '2024-03-10',
+    startTimeId: 1,
+    endTimeId: 1,
+    customerId: 3
+  })
+  bookingPet.push({
+    bookingId: 9,
+    petId: 3,
+    kennelId: 1
+  })
+  bookingStatuses.push({
+    ...bookings.at(-1)!,
+    bookingId: 9,
+    status: BOOKING_STATUS.APPROVED,
+    petIds: '[3]',
+    modifiedAt: new Date().toISOString(),
+    customerId: undefined
+  })
+  bookings.push({
+    startDate: '2024-03-01',
+    endDate: '2024-03-10',
+    startTimeId: 1,
+    endTimeId: 1,
+    customerId: 4
+  })
+  bookingPet.push({
+    bookingId: 10,
+    petId: 4,
+    kennelId: 2
+  })
+  bookingStatuses.push({
+    ...bookings.at(-1)!,
+    bookingId: 10,
+    status: BOOKING_STATUS.APPROVED,
+    petIds: '[4]',
+    modifiedAt: new Date().toISOString(),
+    customerId: undefined
+  })
+
+  // Tint-testing windows (bookings 11–16): three more dates where two pets are
+  // visible together so the picker's rating badges can be eyeballed across the
+  // palette — Apr: pet 1 in kennel 3 + pet 5 on the waitlist (★8 green),
+  // May: pet 5 in kennel 1 + pet 3 in kennel 2 (★1 red),
+  // Jun: pet 4 in kennel 1 + pet 1 in kennel 2 (★10 emerald).
+  // pet 2 stays out of every pair: deceased-pet-relations.spec.ts pins its
+  // relations dialog select.
+  const tintWindows: {
+    startDate: string
+    endDate: string
+    customerId: number
+    bookingId: number
+    petId: number
+    kennelId?: number
+  }[] = [
+    {
+      startDate: '2024-04-01',
+      endDate: '2024-04-10',
+      customerId: 1,
+      bookingId: 11,
+      petId: 1,
+      kennelId: 3
+    },
+    {
+      startDate: '2024-04-01',
+      endDate: '2024-04-10',
+      customerId: 5,
+      bookingId: 12,
+      petId: 5
+    },
+    {
+      startDate: '2024-05-01',
+      endDate: '2024-05-10',
+      customerId: 5,
+      bookingId: 13,
+      petId: 5,
+      kennelId: 1
+    },
+    {
+      startDate: '2024-05-01',
+      endDate: '2024-05-10',
+      customerId: 3,
+      bookingId: 14,
+      petId: 3,
+      kennelId: 2
+    },
+    {
+      startDate: '2024-06-01',
+      endDate: '2024-06-10',
+      customerId: 4,
+      bookingId: 15,
+      petId: 4,
+      kennelId: 1
+    },
+    {
+      startDate: '2024-06-01',
+      endDate: '2024-06-10',
+      customerId: 1,
+      bookingId: 16,
+      petId: 1,
+      kennelId: 2
+    },
+    // Jul 2024: FOUR pets share kennel 1. The picker excludes the pet being
+    // placed from a kennel's occupant list (you are moving it, so it is not an
+    // "other" occupant), so three must be left over to exercise the cap
+    // (MAX_VISIBLE_OCCUPANTS = 2 → two chips + a "+1 more" remainder).
+    {
+      startDate: '2024-07-01',
+      endDate: '2024-07-10',
+      customerId: 3,
+      bookingId: 17,
+      petId: 3,
+      kennelId: 1
+    },
+    {
+      startDate: '2024-07-01',
+      endDate: '2024-07-10',
+      customerId: 4,
+      bookingId: 18,
+      petId: 4,
+      kennelId: 1
+    },
+    {
+      startDate: '2024-07-01',
+      endDate: '2024-07-10',
+      customerId: 5,
+      bookingId: 19,
+      petId: 5,
+      kennelId: 1
+    },
+    // Pet 1 is the fourth occupant, and the one the test opens the picker from.
+    // Self-exclusion then leaves three: two chips + a "+1 more" remainder.
+    {
+      startDate: '2024-07-01',
+      endDate: '2024-07-10',
+      customerId: 1,
+      bookingId: 20,
+      petId: 1,
+      kennelId: 1
+    }
+  ]
+  for (const w of tintWindows) {
+    bookings.push({
+      startDate: w.startDate,
+      endDate: w.endDate,
+      startTimeId: 1,
+      endTimeId: 1,
+      customerId: w.customerId
+    })
+    bookingPet.push({
+      bookingId: w.bookingId,
+      petId: w.petId,
+      kennelId: w.kennelId
+    })
+    bookingStatuses.push({
+      ...bookings.at(-1)!,
+      bookingId: w.bookingId,
+      status: BOOKING_STATUS.APPROVED,
+      petIds: `[${w.petId}]`,
+      modifiedAt: new Date().toISOString(),
+      customerId: undefined
+    })
+  }
 
   const daycareDates = [1, 2, 3, 4, 5].map((nr) => ({
     date: `2024-02-0${nr}`,
@@ -592,6 +778,20 @@ kan annuleringskosten factureren in de gevallen die de klant publiceert.`
   )}`.execute(db)
   await db.insertInto('pets').values(pets).execute()
   await db.insertInto('petAlerts').values(petAlerts).execute()
+
+  // Kennel-picker tint e2e fixture (plan step 4 + 2026-10-07 badge extension):
+  // rating pairs across the palette — (3,4) r3 orange (Mar), (1,5) r8 green
+  // (Apr), (3,5) r1 red (May), (1,4) r10 emerald (Jun). pet_id1 < pet_id2 is
+  // required (migration 29 check constraint); must run after the pets insert
+  // (FK pet_relations_pet_id1_fkey). Deliberately no row involving pet 2 —
+  // deceased-pet-relations.spec.ts pins pet 2's relations dialog select.
+  const petRelations = [
+    { petId1: 3, petId2: 4, rating: 3 },
+    { petId1: 1, petId2: 5, rating: 8 },
+    { petId1: 3, petId2: 5, rating: 1 },
+    { petId1: 1, petId2: 4, rating: 10 }
+  ]
+  await db.insertInto('petRelations').values(petRelations).execute()
   await sql`ALTER SEQUENCE pets_id_seq RESTART WITH ${sql.lit(
     pets.length + 1
   )}`.execute(db)

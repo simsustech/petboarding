@@ -10,9 +10,9 @@ import {
 import type { QuasarTheme } from 'unocss-preset-quasar/theme'
 import type { Locales } from '@simsustech/quasar-components/form'
 
-// Top, not bottom (the bottom covered the mobile footer). Set here rather than in
-// vitrify's `config.notify`, which Quasar ignored.
-Notify.setDefaults({ position: 'top' })
+// Toasts use Quasar's default position (bottom). The earlier top placement is
+// not restored: it existed to keep the toast off the mobile tab bar, and the
+// bottom default was preferred anyway (reverted 2026-10-08).
 
 const lang = useLang()
 

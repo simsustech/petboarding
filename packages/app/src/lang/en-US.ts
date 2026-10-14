@@ -4,6 +4,7 @@ const lang: Language = {
   isoName: 'en-US',
   edit: 'Edit',
   cancel: 'Cancel',
+  undo: 'Undo',
   serverError: 'Something went wrong...',
   search: 'Search...',
   open: 'Open',
@@ -630,8 +631,29 @@ const lang: Language = {
       today: 'Today',
       tomorrow: 'Tomorrow'
     },
+    dialog: {
+      waitlist: 'Waiting list',
+      back: 'Back',
+      placeTitle: 'Place {pet}',
+      rating: '{n} · {band}',
+      ratingBands: {
+        poor: 'Poor',
+        fair: 'Fair',
+        ok: 'OK',
+        good: 'Good',
+        great: 'Great'
+      },
+      legend:
+        'Compatibility with the pets already in a kennel:  {poor} (1-2) · {fair} (3-4) · {ok} (5-6) · {good} (7-8) · {great} (9-10)',
+      free: 'Free',
+      freeSummary: '{free} of {total} free',
+      noKennels: 'No kennels in this building.',
+      moreOccupants: '+{n} more',
+      assignDone: '{pet} placed in {kennel}.',
+      assignFailed: 'Could not place this pet. Nothing was changed.'
+    },
     messages: {
-      dragAndDrop: 'Drag and drop the pets into the kennels.'
+      selectKennel: 'Click on a pet, then choose a kennel or the waiting list.'
     }
   },
   financial: {

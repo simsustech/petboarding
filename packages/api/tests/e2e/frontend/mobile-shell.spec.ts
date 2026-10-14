@@ -169,6 +169,13 @@ test.describe('no route widens the document at 375px', () => {
     for (const route of WIDTH_ROUTES) {
       await page.goto(route)
       await page.waitForLoadState('networkidle')
+      // `networkidle` can settle before the SPA has mounted, which makes the
+      // hasPage guard below race the render (observed as a false E-stop on a
+      // loaded machine). Wait for the page element itself before measuring.
+      await page
+        .locator('.q-page')
+        .first()
+        .waitFor({ state: 'attached', timeout: 15000 })
       const measured = await page.evaluate(() => ({
         hasPage: Boolean(document.querySelector('.q-page')),
         scrollWidth: document.scrollingElement!.scrollWidth,

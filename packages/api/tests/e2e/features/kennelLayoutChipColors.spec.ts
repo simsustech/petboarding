@@ -32,45 +32,7 @@ const chipClasses = async () =>
     }))
   )
 
-test.describe('KennelLayout drag & drop regression', () => {
-  test('dropping a chip onto a chip in a kennel does not throw a TypeError', async () => {
-    // The reported crash: dropping a pet chip onto an occupied kennel threw
-    // `TypeError: Cannot read properties of null (reading 'at')` inside onDrop.
-    // The 4-level ancestor walk stopped on the `petN` row wrapper (which carries
-    // the same id), and `"petN".match(/kennel(.*)/)` returned null. Dropping
-    // onto the occupant chip's own text exercises that exact code path.
-    const typeErrors: string[] = []
-    page.on('console', (m) => {
-      if (m.type() === 'error' && m.text().includes('TypeError')) {
-        typeErrors.push(m.text())
-      }
-    })
-
-    await openLayout('2024-01-02') // seeded: pet2 (approved booking) in kennel 1
-    const chip = page.locator('.drop-target[id^="kennel"] .q-chip').first()
-    if ((await chip.count()) === 0) {
-      test.skip(true, 'No pet chip in any kennel for this date')
-      return
-    }
-    await expect(chip).toBeVisible({ timeout: 5000 })
-
-    // Real drag with movement, dropping back onto the occupant chip's center.
-    const cb = (await chip.boundingBox())!
-    const cx = cb.x + cb.width / 2
-    const cy = cb.y + cb.height / 2
-    await page.mouse.move(cx, cy)
-    await page.mouse.down()
-    await page.mouse.move(cx + 80, cy, { steps: 10 })
-    await page.mouse.move(cx, cy, { steps: 10 })
-    await page.mouse.up()
-    await page.waitForLoadState('networkidle')
-
-    expect(
-      typeErrors,
-      `unexpected TypeError during drop: ${typeErrors}`
-    ).toEqual([])
-  })
-
+test.describe('KennelLayout chip colours', () => {
   test('booking chips are blue and not recolored by alerts', async () => {
     // 2024-01-02: pet2 is the only approved booking, placed in kennel 1.
     await openLayout('2024-01-02')

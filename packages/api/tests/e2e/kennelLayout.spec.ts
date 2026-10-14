@@ -1,13 +1,11 @@
 import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
-
 import { initializeAndLogin } from './setup'
 
 const email = 'admin@petboarding.app'
 const password = 'qjiNWdT8L'
 
 let page: Page
-
 test.describe.configure({ mode: 'serial' })
 
 test.beforeAll(async ({ browser }) => {
@@ -29,23 +27,54 @@ test.beforeAll(async ({ browser }) => {
   ).toBeVisible({ timeout: 15000 })
 })
 
+const openLayout = async (date: string) => {
+  await page.goto(`/employee/kennellayout/${date}`)
+  await page.waitForLoadState('networkidle')
+  await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+  await page.waitForTimeout(1200)
+}
+
+// Dialog-driven assignment helpers (the click→picker flow replaced drag & drop).
+// Selectors deliberately use [id^="kennel"] / .q-chip#petN so they stay valid
+// after the .drop-target class and the duplicate wrapper id are removed.
+
+const openPickerFor = async (chip: ReturnType<typeof page.locator>) => {
+  await chip.click()
+  await expect(page.locator('#pickerDialog')).toBeVisible({ timeout: 5000 })
+}
+
+const pickKennel = async (kennelNr: number) => {
+  await page.locator('#pickerBuilding1').click()
+  await page.locator(`#pickerKennel${kennelNr}`).click()
+  await expect(page.locator('#pickerDialog')).toHaveCount(0, { timeout: 5000 })
+}
+
+const pickWaitlist = async () => {
+  await page.locator('#pickerWaitlist').click()
+  await expect(page.locator('#pickerDialog')).toHaveCount(0, { timeout: 5000 })
+}
+
 test.describe('KennelLayout', () => {
   test.beforeEach(async () => {
     await page.goto('/employee/kennellayout/2024-01-02')
     await page.waitForLoadState('networkidle')
     await expect(
-      page.locator('text="Drag and drop the pets into the kennels."')
+      page.locator(
+        'text="Click on a pet, then choose a kennel or the waiting list."'
+      )
     ).toBeVisible({ timeout: 10000 })
     await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
   })
 
   test('should display the kennel layout page with waitlist and buildings', async () => {
     await expect(
-      page.locator('text="Drag and drop the pets into the kennels."')
+      page.locator(
+        'text="Click on a pet, then choose a kennel or the waiting list."'
+      )
     ).toBeVisible()
 
     await expect(page.locator('#waitlist')).toBeVisible()
-    await expect(page.locator('.drop-target').first()).toBeVisible()
+    await expect(page.locator('[id^="kennel"]').first()).toBeVisible()
   })
 
   test('pet chips size to content height, not their container', async () => {
@@ -66,7 +95,7 @@ test.describe('KennelLayout', () => {
     }
 
     // Prefer a chip inside a kennel section; fall back to the waitlist.
-    const kennelChip = page.locator('.drop-target .q-chip').first()
+    const kennelChip = page.locator('[id^="kennel"] .q-chip').first()
     const chip =
       (await kennelChip.count()) > 0
         ? kennelChip
@@ -74,7 +103,7 @@ test.describe('KennelLayout', () => {
     await expect(chip).toBeVisible()
 
     const section = chip.locator(
-      'xpath=ancestor::*[contains(@class, "drop-target") or @id="waitlist"][1]'
+      'xpath=ancestor::*[@id="waitlist" or starts-with(@id, "kennel")][1]'
     )
     const chipBox = await chip.boundingBox()
     const sectionBox = await section.boundingBox()
@@ -102,67 +131,42 @@ test.describe('KennelLayout', () => {
     ).toBeLessThanOrEqual(contentH + 1)
   })
 
-  test('should drag a pet from waitlist into a kennel', async () => {
-    const petsInWaitlist = page.locator(
-      '#waitlist .q-chip, #waitlist [id^="pet"]'
-    )
-    const initialWaitlistCount = await petsInWaitlist.count()
+  test('should place a pet from the waitlist into a kennel', async () => {
+    // Dialog-driven rewrite of the drag scenario (step 3). Observed fixture:
+    // on 2024-02-02 the APPROVED daycare (seeds/test.ts:222-231 — daycare
+    // date 2, pet 2, daycareDatePetKennel.kennelId NULL) puts pet2 on the
+    // waitlist, where the old drag version could only run if the waitlist
+    // happened to be non-empty on 2024-01-02 (it was not — the guard skipped).
+    await openLayout('2024-02-02')
 
-    if (initialWaitlistCount === 0) {
-      test.skip(true, 'No pets in waitlist for this date')
+    const chip = page.locator('#waitlist .q-chip').first()
+    if ((await chip.count()) === 0) {
+      test.skip(true, 'No pets on the waitlist for this date')
       return
     }
-
-    await expect(petsInWaitlist.first()).toBeVisible({ timeout: 5000 })
-
-    const firstPet = petsInWaitlist.first()
-    const petId = await firstPet.getAttribute('id')
+    const petId = await chip.getAttribute('id')
     expect(petId).toBeTruthy()
 
-    const targetKennel = page.locator('.drop-target[id^="kennel"]').first()
-    await expect(targetKennel).toBeVisible()
+    await openPickerFor(chip)
+    await pickKennel(1)
 
-    const petBox = await firstPet.boundingBox()
-    const kennelBox = await targetKennel.boundingBox()
-    expect(petBox).toBeTruthy()
-    expect(kennelBox).toBeTruthy()
-
-    await page.mouse.move(
-      petBox!.x + petBox!.width / 2,
-      petBox!.y + petBox!.height / 2
-    )
-    await page.mouse.down()
-    await page.mouse.move(
-      kennelBox!.x + kennelBox!.width / 2,
-      kennelBox!.y + kennelBox!.height / 2,
-      { steps: 20 }
-    )
-    await page.mouse.up()
-
-    await page.waitForLoadState('networkidle')
-
-    const petsInWaitlistAfter = page.locator(
-      '#waitlist .q-chip, #waitlist [id^="pet"]'
-    )
-    expect(await petsInWaitlistAfter.count()).toBeLessThan(initialWaitlistCount)
-
-    await expect(page.locator(`#waitlist #${petId}`)).toHaveCount(0)
+    await expect(page.locator(`[id^="kennel"] .q-chip#${petId}`)).toBeVisible({
+      timeout: 5000
+    })
+    await expect(page.locator(`#waitlist .q-chip#${petId}`)).toHaveCount(0)
   })
 
-  test('should keep pet on waitlist across a print-route server read after drag-to-waitlist', async () => {
+  test('should keep pet on waitlist across a print-route server read after dialog-to-waitlist', async () => {
     // Booking 2 / pet 2 is seeded with `bookingPetKennel.kennelId = 1`, putting
     // pet 2 in kennel 1 on 2024-01-02. Without the per-day override -> NULL
-    // sentinel fix in `packages/api/src/repositories/kennel.ts`, dragging pet
-    // 2 from kennel 1 back to the waitlist would only delete any forward
-    // override rows and leave the read resolver falling back to the booking's
-    // default kennel — so pet 2 would reappear in kennel 1 on the print
-    // route (and on any fresh /employee reload), even though the opt-in
-    // mutation was sent.
-    await page.goto('/employee/kennellayout/2024-01-02')
-    await page.waitForLoadState('networkidle')
-    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+    // sentinel fix in `packages/api/src/repositories/kennel.ts`, moving pet 2
+    // from kennel 1 to the waitlist would only delete any forward override rows
+    // and leave the read resolver falling back to the booking's default kennel
+    // — so pet 2 would reappear in kennel 1 on the print route (and on any
+    // fresh /employee reload), even though the opt-in mutation was sent.
+    await openLayout('2024-01-02')
 
-    const petInKennel = page.locator('.drop-target[id^="kennel"] [id="pet2"]')
+    const petInKennel = page.locator('[id^="kennel"] .q-chip#pet2')
     if ((await petInKennel.count()) === 0) {
       test.skip(
         true,
@@ -171,27 +175,12 @@ test.describe('KennelLayout', () => {
       return
     }
 
-    const waitlist = page.locator('#waitlist')
-    await expect(waitlist).toBeVisible()
+    await openPickerFor(petInKennel.first())
+    await pickWaitlist()
 
-    const petBox = await petInKennel.first().boundingBox()
-    expect(petBox).toBeTruthy()
-    const waitlistBox = await waitlist.boundingBox()
-    expect(waitlistBox).toBeTruthy()
-
-    // Drag pet 2 from anywhere in any kennel onto #waitlist.
-    await page.mouse.move(
-      petBox!.x + petBox!.width / 2,
-      petBox!.y + petBox!.height / 2
-    )
-    await page.mouse.down()
-    await page.mouse.move(
-      waitlistBox!.x + waitlistBox!.width / 2,
-      waitlistBox!.y + waitlistBox!.height / 2,
-      { steps: 20 }
-    )
-    await page.mouse.up()
-    await page.waitForLoadState('networkidle')
+    await expect(page.locator('#waitlist .q-chip#pet2')).toBeVisible({
+      timeout: 5000
+    })
 
     // Navigate to the print route — a fresh server read.
     await page.goto('/print/kennellayout/2024-01-02')
@@ -209,43 +198,28 @@ test.describe('KennelLayout', () => {
     await expect(printKennelLocator).toHaveCount(0, { timeout: 5000 })
   })
 
-  test('should drag a pet from a kennel back to the waitlist', async () => {
-    const petsInKennels = page.locator(
-      '.drop-target[id^="kennel"] .q-chip, .drop-target[id^="kennel"] [id^="pet"]'
-    )
-    const existingPet = petsInKennels.first()
+  test('should move a pet from a kennel back to the waitlist', async () => {
+    // Operates on 2024-02-02, where the earlier placement test left pet2 in
+    // kennel 1 (the old drag version depended on whatever happened to be in a
+    // kennel on 2024-01-02 and skipped otherwise).
+    await openLayout('2024-02-02')
 
-    if ((await existingPet.count()) === 0) {
-      test.skip(true, 'No pets in kennels to drag back')
+    const inKennel = page.locator('[id^="kennel"] .q-chip').first()
+    if ((await inKennel.count()) === 0) {
+      test.skip(true, 'No pets in kennels to move back')
       return
     }
-
-    const petId = await existingPet.getAttribute('id')
+    const petId = await inKennel.getAttribute('id')
     expect(petId).toBeTruthy()
 
-    const waitlist = page.locator('#waitlist')
-    await expect(waitlist).toBeVisible()
+    await openPickerFor(inKennel)
+    // Root level of the picker: waitlist row first, buildings after.
+    await expect(page.locator('#pickerWaitlist')).toBeVisible()
+    await pickWaitlist()
 
-    const petBox = await existingPet.boundingBox()
-    const waitlistBox = await waitlist.boundingBox()
-    expect(petBox).toBeTruthy()
-    expect(waitlistBox).toBeTruthy()
-
-    await page.mouse.move(
-      petBox!.x + petBox!.width / 2,
-      petBox!.y + petBox!.height / 2
-    )
-    await page.mouse.down()
-    await page.mouse.move(
-      waitlistBox!.x + waitlistBox!.width / 2,
-      waitlistBox!.y + waitlistBox!.height / 2,
-      { steps: 20 }
-    )
-    await page.mouse.up()
-
-    await page.waitForLoadState('networkidle')
-
-    await expect(page.locator(`#waitlist #${petId}`)).toBeVisible()
+    await expect(page.locator(`#waitlist .q-chip#${petId}`)).toBeVisible({
+      timeout: 5000
+    })
   })
 
   test('should change date and reload pets', async () => {
@@ -262,87 +236,54 @@ test.describe('KennelLayout', () => {
     await expect(page.locator('#waitlist')).toBeVisible()
   })
 
-  test('should keep today layout untouched when booking pet is dragged on a different day', async () => {
+  test('should keep today layout untouched when a pet is placed in a different kennel on another day', async () => {
     // Go to "today" first (the beforeEach already does this at 2024-01-02).
-    await page.goto('/employee/kennellayout/2024-01-02')
-    await page.waitForLoadState('networkidle')
-    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+    // After the print-route test above, pet2 sits on the waitlist on
+    // 2024-01-02 (per-day override -> NULL sentinel, seeds/test.ts:100-111 +
+    // repositories/kennel.ts clearForwardBookingPetKennelOverrides).
+    await openLayout('2024-01-02')
 
-    const petsInWaitlist = page.locator(
-      '#waitlist .q-chip, #waitlist [id^="pet"]'
-    )
-    if ((await petsInWaitlist.count()) === 0) {
+    const waitChip = page.locator('#waitlist .q-chip#pet2')
+    if ((await waitChip.count()) === 0) {
       test.skip(
         true,
-        'No waitlist pets on 2024-01-02 to test per-day isolation'
+        'pet2 is not on the waitlist on 2024-01-02 — cannot exercise per-day isolation'
       )
       return
     }
 
-    // Drag the first waitlist pet into the first kennel on "today".
-    const firstPet = petsInWaitlist.first()
-    const petId = await firstPet.getAttribute('id')
-    expect(petId).toBeTruthy()
+    // Place pet2 into kennel 2 on "today".
+    await openPickerFor(waitChip)
+    await pickKennel(2)
+    await expect(page.locator('#kennel2 .q-chip#pet2')).toBeVisible({
+      timeout: 5000
+    })
 
-    const todayKennel = page.locator('.drop-target[id^="kennel"]').first()
-    await expect(todayKennel).toBeVisible()
-
-    const petBox = await firstPet.boundingBox()
-    const kennelBox = await todayKennel.boundingBox()
-
-    await page.mouse.move(
-      petBox!.x + petBox!.width / 2,
-      petBox!.y + petBox!.height / 2
-    )
-    await page.mouse.down()
-    await page.mouse.move(
-      kennelBox!.x + kennelBox!.width / 2,
-      kennelBox!.y + kennelBox!.height / 2,
-      { steps: 20 }
-    )
-    await page.mouse.up()
-    await page.waitForLoadState('networkidle')
-
-    // That same pet now lives inside the first kennel for "today". Two DOM
-    // nodes share the `pet{id}` (an outer wrapper div and the inner chip),
-    // so use the direct-child selector to refer to the kennel that contains it.
-    const petInTodayKennel = page.locator(`#kennel1 > [id="${petId}"]`)
-    await expect(petInTodayKennel).toBeVisible({ timeout: 5000 })
-
-    // Switch to "tomorrow" (2024-01-03).
-    await page.goto('/employee/kennellayout/2024-01-03')
-    await page.waitForLoadState('networkidle')
-    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
-
-    // If the same pet is present tomorrow (overlapping booking), drag it to a DIFFERENT kennel.
-    const tomorrowPet = page.locator(`[id="${petId}"]`)
-    if ((await tomorrowPet.count()) > 0) {
-      const targetKennel = page.locator('.drop-target[id^="kennel"]').nth(1) // second kennel
-      if ((await targetKennel.count()) > 0) {
-        const tPetBox = await tomorrowPet.first().boundingBox()
-        const tKennelBox = await targetKennel.boundingBox()
-
-        await page.mouse.move(
-          tPetBox!.x + tPetBox!.width / 2,
-          tPetBox!.y + tPetBox!.height / 2
-        )
-        await page.mouse.down()
-        await page.mouse.move(
-          tKennelBox!.x + tKennelBox!.width / 2,
-          tKennelBox!.y + tKennelBox!.height / 2,
-          { steps: 20 }
-        )
-        await page.mouse.up()
-        await page.waitForLoadState('networkidle')
-      }
+    // Switch to "tomorrow" (2024-01-03): the 01-02 override carries forward
+    // (latest override with date <= queried date, repositories/kennel.ts
+    // leftJoinLateral), so pet2 starts in kennel 2 there.
+    await openLayout('2024-01-03')
+    const tomorrowChip = page.locator('#kennel2 .q-chip#pet2')
+    if ((await tomorrowChip.count()) === 0) {
+      test.skip(
+        true,
+        'pet2 did not carry forward to 2024-01-03 — per-day resolver changed, do not improvise'
+      )
+      return
     }
 
-    // Switch BACK to "today" and confirm the pet is still in kennel 1, not affected by tomorrow's edit.
-    await page.goto('/employee/kennellayout/2024-01-02')
-    await page.waitForLoadState('networkidle')
-    await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
+    // Move it to a DIFFERENT kennel tomorrow.
+    await openPickerFor(tomorrowChip)
+    await pickKennel(3)
+    await expect(page.locator('#kennel3 .q-chip#pet2')).toBeVisible({
+      timeout: 5000
+    })
 
-    const petAfter = page.locator(`#kennel1 > [id="${petId}"]`)
-    await expect(petAfter).toBeVisible({ timeout: 5000 })
+    // Switch BACK to "today": pet2 must still be in kennel 2, not kennel 3.
+    await openLayout('2024-01-02')
+    await expect(page.locator('#kennel2 .q-chip#pet2')).toBeVisible({
+      timeout: 5000
+    })
+    await expect(page.locator('#kennel3 .q-chip#pet2')).toHaveCount(0)
   })
 })

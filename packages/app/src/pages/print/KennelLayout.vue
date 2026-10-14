@@ -17,8 +17,6 @@
         }"
         :model-value="pet"
         show-last-name
-        draggable="true"
-        @dragstart="onDragStart"
       >
       </pet-chip>
     </div>
@@ -75,8 +73,6 @@
                   :model-value="pet"
                   show-badge
                   show-last-name
-                  draggable="true"
-                  @dragstart="onDragStart"
                 >
                 </pet-chip>
               </div>
@@ -156,12 +152,6 @@ watch(
       internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
   }
 )
-
-// store the id of the draggable element
-function onDragStart(e) {
-  e.dataTransfer.setData('text', e.target.id)
-  e.dataTransfer.dropEffect = 'move'
-}
 
 onMounted(async () => {
   await executeBuildings()

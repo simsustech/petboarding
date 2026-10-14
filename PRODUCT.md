@@ -33,7 +33,7 @@ A neighboring product could not truthfully copy the combination: an end-to-end
 facility platform that is source-available under ELv2 and runs wherever the operator
 wants — self-hosted via Docker Compose under a license key, operated by simsustech, or
 forked from the public repository — with daycare sold as prepaid subscription packs and
-the kennel floor managed as a drag-and-drop layout with vaccination compliance built
+the kennel floor managed as a tap-to-assign kennel picker with vaccination compliance built
 into assignment. Deployment freedom plus facility-complete operations is the claim.
 
 ## Operating Context

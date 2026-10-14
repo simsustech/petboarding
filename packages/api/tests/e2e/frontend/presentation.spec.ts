@@ -79,7 +79,15 @@ test('customer detail renders a typographic range, no raw arrows', async ({
 
   await page.goto('/employee/customers/1')
   await page.waitForLoadState('networkidle')
-  await page.waitForTimeout(3000)
+  // Wait for the range itself rather than a fixed duration: the bookings list is
+  // populated after its own fetch, so a bare timeout raced the first paint and
+  // failed intermittently with only the calendar's month label in the body.
+  await expect
+    .poll(
+      async () => (await page.locator('body').innerText()).replace(/\s+/g, ' '),
+      { timeout: 15000 }
+    )
+    .toMatch(/\d{4} [–-] /)
 
   const body = (await page.locator('body').innerText()).replace(/\s+/g, ' ')
   expect(body, 'no raw "->" arrows').not.toContain('->')

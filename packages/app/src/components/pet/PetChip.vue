@@ -1,12 +1,14 @@
 <template>
   <q-chip
     :class="{
-      'q-mb-md': $slots['bottom-badge']
+      'q-mb-md': $slots['bottom-badge'],
+      'pet-chip--compact': compact
     }"
-    :style="{
-      'max-width': '12em',
-      height: '100%'
-    }"
+    :style="
+      compact
+        ? { 'max-width': '100%' }
+        : { 'max-width': '12em', height: '100%' }
+    "
   >
     <!-- Kept: component-specific wrapping. The chip's label is user content, so the
          `white-space: normal` is about this text, not a Quasar chip defect. -->
@@ -14,10 +16,11 @@
       :style="{
         'white-space': 'normal !important'
       }"
+      :class="compact ? 'row items-center q-gutter-xs' : ''"
     >
       <div v-if="overline" class="text-overline">{{ overline }}</div>
       <div>{{ label }}</div>
-      <div class="text-caption">{{ food }}</div>
+      <div v-if="!compact" class="text-caption">{{ food }}</div>
       <div v-if="caption" class="text-caption">{{ caption }}</div>
       <div
         v-if="showBadge || $slots['badge']"
@@ -38,6 +41,11 @@
             :name="PET_CHIP_BADGE_ICONS.food"
             size="0.8em"
           />
+          <!-- Badges are icon-only, so each carries its meaning as a tooltip —
+               the same wording the page legend uses (PetLegend.vue). -->
+          <q-tooltip>{{
+            lang.pet.messages.foodMoreThanTwoTimesADay
+          }}</q-tooltip>
         </q-badge>
         <q-badge
           v-if="modelValue.medicines"
@@ -54,6 +62,7 @@
             :name="PET_CHIP_BADGE_ICONS.medicines"
             size="0.8em"
           />
+          <q-tooltip>{{ lang.pet.messages.hasMedication }}</q-tooltip>
         </q-badge>
         <q-badge
           v-if="!modelValue.hasMandatoryVaccinations"
@@ -70,6 +79,7 @@
             :name="PET_CHIP_BADGE_ICONS.vaccinations"
             size="0.8em"
           />
+          <q-tooltip>{{ lang.pet.vaccination.missingVaccinations }}</q-tooltip>
         </q-badge>
         <q-badge
           v-for="alert in modelValue.alerts"
@@ -87,18 +97,20 @@
             :name="PET_ALERT_ICONS[alert.condition]"
             size="0.8em"
           />
+          <q-tooltip>{{ lang.pet.alerts[alert.condition] }}</q-tooltip>
         </q-badge>
         <slot name="badge"></slot>
       </div>
     </div>
     <q-icon
-      v-if="showImage && modelValue.image"
+      v-if="showImage && modelValue.image && !compact"
       name="i-mdi-camera"
       flat
       round
       size="sm"
       @contextmenu.stop="(e) => e.preventDefault()"
       @touchstart.stop="(e) => e.preventDefault()"
+      @click.stop="(e) => e.preventDefault()"
     >
       <q-tooltip>
         <div class="column">
@@ -133,6 +145,20 @@
     </q-badge>
   </q-chip>
 </template>
+
+<style lang="sass">
+// Dense variant for list contexts (kennel-picker rows). The page variant is a
+// multi-line card-scale chip; here the same identity reads on one line so an
+// occupied row keeps the list's rhythm instead of doubling it.
+.pet-chip--compact
+  height: auto !important
+  min-height: 0
+  padding-top: 2px
+  padding-bottom: 2px
+
+.pet-chip--compact .q-chip__content
+  align-items: center
+</style>
 
 <script setup lang="ts">
 import type {
@@ -179,6 +205,7 @@ interface Props {
   onOpenPet?: boolean | Function
   showBadge?: boolean
   showFood?: boolean
+  compact?: boolean
   overline?: string
   caption?: string
 }
@@ -212,4 +239,9 @@ const food = computed(() =>
                     ${lang.value.pet.food.unit[modelValue.value.food?.amountUnit] ?? ''} ${modelValue.value.food?.kind}`
     : ''
 )
+
+// The compact variant carries identity + rating only: the page's food line is
+// not written out, and its `timesADay` prefix is not echoed either — a bare
+// `2x` reads as an unexplained multiplier. Extra feeding is signalled by the
+// food badge, which appears only above two meals a day.
 </script>
