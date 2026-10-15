@@ -384,12 +384,7 @@ const lang: Language = {
       selectDaysHint:
         'Klik op een dag om deze te selecteren. Gebruik de maandknoppen om naar een andere maand te gaan.',
       selectDateForDaycare: 'Voeg deze datum toe aan de dagopvang aanvraag.',
-      noDaycareDates: 'Nog geen dagopvang datums',
-      addFirstDaycareDates:
-        'Kies het plusje om je eerste dagopvang datums toe te voegen.',
-      addMoreDaycareDates: 'Meer dagopvang datums toevoegen',
-      selectDatesThenSave:
-        'Selecteer datums in de kalender. Kies het plusje om datums toe te voegen.',
+      selectPlusToAdd: 'Kies het plusje om datums toe te voegen.',
       clickDateToSelect: 'Klik op een datum om te selecteren.',
       selectPetToStart: 'Selecteer hierboven een huisdier om datums te kiezen.',
       selectedDatesCount: (n: number) =>

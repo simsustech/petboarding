@@ -359,10 +359,7 @@ export interface Language {
       openPets: string
       selectDaysHint: string
       selectDateForDaycare: string
-      noDaycareDates: string
-      addFirstDaycareDates: string
-      addMoreDaycareDates: string
-      selectDatesThenSave: string
+      selectPlusToAdd: string
       clickDateToSelect: string
       selectPetToStart: string
       selectedDatesCount: (n: number) => string

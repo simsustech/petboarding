@@ -59,27 +59,13 @@
           </q-card>
 
           <q-card class="col-span-12">
-            <!-- 1a: empty state when user has pets but no daycare dates -->
+            <!-- One instruction row, always rendered. It deliberately does not
+                 read `data`: the previous pair of branches (empty state when
+                 `!data?.length`, "add more dates" bar when `data?.length`) was
+                 keyed on the fetched window, so the card could vanish and claim
+                 there were no dates while the customer's dates sat outside the
+                 window the calendar had just asked for. -->
             <q-card-section
-              v-if="petsData?.length && !data?.length"
-              class="text-center q-py-xl"
-            >
-              <q-icon
-                name="i-mdi-calendar-plus"
-                size="3em"
-                color="primary"
-                class="q-mb-md"
-              />
-              <div class="text-h6 q-mb-sm">
-                {{ lang.daycare.messages.noDaycareDates }}
-              </div>
-              <div class="text-body-2 text-grey-7">
-                {{ lang.daycare.messages.addFirstDaycareDates }}
-              </div>
-            </q-card-section>
-            <!-- 1b: prominent CTA bar when dates exist -->
-            <q-card-section
-              v-else-if="data?.length"
               class="row items-center q-gutter-md cta-bar q-py-md"
             >
               <div class="col-auto">
@@ -90,12 +76,7 @@
                 />
               </div>
               <div class="col">
-                <div class="text-weight-medium">
-                  {{ lang.daycare.messages.addMoreDaycareDates }}
-                </div>
-                <div class="text-caption text-grey-7">
-                  {{ lang.daycare.messages.selectDatesThenSave }}
-                </div>
+                {{ lang.daycare.messages.selectPlusToAdd }}
               </div>
             </q-card-section>
             <q-card-section>
@@ -504,10 +485,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* The "add more dates" bar. Was `bg-grey-1` (#fafafa), which is nearly invisible
+/* The add-dates instruction row. Was `bg-grey-1` (#fafafa) — nearly invisible
    against the white card, so the primary call to action read as a disabled band.
    Use the M3 container token instead, paired light/dark the way NavigationTabs
-   does. */
+   does. The row carries the scheme's ink, not a grey: on a tinted container a
+   grey caption measures under 4.5:1 and reads as disabled. */
 .cta-bar {
   background: var(--light-primary-container);
 }

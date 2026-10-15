@@ -377,11 +377,7 @@ const lang: Language = {
       selectDaysHint:
         'Click a day to select it. Use the month buttons to move to another month.',
       selectDateForDaycare: 'Add this date to the daycare request.',
-      noDaycareDates: 'No daycare dates yet',
-      addFirstDaycareDates:
-        'Select the plus button to add your first daycare dates.',
-      addMoreDaycareDates: 'Add more daycare dates',
-      selectDatesThenSave: 'To add dates, select the plus button.',
+      selectPlusToAdd: 'Select the plus button to add dates.',
       clickDateToSelect: 'Click a date to select it.',
       selectPetToStart: 'Select a pet above to start picking dates.',
       selectedDatesCount: (n: number) =>
