@@ -6,12 +6,12 @@ packages:
 minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
-  - '@modular-api/api@0.6.39 || 0.6.41'
-  - '@modular-api/fastify-cart@0.3.23'
-  - '@modular-api/fastify-checkout@0.11.1'
-  - '@modular-api/fastify-oidc@0.9.29 || 0.9.30'
-  - '@modular-api/oidc-interactions@0.7.25 || 0.7.26'
-  - '@modular-api/quasar-components@0.3.44'
+  - '@modular-api/api@0.6.39 || 0.6.41 || 0.6.42'
+  - '@modular-api/fastify-cart@0.3.23 || 0.3.24'
+  - '@modular-api/fastify-checkout@0.11.1 || 0.12.0'
+  - '@modular-api/fastify-oidc@0.9.29 || 0.9.30 || 0.9.31'
+  - '@modular-api/oidc-interactions@0.7.25 || 0.7.26 || 0.7.27'
+  - '@modular-api/quasar-components@0.3.44 || 0.3.45'
   - '@rolldown/binding-android-arm-eabi@1.2.12'
   - '@rolldown/binding-android-arm64@1.2.12'
   - '@rolldown/binding-darwin-arm64@1.2.12'
@@ -36,13 +36,9 @@ minimumReleaseAgeExclude:
   - pg@8.23.1
   - rolldown@1.2.12
   - stripe@23.0.0
-  # 0.7.3 carries the MD3-role safelist fix and was published less than 24h
-  # before the pin, so it needs the same deliberate exemption as the rest.
-  - >-
-    unocss-preset-quasar@0.6.0 || 0.6.1 || 0.6.2 || 0.6.3 || 0.6.4 || 0.6.5 ||
-    0.6.6 || 0.7.0 || 0.7.3
+  - unocss-preset-quasar@0.6.0 || 0.6.1 || 0.6.2 || 0.6.3 || 0.6.4 || 0.6.5 || 0.6.6 || 0.7.0 || 0.7.3
   - vite@8.3.2 || 8.3.3
-  - vitrify@0.28.2
+  - vitrify@0.28.2 || 0.28.3
   - '@oxfmt/binding-android-arm-eabi@0.72.0'
   - '@oxfmt/binding-android-arm64@0.72.0'
   - '@oxfmt/binding-darwin-arm64@0.72.0'
@@ -85,6 +81,9 @@ minimumReleaseAgeExclude:
   - oxlint@1.87.0
   - nodemailer@10.0.15
   - handlebars@4.7.10
+  - '@playwright/test@1.64.1'
+  - playwright-core@1.64.1
+  - playwright@1.64.1
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
