@@ -360,6 +360,9 @@ export interface Language {
       selectDaysHint: string
       selectDateForDaycare: string
       selectPlusToAdd: string
+      datesInMonth: (n: number) => string
+      noUpcomingDates: string
+      cancelDate: string
       clickDateToSelect: string
       selectPetToStart: string
       selectedDatesCount: (n: number) => string

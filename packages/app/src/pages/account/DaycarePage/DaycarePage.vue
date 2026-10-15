@@ -88,7 +88,6 @@
                 :focusable="false"
                 :hoverable="false"
                 @click:event="onClickEvent"
-                @change-date="onChangeDate"
               >
                 <template #head-day-button-tooltip>
                   {{ lang.daycare.messages.selectDateForDaycare }}
@@ -102,6 +101,16 @@
                   @click="cancelDaycareDates"
                 />
               </div>
+            </q-card-section>
+            <q-separator />
+            <!-- The grid is the month at a glance; this is every upcoming date,
+                 grouped by month, so the whole plan reads without navigating
+                 the calendar. -->
+            <q-card-section>
+              <daycare-date-list
+                :daycare-dates="data ?? []"
+                @cancel="cancelDaycareDate"
+              />
             </q-card-section>
           </q-card>
         </div>
@@ -137,7 +146,6 @@
       :disabled-dates="disabledDates"
       :submitting="submitting"
       @submit="createDaycare"
-      @change-date="onChangeDate"
     ></daycare-form>
   </responsive-dialog>
   <responsive-dialog
@@ -170,6 +178,7 @@ import DaycareForm from '../../../components/daycare/DaycareForm.vue'
 import DaycareCalendarMonth, {
   QCalendarEvent
 } from '../../../components/daycare/DaycareCalendarMonth.vue'
+import DaycareDateList from '../../../components/daycare/DaycareDateList.vue'
 import { useLang } from '../../../lang/index.js'
 import { useQuasar } from 'quasar'
 import DaycareLegend from '../../../components/daycare/DaycareLegend.vue'
@@ -244,12 +253,8 @@ const configuration = useConfiguration()
 // )
 
 const { pets: petsData, refetch: executePets } = useAccountGetPetsQuery()
-const {
-  daycareDates: data,
-  from: startDate,
-  until: endDate,
-  refetch: execute
-} = useAccountGetDaycareDatesQuery()
+const { daycareDates: data, refetch: execute } =
+  useAccountGetDaycareDatesQuery()
 
 const { daycareSubscriptions, refetch: executeDaycareSubscriptions } =
   usePublicGetDaycareSubscriptionsQuery()
@@ -370,21 +375,26 @@ const dateFormatter = (date: Date, locale: string) =>
     timeZone: 'UTC'
   }).format(date)
 
-const cancelDaycareDates = async () => {
+/**
+ * One confirmation dialog for both cancel paths: the grid's multi-select and a
+ * single row's cancel button in the list. `ids` are daycare-date ids; the dates
+ * are read from `events`, which is built from the same fetched set.
+ */
+const confirmCancel = (ids: number[]) => {
   $q.dialog({
     html: true,
     cancel: true,
     message: `${
       lang.value.daycare.messages.verifyCancelation
     } <br /> <b>${events.value
-      ?.filter((ev) => selectedEvents.value.includes(ev.id))
+      ?.filter((ev) => ids.includes(ev.id))
       .map((event) => {
         return dateFormatter(new Date(event.date), $q.lang.isoName)
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
     try {
-      await cancelDaycareDatesMutation(selectedEvents.value)
+      await cancelDaycareDatesMutation(ids)
 
       await execute()
       selectedEvents.value = []
@@ -393,6 +403,9 @@ const cancelDaycareDates = async () => {
     }
   })
 }
+
+const cancelDaycareDates = () => confirmCancel(selectedEvents.value)
+const cancelDaycareDate = (id: number) => confirmCancel([id])
 
 const events = computed(() => {
   if (data?.value) {
@@ -423,12 +436,12 @@ const termsAndConditionsUrl = computed(
     configuration.value.TERMS_AND_CONDITIONS_URL || '/print/termsandconditions'
 )
 
-const onChangeDate: InstanceType<
-  typeof DaycareCalendarMonth
->['$props']['onChangeDate'] = (data) => {
-  startDate.value = data.start
-  endDate.value = data.end
-}
+/**
+ * This page deliberately does not narrow its fetch to the month the calendar
+ * shows: `useAccountGetDaycareDatesQuery` loads every upcoming date, so the grid
+ * and the list below it read from one set. `DaycareCalendarMonth` still emits
+ * `changeDate` for the pages that window their own query (admin, employee).
+ */
 
 const onPurchaseCustomerDaycareSubscription = async ({
   data,

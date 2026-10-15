@@ -378,6 +378,9 @@ const lang: Language = {
         'Click a day to select it. Use the month buttons to move to another month.',
       selectDateForDaycare: 'Add this date to the daycare request.',
       selectPlusToAdd: 'Select the plus button to add dates.',
+      datesInMonth: (n: number) => (n === 1 ? '1 date' : `${n} dates`),
+      noUpcomingDates: 'No upcoming daycare dates.',
+      cancelDate: 'Cancel this date',
       clickDateToSelect: 'Click a date to select it.',
       selectPetToStart: 'Select a pet above to start picking dates.',
       selectedDatesCount: (n: number) =>
