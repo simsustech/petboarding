@@ -115,3 +115,83 @@ describe('createOrUpdateSlimfactInvoice — cancelation costs for a modified boo
     expect(invoice.requiredDownPaymentAmount).toBe(5000)
   })
 })
+
+// Regression: the invoice merge used to only swap lines whose type the new set
+// repeats, so on a cancelation the original petboarding_booking lines stayed and
+// the cancelation fee was added on top of them — and a surcharge line whose
+// window the booking left was never removed either. The payload now names the
+// line family it owns, so the whole family is replaced on every sync.
+describe('createOrUpdateSlimfactInvoice — the payload owns the petboarding line types', () => {
+  const bookingFixture = (status: string) => ({
+    id: 7,
+    customerId: 1,
+    invoiceUuid: 'existing-uuid',
+    startDate: '2026-07-20',
+    endDate: '2026-08-09',
+    days: 21,
+    startTime: { name: 'Ochtend', startDayCounted: 1 },
+    endTime: { name: 'Middag', endDayCounted: 1 },
+    status: { status },
+    pets: [{ id: 1, name: 'Rex', categoryId: 1 }],
+    services: [],
+    costs: {
+      lines: [{ ...cancelationLine }],
+      discounts: [],
+      surcharges: [],
+      requiredDownPaymentAmount: 5000,
+      taxSummary: [],
+      totalIncludingTax: 12345,
+      totalExcludingTax: 10202
+    }
+  })
+
+  const callInvoice = async (status: string) => {
+    const updateInvoice = vi.fn(async (x: any) => x)
+    const result = await createOrUpdateSlimfactInvoice({
+      fastify: {
+        slimfact: {
+          admin: {
+            getNumberPrefixes: { query: vi.fn(async () => []) },
+            getCompany: {
+              query: vi.fn(async () => ({ id: 1, prefix: 'PB' }))
+            },
+            updateInvoice: { mutate: updateInvoice },
+            createInvoice: { mutate: vi.fn(async (x: any) => x) }
+          }
+        },
+        log: { debug: vi.fn(), error: vi.fn() }
+      } as any,
+      booking: bookingFixture(status) as any,
+      customer: {
+        firstName: 'Jan',
+        lastName: 'Jansen',
+        address: 'Straat 1',
+        postalCode: '1234AB',
+        city: 'Stad',
+        account: { email: 'jan@example.com' }
+      } as any,
+      locale: 'nl'
+    })
+
+    return { result, updateInvoice }
+  }
+
+  it('replaces the whole line family instead of adding the fee on top', async () => {
+    const { result, updateInvoice } = await callInvoice(
+      BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+    )
+
+    expect(result.success).toBe(true)
+    expect(updateInvoice).toHaveBeenCalledWith(
+      expect.objectContaining({ replaceTypedLines: 'petboarding' })
+    )
+  })
+
+  it('sends the same replacement for a live booking', async () => {
+    const { updateInvoice } = await callInvoice(BOOKING_STATUS.APPROVED)
+
+    expect(updateInvoice).toHaveBeenCalledWith(
+      expect.objectContaining({ replaceTypedLines: 'petboarding' })
+    )
+  })
+})

@@ -111,6 +111,12 @@ export const createOrUpdateSlimfactInvoice = async ({
   const surcharges = costs?.surcharges ?? []
   const requiredDownPaymentAmount = costs?.requiredDownPaymentAmount ?? 0
 
+  // The payload owns the `petboarding_*` line types: the invoice update removes
+  // every existing line of that family before these lines are appended, so a
+  // canceled booking's original lines (or a surcharge line whose window the
+  // booking left) cannot linger next to the new ones. Manually added invoice
+  // lines carry no type and are left alone.
+
   const notes = `${dateFormatter(new Date(booking.startDate))} ${booking.startTime?.name}
   →
   ${dateFormatter(new Date(booking.endDate))} ${booking.endTime?.name}`
@@ -141,7 +147,9 @@ export const createOrUpdateSlimfactInvoice = async ({
           referenceUrl: `https://${host}/employee/bookings/${booking.id}`,
           webhookUrl: `https://${host}/webhook/slimfact`
         },
-        replaceExistingLinesOfSameType: true
+        // Replace the whole app-owned line family, so a canceled booking's lines
+        // (or a surcharge the booking no longer earns) cannot survive the sync.
+        replaceTypedLines: 'petboarding'
       })
 
       return { success: true, invoice }
