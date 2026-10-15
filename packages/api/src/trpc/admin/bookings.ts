@@ -524,7 +524,9 @@ export const adminBookingRoutes = ({
     )
     .mutation(async ({ input }) => {
       const { id } = input
-      const success = await cancelBooking({ id }, '', true)
+      const success = await cancelBooking({ id }, '', {
+        allowPastStartDate: true
+      })
       if (success) {
         await syncBookingInvoice({ fastify, bookingId: id })
         return true

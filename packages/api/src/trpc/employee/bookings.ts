@@ -185,7 +185,7 @@ export const employeeBookingRoutes = ({
         const { id, reason } = input
 
         if (id) {
-          await cancelBooking({ id }, reason, true)
+          await cancelBooking({ id }, reason, { allowPastStartDate: true })
           await syncBookingInvoice({ fastify, bookingId: id })
           return true
         }

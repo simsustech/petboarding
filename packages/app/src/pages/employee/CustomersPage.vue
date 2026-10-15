@@ -642,7 +642,10 @@ const createDaycare: InstanceType<
       }))
     )
 
-    done()
+    // The in-form submit button has no dialog `done` — see
+    // `account/DaycarePage` — so guard it and close the dialog unconditionally.
+    if (done) done()
+    createDaycareDialogRef.value?.functions.close()
     await execute()
   } catch (e) {
     console.error(e)

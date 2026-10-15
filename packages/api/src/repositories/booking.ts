@@ -49,7 +49,6 @@ import {
   type Invoice
 } from '@modular-api/fastify-checkout'
 import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
-import type { BookingCostsHandler } from '../petboarding.d.ts'
 import type { FastifyInstance } from 'fastify'
 import { bookingEmailTemplates } from '../templates/email/bookings/index.js'
 import { compileEmail } from '../trpc/admin/bookings.js'
@@ -57,6 +56,10 @@ import { findCustomer } from './customer.js'
 import { bookingTemplates } from '../templates/booking/index.js'
 import { eachDayOfInterval } from '../tools.js'
 import { findVacations } from './vacation.js'
+import {
+  bookingCancelationHandler,
+  bookingCostsHandler
+} from '../api.config.js'
 
 export type Booking = Selectable<Bookings>
 type NewBooking = Insertable<Bookings>
@@ -101,7 +104,10 @@ export interface BookingService {
   comments: string | null
   price: number | null
   listPrice: number | null
-  service: Service
+  // `withServices` joins this with `jsonObjectFrom`, which kysely types as
+  // `Service | null` (a `jsonObjectFrom` can be empty by construction); readers
+  // guard it (`service.service?.name`).
+  service: Service | null
 }
 
 export type BookingPets = Pick<ParsedPet, 'id' | 'name' | 'categoryId'>[]
@@ -228,110 +234,54 @@ export async function calculateBookingCosts({
         return null
       }
 
-      let bookingCostsHandler: BookingCostsHandler
-      try {
-        ;({ bookingCostsHandler } = await import('../api.config.js'))
+      const vacations = await findVacations({
+        from: booking.startDate,
+        until: booking.endDate
+      })
 
-        const vacations = await findVacations({
-          from: booking.startDate,
-          until: booking.endDate
-        })
-
-        ;({
-          lines,
-          discounts,
-          surcharges,
-          requiredDownPaymentAmount = 0
-        } = bookingCostsHandler({
-          period: {
-            startDate: booking.startDate,
-            endDate: booking.endDate,
-            days,
-            startDayCounted: booking.startTime?.startDayCounted,
-            endDayCounted: booking.endTime?.endDayCounted
-          },
-          services: booking.services,
-          pets: booking.pets,
-          categories,
-          withServices,
-          vacations,
-          dateFns: {
-            eachDayOfInterval,
-            getOverlappingDaysInIntervals,
-            parse,
-            isWithinInterval,
-            isAfter,
-            isBefore,
-            parseISO,
-            subMonths,
-            subDays,
-            differenceInDays
-          },
-          dateHolidays: Holidays,
-          computeInvoiceCosts,
-          locale: config.lang,
-          country: config.country,
-          bookingStatus,
-          lastApprovedBooking,
-          ctx: {
-            BOOKING_STATUS,
-            // Labels come from the deployment's language bundle (see lang/index.ts),
-            // so a Dutch deployment gets 'Annuleringskosten' / 'Aanbetaling'.
-            lang: { booking: (await getLang(config.lang)).default.booking }
-          }
-        }))
-      } catch (e) {
-        console.error('Unable to load API config')
-        console.error(e)
-
-        const findActualPrice = ({
-          prices,
-          date
-        }: {
-          prices?: { date: string; listPrice: number }[]
-          date: string
-        }) => {
-          const sortedAndFiltered = prices
-            ?.filter((price) => price.date <= date)
-            .sort((a, b) => {
-              return a.date < b.date ? 1 : a.date > b.date ? -1 : 0
-            })
-
-          return sortedAndFiltered?.at(0)?.listPrice || 0
+      ;({
+        lines,
+        discounts,
+        surcharges,
+        requiredDownPaymentAmount = 0
+      } = bookingCostsHandler({
+        period: {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          days,
+          startDayCounted: booking.startTime?.startDayCounted,
+          endDayCounted: booking.endTime?.endDayCounted
+        },
+        services: booking.services,
+        pets: booking.pets,
+        categories,
+        withServices,
+        vacations,
+        dateFns: {
+          eachDayOfInterval,
+          getOverlappingDaysInIntervals,
+          parse,
+          isWithinInterval,
+          isAfter,
+          isBefore,
+          parseISO,
+          subMonths,
+          subDays,
+          differenceInDays
+        },
+        dateHolidays: Holidays,
+        computeInvoiceCosts,
+        locale: config.lang,
+        country: config.country,
+        bookingStatus,
+        lastApprovedBooking,
+        ctx: {
+          BOOKING_STATUS,
+          // Labels come from the deployment's language bundle (see lang/index.ts),
+          // so a Dutch deployment gets 'Annuleringskosten' / 'Aanbetaling'.
+          lang: { booking: (await getLang(config.lang)).default.booking }
         }
-
-        lines = booking.pets.map((pet) => ({
-          description: pet.name,
-          listPrice: findActualPrice({
-            prices: categories?.find(
-              (category) => category.id === pet.categoryId
-            )?.prices,
-            date: booking.startDate
-          }),
-          listPriceIncludesTax: true,
-          quantity: days * 1000,
-          quantityPerMille: true,
-          discount: 0,
-          taxRate: 21,
-          type: 'petboarding_booking'
-        }))
-        if (withServices) {
-          for (const service of booking.services) {
-            if (service.service && service.listPrice) {
-              lines.push({
-                description: service.service?.name,
-                listPrice: service.listPrice,
-                listPriceIncludesTax: true,
-                quantity: 1,
-                quantityPerMille: false,
-                discount: 0,
-                taxRate: 21,
-                type: 'petboarding_service'
-              })
-            }
-          }
-        }
-      }
+      }))
     }
   }
 
@@ -1185,10 +1135,20 @@ export async function updateBooking(
   }
 }
 
+/**
+ * Cancel a booking and record the status the cancelation period implies — the
+ * same status `bookingCancelationHandler` derives from the clock, which is what
+ * the financial overview filters on and what the billed cancelation tier is
+ * computed from. The two must agree, or a billed fee goes uncollected.
+ *
+ * `allowPastStartDate` permits cancelling a stay that already started (staff
+ * no-shows, an expired down payment). It does not change how the cancelation is
+ * billed or recorded.
+ */
 export async function cancelBooking(
   criteria: Partial<Booking>,
   reason: string,
-  ignoreCancelationPeriod?: boolean
+  options?: { allowPastStartDate?: boolean }
 ) {
   const booking = await findBooking({ criteria })
   const vacations = await findVacations({
@@ -1199,7 +1159,7 @@ export async function cancelBooking(
   if (
     booking?.startDate &&
     booking.startDate <= new Date().toISOString().slice(0, 10) &&
-    !ignoreCancelationPeriod
+    !options?.allowPastStartDate
   ) {
     throw new Error('You cannot cancel dates in the past.')
   }
@@ -1209,53 +1169,50 @@ export async function cancelBooking(
   }
 
   if (booking) {
-    let bookingCancelationHandler
-    let status = BOOKING_STATUS.CANCELED
+    // The status `bookingCancelationHandler` derives from the clock, kept as the
+    // fallback for a booking the handler cannot price (below). The handler is a
+    // compiled-in import: there is no mountable `api.config.mjs` to be missing, so
+    // nothing here has to defend against one.
+    let status = isAfter(
+      new Date(),
+      subMonths(parseISO(booking.startDate), config.cancelationPeriodMonths)
+    )
+      ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
+      : BOOKING_STATUS.CANCELED
     let cancelationCosts
     const days = booking.days
 
-    const lastApprovedBooking = getLastApprovedForBooking(booking)
-    try {
-      ;({ bookingCancelationHandler } = await import('../api.config.js'))
+    // `getLastApprovedForBooking` is async, and falls back to the booking itself
+    // when it was never approved. Awaiting it is load-bearing: the handler reads
+    // `booking.costs`, so an unawaited promise makes it throw.
+    const lastApprovedBooking = await getLastApprovedForBooking(booking)
+
+    // `costs` is null for a booking whose pets are not all categorised (see
+    // `calculateBookingCosts`), and a cancelation cannot be priced from nothing.
+    if (days && lastApprovedBooking?.costs) {
       const locale = config.lang
       const resolvedLang = await getLang(locale)
-      if (days) {
-        ;({ status, cancelationCosts } = bookingCancelationHandler({
-          period: {
-            startDate: booking.startDate,
-            endDate: booking.endDate,
-            days
-          },
-          dateFns: {
-            isBefore,
-            isAfter,
-            isWithinInterval,
-            parse,
-            parseISO,
-            subMonths,
-            subDays,
-            differenceInDays
-          },
-          booking: lastApprovedBooking,
-          BOOKING_STATUS,
-          vacations,
-          lang: resolvedLang.default.booking
-        }))
-      }
-    } catch (e) {
-      console.error('Unable to load API config')
-      console.error(e)
-
-      const maxCancelationDate = subMonths(
-        parseISO(booking.startDate),
-        config.cancelationPeriodMonths
-      )
-
-      status =
-        isAfter(new Date(), maxCancelationDate) &&
-        booking.status?.status === BOOKING_STATUS.APPROVED
-          ? BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD
-          : BOOKING_STATUS.CANCELED
+      ;({ status, cancelationCosts } = bookingCancelationHandler({
+        period: {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          days
+        },
+        dateFns: {
+          isBefore,
+          isAfter,
+          isWithinInterval,
+          parse,
+          parseISO,
+          subMonths,
+          subDays,
+          differenceInDays
+        },
+        booking: lastApprovedBooking,
+        BOOKING_STATUS,
+        vacations,
+        lang: resolvedLang.default.booking
+      }))
     }
 
     const petIds = booking.pets.map((pet) => pet.id)
@@ -1266,7 +1223,7 @@ export async function cancelBooking(
         comments: reason
       },
       petIds,
-      status: ignoreCancelationPeriod ? BOOKING_STATUS.CANCELED : status
+      status
     })
     return { status, cancelationCosts }
   }
@@ -1349,7 +1306,7 @@ export async function checkDownPayments({
   try {
     ;({ reason } =
       await bookingTemplates[`./downPaymentNotReceived/${localeCode}.ts`]())
-  } catch (e) {
+  } catch {
     ;({ reason } =
       await bookingTemplates[`./downPaymentNotReceived/en-US.ts`]())
   }
@@ -1371,13 +1328,15 @@ export async function checkDownPayments({
       new Date(booking.status?.modifiedAt) <
         subDays(new Date(), downPaymentPaymentTermDays)
     ) {
-      await cancelBooking({ id: booking.id }, reason, true)
+      await cancelBooking({ id: booking.id }, reason, {
+        allowPastStartDate: true
+      })
       if (fastify?.mailer) {
         const localeCode = config.lang
         let template: { subject: string; body: string }
         try {
           template = await bookingEmailTemplates[`./cancel/${localeCode}.ts`]()
-        } catch (e) {
+        } catch {
           template = await bookingEmailTemplates[`./cancel/en-US.ts`]()
         }
         const parsedBooking = await findBooking({

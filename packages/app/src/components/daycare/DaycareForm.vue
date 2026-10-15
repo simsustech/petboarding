@@ -155,7 +155,6 @@ import type {
 import { ref, useAttrs, computed, toRefs } from 'vue'
 import DaycareCalendarMonth from './DaycareCalendarMonth.vue'
 import { useLang } from '../../lang/index.js'
-import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { QForm, QSelect, date as dateUtil } from 'quasar'
 import { useConfiguration } from '../../configuration.js'
 import TermsAndConditionsCheckbox from '../TermsAndConditionsCheckbox.vue'
@@ -187,7 +186,7 @@ const emit = defineEmits<{
       done
     }: {
       data: DaycareDate[]
-      done: (success?: boolean) => void
+      done?: (success?: boolean) => void
     }
   ): void
   (
@@ -238,9 +237,22 @@ const setValue = (newValue: DaycareDate) => {
   //
 }
 
-const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
-  done
-}) => {
+/**
+ * One handler, two callers. `ResponsiveDialog`'s own submit button reaches it
+ * through `functions.submit({ done })`, and this form's `type="submit"` button
+ * reaches it through QForm, which emits the DOM submit event — no `done` at all.
+ * Only the dialog path has one, so each call site guards it: an unguarded
+ * `done()` threw `TypeError: done is not a function` in the parent *after* the
+ * dates had already been saved.
+ *
+ * Because the in-form path has no dialog `done` to hide a dialog with, the
+ * parent closes the dialog itself — see `createDaycare`.
+ */
+type SubmitTrigger = { done?: (success?: boolean) => void } | Event
+
+const submit = (trigger?: SubmitTrigger) => {
+  const done = trigger && 'done' in trigger ? trigger.done : undefined
+
   formRef.value?.validate().then((success) => {
     if (success) {
       const data: DaycareDate[] = selectedDates.value.map((date) => ({
@@ -252,7 +264,7 @@ const submit: InstanceType<typeof ResponsiveDialog>['$props']['onSubmit'] = ({
         done
       })
     }
-    done(false)
+    if (done) done(false)
   })
 }
 

@@ -339,7 +339,10 @@ const createDaycare: InstanceType<
   try {
     await createDaycareDatesMutation(daycareDates)
 
-    done()
+    // The in-form submit button has no dialog `done` (only the dialog's own
+    // submit passes one), so guard the callback and always close the dialog.
+    if (done) done()
+    createDialogRef.value?.functions.close()
 
     // 2a: success dialog shows count + pet names
     const petNames =
