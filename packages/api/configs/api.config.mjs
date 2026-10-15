@@ -317,7 +317,11 @@ const bookingCostsHandler = ({
     bookingStatus &&
     ctx &&
     (bookingStatus === ctx.BOOKING_STATUS.CANCELED ||
-      bookingStatus === ctx.BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD)
+      bookingStatus === ctx.BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD ||
+      // Rejecting a booking that was already approved and billed is a
+      // cancelation: it owes the cancelation tier, not the original lines. A
+      // never-approved booking was never billed, so it keeps its own costs.
+      (bookingStatus === ctx.BOOKING_STATUS.REJECTED && lastApprovedBooking))
   ) {
     // Full cancellation — replace lines with the cancelation-cost line(s).
     const ref = lastApprovedBooking ?? {

@@ -2273,6 +2273,76 @@ describe('bookingCostsHandler — full cancellation branch', () => {
     expect(result.lines[0].type).toBe('petboarding_downpayment')
     expect(result.lines[0].description).toBe('Aanbetaling')
   })
+
+  it('bills a rejected booking that was approved as a cancelation', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: {
+        BOOKING_STATUS,
+        lang: {
+          booking: {
+            cancelationCosts: 'Annuleringskosten',
+            downPayment: 'Aanbetaling'
+          }
+        }
+      },
+      bookingStatus: BOOKING_STATUS.REJECTED,
+      // The booking was approved before it was rejected, so it owes the
+      // cancelation tier instead of its original lines.
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      }
+    } as any)
+
+    expect(result.lines).toHaveLength(1)
+    expect(result.lines[0].type).toBe('petboarding_cancelation')
+    expect(result.lines[0].description).toBe('Annuleringskosten')
+  })
+
+  it('keeps the booking lines for a rejected booking that was never approved', () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: {
+        BOOKING_STATUS,
+        lang: {
+          booking: {
+            cancelationCosts: 'Annuleringskosten',
+            downPayment: 'Aanbetaling'
+          }
+        }
+      },
+      bookingStatus: BOOKING_STATUS.REJECTED
+      // No lastApprovedBooking: a booking that was never approved was never
+      // billed, so it is not a cancelation.
+    } as any)
+
+    expect(result.lines.map((line: any) => line.type)).toEqual([
+      'petboarding_booking'
+    ])
+  })
 })
 
 describe('bookingCostsHandler — modification surcharge via handler', () => {
