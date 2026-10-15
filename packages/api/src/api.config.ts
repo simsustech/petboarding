@@ -346,7 +346,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
       },
       booking: ref,
       BOOKING_STATUS: ctx.BOOKING_STATUS,
-      vacations
+      vacations,
+      lang: ctx.lang?.booking
     })
 
     if (cancelationCosts) {
@@ -387,7 +388,8 @@ const bookingCostsHandler: BookingCostsHandler = ({
         },
         booking: lastApprovedBooking,
         BOOKING_STATUS: ctx.BOOKING_STATUS,
-        vacations
+        vacations,
+        lang: ctx.lang?.booking
       })
 
     if (status === ctx.BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD) {

@@ -2203,6 +2203,76 @@ describe('bookingCostsHandler — full cancellation branch', () => {
     expect(result.lines[0].type).toBe('petboarding_downpayment')
     expect(result.lines[0].listPrice).toBe(5000)
   })
+
+  it("labels the cancelation line from the deployment's language", () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2025-11-08', endDate: '2025-11-18', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: {
+        BOOKING_STATUS,
+        lang: {
+          booking: {
+            cancelationCosts: 'Annuleringskosten',
+            downPayment: 'Aanbetaling'
+          }
+        }
+      },
+      bookingStatus: BOOKING_STATUS.CANCELED_OUTSIDE_PERIOD,
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
+        startDate: '2025-11-08',
+        endDate: '2025-11-18',
+        days: 10
+      }
+    } as any)
+
+    expect(result.lines[0].type).toBe('petboarding_cancelation')
+    expect(result.lines[0].description).toBe('Annuleringskosten')
+  })
+
+  it("labels the down-payment fallback from the deployment's language", () => {
+    const result = bookingCostsHandler({
+      ...buildParams({
+        period: { startDate: '2027-01-15', endDate: '2027-01-25', days: 10 },
+        pets: [makePet({ id: 1, name: 'Rex', categoryId: 1 })],
+        categories: [
+          makeCategory({
+            id: 1,
+            prices: [{ date: '2025-01-01', listPrice: 2000 }]
+          })
+        ],
+        vacations: nlVacations2026 as any
+      }),
+      ctx: {
+        BOOKING_STATUS,
+        lang: {
+          booking: {
+            cancelationCosts: 'Annuleringskosten',
+            downPayment: 'Aanbetaling'
+          }
+        }
+      },
+      bookingStatus: BOOKING_STATUS.CANCELED,
+      lastApprovedBooking: {
+        costs: { totalIncludingTax: 20000, requiredDownPaymentAmount: 5000 },
+        startDate: '2027-01-15',
+        endDate: '2027-01-25',
+        days: 10
+      }
+    } as any)
+
+    expect(result.lines[0].type).toBe('petboarding_downpayment')
+    expect(result.lines[0].description).toBe('Aanbetaling')
+  })
 })
 
 describe('bookingCostsHandler — modification surcharge via handler', () => {

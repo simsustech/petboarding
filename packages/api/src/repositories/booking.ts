@@ -275,14 +275,9 @@ export async function calculateBookingCosts({
           lastApprovedBooking,
           ctx: {
             BOOKING_STATUS,
-            lang: {
-              booking: {
-                cancelationCosts:
-                  config.lang === 'nl-NL'
-                    ? 'Annuleringskosten'
-                    : 'Cancelation costs'
-              }
-            }
+            // Labels come from the deployment's language bundle (see lang/index.ts),
+            // so a Dutch deployment gets 'Annuleringskosten' / 'Aanbetaling'.
+            lang: { booking: (await getLang(config.lang)).default.booking }
           }
         }))
       } catch (e) {
