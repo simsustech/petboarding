@@ -14,8 +14,8 @@ import Holidays from 'date-holidays'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
 import { bookingCancelationHandler, bookingCostsHandler } from './api.config.js'
 
-// Mirror the default list in `packages/api/configs/api.config.mjs`. Kept local
-// so the test does not depend on the runtime variant config.
+// Mirror the private `DEFAULT_SURCHARGE_HOLIDAYS` list in `./api.config.ts`. It is
+// not exported, so the test keeps its own copy.
 const defaultSurchargeHolidays = [
   { rule: '01-01' },
   { rule: 'easter' },

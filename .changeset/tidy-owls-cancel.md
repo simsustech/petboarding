@@ -18,9 +18,6 @@ fix: label cancelation costs in the deployment's language, and keep the invoice 
 - Rejecting a booking that was already approved — and therefore billed — is treated as a
   cancelation: it owes the cancelation tier instead of its original lines. A booking that
   was never approved was never billed and keeps its own costs.
-- `packages/api/configs/api.config.mjs` is back in 1:1 parity with `src/api.config.ts`: it
-  was missing the `AWAITING_DOWNPAYMENT` status for the modification surcharge and pushed
-  the cancelation fee into `surcharges` instead of `lines`.
 
 Requires `@modular-api/fastify-checkout` ≥ 0.12, which replaces
 `replaceExistingLinesOfSameType` with `replaceTypedLines`.
