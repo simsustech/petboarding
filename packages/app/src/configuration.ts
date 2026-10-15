@@ -4,9 +4,15 @@ import { useLang } from './lang/index.js'
 import type { Pet } from '@petboarding/api/zod'
 import {
   type PET_SPECIES,
-  PET_ALERTS,
   PET_ALERT_CONDITIONS
 } from '@petboarding/tools/constants'
+import {
+  alertToken,
+  badgeToken,
+  iconToken,
+  inkToken,
+  statusToken
+} from './theme-tokens.js'
 import type { QuasarTheme } from 'unocss-preset-quasar/theme'
 import type { Locales } from '@simsustech/quasar-components/form'
 
@@ -36,9 +42,60 @@ export interface PetAlert {
   endDate: string | null
 }
 
+/**
+ * The alert family as colour *names* — `alert-in-heat` … — which Quasar composes
+ * into `bg-<name>` at runtime and which `themeTokenColors` (in
+ * `vitrify.config.ts`) gives a rule: `.bg-alert-in-heat{background-color:var(--q-alert-in-heat)}`.
+ *
+ * Derived from the enum rather than listed, so a new condition cannot be
+ * forgotten here. `PET_ALERTS[].color` used to carry these as wind4 palette
+ * names from `@petboarding/tools` — a presentation detail that does not belong
+ * in a shared package, and a value that could not follow a colour scheme.
+ */
 export const PET_ALERT_COLORS = Object.fromEntries(
-  PET_ALERTS.map((a) => [a.value, a.color])
-) as Record<string, string>
+  Object.values(PET_ALERT_CONDITIONS).map((condition) => [
+    condition,
+    alertToken(condition)
+  ])
+) as Record<PET_ALERT_CONDITIONS, string>
+
+/** The ink on each fill: `on-alert-in-heat` … → `--q-on-surface`. */
+export const PET_ALERT_INK_COLORS = Object.fromEntries(
+  Object.values(PET_ALERT_CONDITIONS).map((condition) => [
+    condition,
+    inkToken(alertToken(condition))
+  ])
+) as Record<PET_ALERT_CONDITIONS, string>
+
+/**
+ * The tile's classes as literals, so UnoCSS's content scan sees the exact class
+ * (a `bg-${…}` template is invisible to it). Solid now, rather than the 40% tint
+ * that stood in while no fill had a dark value: each condition has one value per
+ * scheme, so the fill carries the scheme and the ink clears 4.5:1 in both
+ * (6.10–7.99 light, 6.10–7.02 dark).
+ */
+export const PET_ALERT_FILL_CLASSES: Record<PET_ALERT_CONDITIONS, string> = {
+  [PET_ALERT_CONDITIONS.IN_HEAT]: 'bg-alert-in-heat',
+  [PET_ALERT_CONDITIONS.NEEDS_REST]: 'bg-alert-needs-rest',
+  [PET_ALERT_CONDITIONS.AGGRESSIVE]: 'bg-alert-aggressive',
+  [PET_ALERT_CONDITIONS.DIABETIC]: 'bg-alert-diabetic'
+}
+
+/** The ink that sits on each tile, named per condition so a fill can differ. */
+export const PET_ALERT_INK_CLASSES: Record<PET_ALERT_CONDITIONS, string> = {
+  [PET_ALERT_CONDITIONS.IN_HEAT]: 'text-on-alert-in-heat',
+  [PET_ALERT_CONDITIONS.NEEDS_REST]: 'text-on-alert-needs-rest',
+  [PET_ALERT_CONDITIONS.AGGRESSIVE]: 'text-on-alert-aggressive',
+  [PET_ALERT_CONDITIONS.DIABETIC]: 'text-on-alert-diabetic'
+}
+
+/**
+ * An alert row as the API's `Pet` carries it: its dates are optional-with-null
+ * there, where `PetAlert` (the app's read/write shape) requires them. A surface
+ * that renders rows straight off the model types them from the model rather than
+ * casting between the two spellings.
+ */
+export type PetAlertRow = NonNullable<Pet['alerts']>[number]
 
 /**
  * Icons as literals, not derived from `PET_ALERTS`: UnoCSS's content scan reaches
@@ -96,31 +153,48 @@ export const BOOKING_ICON = ref({
   awaitingdownpayment: 'i-mdi-hourglass'
 })
 
+/**
+ * Booking-status glyphs — a *foreground* accent, not a fill. The icon sits on the
+ * surface, so each status needs a value that reads on a light **and** a dark one
+ * (dark-in-light, bright-in-dark), which is why these are `icon-*` tokens and not
+ * the status fills. Measured against the surface: 5.92–7.48 light, 5.37–12.11
+ * dark. The light halves keep the hues these had as palette names.
+ */
 export const BOOKING_ICON_COLOR = ref({
-  approved: 'green',
-  rejected: 'red',
-  canceled: 'deep-orange',
-  canceledoutsideperiod: 'deep-orange',
-  pending: 'grey',
-  standby: 'yellow',
-  awaitingdownpayment: 'green'
+  approved: iconToken('approved'),
+  rejected: iconToken('rejected'),
+  canceled: iconToken('canceled'),
+  canceledoutsideperiod: iconToken('canceled'),
+  pending: iconToken('pending'),
+  standby: iconToken('standby'),
+  awaitingdownpayment: iconToken('approved')
 })
 
+/**
+ * The status *names* the daycare legend and the agenda badges hand to Quasar,
+ * each one the token it means. `default` is not a status — a daycare date with
+ * no booking — and keeps its palette name.
+ */
 export const DAYCARE_DATE_COLORS = {
-  approved: 'green',
-  rejected: 'red',
-  canceled: 'deep-orange',
-  pending: 'grey',
-  standby: 'yellow',
+  approved: statusToken('approved'),
+  rejected: statusToken('rejected'),
+  canceled: statusToken('canceled'),
+  pending: statusToken('pending'),
+  standby: statusToken('standby'),
   default: 'red-5'
 } as const
 
+/**
+ * The date cell's classes: a status fill and the ink that belongs on it. The ink
+ * is the half that was missing — the label inherited the theme's text colour, so
+ * a light fill with near-white text measured 1.04–1.45:1 in a dark theme.
+ */
 export const DAYCARE_DATE_BUTTON_BG_CLASSES = {
-  approved: ['bg-green'],
-  rejected: ['bg-red'],
-  canceled: ['bg-deep-orange'],
-  pending: ['bg-grey'],
-  standby: ['bg-yellow'],
+  approved: ['bg-status-approved', 'text-on-status-approved'],
+  rejected: ['bg-status-rejected', 'text-on-status-rejected'],
+  canceled: ['bg-status-canceled', 'text-on-status-canceled'],
+  pending: ['bg-status-pending', 'text-on-status-pending'],
+  standby: ['bg-status-standby', 'text-on-status-standby'],
   default: ['bg-blue-5']
 } as const
 
@@ -136,10 +210,22 @@ export const DAYCARE_DATE_ICONS = {
   standby: 'i-mdi-hourglass-full'
 }
 
+/**
+ * Category fills. Not statuses — DESIGN.md's status vocabulary is five and closed
+ * — but an icon sits on each of them, so a fixed light fill under an ink that
+ * flips fails in a dark theme exactly as the alert tiles did. Hence a pair each,
+ * with the ink named so a fill can differ without touching a call site.
+ */
 export const AGENDA_CHIP_BADGE_COLORS = {
-  appointment: 'light-blue',
-  isDoubleBooked: 'deep-orange'
-}
+  appointment: badgeToken('appointment'),
+  isDoubleBooked: badgeToken('doubleBooked')
+} as const
+
+/** The ink on each agenda badge fill. */
+export const AGENDA_CHIP_BADGE_INK_COLORS = {
+  appointment: inkToken(badgeToken('appointment')),
+  isDoubleBooked: inkToken(badgeToken('doubleBooked'))
+} as const
 
 export const AGENDA_CHIP_BADGE_ICONS = {
   appointment: 'i-mdi-event',
@@ -147,10 +233,17 @@ export const AGENDA_CHIP_BADGE_ICONS = {
 }
 
 export const PET_CHIP_BADGE_COLORS = {
-  food: 'teal',
-  medicines: 'orange',
-  vaccinations: 'red'
-}
+  food: badgeToken('food'),
+  medicines: badgeToken('medicines'),
+  vaccinations: badgeToken('vaccinations')
+} as const
+
+/** The ink on each pet badge fill. */
+export const PET_CHIP_BADGE_INK_COLORS = {
+  food: inkToken(badgeToken('food')),
+  medicines: inkToken(badgeToken('medicines')),
+  vaccinations: inkToken(badgeToken('vaccinations'))
+} as const
 
 export const PET_CHIP_BADGE_ICONS = {
   food: 'i-mdi-restaurant',

@@ -4,7 +4,10 @@
     <q-item
       v-for="openingTime in modelValue"
       :key="openingTime.id"
-      :class="{ 'bg-grey-3': openingTime.disabled }"
+      :class="{
+        'bg-surface-container-high text-on-surface-variant':
+          openingTime.disabled
+      }"
     >
       <q-item-section>
         <q-item-label>

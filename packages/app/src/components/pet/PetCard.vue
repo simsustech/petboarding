@@ -1,5 +1,10 @@
 <template>
-  <q-styled-card v-bind="attrs" :class="{ 'bg-grey-5': modelValue.deceased }">
+  <q-styled-card
+    v-bind="attrs"
+    :class="{
+      'bg-surface-container-high text-on-surface-variant': modelValue.deceased
+    }"
+  >
     <template #title>
       <div class="row justify-between">
         <image-avatar :model-value="modelValue.image" />
@@ -173,46 +178,93 @@
       </q-item>
     </q-list>
 
-    <q-list v-if="showAlerts">
+    <q-list v-if="showAlerts" data-testid="pet-alerts">
       <q-item>
         <q-item-section>
           <q-item-label header>
             {{ lang.pet.alerts.title }}
           </q-item-label>
-          <div v-if="modelValue.alerts?.length" class="row items-center">
-            <q-badge
-              v-for="alert in modelValue.alerts"
-              :key="alert.id || alert.condition"
-              :class="`bg-${PET_ALERT_COLORS[alert.condition]} text-white`"
-              :title="
-                lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
-              "
-              dense
-              rounded
-              class="q-mr-sm q-mb-xs"
-            >
-              <q-icon :name="PET_ALERT_ICONS[alert.condition]" size="xs" />
-              {{
-                lang.pet.alerts[alert.condition as keyof typeof lang.pet.alerts]
-              }}
-              <q-btn
-                dense
-                flat
-                round
-                size="xs"
-                icon="i-mdi-close-circle"
-                class="q-ml-xs"
-                @click.stop="confirmDeleteAlert(alert)"
-              />
-            </q-badge>
-          </div>
         </q-item-section>
         <q-item-section side>
           <q-btn
             outline
             icon="i-mdi-add"
-            @click="petAlertsDialogRef?.functions.open()"
-          />
+            data-testid="add-alert-button"
+            :aria-label="lang.pet.alerts.addAlert"
+            @click="openCreateAlert"
+          >
+            <q-tooltip>{{ lang.pet.alerts.addAlert }}</q-tooltip>
+          </q-btn>
+        </q-item-section>
+      </q-item>
+
+      <!-- One alert per row, and the row's text is the edit affordance: an alert
+           whose dates are hidden cannot be acted on, and a window read behind a
+           destructive control is worse. The condition + tile sit inside a real
+           button (keyboard and screen-reader path, named by aria-label), and the
+           destructive action is a sibling control, never a target inside the
+           status shape. A second 48px button here measured the window down to
+           120px and ellipsized it — the 400-year range the row exists to show.
+           The window is a plain line under that button, so it owns the row's
+           remaining width and wraps instead of clipping. -->
+      <q-item
+        v-for="alert in modelValue.alerts"
+        :key="alertKey(alert)"
+        data-testid="pet-alert-row"
+      >
+        <q-item-section>
+          <q-btn
+            flat
+            class="full-width text-left"
+            data-testid="edit-alert-button"
+            :aria-label="editAlertLabel(alert)"
+            @click="openEditAlert(alert)"
+          >
+            <div class="row items-center no-wrap full-width">
+              <q-badge
+                :class="[
+                  PET_ALERT_FILL_CLASSES[alert.condition],
+                  PET_ALERT_INK_CLASSES[alert.condition]
+                ]"
+                class="q-mr-sm"
+                rounded
+                aria-hidden="true"
+                data-testid="pet-alert-tile"
+              >
+                <q-icon :name="PET_ALERT_ICONS[alert.condition]" size="0.8em" />
+              </q-badge>
+              {{ alertLabel(alert) }}
+            </div>
+            <q-tooltip>{{ lang.edit }}</q-tooltip>
+          </q-btn>
+          <!-- The app's own wrap rule for a dated label in a dense row
+               (BookingExpansionItem/BookingItemContent): `q-item__label` clips
+               to one line, and a hidden window is the defect this row exists to
+               fix. -->
+          <q-item-label
+            class="whitespace-normal overflow-visible"
+            overline
+            data-testid="pet-alert-window"
+          >
+            {{ alertWindow(alert) }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn
+            flat
+            round
+            dense
+            data-testid="delete-alert-button"
+            :aria-label="deleteAlertLabel(alert)"
+            @click="confirmDeleteAlert(alert)"
+          >
+            <!-- The theme's error token, not the palette's `red`: that shade
+                 measures 2.5:1 on the light card, while `--q-error` flips with
+                 the scheme (#ba1a1a light / #ffb4ab dark) and clears the 3:1
+                 floor for a glyph in both. -->
+            <q-icon name="i-mdi-delete-outline" class="text-error" />
+            <q-tooltip>{{ lang.delete }}</q-tooltip>
+          </q-btn>
         </q-item-section>
       </q-item>
     </q-list>
@@ -288,7 +340,8 @@
     :icons="{ close: 'i-mdi-close' }"
     @submit="submitAlertForm"
   >
-    <pet-alerts-form ref="petAlertsFormRef" @submit="createAlert" />
+    <template #title>{{ alertDialogTitle }}</template>
+    <pet-alerts-form ref="petAlertsFormRef" @submit="saveAlert" />
   </responsive-dialog>
 </template>
 
@@ -316,17 +369,22 @@ import VaccinationItem from '../vaccination/VaccinationItem.vue'
 import { useConfiguration } from '../../configuration.js'
 import { useEmployeeCreateAlert } from '../../mutations/employee/pet.js'
 
-import { useEmployeeDeleteAlert } from '../../mutations/employee/pet.js'
+import {
+  useEmployeeDeleteAlert,
+  useEmployeeUpdateAlert
+} from '../../mutations/employee/pet.js'
 import type { Vaccination } from '../vaccination/VaccinationItem.vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
-import { ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import PetSelect from '../employee/PetSelect.vue'
 import { useEmployeeSetPetRelation } from '../../mutations/employee/pet.js'
 import PetAlertsForm from './PetAlertsForm.vue'
 import {
-  PET_ALERT_COLORS,
+  PET_ALERT_FILL_CLASSES,
+  PET_ALERT_INK_CLASSES,
   PET_ALERT_ICONS,
-  type PetAlert
+  type PetAlert,
+  type PetAlertRow
 } from '../../configuration.js'
 
 export type OpenCustomerHandler = (payload: { id: number }) => void
@@ -472,44 +530,152 @@ const submitAlertForm: InstanceType<
   petAlertsFormRef.value?.functions.submit({ done })
 }
 
-const createAlert: InstanceType<
+const editingAlert = ref<PetAlertRow | null>(null)
+
+const alertDialogTitle = computed(() =>
+  editingAlert.value
+    ? lang.value.pet.alerts.editAlert
+    : lang.value.pet.alerts.addAlert
+)
+
+const alertLabel = (alert: PetAlertRow) =>
+  lang.value.pet.alerts[alert.condition as keyof typeof lang.value.pet.alerts]
+
+/**
+ * A stable key for a row that may not have a server id yet. Two alerts with the
+ * same condition are legal, so the condition alone cannot identify a row —
+ * `alert.id || alert.condition` collided as soon as one row lacked an id.
+ */
+const alertKey = (alert: PetAlertRow) =>
+  alert.id ??
+  `${alert.condition}-${alert.startDate ?? ''}-${alert.endDate ?? ''}`
+
+/**
+ * The alert's window in the reading order the locale expects. `formatRange`
+ * collapses the fields both ends share ("Jan 5 – 12, 2024" / "5–12 jan 2024"),
+ * which assembled date glue cannot do per locale; an open end reads as a word,
+ * because a bare "-" is all the delete dialog ever showed.
+ */
+const alertWindow = (alert: PetAlertRow) => {
+  const formatter = new Intl.DateTimeFormat($q.lang.isoName, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC'
+  })
+  const start = alert.startDate ? new Date(alert.startDate) : null
+  const end = alert.endDate ? new Date(alert.endDate) : null
+  if (start && end) return formatter.formatRange(start, end)
+  if (start) return `${lang.value.pet.alerts.since} ${formatter.format(start)}`
+  if (end) return `${lang.value.pet.alerts.until} ${formatter.format(end)}`
+  return lang.value.pet.alerts.ongoing
+}
+
+const editAlertLabel = (alert: PetAlertRow) =>
+  `${lang.value.pet.alerts.editAlert}: ${alertLabel(alert)}`
+const deleteAlertLabel = (alert: PetAlertRow) =>
+  `${lang.value.pet.alerts.deleteAlert}: ${alertLabel(alert)}`
+
+const setAlerts = (alerts: PetAlertRow[]) =>
+  emit('update:modelValue', { ...modelValue.value, alerts })
+
+const openCreateAlert = () => {
+  editingAlert.value = null
+  petAlertsDialogRef.value?.functions.open()
+  nextTick(() => {
+    petAlertsFormRef.value?.functions.setValue(null)
+  })
+}
+
+const openEditAlert = (alert: PetAlertRow) => {
+  // The optimistic row of a just-created alert has no id until the card
+  // refetches, and the update endpoint keys on it.
+  if (!alert.id) return
+  editingAlert.value = alert
+  petAlertsDialogRef.value?.functions.open()
+  nextTick(() => {
+    petAlertsFormRef.value?.functions.setValue(alert)
+  })
+}
+
+const saveAlert: InstanceType<
   typeof PetAlertsForm
 >['$props']['onSubmit'] = async ({ data, done }) => {
-  if (modelValue.value.id) {
-    const { mutateAsync: createAlertMutation } = useEmployeeCreateAlert()
-    try {
-      await createAlertMutation({
-        petId: modelValue.value.id,
-        condition: data.condition,
-        startDate: data.startDate,
-        endDate: data.endDate
-      })
-      done()
-      emit('update:modelValue', {
-        ...modelValue.value,
-        alerts: [...(modelValue.value.alerts || []), data]
-      })
-    } catch (e) {
-      console.error(e)
-      done(false)
-    }
+  const alert = editingAlert.value
+  if (alert?.id) {
+    await updateAlert({ id: alert.id, data, done })
+    return
+  }
+  await createAlert({ data, done })
+}
+
+const createAlert = async ({
+  data,
+  done
+}: {
+  data: PetAlertRow
+  done: (success?: boolean) => void
+}) => {
+  if (!modelValue.value.id) return
+  const { mutateAsync: createAlertMutation } = useEmployeeCreateAlert()
+  try {
+    // Merge the row the server returned, not the form payload: without its id
+    // the new alert cannot be edited or deleted until the card refetches.
+    const created = await createAlertMutation({
+      petId: modelValue.value.id,
+      condition: data.condition,
+      startDate: data.startDate,
+      endDate: data.endDate
+    })
+    done()
+    setAlerts([...(modelValue.value.alerts || []), created ?? data])
+  } catch (e) {
+    console.error(e)
+    done(false)
   }
 }
 
-const confirmDeleteAlert = (alert: PetAlert) => {
+const updateAlert = async ({
+  id,
+  data,
+  done
+}: {
+  id: number
+  data: PetAlertRow
+  done: (success?: boolean) => void
+}) => {
+  const { mutateAsync: updateAlertMutation } = useEmployeeUpdateAlert()
+  try {
+    const updated = await updateAlertMutation({
+      id,
+      condition: data.condition,
+      startDate: data.startDate,
+      endDate: data.endDate
+    })
+    done()
+    setAlerts(
+      (modelValue.value.alerts || []).map((alert) =>
+        alert.id === id ? { ...alert, ...updated, id } : alert
+      )
+    )
+  } catch (e) {
+    console.error(e)
+    done(false)
+  }
+}
+
+const confirmDeleteAlert = (alert: PetAlertRow) => {
   $q.dialog({
-    title: lang.value.pet.alerts.title,
-    message: `${lang.value.pet.alerts[alert.condition as keyof typeof lang.value.pet.alerts]} (${modelValue.value.name}) — ${formatDate(alert.startDate)} → ${formatDate(alert.endDate)}`,
-    cancel: true,
+    title: lang.value.pet.alerts.deleteAlert,
+    message: `${alertLabel(alert)} — ${alertWindow(alert)} (${modelValue.value.name})`,
+    ok: lang.value.delete,
+    cancel: lang.value.cancel,
     persistent: true
   }).onOk(async () => {
     if (alert.id && modelValue.value.id) {
       const { mutateAsync: deleteAlert } = useEmployeeDeleteAlert()
       await deleteAlert({ id: alert.id })
-      emit('update:modelValue', {
-        ...modelValue.value,
-        alerts: modelValue.value.alerts?.filter((a) => a.id !== alert.id) || []
-      })
+      setAlerts(modelValue.value.alerts?.filter((a) => a.id !== alert.id) || [])
     }
   })
 }
@@ -533,13 +699,6 @@ const updatePetRelation = async ({
     relations: {
       ...modelValue.value.relations
     }
-  })
-}
-
-const saveAlerts = (alerts: PetAlert[]) => {
-  emit('update:modelValue', {
-    ...modelValue.value,
-    alerts
   })
 }
 </script>

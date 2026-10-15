@@ -24,6 +24,7 @@ import { useConfiguration } from './configuration.js'
 import { useMeta } from 'quasar'
 import { EventBus } from 'quasar'
 import { generateTheme, setThemeColors } from 'unocss-preset-quasar/theme'
+import { tokenTones } from './theme-tokens.js'
 
 const bus = new EventBus<{
   'account-open-customer-create-dialog': () => void
@@ -45,9 +46,15 @@ provide<EventBus>('bus', bus)
 
 const configuration = useConfiguration()
 watch(configuration, (newVal) => {
-  if (newVal.THEME_COLORS) {
-    setThemeColors(newVal.THEME_COLORS)
-  }
+  const tones = tokenTones()
+  setThemeColors({
+    ...newVal.THEME_COLORS,
+    // ADR 005: the status and alert tones are product constants — a deployment's
+    // source colour must not re-hue "approved" — so they merge *over* the
+    // configured colours, and they apply even when nothing is configured.
+    light: { ...newVal.THEME_COLORS?.light, ...tones.light },
+    dark: { ...newVal.THEME_COLORS?.dark, ...tones.dark }
+  })
 })
 
 useMeta(() => {

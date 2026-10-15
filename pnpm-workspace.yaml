@@ -36,9 +36,11 @@ minimumReleaseAgeExclude:
   - pg@8.23.1
   - rolldown@1.2.12
   - stripe@23.0.0
+  # 0.7.3 carries the MD3-role safelist fix and was published less than 24h
+  # before the pin, so it needs the same deliberate exemption as the rest.
   - >-
     unocss-preset-quasar@0.6.0 || 0.6.1 || 0.6.2 || 0.6.3 || 0.6.4 || 0.6.5 ||
-    0.6.6 || 0.7.0
+    0.6.6 || 0.7.0 || 0.7.3
   - vite@8.3.2 || 8.3.3
   - vitrify@0.28.2
   - '@oxfmt/binding-android-arm-eabi@0.72.0'

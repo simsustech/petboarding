@@ -51,6 +51,10 @@ export const petValidation = {
   alerts: z
     .array(
       z.object({
+        // `id` is what the delete/update endpoints key on, and every read that
+        // selects alerts returns it; without it here the UI has to read a field
+        // its own model type denies.
+        id: z.number().optional(),
         condition: z.nativeEnum(PET_ALERT_CONDITIONS),
         startDate: z.string().nullable().optional(),
         endDate: z.string().nullable().optional()

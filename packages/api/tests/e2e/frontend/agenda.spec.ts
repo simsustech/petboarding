@@ -331,10 +331,12 @@ test('badges do not overlap the name', async ({ browser }) => {
       const badges = [...chip.querySelectorAll('.q-badge')].filter(
         (b) => !b.className.includes('bg-transparent')
       )
-      // A pet with an alert: pink (in heat), yellow (needs rest) or blue
-      // (diabetic) — none of those colors is used by any other badge type.
-      const hasAlert = badges.some((b) =>
-        /bg-(pink|yellow|blue)/.test(b.className)
+      // A pet with an alert carries one of the `bg-alert-*` tokens. It is found
+      // by its testid, not by its colour: the colour is a token now
+      // (`bg-alert-aggressive` where it was `bg-red`), and renaming a token must
+      // not silently empty this detector.
+      const hasAlert = badges.some(
+        (b) => b.dataset.testid === 'pet-alert-badge'
       )
       if (!hasAlert) continue
       const nameDiv = [...chip.querySelectorAll('div')].find(

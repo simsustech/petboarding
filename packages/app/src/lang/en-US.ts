@@ -218,7 +218,13 @@ const lang: Language = {
       inHeat: 'In heat',
       needsRest: 'Needs rest',
       aggressive: 'Aggressive',
-      diabetic: 'Diabetic'
+      diabetic: 'Diabetic',
+      since: 'Since',
+      until: 'Until',
+      ongoing: 'Ongoing',
+      editAlert: 'Edit alert',
+      deleteAlert: 'Delete alert',
+      endBeforeStart: 'The end date cannot be before the start date'
     }
   },
   booking: {

@@ -8,7 +8,7 @@
         class="col-span-12"
         map-options
         emit-value
-        :rules="[(val: any) => !!val || 'Required']"
+        :rules="[(val: unknown) => !!val || lang.pet.validations.fieldRequired]"
       />
       <date-input
         v-model="alert.startDate"
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
+import { Notify } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { PET_ALERTS, PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 import { DateInput } from '@simsustech/quasar-components/form'
@@ -84,13 +85,41 @@ const alertOptions = computed(() =>
   }))
 )
 
-function setValue(data: PetAlert) {
-  alert.condition = data.condition
-  alert.startDate = data.startDate
-  alert.endDate = data.endDate
+/**
+ * Reset (or prefill) the form for the next open: the previous alert's dates
+ * used to survive into a new one, and a stale "field is required" stayed on
+ * screen after the field was filled.
+ */
+function setValue(data: PetAlert | null) {
+  alert.condition = data?.condition ?? PET_ALERT_CONDITIONS.IN_HEAT
+  alert.startDate = data?.startDate ?? null
+  alert.endDate = data?.endDate ?? null
+  formRef.value?.resetValidation()
 }
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+/**
+ * Either end of a window may be open (a chronic condition has no window at
+ * all), so only a closed window has an order to check. The component emits ISO
+ * strings; partial input (`2024-__-__`) is left to the field's own rule.
+ */
+const windowIsOrdered = () =>
+  !alert.startDate ||
+  !alert.endDate ||
+  !ISO_DATE.test(alert.startDate) ||
+  !ISO_DATE.test(alert.endDate) ||
+  alert.endDate >= alert.startDate
+
 function submit({ done }: { done: (success?: boolean) => void }) {
+  if (!windowIsOrdered()) {
+    Notify.create({
+      message: lang.value.pet.alerts.endBeforeStart,
+      type: 'negative'
+    })
+    done(false)
+    return
+  }
   formRef.value.validate().then((success: boolean) => {
     if (success) {
       emit('submit', { data: { ...alert }, done })

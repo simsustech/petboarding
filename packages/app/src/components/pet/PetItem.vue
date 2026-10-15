@@ -1,5 +1,9 @@
 <template>
-  <q-item :class="{ 'bg-grey-5': modelValue.deceased }">
+  <q-item
+    :class="{
+      'bg-surface-container-high text-on-surface-variant': modelValue.deceased
+    }"
+  >
     <q-item-section avatar>
       <image-avatar :model-value="modelValue.image" />
     </q-item-section>

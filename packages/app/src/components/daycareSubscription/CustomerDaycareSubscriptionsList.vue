@@ -23,7 +23,10 @@
         customerDaycareSubscription, index
       ) in filteredCustomerDaycareSubscriptions"
       :key="index"
-      :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
+      :class="{
+        'bg-surface-container-high text-on-surface-variant':
+          !customerDaycareSubscription.isActive
+      }"
       :content-inset-level="1"
     >
       <template #header>

@@ -34,6 +34,7 @@
             'padding-right': '3px'
           }"
           :color="PET_CHIP_BADGE_COLORS.food"
+          :text-color="PET_CHIP_BADGE_INK_COLORS.food"
           rounded
         >
           <q-icon
@@ -55,6 +56,7 @@
             'padding-right': '3px'
           }"
           :color="PET_CHIP_BADGE_COLORS.medicines"
+          :text-color="PET_CHIP_BADGE_INK_COLORS.medicines"
           rounded
         >
           <q-icon
@@ -72,6 +74,7 @@
             'padding-right': '3px'
           }"
           :color="PET_CHIP_BADGE_COLORS.vaccinations"
+          :text-color="PET_CHIP_BADGE_INK_COLORS.vaccinations"
           rounded
         >
           <q-icon
@@ -90,6 +93,8 @@
             'padding-right': '3px'
           }"
           :color="PET_ALERT_COLORS[alert.condition]"
+          :text-color="PET_ALERT_INK_COLORS[alert.condition]"
+          data-testid="pet-alert-badge"
           rounded
         >
           <q-icon
@@ -170,8 +175,10 @@ import Base64Image from '../Base64Image.vue'
 import { computed, toRefs } from 'vue'
 import {
   PET_CHIP_BADGE_COLORS,
+  PET_CHIP_BADGE_INK_COLORS,
   PET_CHIP_BADGE_ICONS,
   PET_ALERT_COLORS,
+  PET_ALERT_INK_COLORS,
   PET_ALERT_ICONS
 } from 'src/configuration.js'
 

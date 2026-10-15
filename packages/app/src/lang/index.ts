@@ -214,6 +214,12 @@ export interface Language {
       needsRest: string
       aggressive: string
       diabetic: string
+      since: string
+      until: string
+      ongoing: string
+      editAlert: string
+      deleteAlert: string
+      endBeforeStart: string
     }
   }
   booking: {

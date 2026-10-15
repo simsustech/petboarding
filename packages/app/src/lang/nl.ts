@@ -219,7 +219,13 @@ const lang: Language = {
       inHeat: 'Loops',
       needsRest: 'Rust nodig',
       aggressive: 'Aanvallend',
-      diabetic: 'Diabetisch'
+      diabetic: 'Diabetisch',
+      since: 'Sinds',
+      until: 'Tot',
+      ongoing: 'Doorlopend',
+      editAlert: 'Waarschuwing aanpassen',
+      deleteAlert: 'Waarschuwing verwijderen',
+      endBeforeStart: 'De eind datum mag niet voor de start datum liggen'
     }
   },
   booking: {

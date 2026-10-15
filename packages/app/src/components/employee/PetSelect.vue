@@ -18,7 +18,12 @@
          input, and — before the preset's field-root fix — a second stacked row).
          Nothing in the app passes `#before`; `#prepend` below is the one in use. -->
     <template #option="{ itemProps, opt }">
-      <q-item v-bind="itemProps" :class="{ 'bg-grey-5': opt.deceased }">
+      <q-item
+        v-bind="itemProps"
+        :class="{
+          'bg-surface-container-high text-on-surface-variant': opt.deceased
+        }"
+      >
         <q-item-section>
           <q-item-label>
             {{ opt.label }}

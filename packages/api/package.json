@@ -67,7 +67,7 @@
     "@petboarding/app": "workspace:*",
     "@petboarding/tools": "workspace:*",
     "@pinia/colada": "1.4.7",
-    "@simsustech/quasar-components": "0.12.13",
+    "@simsustech/quasar-components": "0.12.14",
     "@trpc/client": "^11.19.0",
     "@trpc/server": "^11.19.0",
     "@vitrify/tools": "^0.5.5",

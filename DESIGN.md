@@ -30,11 +30,73 @@ colors:
   negative: "#C10015"
   warning: "#F2C037"
   info: "#31CCEC"
+  # A status is a light/dark *pair* (ADR 005). The light half is what shipped; the
+  # dark half is what makes the ink readable on a dark screen. `setThemeColors`
+  # writes them as one `--q-status-*` variable per scheme (`:root` for light,
+  # `body.body--dark` for dark), so a component names the token, never the scheme.
   status-approved: "#4ade80"
+  dark-status-approved: "#14532d"
   status-rejected: "#f87171"
+  dark-status-rejected: "#991b1b"
   status-canceled: "#ff5722"
+  dark-status-canceled: "#9a2c08"
   status-pending: "#9e9e9e"
+  dark-status-pending: "#424242"
   status-standby: "#facc15"
+  dark-status-standby: "#713f12"
+  # The ink that sits on a status fill. It is the scheme's own `on-surface`, so a
+  # deployment's source colour keeps driving it instead of a frozen pair.
+  on-status-approved: "{colors.on-surface}"
+  on-status-rejected: "{colors.on-surface}"
+  on-status-canceled: "{colors.on-surface}"
+  on-status-pending: "{colors.on-surface}"
+  on-status-standby: "{colors.on-surface}"
+  # The four pet-alert conditions, same shape. `needs-rest` is amber, not the
+  # yellow it shipped as: that yellow was byte-identical to `status-standby`, and
+  # yellow means "reserve" here.
+  alert-in-heat: "#f472b6"
+  dark-alert-in-heat: "#9d174d"
+  alert-needs-rest: "#f59e0b"
+  dark-alert-needs-rest: "#78350f"
+  alert-aggressive: "#f87171"
+  dark-alert-aggressive: "#991b1b"
+  alert-diabetic: "#60a5fa"
+  dark-alert-diabetic: "#1e40af"
+  on-alert-in-heat: "{colors.on-surface}"
+  on-alert-needs-rest: "{colors.on-surface}"
+  on-alert-aggressive: "{colors.on-surface}"
+  on-alert-diabetic: "{colors.on-surface}"
+  # The category hues — food, medicines, vaccinations, an appointment, a double
+  # booking. Not statuses, but they are fills that carry an icon, so they need the
+  # same light/dark pair for the same reason.
+  badge-food: "#2dd4bf"
+  dark-badge-food: "#115e59"
+  badge-medicines: "#fb923c"
+  dark-badge-medicines: "#7c2d12"
+  badge-vaccinations: "#f87171"
+  dark-badge-vaccinations: "#991b1b"
+  badge-appointment: "#03a9f4"
+  dark-badge-appointment: "#075985"
+  badge-double-booked: "#ff5722"
+  dark-badge-double-booked: "#9a2c08"
+  on-badge-food: "{colors.on-surface}"
+  on-badge-medicines: "{colors.on-surface}"
+  on-badge-vaccinations: "{colors.on-surface}"
+  on-badge-appointment: "{colors.on-surface}"
+  on-badge-double-booked: "{colors.on-surface}"
+  # Foreground accents — the booking-status glyphs. The opposite case: the colour
+  # sits *on* the surface, so each one is dark-in-light and bright-in-dark, like
+  # the preset's own positive/negative family.
+  icon-approved: "#006c45"
+  dark-icon-approved: "#00a56c"
+  icon-rejected: "#bd0048"
+  dark-icon-rejected: "#ff4e79"
+  icon-canceled: "#8a3d00"
+  dark-icon-canceled: "#ffb77c"
+  icon-pending: "#5f6368"
+  dark-icon-pending: "#c4c7c5"
+  icon-standby: "#7a5900"
+  dark-icon-standby: "#ffd54f"
   rating-1: "#dc2626"
   rating-2: "#ef4444"
   rating-3: "#f97316"
@@ -111,7 +173,7 @@ components:
     typography: "{typography.body}"
   chip-status:
     backgroundColor: "{colors.status-approved}"
-    textColor: "{colors.on-surface}"
+    textColor: "{colors.on-status-approved}"
     rounded: "{rounded.md}"
     padding: "0 8px"
     typography: "{typography.label}"
@@ -214,8 +276,20 @@ brand hue.
 - **Canceled Orange** (`#ff5722`): canceled (also double-booking badges).
 - **Pending Grey** (`#9e9e9e`): pending/awaiting.
 - **Standby Yellow** (`#facc15`): standby/reserve list.
-- Supporting badge hues: arrival/food green, departure/vaccinations red,
-  medicines orange, appointment light-blue, pet alerts pink/yellow/red/blue.
+- Each status is a **pair**: a fill and the ink that sits on it (`on-status-*`,
+  which resolves to the scheme's `on-surface`). One fixed fill under an ink that
+  flips with the scheme measures 1.04–2.45:1 in a dark theme — ADR 005 fixes that,
+  and it is why a status is never a lone hex with the text colour left to inherit.
+- Supporting badge hues are tokens too, for the same reason: food `badge-food`, medicines
+  `badge-medicines`, vaccinations `badge-vaccinations`, an appointment `badge-appointment`,
+  a double booking `badge-double-booked` — each with its own `on-badge-*` ink.
+- **Disabled and deceased are not statuses.** They are a surface step plus reduced
+  emphasis: `bg-surface-container-high` with `text-on-surface-variant`. Inventing a sixth
+  status for them would break the Status Meanings Rule, and a grey *palette* step cannot
+  follow a colour scheme (it read as a bright block on a dark page).
+- Booking-status glyphs are foregrounds, not fills: `icon-*`, one value per scheme.
+- Pet alerts carry their own tokens (`alert-in-heat`, `alert-needs-rest`, `alert-aggressive`,
+  `alert-diabetic`) — amber for needs-rest, since yellow means "reserve" here.
 
 ### Named Rules
 
@@ -227,6 +301,14 @@ reads `primary`, `surface-container-*`, `on-surface`; it does not paste a color.
 across calendar, agenda, list, and legend. Green never decorates; grey never
 means success; yellow always means "reserve".
 
+**The Status Ink Rule.** A status fill always carries its own ink
+(`text-on-status-*`), rather than leaving the text colour to inherit: the fill has
+a value per scheme, so an inherited ink can only be right in one of them.
+
+**The Foreground Rule.** A colour that sits *on* the surface — an icon, a glyph, a
+status indicator that is not a fill — is not a fill token. It needs a value that
+reads in both schemes (`icon-*`: dark-in-light, bright-in-dark), never a 400 shade,
+which washes out on a dark surface.
 **The Compatibility Scale Rule.** Pet-to-pet compatibility is a ten-step scale
 (`rating-1` … `rating-10`, red → emerald) and it is the one place a red-to-green
 ramp is legitimate: it encodes a rating, not a status. It appears only where the

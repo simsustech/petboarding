@@ -27,16 +27,34 @@ describe('booking and daycare status colours', () => {
     expect(BOOKING_COLOR.canceledoutsideperiod).toBe(BOOKING_COLOR.canceled)
   })
 
-  it('leaves the approved/pending/standby/rejected palette untouched', () => {
-    expect(BOOKING_COLOR.approved).toBe('green')
-    expect(BOOKING_COLOR.pending).toBe('grey')
-    expect(BOOKING_COLOR.standby).toBe('yellow')
-    expect(BOOKING_COLOR.rejected).toBe('red')
-    expect(DAYCARE_DATE_COLORS.approved).toBe('green')
-    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.approved).toEqual(['bg-green'])
-    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.rejected).toEqual(['bg-red'])
-    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.pending).toEqual(['bg-grey'])
-    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.standby).toEqual(['bg-yellow'])
+  it('moves glyph colours to foreground tokens and status fills to fill tokens', () => {
+    // A glyph sits *on* the surface, so it needs a value per scheme (dark-in-light,
+    // bright-in-dark) — the opposite of a fill, which carries an ink. The light
+    // halves keep the hues these had as palette names.
+    expect(BOOKING_COLOR.approved).toBe('icon-approved')
+    expect(BOOKING_COLOR.pending).toBe('icon-pending')
+    expect(BOOKING_COLOR.standby).toBe('icon-standby')
+    expect(BOOKING_COLOR.rejected).toBe('icon-rejected')
+    // A fill carries the scheme, so it is a token plus the ink that sits on it:
+    // the label used to inherit the theme's text colour, which measured
+    // 1.04–1.45:1 on these fills in a dark theme.
+    expect(DAYCARE_DATE_COLORS.approved).toBe('status-approved')
+    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.approved).toEqual([
+      'bg-status-approved',
+      'text-on-status-approved'
+    ])
+    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.rejected).toEqual([
+      'bg-status-rejected',
+      'text-on-status-rejected'
+    ])
+    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.pending).toEqual([
+      'bg-status-pending',
+      'text-on-status-pending'
+    ])
+    expect(DAYCARE_DATE_BUTTON_BG_CLASSES.standby).toEqual([
+      'bg-status-standby',
+      'text-on-status-standby'
+    ])
   })
 
   it('keeps the pet chip badge hues distinct from one another', () => {

@@ -38,6 +38,7 @@
             ) && index === 0
           "
           :color="AGENDA_CHIP_BADGE_COLORS.appointment"
+          :text-color="AGENDA_CHIP_BADGE_INK_COLORS.appointment"
           rounded
         >
           <q-icon
@@ -49,6 +50,7 @@
         <q-badge
           v-if="modelValue.isDoubleBooked"
           :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
+          :text-color="AGENDA_CHIP_BADGE_INK_COLORS.isDoubleBooked"
           rounded
         >
           <q-icon
@@ -89,6 +91,7 @@ import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
 import {
   AGENDA_CHIP_BADGE_COLORS,
+  AGENDA_CHIP_BADGE_INK_COLORS,
   AGENDA_CHIP_BADGE_ICONS
 } from '../configuration.js'
 import PetChip from './pet/PetChip.vue'
