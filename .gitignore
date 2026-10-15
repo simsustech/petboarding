@@ -22,5 +22,7 @@ docker-compose.*.override.yaml
 # Local review/scratch artifacts (not for commit)
 .scratch/
 # Showcase screenshots — keep README/spec, ignore PNG artifacts
+# Report artefacts — a PDF and screenshots that embed a render date
+.pi/reports/
 showcase/*/*.png
 showcase/*/!(*.md)
