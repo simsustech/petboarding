@@ -32,7 +32,7 @@ function whereName(
 ) {
   if (!name) return query
   return query.where((web) =>
-    web(web.fn('lower', ['name']), 'like', `%${name.toLowerCase()}%`)
+    web(sql`lower(${displayName()})`, 'like', `%${name.toLowerCase()}%`)
   )
 }
 
@@ -48,6 +48,27 @@ function whereRoles(
       `[${roles.map((role) => `"${role}"`).join(', ')}]`
     )
   )
+}
+
+/**
+ * The name the accounts list displays: the customer's first plus last name when
+ * the account has a profile, otherwise `accounts.name` (`accounts` itself only
+ * carries email/roles). A correlated subquery, not a join — joining customers
+ * would make unqualified `id` references ambiguous. Search must match this same
+ * expression so the filter and the rendered column cannot diverge.
+ */
+function displayName() {
+  return sql<string>`coalesce(
+    (
+      select nullif(
+        concat_ws(' ', c.first_name, c.last_name), ''
+      )
+      from customers c
+      where c.account_id = accounts.id
+      limit 1
+    ),
+    accounts.name
+  )`
 }
 
 function find({
@@ -79,10 +100,11 @@ function find({
   query = whereName(query, criteria.name)
 
   if (criteria.searchPhrase) {
+    const phrase = `%${criteria.searchPhrase.toLowerCase()}%`
     query = query.where((web) =>
       web.or([
-        web('email', 'like', `%${criteria.searchPhrase}%`),
-        web('name', 'like', `%${criteria.name}%`)
+        web(web.fn('lower', ['email']), 'like', phrase),
+        web(sql`lower(${displayName()})`, 'like', phrase)
       ])
     )
   }
@@ -99,25 +121,10 @@ function find({
     query = query.limit(pagination.limit).offset(pagination.offset)
   }
 
-  // `accounts` only carries email/roles; stand in the customer's name when the
-  // account has a profile. A correlated subquery, not a join — joining customers
-  // would make unqualified `id` references ambiguous.
   return query
     .select([])
     .select(select.filter((column) => column !== 'name'))
-    .select([
-      sql<string>`coalesce(
-        (
-          select nullif(
-            concat_ws(' ', c.first_name, c.last_name), ''
-          )
-          from customers c
-          where c.account_id = accounts.id
-          limit 1
-        ),
-        accounts.name
-      )`.as('name')
-    ])
+    .select([displayName().as('name')])
 }
 
 export async function findAccount({
