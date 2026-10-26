@@ -1,6 +1,7 @@
 import type { Pet } from '@petboarding/api/zod'
 import { useMutation } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
+import type { PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 
 export const useEmployeeUpdatePetMutation = () => {
   const { ...rest } = useMutation({
@@ -22,6 +23,56 @@ export const useEmployeeSetPetRelation = () => {
       petId2: number
       rating: number
     }) => trpc.employee.setPetRelation.mutate({ petId1, petId2, rating })
+  })
+  return {
+    ...rest
+  }
+}
+
+export const useEmployeeCreateAlert = () => {
+  const { ...rest } = useMutation({
+    mutation: ({
+      petId,
+      condition,
+      startDate,
+      endDate
+    }: {
+      petId: number
+      condition: PET_ALERT_CONDITIONS
+      startDate?: string | null
+      endDate?: string | null
+    }) =>
+      trpc.employee.createAlert.mutate({ petId, condition, startDate, endDate })
+  })
+  return {
+    ...rest
+  }
+}
+
+export const useEmployeeUpdateAlert = () => {
+  const { ...rest } = useMutation({
+    mutation: ({
+      id,
+      condition,
+      startDate,
+      endDate
+    }: {
+      id: number
+      condition: PET_ALERT_CONDITIONS
+      startDate?: string | null
+      endDate?: string | null
+    }) =>
+      trpc.employee.updateAlert.mutate({ id, condition, startDate, endDate })
+  })
+  return {
+    ...rest
+  }
+}
+
+export const useEmployeeDeleteAlert = () => {
+  const { ...rest } = useMutation({
+    mutation: ({ id }: { id: number }) =>
+      trpc.employee.deleteAlert.mutate({ id })
   })
   return {
     ...rest

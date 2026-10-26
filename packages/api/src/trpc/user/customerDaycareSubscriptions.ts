@@ -24,7 +24,11 @@ import {
   type RawInvoiceLine,
   type RawInvoiceSurcharge
 } from '@modular-api/fastify-checkout'
-import { InvoiceStatus } from '@modular-api/fastify-checkout/types'
+import {
+  InvoiceStatus,
+  PaymentStatus
+} from '@modular-api/fastify-checkout/types'
+import { cancelOrphanAndFollowWinner } from '../admin/slimfactInvoice.js'
 
 const currency = config.currency
 const host = config.apiHost
@@ -62,7 +66,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
     companyDetails = await fastify.slimfact.admin.getCompany.query({
       id: Number(config.slimfactCompanyId)
     })
-  } catch (e) {
+  } catch {
     return {
       success: false,
       errorMessage: 'SlimFact not authorized.'
@@ -85,7 +89,8 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       quantity: 1,
       quantityPerMille: false,
       discount: 0,
-      taxRate: 21
+      taxRate: 21,
+      type: 'petboarding_daycare'
     }
   ]
   const discounts: RawInvoiceDiscount[] = []
@@ -117,7 +122,7 @@ export const createOrUpdateSlimfactDaycareSubscription = async ({
       success: true,
       invoice
     }
-  } catch (e) {
+  } catch {
     return {
       success: false,
       errorMessage: 'Could not create or update daycare subscription invoice.'
@@ -140,30 +145,28 @@ export const userCustomerDaycareSubscriptionRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getCustomerDaycareSubscriptions: procedure.query(async ({ ctx }) => {
-    if (ctx.account?.id) {
-      const customer = await findCustomer({
-        criteria: {
-          accountId: Number(ctx.account.id)
-        }
-      })
-      if (customer?.id) {
-        const customerDaycareSubscriptions =
-          await findCustomerDaycareSubscriptions({
-            criteria: {
-              customerId: customer.id,
-              expirationDate: new Date().toISOString().slice(0, 10),
-              // date: new Date().toISOString().slice(0, 10),
-              statuses: [
-                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
-                CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
-              ]
-            },
-            fastify
-          })
-        return customerDaycareSubscriptions
+    // A staff account has no customer profile — that is valid, so return empty;
+    // BAD_REQUEST is only for unauthenticated callers.
+    if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+    const customer = await findCustomer({
+      criteria: {
+        accountId: Number(ctx.account.id)
       }
-    }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+    if (!customer?.id) return []
+
+    return findCustomerDaycareSubscriptions({
+      criteria: {
+        customerId: customer.id,
+        expirationDate: new Date().toISOString().slice(0, 10),
+        statuses: [
+          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+        ]
+      },
+      fastify
+    })
   }),
   createCustomerDaycareSubscription: procedure
     .input(userCustomerDaycareSubscriptionValidation)
@@ -257,24 +260,71 @@ export const userCustomerDaycareSubscriptionRoutes = ({
               })
               if (result.success) {
                 invoice = result.invoice
-                await updateCustomerDaycareSubscription(
+                const linked = await updateCustomerDaycareSubscription(
                   { id: customerDaycareSubscription.id },
                   {
                     invoiceUuid: invoice.uuid
-                  }
+                  },
+                  { onlyIfInvoiceUuidNull: true }
                 )
+                if (linked) {
+                  // Re-read so the response carries the persisted invoiceUuid;
+                  // `customerDaycareSubscription` above was captured before the
+                  // link and would otherwise serialise as null.
+                  customerDaycareSubscription =
+                    (await findCustomerDaycareSubscription({
+                      criteria: { id: customerDaycareSubscription.id },
+                      fastify
+                    })) ?? customerDaycareSubscription
+                }
+                if (!linked) {
+                  // Lost a concurrent bill-creation race: our bill is an orphan,
+                  // the winner's is linked, so continue on that one.
+                  const winner = await findCustomerDaycareSubscription({
+                    criteria: { id: customerDaycareSubscription.id },
+                    fastify
+                  })
+                  const winnerInvoice = await cancelOrphanAndFollowWinner({
+                    fastify,
+                    orphan: invoice,
+                    winnerInvoiceUuid: winner?.invoiceUuid,
+                    logLabel: `daycare subscription ${customerDaycareSubscription.id}`
+                  })
+                  if (!winnerInvoice) {
+                    throw new Error(
+                      `Daycare subscription ${customerDaycareSubscription.id} invoice was linked concurrently but no invoice found`
+                    )
+                  }
+                  customerDaycareSubscription = winner
+                  invoice = winnerInvoice
+                }
               } else {
                 throw new Error(result.errorMessage)
               }
             }
             if (invoice) {
+              const reusablePayment = [...(invoice.payments ?? [])]
+                .filter(
+                  (payment) =>
+                    (payment.status === PaymentStatus.OPEN ||
+                      payment.status === PaymentStatus.PENDING) &&
+                    payment.checkoutUrl
+                )
+                .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+                .at(0)
+              if (reusablePayment?.checkoutUrl) {
+                return {
+                  customerDaycareSubscription,
+                  checkoutUrl: reusablePayment.checkoutUrl
+                }
+              }
               const payment =
                 await fastify.slimfact.admin.addPaymentToInvoice.mutate({
                   id: invoice.id,
                   payment: {
                     currency,
                     amount: invoice.totalIncludingTax,
-                    method: PaymentMethod.ideal,
+                    method: PaymentMethod.wero,
                     redirectUrl: `https://${host}/account/daycare`
                   }
                 })

@@ -27,7 +27,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
-          aria-label="More options"
+          :aria-label="`${lang.moreOptions} — ${daycareSubscription.description}`"
         >
           <q-menu>
             <q-list>
@@ -130,13 +130,18 @@ const lang = useLang()
 
 const configuration = useConfiguration()
 
+/** `1 Months` → `1 month` (audit: admin-config-daycaresubscriptions.png). */
+const unit = (count: number, one: string, many: string) =>
+  `${count} ${count === 1 ? one : many}`
+
 const formatValidityPeriod = (
   validityPeriod: DaycareSubscription['validityPeriod']
 ) => {
+  const labels = lang.value.daycareSubscription.labels
   return `${lang.value.customerDaycareSubscription.fields.validityPeriod}:
-  ${validityPeriod.years ? `${validityPeriod.years} ${lang.value.daycareSubscription.labels.years}` : ''}
-  ${validityPeriod.months ? `${validityPeriod.months} ${lang.value.daycareSubscription.labels.months}` : ''}
-  ${validityPeriod.days ? `${validityPeriod.days} ${lang.value.daycareSubscription.labels.days}` : ''}
+  ${validityPeriod.years ? unit(validityPeriod.years, labels.year, labels.years) : ''}
+  ${validityPeriod.months ? unit(validityPeriod.months, labels.month, labels.months) : ''}
+  ${validityPeriod.days ? unit(validityPeriod.days, labels.day, labels.days) : ''}
   `
 }
 </script>

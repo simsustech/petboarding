@@ -1,5 +1,6 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
+import { user } from '../../oauth.js'
 import { ref } from 'vue'
 import { date as dateUtil } from 'quasar'
 import { BOOKING_STATUS } from '@petboarding/tools/constants'
@@ -7,7 +8,7 @@ import { computed } from 'vue'
 type REPLY_TYPES = ['approve', 'reject', 'standby', 'reply']
 
 export const useAdminGetBookingsQuery = defineQuery(() => {
-  const customerId = ref(NaN)
+  const customerId = ref<number | null>(null)
   const from = ref(
     dateUtil
       .subtractFromDate(new Date(), { years: 2 })
@@ -72,15 +73,15 @@ export const useAdminGetBookingsQuery = defineQuery(() => {
 })
 
 export const useAdminGetBookingEmailQuery = defineQuery(() => {
-  const id = ref(NaN)
+  const id = ref<number | null>(null)
   const type = ref<REPLY_TYPES[number]>('approve')
 
   const { data: email, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR && !!id.value && !Number.isNaN(id.value),
+    enabled: !import.meta.env.SSR && id.value != null,
     key: () => ['adminGetBookingEmail', id.value, type.value],
     query: () =>
       trpc.admin.getBookingEmail.query({
-        id: id.value,
+        id: id.value!,
         type: type.value
       })
   })
@@ -95,9 +96,13 @@ export const useAdminGetBookingEmailQuery = defineQuery(() => {
 
 export const useAdminGetBookingsCount = defineQuery(() => {
   const bookingStatus = ref<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+  // Arm only once the role is known, so non-admins never issue the count (401 flood).
+  const isAdmin = computed(
+    () => user.value?.roles?.includes('administrator') ?? false
+  )
 
   const { data: bookingsCount, ...rest } = useQuery({
-    enabled: !import.meta.env.SSR,
+    enabled: !import.meta.env.SSR && isAdmin,
     key: () => ['adminGetBookingsCount', bookingStatus.value],
     query: () =>
       trpc.admin.getBookingsCount.query({

@@ -14,7 +14,7 @@
         <q-item-label overline>
           {{ announcement.title }}
         </q-item-label>
-        <q-item-label>
+        <q-item-label class="announcement-message">
           {{ announcement.message }}
         </q-item-label>
       </q-item-section>
@@ -23,7 +23,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
-          aria-label="More options"
+          :aria-label="`${lang.moreOptions} — ${announcement.title}`"
         >
           <q-menu>
             <q-list>
@@ -66,6 +66,18 @@ export default {
   name: 'AnnouncementsList'
 }
 </script>
+
+<style scoped>
+/*
+ * Quasar's `q-item__label` is nowrap+hidden and clipped long announcements. Unlayered
+ * scoped CSS outranks the preset's layered list rules.
+ */
+.announcement-message {
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+</style>
 
 <script setup lang="ts">
 import { useLang } from '../../lang/index.js'

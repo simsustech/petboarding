@@ -26,6 +26,8 @@ export type BookingCostsHandler = (params: {
     startDate: string
     endDate: string
     days: number
+    startDayCounted?: number
+    endDayCounted?: number
   }
   pets: BookingPets
   categories: ParsedCategory[]
@@ -36,18 +38,37 @@ export type BookingCostsHandler = (params: {
     getOverlappingDaysInIntervals: typeof getOverlappingDaysInIntervals
     parse: typeof parse
     isBefore?: typeof isBefore
+    isAfter?: typeof isAfter
     isWithinInterval?: typeof isWithinInterval
     parseISO?: typeof parseISO
     subMonths?: typeof subMonths
+    subDays?: typeof subDays
+    differenceInDays?: typeof differenceInDays
   }
   dateHolidays?: typeof Holidays
   computeInvoiceCosts?: typeof computeInvoiceCosts
+  surchargeHolidays?: { rule: string; listPrice?: number }[]
+  locale?: string
+  country?: string
+  requiredDownPaymentAmountFractionOfTotal?: number
+  minimumRequiredDownPaymentAmount?: number
   vacations: {
     name: string
     startDate: string
     endDate: string
     surchargePerDay: number
   }[]
+  bookingStatus?: string
+  lastApprovedBooking?: {
+    costs: { totalIncludingTax: number; requiredDownPaymentAmount?: number }
+    startDate: string
+    endDate: string
+    days: number
+  }
+  ctx?: {
+    BOOKING_STATUS: typeof BOOKING_STATUS
+    lang?: { booking: { cancelationCosts?: string } }
+  }
 }) => {
   lines: RawInvoiceLine[]
   discounts: RawInvoiceDiscount[]
@@ -75,6 +96,10 @@ export type BookingCancelationHandler = (params: {
   booking: Booking
   BOOKING_STATUS: typeof BOOKING_STATUS
   vacations: { name: string; startDate: string; endDate: string }[]
+  lang?: {
+    cancelationCosts: string
+    downPayment: string
+  }
 }) => {
   status: BOOKING_STATUS
   cancelationCosts?: {

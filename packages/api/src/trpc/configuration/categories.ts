@@ -17,13 +17,27 @@ export const configurationCategoryRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getCategories: procedure.query(async () => {
-    const categories = await findCategories({
-      criteria: {}
-    })
-    if (categories) return categories
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getCategories: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z.union([z.literal('name'), z.literal('order')]).nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const categories = await findCategories({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (categories) return categories
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createCategory: procedure.input(category).mutation(async ({ input }) => {
     const category = await createCategory(input)
 

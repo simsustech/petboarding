@@ -4,7 +4,7 @@
       <template #avatar>
         <q-icon name="i-mdi-warning" color="warning" />
       </template>
-      <a href="/print/termsandconditions" target="_blank">{{
+      <a class="q-link" href="/print/termsandconditions" target="_blank">{{
         lang.information.messages.termsAndConditions
       }}</a>
     </q-banner>

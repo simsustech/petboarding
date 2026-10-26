@@ -17,6 +17,19 @@ const category = {
   // price: 111
 }
 
+/**
+ * The categories query has no ORDER BY, so `.last()` is whatever the heap returned
+ * last — it once renamed and then deleted the seeded `Small` category. Always address
+ * the row this spec owns.
+ */
+const rowOwnedBy = (name: string) =>
+  page.locator('.q-item', { hasText: name }).first()
+
+const openOwnMenu = async (name: string) => {
+  await rowOwnedBy(name).getByTestId('item-menu-button').click()
+  await page.locator('.q-menu').last().waitFor({ state: 'visible' })
+}
+
 test.describe.configure({ mode: 'serial' })
 
 test.beforeAll(async ({ browser }) => {
@@ -43,13 +56,12 @@ test.describe('Categories', async () => {
     await expect(page.locator(`text=${category.name}`)).toBeVisible()
   })
   test('Update category', async () => {
-    await page.getByTestId('item-menu-button').last().click()
-    // await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('edit-button').last().click()
+    await openOwnMenu(category.name)
+    await page.locator('.q-menu').last().getByTestId('edit-button').click()
 
-    const dialog = page.locator('.q-dialog')
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Name').fill('UpdatedName')
+    await dialog.getByLabel('Name').fill('UpdatedName')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedName').first()).toBeVisible()
@@ -62,9 +74,9 @@ test.describe('Categories', async () => {
     //   .getByRole('button')
     //   .last()
     //   .click()
-    await page.getByTestId('item-menu-button').last().click()
-    await page.getByText('Add price').click()
-    const dialog = page.locator('.q-dialog')
+    await openOwnMenu('UpdatedName')
+    await page.locator('.q-menu').last().getByText('Add price').click()
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     const [YYYY, MM, DD] = '2030-01-01'.split('-')
     await page.getByPlaceholder('DD').first().fill(DD)
@@ -76,9 +88,9 @@ test.describe('Categories', async () => {
   })
 
   test('Delete category', async () => {
-    await page.getByTestId('item-menu-button').last().click()
-    await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    await openOwnMenu('UpdatedName')
+    await page.locator('.q-menu').last().getByTestId('delete-button').click()
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 

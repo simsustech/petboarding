@@ -6,12 +6,6 @@
   </q-page>
 </template>
 
-<scirpt lang="ts">
-export default {
-  name: 'AvailabilityPage'
-}
-</scirpt>
-
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import AvailabilityCard from '../components/AvailabilityCard.vue'

@@ -4,16 +4,12 @@
       <q-card class="col-span-12 md:col-span-4">
         <q-card-section>
           <div class="text-center">
-            {{ title }}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <div class="text-center">
             <q-img
               loading="eager"
               style="max-width: 100px"
               :img-style="{ overflow: 'visible', width: '100%' }"
               :src="logo"
+              :alt="title"
             />
           </div>
         </q-card-section>
@@ -37,12 +33,6 @@
     </div>
   </q-page>
 </template>
-
-<scirpt lang="ts">
-export default {
-  name: 'IndexPage'
-}
-</scirpt>
 
 <script setup lang="ts">
 import AnnouncementsList from '../components/announcement/AnnouncementsList.vue'

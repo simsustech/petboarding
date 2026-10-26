@@ -12,7 +12,7 @@
   >
     <template #no-option>
       <q-item>
-        <q-item-section class="text-italic text-grey">
+        <q-item-section class="text-italic text-gray">
           {{ lang.openingTime.messages.noOpeningTimesOnSelectedDate }}
         </q-item-section>
       </q-item>

@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <q-list>
+      <q-item-label header>{{ lang.document.title }}</q-item-label>
       <q-expansion-item :content-inset-level="1">
         <template #header>
           <q-item-section>
@@ -9,7 +10,11 @@
             </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-btn icon="i-mdi-more-vert" flat>
+            <q-btn
+              icon="i-mdi-more-vert"
+              flat
+              :aria-label="`${lang.moreOptions} — ${lang.termsAndConditions}`"
+            >
               <q-menu>
                 <q-list>
                   <q-item
@@ -40,7 +45,11 @@
             </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-btn icon="i-mdi-more-vert" flat>
+            <q-btn
+              icon="i-mdi-more-vert"
+              flat
+              :aria-label="`${lang.moreOptions} — ${lang.privacyPolicy}`"
+            >
               <q-menu>
                 <q-list>
                   <q-item
@@ -89,7 +98,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { QMarkdown } from '@quasar/quasar-ui-qmarkdown'
-import '@quasar/quasar-ui-qmarkdown/dist/index.css'
 import { useLang } from '../../../lang/index.js'
 import { ref } from 'vue'
 import { ResponsiveDialog } from '@simsustech/quasar-components'

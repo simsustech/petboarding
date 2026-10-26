@@ -44,18 +44,13 @@
       </div>
     </div>
     <pet-legend />
-    <div class="row">
-      {{ lang.kennellayout.messages.dragAndDrop }}
+    <div class="row items-center q-gutter-xs text-subtitle2">
+      <q-icon name="i-mdi-gesture-tap" size="sm" />
+      <span>{{ lang.kennellayout.messages.selectKennel }}</span>
     </div>
     <div class="grid grid-cols-12 gap-3">
       <q-card class="col-span-12 md:col-span-3">
-        <q-card-section
-          id="waitlist"
-          @dragenter="onDragEnter"
-          @dragleave="onDragLeave"
-          @dragover="onDragOver"
-          @drop="onDrop"
-        >
+        <q-card-section id="waitlist">
           <pet-chip
             v-for="pet in internalPetKennels.filter(
               (pet) => pet.kennelId === null
@@ -64,21 +59,18 @@
             :key="pet.id"
             :model-value="pet"
             :class="getPetChipClasses(pet)"
-            :draggable="true"
             :overline="getOverline(pet)"
             show-image
             show-last-name
-            @dragstart="onDragStart"
+            show-badge
+            :on-open-pet="true"
+            clickable
+            tabindex="0"
+            @click="openPicker(pet)"
+            @keydown.enter.prevent="openPicker(pet)"
+            @keydown.space.prevent="openPicker(pet)"
             @open-pet="openPet"
-          >
-            <template #menu-items>
-              <pet-kennel-context-menu-items
-                :pet-kennel="pet"
-                :buildings="buildings"
-                @set-pet-kennel="setPetKennel"
-              />
-            </template>
-          </pet-chip>
+          />
         </q-card-section>
       </q-card>
       <div class="col-span-12 md:col-span-9">
@@ -98,17 +90,12 @@
               </q-card-section>
               <q-card-section
                 :id="`kennel${kennel.id}`"
-                class="min-h-80px !border-rd-8px drop-target rounded-borders overflow-hidden"
-                @dragenter="onDragEnter"
-                @dragleave="onDragLeave"
-                @dragover="onDragOver"
-                @drop="onDrop"
+                class="rounded-borders overflow-hidden"
               >
                 <div
                   v-for="pet in internalPetKennels.filter(
                     (pet) => pet.kennelId === kennel.id
                   )"
-                  :id="`pet${pet.id}`"
                   :key="pet.id"
                   class="row justify-center"
                 >
@@ -116,22 +103,18 @@
                     :id="`pet${pet.id}`"
                     :model-value="pet"
                     :class="getPetChipClasses(pet)"
-                    :draggable="true"
                     show-badge
                     show-last-name
                     show-image
                     :overline="getOverline(pet)"
-                    @dragstart="onDragStart"
+                    :on-open-pet="true"
+                    clickable
+                    tabindex="0"
+                    @click="openPicker(pet)"
+                    @keydown.enter.prevent="openPicker(pet)"
+                    @keydown.space.prevent="openPicker(pet)"
                     @open-pet="openPet"
-                  >
-                    <template #menu-items>
-                      <pet-kennel-context-menu-items
-                        :pet-kennel="pet"
-                        :buildings="buildings"
-                        @set-pet-kennel="setPetKennel"
-                      />
-                    </template>
-                  </pet-chip>
+                  />
                 </div>
               </q-card-section>
             </q-card>
@@ -139,12 +122,27 @@
         </div>
       </div>
     </div>
+
+    <responsive-dialog
+      ref="pickerDialogRef"
+      display
+      :title="pickerTitle"
+      :icons="{ close: 'i-mdi-close' }"
+    >
+      <kennel-picker-dialog
+        v-if="pickedPetKennel"
+        :pet-kennel="pickedPetKennel"
+        :buildings="buildings"
+        :pet-kennels="internalPetKennels"
+        @select="onSelectKennel"
+      />
+    </responsive-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-import { extend, date as dateUtil } from 'quasar'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { extend, Notify, date as dateUtil } from 'quasar'
 import { useLang } from '../../lang/index.js'
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import { DateInput } from '@simsustech/quasar-components/form'
@@ -153,13 +151,14 @@ import PetLegend from '../../components/pet/PetLegend.vue'
 import { useEmployeeGetPetKennelsQuery } from '../../queries/employee/petKennel.js'
 import { useEmployeeGetBuildingsQuery } from '../../queries/employee/building.js'
 import {
-  useEmployeeSetBookingPetKennelMutation,
+  useEmployeeSetBookingPetKennelForDateMutation,
   useEmployeeSetDaycareDatePetKennelMutation
 } from '../../mutations/employee/petKennel.js'
 import type { PetKennel } from '../../configuration.js'
-import PetKennelContextMenuItems from '../../components/kennelLayout/PetKennelContextMenuItems.vue'
+import { PET_CHIP_BADGE_COLORS } from '../../configuration.js'
+import KennelPickerDialog from '../../components/kennelLayout/KennelPickerDialog.vue'
+import { ResponsiveDialog } from '@simsustech/quasar-components'
 import { usePublicGetOpeningTimesQuery } from 'src/queries/public.js'
-import { computed } from 'vue'
 
 const lang = useLang()
 
@@ -171,7 +170,6 @@ onBeforeRouteUpdate((to) => {
     selectedDate.value = to.params.date
   }
 })
-
 const internalPetKennels = ref<PetKennel[]>([])
 
 const { buildings, refetch: executeBuildings } = useEmployeeGetBuildingsQuery()
@@ -185,8 +183,28 @@ selectedDate.value = !Array.isArray(route.params.date)
   : new Date().toISOString().slice(0, 10)
 const { openingTimes } = usePublicGetOpeningTimesQuery()
 
-const { mutateAsync: setBookingPetKennelMutation } =
-  useEmployeeSetBookingPetKennelMutation()
+// Keep the URL in step with the date field. Without this the picker/field changed
+// the queried date but left `:date` at the old value, so the page could not be
+// bookmarked, shared or reloaded for the day the user was actually looking at
+// (and a back/forward step restored a stale date).
+// Guarded both ways: only push when the values genuinely differ, and only for a
+// date-shaped value — the field is clearable, and `to.params.date` may be absent
+// while the input is momentarily empty.
+watch(selectedDate, (value) => {
+  if (!value) return
+  const current = !Array.isArray(route.params.date) ? route.params.date : ''
+  if (value === current) return
+  // `replace`, not `push`: adjusting the date refines the current view rather
+  // than navigating somewhere new. Pushing stacked a history entry per edit,
+  // which made Back land on a half-edited date and left Forward dead.
+  router.replace({
+    name: 'employeekennellayout',
+    params: { date: value }
+  })
+})
+
+const { mutateAsync: setBookingPetKennelForDateMutation } =
+  useEmployeeSetBookingPetKennelForDateMutation()
 const { mutateAsync: setDaycareDatePetKennelMutation } =
   useEmployeeSetDaycareDatePetKennelMutation()
 
@@ -198,83 +216,14 @@ watch(
   }
 )
 
-const draggedPetId = ref<number | null>(null)
-const draggedPetRelations = computed(() => {
-  return (
-    internalPetKennels.value.find(
-      (petKennel) => petKennel.id === draggedPetId.value
-    )?.relations ?? {}
-  )
-})
-// store the id of the draggable element
-function onDragStart(e) {
-  draggedPetId.value = Number(e.target.id.match(/pet(.*)/).at(1))
-  e.dataTransfer.setData('text', e.target.id)
-  e.dataTransfer.dropEffect = 'move'
-}
-
-function onDragEnter(e) {
-  // don't drop on other draggables
-  if (
-    e.target.draggable !== true &&
-    ![...e.target.classList].includes('q-chip__content')
-  ) {
-    e.target.classList.add('drag-enter')
-  }
-}
-
-function onDragLeave(e) {
-  e.target.classList.remove('drag-enter')
-}
-
-function onDragOver(e) {
-  e.preventDefault()
-}
-
-function onDrop(e) {
-  e.preventDefault()
-  draggedPetId.value = null
-  // don't drop on other draggables
-  if (e.target.draggable === true) {
-    return
-  }
-  let kennel = e.target
-
-  for (let i = 0; i < 4; i++) {
-    if (!kennel.id?.match(/(kennel|waitlist)(.*)/)) {
-      kennel = kennel.parentNode
-    }
-  }
-  const draggedId = e.dataTransfer.getData('text')
-  const draggedEl = document.getElementById(draggedId)
-  let petId: number | undefined
-  if (draggedId) petId = Number(draggedId.match(/pet(.*)/).at(1))
-  let kennelId: number | undefined | null
-  if (kennel.id) {
-    if (kennel.id === 'waitlist') kennelId = null
-    else kennelId = Number(kennel.id?.match(/kennel(.*)/).at(1))
-  }
-
-  // check if original parent node
-  if (draggedEl?.parentNode === e.target || kennelId === undefined) {
-    e.target.classList.remove('drag-enter')
-    return
-  }
-
-  const petKennel =
-    internalPetKennels.value[
-      internalPetKennels.value.findIndex((pet) => pet.id === petId)
-    ]
-  petKennel.kennelId = kennelId
-
-  setPetKennel(petKennel)
-
-  e.target.classList.remove('drag-enter')
-}
-
 const setPetKennel = async (petKennel: PetKennel) => {
   if (petKennel.bookingId) {
-    await setBookingPetKennelMutation(petKennel)
+    await setBookingPetKennelForDateMutation({
+      bookingId: petKennel.bookingId,
+      petId: petKennel.id,
+      date: selectedDate.value,
+      kennelId: petKennel.kennelId
+    })
   } else if (petKennel.daycareDateId) {
     await setDaycareDatePetKennelMutation(petKennel)
   }
@@ -313,6 +262,105 @@ const openPet = (id: number) =>
     path: `/employee/pets/${id}`
   })
 
+const pickedPetKennel = ref<PetKennel | null>(null)
+const pickerDialogRef = ref<typeof ResponsiveDialog>()
+// True while an assignment mutation is in flight (double-tap guard).
+const assigning = ref(false)
+
+// The dialog title names the *subject* ("Place name3"): the rows are about one
+// pet, and a bare name doesn't say what the dialog is for.
+const pickerTitle = computed(() =>
+  pickedPetKennel.value
+    ? lang.value.kennellayout.dialog.placeTitle.replace(
+        '{pet}',
+        pickedPetKennel.value.name ?? ''
+      )
+    : ''
+)
+
+const openPicker = (pet: PetKennel) => {
+  pickedPetKennel.value = pet
+  pickerDialogRef.value?.functions.open()
+}
+
+const onSelectKennel = async (kennelId: number | null) => {
+  const picked = pickedPetKennel.value
+  if (!picked) return
+  if (kennelId === picked.kennelId) {
+    // Same target as the current assignment — just close, no mutation.
+    pickerDialogRef.value?.functions.close()
+    return
+  }
+
+  // Guard concurrent taps: a second row tap while the first mutation is in
+  // flight would race two assignments for the same pet.
+  if (assigning.value) return
+  assigning.value = true
+
+  const previousKennelId = picked.kennelId
+  const targetLabel =
+    kennelId === null
+      ? lang.value.kennellayout.dialog.waitlist
+      : (buildings.value
+          .flatMap((building) => building.kennels ?? [])
+          .find((kennel) => kennel.id === kennelId)?.name ?? '')
+
+  try {
+    picked.kennelId = kennelId
+    // Existing helper: booking-vs-daycare branching, mutation calls and the
+    // optimistic local state update all live here (plan step 3 — reuse, not duplicate).
+    await setPetKennel(picked)
+    closePickerAndNotify(targetLabel, picked, previousKennelId)
+  } catch (error) {
+    // Roll the optimistic change back and keep the dialog open so the staff
+    // member can retry instead of silently believing the pet moved.
+    picked.kennelId = previousKennelId
+    await executePets()
+    Notify.create({
+      message: lang.value.kennellayout.dialog.assignFailed,
+      caption: error instanceof Error ? error.message : undefined,
+      type: 'negative',
+      timeout: 6000
+    })
+  } finally {
+    assigning.value = false
+  }
+}
+
+const closePickerAndNotify = (
+  targetLabel: string,
+  picked: PetKennel,
+  previousKennelId: number | null
+) => {
+  pickerDialogRef.value?.functions.close()
+  // No silent success: name the PET and the destination (a snackbar reading
+  // just "Placed in 2" doesn't say which animal moved), and offer the one-tap
+  // way back (ADR 005 removed drag, so a mis-tap is the likelier mistake).
+  // The full last name is used here — the chip truncates it for width, but a
+  // confirmation message has room and must not abbreviate the animal's name.
+  const petLabel =
+    `${picked.name ?? ''} ${picked.customer?.lastName ?? ''}`.trim()
+  Notify.create({
+    message: lang.value.kennellayout.dialog.assignDone
+      .replace('{pet}', petLabel)
+      .replace('{kennel}', targetLabel),
+    color: 'positive',
+    timeout: 6000,
+    actions: [
+      {
+        label: lang.value.undo,
+        color: 'white',
+        handler: () => {
+          picked.kennelId = previousKennelId
+          setPetKennel(picked).catch(() => {
+            executePets()
+          })
+        }
+      }
+    ]
+  })
+}
+
 const getOverline = (pet: PetKennel) => {
   if (pet.arrivalTimeId)
     return `+ ${openingTimes.value?.find((openingTime) => openingTime.id === pet.arrivalTimeId)?.name}`
@@ -324,34 +372,7 @@ const getOverline = (pet: PetKennel) => {
 }
 
 const getPetChipClasses = (petKennel: PetKennel) => {
-  if (petKennel.id && draggedPetRelations.value[petKennel.id]) {
-    switch (draggedPetRelations.value[petKennel.id].rating) {
-      case 1:
-        return 'bg-red-600'
-      case 2:
-        return 'bg-red-500'
-      case 3:
-        return 'bg-orange-500'
-      case 4:
-        return 'bg-orange-400'
-      case 5:
-        return 'bg-yellow-500'
-      case 6:
-        return 'bg-yellow-400'
-      case 7:
-        return 'bg-lime-400'
-      case 8:
-        return 'bg-green-400'
-      case 9:
-        return 'bg-green-500'
-      case 10:
-        return 'bg-emerald-600'
-      default:
-        break
-    }
-  } else if (draggedPetId.value) {
-    return 'bg-grey-2'
-  } else if (petKennel.bookingId) {
+  if (petKennel.bookingId) {
     return 'bg-blue-2'
   } else if (petKennel.daycareDateId) {
     return 'bg-yellow-2'
@@ -363,12 +384,3 @@ onMounted(async () => {
   await executePets()
 })
 </script>
-
-<style lang="sass">
-.drop-target
-  background-color: gainsboro
-
-.drag-enter
-  outline-style: dashed
-  outline-offset: -2px
-</style>

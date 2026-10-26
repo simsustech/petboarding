@@ -294,7 +294,7 @@ onMounted(async () => {
     customerId.value = data.value[0].customerId
     await executePets()
   } else {
-    customerId.value = NaN
+    customerId.value = null
   }
   await executeServices()
   if (route.params.ids) await execute()

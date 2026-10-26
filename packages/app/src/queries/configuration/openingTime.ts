@@ -1,19 +1,36 @@
 import { defineQuery, useQuery } from '@pinia/colada'
 import { trpc } from '../../trpc.js'
 import { useConfiguration } from '../../configuration.js'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { watch } from 'vue'
 
 export const useConfigurationGetOpeningTimesQuery = defineQuery(() => {
+  const page = ref(1)
+  const rowsPerPage = ref(10)
+  const sortBy = ref<'name' | 'startTime'>('name')
+  const descending = ref(false)
+
+  const pagination = computed(() => ({
+    limit: rowsPerPage.value,
+    offset: (page.value - 1) * rowsPerPage.value,
+    sortBy: sortBy.value,
+    descending: descending.value
+  }))
+
   const { data: openingTimes, ...rest } = useQuery({
     enabled: !import.meta.env.SSR,
-    key: () => ['adminGetOpeningTimesQuery'],
-    query: () => trpc.configuration.getOpeningTimes.query()
+    key: () => ['adminGetOpeningTimesQuery', pagination.value],
+    query: () =>
+      trpc.configuration.getOpeningTimes.query({ pagination: pagination.value })
   })
 
   return {
     openingTimes,
+    page,
+    rowsPerPage,
+    sortBy,
+    descending,
     ...rest
   }
 })

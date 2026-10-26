@@ -43,20 +43,19 @@ const options = ref<
 >([])
 
 const filterFn = (val, update) => {
-  if (val === '') {
-    options.value = []
-    update()
-  } else {
-    email.value = val.toLowerCase()
-    execute().then(() => {
-      update(() => {
+  update(() => {
+    if (val === '') {
+      options.value = []
+    } else {
+      email.value = val.toLowerCase()
+      execute().then(() => {
         options.value =
           data.value?.map((account) => ({
             label: account.email,
             value: account.id
           })) || []
       })
-    })
-  }
+    }
+  })
 }
 </script>

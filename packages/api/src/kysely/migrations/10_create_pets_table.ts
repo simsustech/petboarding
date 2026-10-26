@@ -33,16 +33,17 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .execute()
 
+  // Pet search GIN index; `unaccented` is created in migration 07. MUST stay in
+  // sync with petSearchVector() in src/repositories/search.ts.
   await sql`
-    ALTER TABLE pets
-      ADD COLUMN fulltext tsvector
-        GENERATED ALWAYS AS 
-        (to_tsvector('english', 
-        coalesce(name, '') || ' ' || 
+    CREATE INDEX pets_search_idx ON pets USING GIN (
+      to_tsvector('unaccented',
+        coalesce(name, '') || ' ' ||
         coalesce(breed, '') || ' ' ||
-        coalesce(chip_number, '' || ' ' ||
-        coalesce(color, '') || ' '))) STORED;
-    CREATE INDEX pets_fulltext_idx ON pets USING GIN (fulltext);`.execute(db)
+        coalesce(chip_number, '') || ' ' ||
+        coalesce(color, ''))
+    );
+  `.execute(db)
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {

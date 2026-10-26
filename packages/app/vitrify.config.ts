@@ -5,158 +5,112 @@ import {
   QuasarPlugin,
   type QuasarPluginOptions
 } from 'vitrify/plugins'
-import { certificateFor } from 'devcert'
+import { getCertificate } from '@vitejs/plugin-basic-ssl'
 import QuasarComponentsPlugin from '@simsustech/quasar-components/vite-plugin'
-import { QuasarPreset } from 'unocss-preset-quasar'
+import {
+  QuasarPreset,
+  quasarIconSet,
+  quasarWind4Options
+} from 'unocss-preset-quasar'
+import presetWind4 from '@unocss/preset-wind4'
 import { MaterialDesign3 } from 'unocss-preset-quasar/styles'
 import { loadEnv } from 'vite'
+import { PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 
-const iconifyJsonIconSet = {
-  name: 'iconify-json-mdi',
-  type: {
-    positive: 'i-mdi-check-circle',
-    negative: 'i-mdi-alert',
-    info: 'i-mdi-information',
-    warning: 'i-mdi-exclamation'
-  },
-  arrow: {
-    up: 'i-mdi-arrow-up',
-    right: 'i-mdi-arrow-right',
-    down: 'i-mdi-arrow-down',
-    left: 'i-mdi-arrow-left',
-    dropdown: 'i-mdi-menu-down'
-  },
-  chevron: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right'
-  },
-  colorPicker: {
-    spectrum: 'i-mdi-gradient-vertical',
-    tune: 'i-mdi-tune',
-    palette: 'i-mdi-palette-swatch'
-  },
-  pullToRefresh: {
-    icon: 'i-mdi-refresh'
-  },
-  carousel: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right',
-    up: 'i-mdi-chevron-up',
-    down: 'i-mdi-chevron-down',
-    navigationIcon: 'i-mdi-circle'
-  },
-  chip: {
-    remove: 'i-mdi-close-circle',
-    selected: 'i-mdi-check'
-  },
-  datetime: {
-    arrowLeft: 'i-mdi-chevron-left',
-    arrowRight: 'i-mdi-chevron-right',
-    now: 'i-mdi-clock-outline',
-    today: 'i-mdi-calendar-today'
-  },
-  editor: {
-    bold: 'i-mdi-format-bold',
-    italic: 'i-mdi-format-italic',
-    strikethrough: 'i-mdi-format-strikethrough-variant',
-    underline: 'i-mdi-format-underline',
-    unorderedList: 'i-mdi-format-list-bulleted',
-    orderedList: 'i-mdi-format-list-numbered',
-    subscript: 'i-mdi-format-subscript',
-    superscript: 'i-mdi-format-superscript',
-    hyperlink: 'i-mdi-link',
-    toggleFullscreen: 'i-mdi-fullscreen',
-    quote: 'i-mdi-format-quote-close',
-    left: 'i-mdi-format-align-left',
-    center: 'i-mdi-format-align-center',
-    right: 'i-mdi-format-align-right',
-    justify: 'i-mdi-format-align-justify',
-    print: 'i-mdi-printer',
-    outdent: 'i-mdi-format-indent-decrease',
-    indent: 'i-mdi-format-indent-increase',
-    removeFormat: 'i-mdi-format-clear',
-    formatting: 'i-mdi-format-color-text',
-    fontSize: 'i-mdi-format-size',
-    align: 'i-mdi-format-align-left',
-    hr: 'i-mdi-minus',
-    undo: 'i-mdi-undo',
-    redo: 'i-mdi-redo',
-    heading: 'i-mdi-format-size',
-    heading1: 'i-mdi-format-header-1',
-    heading2: 'i-mdi-format-header-2',
-    heading3: 'i-mdi-format-header-3',
-    heading4: 'i-mdi-format-header-4',
-    heading5: 'i-mdi-format-header-5',
-    heading6: 'i-mdi-format-header-6',
-    code: 'i-mdi-code-tags',
-    size: 'i-mdi-format-size',
-    size1: 'i-mdi-numeric-1-box',
-    size2: 'i-mdi-numeric-2-box',
-    size3: 'i-mdi-numeric-3-box',
-    size4: 'i-mdi-numeric-4-box',
-    size5: 'i-mdi-numeric-5-box',
-    size6: 'i-mdi-numeric-6-box',
-    size7: 'i-mdi-numeric-7-box',
-    font: 'i-mdi-format-font',
-    viewSource: 'i-mdi-code-tags'
-  },
-  expansionItem: {
-    icon: 'i-mdi-chevron-down',
-    denseIcon: 'i-mdi-menu-down'
-  },
-  fab: {
-    icon: 'i-mdi-plus',
-    activeIcon: 'i-mdi-close'
-  },
-  field: {
-    clear: 'i-mdi-close-circle',
-    error: 'i-mdi-alert-circle'
-  },
-  pagination: {
-    first: 'i-mdi-chevron-double-left',
-    prev: 'i-mdi-chevron-left',
-    next: 'i-mdi-chevron-right',
-    last: 'i-mdi-chevron-double-right'
-  },
-  rating: {
-    icon: 'i-mdi-star'
-  },
-  stepper: {
-    done: 'i-mdi-check',
-    active: 'i-mdi-pencil',
-    error: 'i-mdi-alert'
-  },
-  tabs: {
-    left: 'i-mdi-chevron-left',
-    right: 'i-mdi-chevron-right',
-    up: 'i-mdi-chevron-up',
-    down: 'i-mdi-chevron-down'
-  },
-  table: {
-    arrowUp: 'i-mdi-arrow-up',
-    warning: 'i-mdi-alert',
-    firstPage: 'i-mdi-chevron-double-left',
-    prevPage: 'i-mdi-chevron-left',
-    nextPage: 'i-mdi-chevron-right',
-    lastPage: 'i-mdi-chevron-double-right'
-  },
-  tree: {
-    icon: 'i-mdi-play'
-  },
-  uploader: {
-    done: 'i-mdi-check',
-    clear: 'i-mdi-close',
-    add: 'i-mdi-plus-box',
-    upload: 'i-mdi-cloud-upload',
-    removeQueue: 'i-mdi-notification-clear-all',
-    removeUploaded: 'i-mdi-check-all'
-  }
-}
+/**
+ * ADR 005's status and alert tokens, as UnoCSS theme colours.
+ *
+ * Spelled out here rather than imported from `src/theme-tokens.ts`: this config
+ * is transpiled to a `.js` file and then executed by Node's ESM loader, so a
+ * relative import of a `.ts` module cannot resolve (`ERR_MODULE_NOT_FOUND`, no
+ * bundling step). The list is kept honest by `src/theme-tokens.test.ts`, which
+ * asserts it equals the app's own `TOKEN_NAMES`.
+ */
+const STATUS_NAMES = [
+  'approved',
+  'rejected',
+  'canceled',
+  'pending',
+  'standby'
+] as const
+
+/**
+ * The category and glyph families. Literal lists for the same reason as the
+ * statuses: this file cannot import the app's token module. `src/theme-tokens.test.ts`
+ * asserts all three lists stay in step with `TOKEN_NAMES`.
+ */
+const BADGE_NAMES = [
+  'food',
+  'medicines',
+  'vaccinations',
+  'appointment',
+  'doubleBooked'
+] as const
+const ICON_NAMES = [
+  'approved',
+  'rejected',
+  'canceled',
+  'pending',
+  'standby'
+] as const
+
+/** Kebab the way the preset kebabizes a theme key (`quasar-theme.js`). */
+const kebab = (key: string) => key.replace(/([A-Z])/g, '-$1').toLowerCase()
+
+/** Fills carry an ink; foregrounds *are* the ink, so they get no `on-*` entry. */
+const UNOCSS_FILL_TOKENS = [
+  ...STATUS_NAMES.map((status) => `status-${status}`),
+  ...Object.values(PET_ALERT_CONDITIONS).map(
+    (condition) => `alert-${kebab(condition)}`
+  ),
+  ...BADGE_NAMES.map((badge) => `badge-${kebab(badge)}`)
+]
+
+const UNOCSS_FOREGROUND_TOKENS = ICON_NAMES.map((icon) => `icon-${kebab(icon)}`)
+
+/**
+ * A theme colour whose value is a `var()` emits a working utility, so the fills
+ * are `bg-status-approved` … and the `on-*` names follow the scheme's own ink.
+ */
+const themeTokenColors = Object.fromEntries([
+  ...UNOCSS_FILL_TOKENS.flatMap((token) => [
+    [token, `var(--q-${token})`],
+    [`on-${token}`, 'var(--q-on-surface)']
+  ]),
+  ...UNOCSS_FOREGROUND_TOKENS.map((token) => [token, `var(--q-${token})`])
+])
+
+/**
+ * Quasar composes `bg-${color}` from a `color=` prop at runtime, which UnoCSS's
+ * content scan cannot see — without these the named colours paint nothing.
+ */
+const tokenSafelist = [
+  ...UNOCSS_FILL_TOKENS.flatMap((token) => [
+    `bg-${token}`,
+    `text-${token}`,
+    `text-on-${token}`
+  ]),
+  ...UNOCSS_FOREGROUND_TOKENS.map((token) => `text-${token}`)
+]
+import type { QuasarIconSet } from 'quasar'
+
+// The icon set comes from the preset's provider (BUG-003), derived from
+// Quasar's own icon-set data — no hand-written copy that can drift.
+const provider = quasarIconSet('mdi-v7')
 
 const quasarConf: QuasarPluginOptions = {
+  // Toast position is set in `src/configuration.ts` (`Notify.setDefaults`); Quasar ignores this block.
   framework: {
     plugins: ['Dialog', 'Notify', 'Loading', 'Meta', 'LocalStorage'],
-    iconSet: iconifyJsonIconSet
+    iconSet: provider.iconSet as QuasarIconSet,
+    // vitrify serialises framework.iconMapFn with `.toString()` into a bare
+    // virtual module (no imports, no closed-over bindings), so it must be
+    // self-contained. It mirrors provider.iconMapFn's idempotency: Quasar calls
+    // it on values that are already iconify classes, so re-prefixing them would
+    // produce `i-mdi-i-mdi-*` classes with no CSS.
+    iconMapFn: (name) => ({
+      icon: name.startsWith('i-') ? name : `i-mdi-${name.replace(/^mdi-/, '')}`
+    })
   },
   /*
    * Disable SASS if you use UnoCSS
@@ -164,7 +118,11 @@ const quasarConf: QuasarPluginOptions = {
   disableSass: true
 }
 
-export default async function ({ mode, command }): Promise<VitrifyConfig> {
+export default async function ({
+  mode
+}: {
+  mode: string
+}): Promise<VitrifyConfig> {
   const env = loadEnv(mode, process.cwd(), '')
   const config: VitrifyConfig = {
     plugins: [QuasarComponentsPlugin()],
@@ -189,7 +147,8 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       ssr: {
         serverModules: []
       },
-      manualChunks: ['zod'],
+      // `manualChunks: ['zod']` lived here but vitrify's config has no such key; a real
+      // chunking opt-in belongs in vite's `build.rollupOptions.output.manualChunks`.
       pwa: {
         manifest: {
           name: 'Petboarding',
@@ -211,22 +170,34 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
       },
       unocss: {
         presets: [
+          // wind4 is composed by the consumer here (`quasarWind4Options`: reset off, Quasar dark mapping).
+          presetWind4(quasarWind4Options),
           QuasarPreset({
             style: MaterialDesign3,
             sourceColor: env.VITE_SOURCE_COLOR,
             plugins: quasarConf['framework']['plugins'],
-            iconSet: quasarConf['framework']['iconSet']
+            iconSet: 'mdi-v7',
+            // ADR 0005: the preset ships this CSS; opt the extensions in here.
+            appExtensions: ['qcalendar', 'qmarkdown']
           })
         ],
-        theme: {},
+        // ADR 005: the status and alert tokens. Their values live in
+        // `src/theme-tokens.ts` as `--q-*` pairs written per scheme by
+        // `setThemeColors`; these entries are what turn them into utilities
+        // (`bg-status-approved`, `text-on-alert-in-heat`). `safelist` carries the
+        // names Quasar composes into classes at runtime, which the content scan
+        // cannot see — without it they would silently paint nothing.
+        theme: { colors: themeTokenColors },
+        safelist: tokenSafelist,
         content: {
           pipeline: {
             include: [
               'src/**/configuration.ts',
               /@simsustech\/quasar-components/,
               /@modular-api\/quasar-components/,
-              /simsustech/,
-              /modular-api/
+              // Linked/overlay installs resolve to a path without the scoped name — match the dir too.
+              /quasar-components\//,
+              /modular-api\//
             ]
           }
         }
@@ -236,8 +207,16 @@ export default async function ({ mode, command }): Promise<VitrifyConfig> {
     // quasar: quasarConf
   }
   if (mode === 'development') {
+    const certificate = await getCertificate(
+      'node_modules/.vite/basic-ssl',
+      '',
+      ['vitrify.test']
+    )
     config.server = {
-      https: await certificateFor('vitrify.local')
+      https: {
+        cert: certificate,
+        key: certificate
+      }
     }
   }
   return config

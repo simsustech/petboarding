@@ -27,10 +27,17 @@ function withKennels(eb: ExpressionBuilder<Database, 'buildings'>) {
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Building>
   select?: (keyof Building)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'name' | 'order' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -45,7 +52,24 @@ function find({
     query = query.where('name', '=', criteria.name)
   }
 
-  return query.select(select).select([withKennels])
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  return query
+    .select(select)
+    .select([withKennels])
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
 }
 
 export async function findBuilding({
@@ -62,14 +86,22 @@ export async function findBuilding({
 
 export async function findBuildings({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Building>
   select?: (keyof Building)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'name' | 'order' | null
+    descending: boolean
+  }
 }) {
   const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
   return query.execute()
 }

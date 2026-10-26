@@ -59,13 +59,25 @@
           </q-card>
 
           <q-card class="col-span-12">
-            <q-card-section class="text-right">
-              <q-btn
-                outline
-                icon="i-mdi-add"
-                :label="lang.add"
-                @click="openCreateDialog"
-              />
+            <!-- One instruction row, always rendered. It deliberately does not
+                 read `data`: the previous pair of branches (empty state when
+                 `!data?.length`, "add more dates" bar when `data?.length`) was
+                 keyed on the fetched window, so the card could vanish and claim
+                 there were no dates while the customer's dates sat outside the
+                 window the calendar had just asked for. -->
+            <q-card-section
+              class="row items-center q-gutter-md cta-bar q-py-md"
+            >
+              <div class="col-auto">
+                <q-icon
+                  name="i-mdi-calendar-plus"
+                  color="primary"
+                  size="1.5em"
+                />
+              </div>
+              <div class="col">
+                {{ lang.daycare.messages.selectPlusToAdd }}
+              </div>
             </q-card-section>
             <q-card-section>
               <daycare-legend />
@@ -76,10 +88,9 @@
                 :focusable="false"
                 :hoverable="false"
                 @click:event="onClickEvent"
-                @change-date="onChangeDate"
               >
                 <template #head-day-button-tooltip>
-                  {{ lang.daycare.messages.addDaycareDates }}
+                  {{ lang.daycare.messages.selectDateForDaycare }}
                 </template>
               </daycare-calendar-month>
               <div class="row justify-center min-h-36px q-pt-md">
@@ -91,11 +102,21 @@
                 />
               </div>
             </q-card-section>
+            <q-separator />
+            <!-- The grid is the month at a glance; this is every upcoming date,
+                 grouped by month, so the whole plan reads without navigating
+                 the calendar. -->
+            <q-card-section>
+              <daycare-date-list
+                :daycare-dates="data ?? []"
+                @cancel="cancelDaycareDate"
+              />
+            </q-card-section>
           </q-card>
         </div>
       </div>
       <div v-else>
-        <router-link to="/account/pets">{{
+        <router-link class="q-link" to="/account/pets">{{
           lang.daycare.messages.addPets
         }}</router-link>
       </div>
@@ -105,10 +126,14 @@
   <responsive-dialog
     ref="createDialogRef"
     padding
+    :display="true"
     :icons="{ close: 'i-mdi-close' }"
     persistent
     @submit="create"
   >
+    <template #title>
+      <span>{{ lang.daycare.labels.addDaycare }}</span>
+    </template>
     <daycare-form
       ref="createDaycareFormRef"
       :pets="petsData"
@@ -119,8 +144,8 @@
       :use-customer-daycare-subscriptions="!!daycareSubscriptions.length"
       :current-daycare-dates="data"
       :disabled-dates="disabledDates"
+      :submitting="submitting"
       @submit="createDaycare"
-      @change-date="onChangeDate"
     ></daycare-form>
   </responsive-dialog>
   <responsive-dialog
@@ -132,6 +157,7 @@
   >
     <customer-daycare-subscription-stepper
       :daycare-subscriptions="daycareSubscriptions"
+      :purchase-pending="isCreateCustomerDaycareSubscriptionPending"
       @purchase-customer-daycare-subscription="
         onPurchaseCustomerDaycareSubscription
       "
@@ -152,6 +178,7 @@ import DaycareForm from '../../../components/daycare/DaycareForm.vue'
 import DaycareCalendarMonth, {
   QCalendarEvent
 } from '../../../components/daycare/DaycareCalendarMonth.vue'
+import DaycareDateList from '../../../components/daycare/DaycareDateList.vue'
 import { useLang } from '../../../lang/index.js'
 import { useQuasar } from 'quasar'
 import DaycareLegend from '../../../components/daycare/DaycareLegend.vue'
@@ -226,12 +253,8 @@ const configuration = useConfiguration()
 // )
 
 const { pets: petsData, refetch: executePets } = useAccountGetPetsQuery()
-const {
-  daycareDates: data,
-  from: startDate,
-  until: endDate,
-  refetch: execute
-} = useAccountGetDaycareDatesQuery()
+const { daycareDates: data, refetch: execute } =
+  useAccountGetDaycareDatesQuery()
 
 const { daycareSubscriptions, refetch: executeDaycareSubscriptions } =
   usePublicGetDaycareSubscriptionsQuery()
@@ -248,8 +271,10 @@ const { mutateAsync: createDaycareDatesMutation } =
   useAccountCreateDaycareDatesMutation()
 const { mutateAsync: cancelDaycareDatesMutation } =
   useAccountCancelDaycareDateMutation()
-const { mutateAsync: createCustomerDaycareSubscriptionMutation } =
-  useAccountCreateCustomerDaycareSubscriptionMutation()
+const {
+  mutateAsync: createCustomerDaycareSubscriptionMutation,
+  isPending: isCreateCustomerDaycareSubscriptionPending
+} = useAccountCreateCustomerDaycareSubscriptionMutation()
 
 const missingVaccinations = computed(() =>
   petsData.value?.some(
@@ -260,6 +285,7 @@ const missingVaccinations = computed(() =>
 )
 const createDaycareFormRef = ref<typeof DaycareForm>()
 const createDialogRef = ref<typeof ResponsiveDialog>()
+const submitting = ref(false)
 
 const openCreateDialog: InstanceType<
   typeof ResourcePage
@@ -280,7 +306,9 @@ const openCreateDialog: InstanceType<
 const create: InstanceType<
   typeof ResponsiveDialog
 >['$props']['onSubmit'] = async ({ done }) => {
+  submitting.value = true
   const afterCreate = (success?: boolean) => {
+    submitting.value = false
     done(success)
   }
   createDaycareFormRef.value?.functions.submit({ done: afterCreate })
@@ -292,18 +320,52 @@ const create: InstanceType<
 
 const createDaycare: InstanceType<
   typeof DaycareForm
->['$props']['onSubmit'] = async ({ data, done }) => {
+>['$props']['onSubmit'] = async ({ data: daycareDates, done }) => {
+  submitting.value = true
   try {
-    await createDaycareDatesMutation(data)
+    await createDaycareDatesMutation(daycareDates)
 
-    done()
+    // The in-form submit button has no dialog `done` (only the dialog's own
+    // submit passes one), so guard the callback and always close the dialog.
+    if (done) done()
+    createDialogRef.value?.functions.close()
+
+    // 2a: success dialog shows count + pet names
+    const petNames =
+      petsData.value
+        ?.filter((p) => daycareDates[0]?.petIds.includes(p.id))
+        .map((p) => p.name)
+        .join(', ') ?? ''
+
     $q.dialog({
-      message: lang.value.daycare.messages.submitted
+      title: lang.value.daycare.messages.datesAdded,
+      // One template per locale, and `html: false`: the old message split a
+      // sentence across three keys ('2 dates were' + 'for pets' + names) and
+      // injected user-controlled pet names into an `html: true` string.
+      message: lang.value.daycare.messages.datesAddedSummary(
+        daycareDates.length,
+        petNames
+      )
     })
+
     await execute()
     await executeCustomerDaycareSubscriptions()
   } catch (e) {
+    // 2b: show error without closing dialog
     console.error(e)
+    $q.notify({
+      type: 'negative',
+      message:
+        e instanceof Error
+          ? e.message
+          : lang.value.errors.invalid_type({
+              path: 'daycare',
+              expected: 'valid days'
+            }),
+      timeout: 8000
+    })
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -313,21 +375,26 @@ const dateFormatter = (date: Date, locale: string) =>
     timeZone: 'UTC'
   }).format(date)
 
-const cancelDaycareDates = async () => {
+/**
+ * One confirmation dialog for both cancel paths: the grid's multi-select and a
+ * single row's cancel button in the list. `ids` are daycare-date ids; the dates
+ * are read from `events`, which is built from the same fetched set.
+ */
+const confirmCancel = (ids: number[]) => {
   $q.dialog({
     html: true,
     cancel: true,
     message: `${
       lang.value.daycare.messages.verifyCancelation
     } <br /> <b>${events.value
-      ?.filter((ev) => selectedEvents.value.includes(ev.id))
+      ?.filter((ev) => ids.includes(ev.id))
       .map((event) => {
         return dateFormatter(new Date(event.date), $q.lang.isoName)
       })
       .join('<br />')}</b>`
   }).onOk(async () => {
     try {
-      await cancelDaycareDatesMutation(selectedEvents.value)
+      await cancelDaycareDatesMutation(ids)
 
       await execute()
       selectedEvents.value = []
@@ -336,6 +403,9 @@ const cancelDaycareDates = async () => {
     }
   })
 }
+
+const cancelDaycareDates = () => confirmCancel(selectedEvents.value)
+const cancelDaycareDate = (id: number) => confirmCancel([id])
 
 const events = computed(() => {
   if (data?.value) {
@@ -366,12 +436,12 @@ const termsAndConditionsUrl = computed(
     configuration.value.TERMS_AND_CONDITIONS_URL || '/print/termsandconditions'
 )
 
-const onChangeDate: InstanceType<
-  typeof DaycareCalendarMonth
->['$props']['onChangeDate'] = (data) => {
-  startDate.value = data.start
-  endDate.value = data.end
-}
+/**
+ * This page deliberately does not narrow its fetch to the month the calendar
+ * shows: `useAccountGetDaycareDatesQuery` loads every upcoming date, so the grid
+ * and the list below it read from one set. `DaycareCalendarMonth` still emits
+ * `changeDate` for the pages that window their own query (admin, employee).
+ */
 
 const onPurchaseCustomerDaycareSubscription = async ({
   data,
@@ -426,3 +496,18 @@ onMounted(async () => {
   ready.value = true
 })
 </script>
+
+<style scoped>
+/* The add-dates instruction row. Was `bg-grey-1` (#fafafa) — nearly invisible
+   against the white card, so the primary call to action read as a disabled band.
+   Use the M3 container token instead, paired light/dark the way NavigationTabs
+   does. The row carries the scheme's ink, not a grey: on a tinted container a
+   grey caption measures under 4.5:1 and reads as disabled. */
+.cta-bar {
+  background: var(--light-primary-container);
+}
+
+.body--dark .cta-bar {
+  background: var(--dark-primary-container);
+}
+</style>

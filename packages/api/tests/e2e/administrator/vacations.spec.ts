@@ -29,40 +29,79 @@ test.beforeAll(async ({ browser }) => {
 })
 
 test.describe('Vacations', async () => {
+  test('Pagination: 12 seeded items across 2 pages', async () => {
+    await page.goto('/admin/configuration/vacations')
+    await page.waitForLoadState('networkidle')
+
+    const pagination = page.locator('.q-pagination')
+    await expect(pagination).toBeVisible()
+
+    // 12 items, 10 per page — Vacation 10 is last on page 1
+    await expect(page.getByText('Vacation 10').first()).toBeVisible()
+    await expect(page.getByText('Vacation 11').first()).not.toBeVisible()
+
+    // Navigate to page 2
+    await pagination.locator('button').last().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Vacation 11').first()).toBeVisible()
+    await expect(page.getByText('Vacation 10').first()).not.toBeVisible()
+
+    // Navigate back to page 1
+    await pagination.locator('button').first().click()
+    await page.waitForLoadState('networkidle')
+
+    await expect(page.getByText('Vacation 10').first()).toBeVisible()
+  })
+
   test('Create vacation', async () => {
     await page.goto('/admin/configuration/vacations')
     await page.waitForLoadState('networkidle')
 
     await page.locator('#fabAdd').click()
-
     await page.getByLabel('Name').fill(vacation.name)
-
-    await page.locator('.q-date__calendar-item--in').first().click()
-    await page
-      .locator('.q-date__navigation > div:nth-child(3) > .q-btn')
+    // A vacation needs a real range: quoting only the first day submits `endDate: ""`,
+    // which the API rejects. Navigate to the next month, wait until it is on screen,
+    // then pick two distinct days by name.
+    const dialog = page.locator('.q-dialog:visible').last()
+    const nextMonth = new Date(
+      Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth() + 1, 1)
+    )
+    const monthName = nextMonth.toLocaleString('en-US', {
+      month: 'long',
+      timeZone: 'UTC'
+    })
+    const year = nextMonth.getUTCFullYear()
+    await dialog.getByRole('button', { name: 'Next month' }).click()
+    await expect(
+      dialog.getByRole('button', { name: `10 ${monthName} ${year}` })
+    ).toBeVisible()
+    await dialog
+      .getByRole('button', { name: `10 ${monthName} ${year}` })
       .click()
-    await page.locator('.q-date__calendar-item--in').first().click()
-
+    await dialog
+      .getByRole('button', { name: `15 ${monthName} ${year}` })
+      .click()
     await page.locator('text=Submit').click()
 
     await expect(page.locator(`text=${vacation.name}`)).toBeVisible()
   })
 
   test('Update vacation', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('edit-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    await page.getByRole('listitem').first().getByRole('button').click()
+    await page.getByTestId('edit-button').first().click()
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
-    await page.getByLabel('Name').fill('UpdatedVacation')
+    await dialog.getByLabel('Name').fill('UpdatedVacation')
     await dialog.locator('text=Submit').click()
     await delay(100)
     await expect(page.getByText('UpdatedVacation').first()).toBeVisible()
   })
 
   test('Delete vacation', async () => {
-    await page.getByRole('listitem').last().getByRole('button').click()
-    await page.getByTestId('delete-button').last().click()
-    const dialog = page.locator('.q-dialog')
+    await page.getByRole('listitem').first().getByRole('button').click()
+    await page.getByTestId('delete-button').first().click()
+    const dialog = page.locator('.q-dialog').last()
     await dialog.isVisible()
     await dialog.locator('text=Ok').click()
 

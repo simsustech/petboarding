@@ -8,6 +8,7 @@
         rounded
         :filled="false"
         :label="lang.search"
+        :hint="lang.listPages.searchCustomers"
         :filtered-options="filteredCustomers"
         @update:model-value="setParam"
         @filter="onFilterCustomers"
@@ -16,6 +17,16 @@
       </customer-select>
     </q-toolbar>
 
+    <!-- Nothing selected yet: the page is a search, so it says so instead of
+         rendering an empty grid (audit: employee-customers.png). The token flips
+         with the scheme — `text-grey-7` measured 3.71:1 on the dark surface. -->
+    <div
+      v-if="!data"
+      class="q-pa-lg flex flex-center text-body1 text-on-surface-variant"
+    >
+      {{ lang.listPages.emptyCustomers }}
+    </div>
+
     <div class="grid grid-cols-12 gap-3">
       <customer-card
         v-if="data"
@@ -23,6 +34,7 @@
         :model-value="data"
         show-edit-button
         use-rating
+        use-comments
         @update="openUpdateDialog"
       />
 
@@ -79,7 +91,7 @@
             <q-item>
               <q-item-section>
                 <q-item-label header>{{
-                  `${lang.booking.title} ${todayFormatted} -> ${untilFormatted}`
+                  `${lang.booking.title} ${todayFormatted} – ${untilFormatted}`
                 }}</q-item-label>
               </q-item-section>
               <!-- <q-item-section side>
@@ -102,7 +114,7 @@
             <template #header>
               <q-item-label header>
                 {{
-                  `${lang.booking.title} ${fromFormatted} -> ${todayFormatted}`
+                  `${lang.booking.title} ${fromFormatted} – ${todayFormatted}`
                 }}
               </q-item-label>
             </template>
@@ -142,6 +154,7 @@
             v-if="customerDaycareSubscriptions"
             :model-value="customerDaycareSubscriptions"
             :opened="true"
+            @update="openUpdateDaycareSubscriptionDialog"
           />
         </q-card-section>
         <q-card-section>
@@ -220,6 +233,19 @@
       @submit="createDaycare"
     ></daycare-form>
   </responsive-dialog>
+
+  <responsive-dialog
+    ref="updateDaycareSubscriptionDialogRef"
+    padding
+    :icons="{ close: 'i-mdi-close' }"
+    persistent
+    @submit="submitUpdateDaycareSubscription"
+  >
+    <customer-daycare-subscription-form
+      ref="updateDaycareSubscriptionFormRef"
+      @submit="updateDaycareSubscription"
+    ></customer-daycare-subscription-form>
+  </responsive-dialog>
 </template>
 
 <script setup lang="ts">
@@ -242,6 +268,7 @@ import BookingForm from '../../components/booking/BookingForm.vue'
 import DaycareForm from '../../components/daycare/DaycareForm.vue'
 import CustomerDaycareSubscriptionsList from '../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 import { useQuasar } from 'quasar'
+import CustomerDaycareSubscriptionForm from '../../components/daycareSubscription/CustomerDaycareSubscriptionForm.vue'
 import { useConfiguration } from '../../configuration.js'
 import {
   useEmployeeGetCustomerQuery,
@@ -254,6 +281,7 @@ import {
 import { useEmployeeCreateBookingMutation } from 'src/mutations/employee/booking.js'
 import { useEmployeeCreateDaycareDatesMutation } from 'src/mutations/employee/daycareDate.js'
 import { useEmployeeUpdateCustomerMutation } from 'src/mutations/employee/customer.js'
+import { useEmployeeUpdateCustomerDaycareSubscriptionMutation } from 'src/mutations/employee/customerDaycareSubscription.js'
 
 const configuration = useConfiguration()
 const route = useRoute()
@@ -312,6 +340,8 @@ const { categories, refetch: executeCategories } = usePublicGetCategories()
 const { mutateAsync: updateCustomerMutation } =
   useEmployeeUpdateCustomerMutation()
 
+const { mutateAsync: updateDaycareSubscriptionMutation } =
+  useEmployeeUpdateCustomerDaycareSubscriptionMutation()
 if (route.params.id) id.value = Number(route.params.id)
 // const { data: bookings, execute: executeBookings } = useQuery(
 //   'employee.getBookings',
@@ -612,7 +642,10 @@ const createDaycare: InstanceType<
       }))
     )
 
-    done()
+    // The in-form submit button has no dialog `done` — see
+    // `account/DaycarePage` — so guard it and close the dialog unconditionally.
+    if (done) done()
+    createDaycareDialogRef.value?.functions.close()
     await execute()
   } catch (e) {
     console.error(e)
@@ -632,6 +665,46 @@ const createDaycare: InstanceType<
   //   await executeDaycareDates()
   // }
   // done(!result.error.value)
+}
+
+const updateDaycareSubscriptionDialogRef = ref<typeof ResponsiveDialog>()
+const updateDaycareSubscriptionFormRef =
+  ref<typeof CustomerDaycareSubscriptionForm>()
+const openUpdateDaycareSubscriptionDialog: InstanceType<
+  typeof CustomerDaycareSubscriptionsList
+>['$props']['onUpdate'] = ({ data }) => {
+  updateDaycareSubscriptionDialogRef.value?.functions.open()
+  nextTick(() => {
+    updateDaycareSubscriptionFormRef.value?.functions.setValue({
+      id: data.id,
+      expirationDate: data.expirationDate
+    })
+  })
+}
+
+const submitUpdateDaycareSubscription: InstanceType<
+  typeof ResponsiveDialog
+>['$props']['onSubmit'] = async ({ done }) => {
+  const afterUpdate = (success?: boolean) => {
+    done(success)
+    execute()
+  }
+  updateDaycareSubscriptionFormRef.value?.functions.submit({
+    done: afterUpdate
+  })
+}
+
+const updateDaycareSubscription: InstanceType<
+  typeof CustomerDaycareSubscriptionForm
+>['$props']['onSubmit'] = async ({ data, done }) => {
+  try {
+    await updateDaycareSubscriptionMutation(data)
+
+    done()
+    await execute()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 onMounted(async () => {

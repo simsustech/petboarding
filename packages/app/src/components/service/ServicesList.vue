@@ -1,5 +1,6 @@
 <template>
   <q-list>
+    <q-item-label header>{{ lang.service.title }}</q-item-label>
     <q-item v-for="service in modelValue" :key="service.id">
       <q-item-section>
         <q-item-label overline>
@@ -20,7 +21,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
-          aria-label="More options"
+          :aria-label="`${lang.moreOptions} — ${service.name}`"
         >
           <q-menu>
             <q-list>

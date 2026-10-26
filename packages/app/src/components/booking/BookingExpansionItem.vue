@@ -1,7 +1,8 @@
 <template>
   <q-expansion-item
     :header-class="{
-      'bg-grey-3': modelValue.endDate < currentDate
+      'bg-$light-surface-container-high dark:bg-$dark-surface-container-high':
+        modelValue.endDate < currentDate
     }"
   >
     <template #header>
@@ -29,7 +30,7 @@
     <q-list>
       <q-item :inset-level="1">
         <q-item-section>
-          <q-item-label>
+          <q-item-label class="whitespace-normal overflow-visible">
             <a
               >{{
                 formatDates(

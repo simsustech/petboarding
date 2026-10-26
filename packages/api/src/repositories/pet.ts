@@ -1,7 +1,8 @@
-import { Database, db } from '../kysely/index.js'
+import { type Database, db } from '../kysely/index.js'
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
 import type { Pets } from '../kysely/types.ts'
+import type { PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 import { config } from '../env.js'
 import {
   type Insertable,
@@ -10,7 +11,12 @@ import {
   type ExpressionBuilder,
   sql
 } from 'kysely'
-import { Vaccination } from '../zod/index.js'
+import {
+  buildSearchTsQuery,
+  customerSearchVector,
+  petSearchVector
+} from './search.js'
+import type { Vaccination } from '../zod/index.js'
 import { subYears } from 'date-fns'
 export type Pet = Selectable<Pets>
 type NewPet = Insertable<Pets>
@@ -21,6 +27,14 @@ export interface ParsedPet extends Omit<Pet, 'image'> {
   vaccinations?: Vaccination[]
   validVaccinations?: string[]
   hasMandatoryVaccinations?: boolean
+  alerts?: PetAlert[]
+}
+
+export interface PetAlert {
+  id?: number
+  condition: PET_ALERT_CONDITIONS
+  startDate: string | null
+  endDate: string | null
 }
 
 const mandatoryVaccinations: Record<string, string[]> = {
@@ -138,6 +152,7 @@ export function withRelations(eb: ExpressionBuilder<Database, 'pets'>) {
       'relatedPets.id',
       'unioned_relations.petId'
     )
+    .where('relatedPets.deceased', '=', false)
     .innerJoin(
       'customers as relatedCustomers',
       'relatedCustomers.id',
@@ -162,6 +177,33 @@ export function withRelations(eb: ExpressionBuilder<Database, 'pets'>) {
     .as('relations')
 }
 
+export function withAlerts(date?: string) {
+  return (eb: ExpressionBuilder<Database, 'pets'>) => {
+    let subquery = eb
+      .selectFrom('petAlerts')
+      .select([
+        'petAlerts.id',
+        'petAlerts.condition',
+        'petAlerts.startDate',
+        'petAlerts.endDate'
+      ])
+      .whereRef('petAlerts.petId', '=', 'pets.id')
+
+    if (date) {
+      subquery = subquery
+        .where('petAlerts.startDate', '<=', sql<string>`${date}::date`)
+        .where((eb) =>
+          eb.or([
+            eb('petAlerts.endDate', 'is', null),
+            eb('petAlerts.endDate', '>=', sql<string>`${date}::date`)
+          ])
+        )
+    }
+
+    return jsonArrayFrom(subquery).as('alerts')
+  }
+}
+
 function find({
   criteria,
   select,
@@ -172,6 +214,7 @@ function find({
   relations?: {
     vaccinations?: boolean
     relations?: boolean
+    alerts?: boolean
   }
 }) {
   if (select) select = [...defaultSelect, ...select]
@@ -203,6 +246,10 @@ function find({
 
   if (relations?.relations) {
     query = query.select([withRelations])
+  }
+
+  if (relations?.alerts) {
+    query = query.select([withAlerts()])
   }
 
   return query
@@ -294,32 +341,8 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
 }
 
 export async function searchPets(searchPhrase: string) {
-  if (!searchPhrase || typeof searchPhrase !== 'string') {
-    return []
-  }
-
-  const sanitizedPhrase = searchPhrase.replace(/[^\w\s-]/g, '').trim()
-  if (!sanitizedPhrase) {
-    return []
-  }
-
-  const searchTerms = sanitizedPhrase
-    .split(/\s+/)
-    .filter((term) => term.length > 0)
-  if (searchTerms.length === 0) {
-    return []
-  }
-
-  const tsQueryString = searchTerms
-    .map((term) => {
-      const safeTerm = term.replace(/[^a-zA-Z0-9]/g, '')
-      return safeTerm.length > 0
-        ? `${safeTerm}${safeTerm.length > 3 ? ':*' : ''}`
-        : null
-    })
-    .filter(Boolean)
-    .join(' | ')
-
+  // The database folds accents; this builder drops stopwords and AND-joins.
+  const tsQueryString = buildSearchTsQuery(searchPhrase)
   if (!tsQueryString) {
     return []
   }
@@ -350,9 +373,8 @@ export async function searchPets(searchPhrase: string) {
       pets p 
       inner join customers c on p.customer_id = c.id 
     where 
-      p.fulltext @@ to_tsquery(
-        'english', ${sql.val(tsQueryString)}
-        )
+      p.deceased = false
+      and ${sql.raw(petSearchVector('p.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   ), relation as (
     select 
       p.id,
@@ -377,11 +399,11 @@ export async function searchPets(searchPhrase: string) {
       pets p 
       inner join customers c on p.customer_id = c.id 
     where 
-      c.fulltext @@ to_tsquery(
-        'english', ${sql.val(tsQueryString)}
-      )
+      p.deceased = false
+      and ${sql.raw(customerSearchVector('c.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   )
-  select distinct on (id) * from main union select * from relation;
+  select distinct on (id) * from main union select * from relation
+  order by name asc;
   `
 
     const results = await query.execute(db)

@@ -12,7 +12,10 @@ import {
   daycareDate
 } from '../../zod/index.js'
 import { findDaycareSubscriptions } from 'src/repositories/daycareSubscription.js'
-import { findCustomerDaycareSubscriptions } from 'src/repositories/customerDaycareSubscription.js'
+import {
+  findCustomerDaycareSubscriptions,
+  updateCustomerDaycareSubscription
+} from 'src/repositories/customerDaycareSubscription.js'
 
 export const employeeDaycareValidation = daycareDate
   .omit({
@@ -100,6 +103,30 @@ export const employeeDaycareRoutes = ({
             fastify
           })
         return customerDaycareSubscriptions
+      }
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
+  updateCustomerDaycareSubscription: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        expirationDate: z.string()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, expirationDate } = input
+      if (id) {
+        const customerDaycareSubscription =
+          await updateCustomerDaycareSubscription(
+            {
+              id
+            },
+            {
+              expirationDate
+            }
+          )
+
+        return customerDaycareSubscription
       }
       throw new TRPCError({ code: 'BAD_REQUEST' })
     })

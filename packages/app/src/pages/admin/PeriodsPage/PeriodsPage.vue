@@ -1,5 +1,9 @@
 <template>
   <q-page padding>
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <periods-list
       v-if="periods"
       :model-value="periods"
@@ -8,6 +12,15 @@
       @update="openUpdatePeriodDialog"
       @delete="openDeletePeriodDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createPeriodDialogRef"
@@ -36,7 +49,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Period } from '@petboarding/api/zod'
@@ -61,7 +74,13 @@ bus.on('administrator-open-periods-create-dialog', () => {
     })
 })
 
-const { periods, refetch: execute } = useConfigurationGetPeriodsQuery()
+const {
+  periods,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetPeriodsQuery()
+const total = computed(() => periods.value?.at(0)?.total || 0)
 const { mutateAsync: createPeriodMutation } =
   useConfigurationCreatePeriodMutation()
 const { mutateAsync: updatePeriodMutation } =

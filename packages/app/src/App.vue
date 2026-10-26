@@ -18,22 +18,13 @@ export default {
 </script>
 
 <script setup lang="ts">
+import '@simsustech/quasar-components/css'
 import { provide, watch } from 'vue'
 import { useConfiguration } from './configuration.js'
-import {
-  useMeta,
-  QBtn,
-  QBtnDropdown,
-  QBtnToggle,
-  QBtnGroup,
-  QInput,
-  QSelect,
-  QField,
-  QChip
-} from 'quasar'
-import { setDefaultPropsMd3 } from 'unocss-preset-quasar/styles'
+import { useMeta } from 'quasar'
 import { EventBus } from 'quasar'
-import { setThemeColors } from 'unocss-preset-quasar/theme'
+import { generateTheme, setThemeColors } from 'unocss-preset-quasar/theme'
+import { tokenTones } from './theme-tokens.js'
 
 const bus = new EventBus<{
   'account-open-customer-create-dialog': () => void
@@ -54,26 +45,21 @@ const bus = new EventBus<{
 provide<EventBus>('bus', bus)
 
 const configuration = useConfiguration()
+watch(configuration, (newVal) => {
+  const tones = tokenTones()
+  setThemeColors({
+    ...newVal.THEME_COLORS,
+    // ADR 005: the status and alert tones are product constants — a deployment's
+    // source colour must not re-hue "approved" — so they merge *over* the
+    // configured colours, and they apply even when nothing is configured.
+    light: { ...newVal.THEME_COLORS?.light, ...tones.light },
+    dark: { ...newVal.THEME_COLORS?.dark, ...tones.dark }
+  })
+})
+
 useMeta(() => {
   return {
     title: configuration.value.TITLE
-  }
-})
-
-setDefaultPropsMd3({
-  QBtn,
-  QBtnDropdown,
-  QBtnGroup,
-  QBtnToggle,
-  QInput,
-  QSelect,
-  QField,
-  QChip
-})
-
-watch(configuration, (newVal) => {
-  if (newVal.THEME_COLORS) {
-    setThemeColors(newVal.THEME_COLORS)
   }
 })
 </script>

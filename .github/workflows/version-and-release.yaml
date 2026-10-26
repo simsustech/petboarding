@@ -1,0 +1,118 @@
+name: Version and create GitHub Release
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      - name: Creating .npmrc
+        run: |
+          cat > ~/.npmrc << EOF
+            //npm.simsus.tech/:_authToken=$SIMSUSTECH_NPM_TOKEN
+          EOF
+        env:
+          SIMSUSTECH_NPM_TOKEN: ${{ secrets.SIMSUSTECH_NPM_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 12.5.1
+
+      - name: Use Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm i
+
+      # When pending changesets exist, changesets/action runs `changeset
+      # version`, commits the bump + changelogs, and opens a release PR to
+      # main. It never pushes directly to main, so it satisfies the repo rule
+      # "Changes must be made through a pull request". GH_RELEASE_TOKEN is used
+      # so the PR and its branch carry the right access.
+      - name: Create release PR
+        id: changesets
+        uses: changesets/action@v2
+        with:
+          pr-title: "chore: release"
+          commit-message: "chore: version packages"
+          version-script: pnpm changeset version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      # After the release PR is merged there are no changesets left, so this
+      # run tags the bumped version and creates the GitHub Release.
+      - name: Read current version
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        id: version
+        run: |
+          VERSION=$(node -p "require('./packages/api/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --tags origin "refs/tags/v$VERSION" | grep -q .; then
+            echo "tagged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tagged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract release notes
+        if: >-
+          steps.changesets.outputs.hasChangesets == 'false' &&
+          steps.version.outputs.tagged == 'false'
+        run: |
+          node -e "
+            const fs = require('fs');
+            const file = 'packages/api/CHANGELOG.md';
+            const content = fs.readFileSync(file, 'utf8');
+            const lines = content.split('\n');
+            let start = -1, end = -1;
+            for (let i = 0; i < lines.length; i++) {
+              if (/^## v?\d+\.\d+\.\d+/.test(lines[i])) {
+                if (start === -1) start = i;
+                else { end = i; break; }
+              }
+            }
+            const stop = end === -1 ? lines.length : end;
+            const notes = lines.slice(start, stop).join('\n').trim();
+            fs.writeFileSync('RELEASE_NOTES.md', notes || 'No release notes');
+          "
+
+      - name: Create git tag
+        if: >-
+          steps.changesets.outputs.hasChangesets == 'false' &&
+          steps.version.outputs.tagged == 'false'
+        run: |
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
+
+      - name: Create GitHub Release
+        if: >-
+          steps.changesets.outputs.hasChangesets == 'false' &&
+          steps.version.outputs.tagged == 'false'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      - name: Remove .npmrc
+        if: always()
+        run: rm -f ~/.npmrc
+
+      - name: Cleanup changeset status
+        if: always()
+        run: rm -f changesets.json RELEASE_NOTES.md

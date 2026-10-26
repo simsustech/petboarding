@@ -1,5 +1,9 @@
 <template>
   <q-page padding>
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <announcements-list
       v-if="announcements"
       :model-value="announcements"
@@ -8,6 +12,15 @@
       @update="openUpdateAnnouncementDialog"
       @delete="openDeleteAnnouncementDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createAnnouncementDialogRef"
@@ -42,7 +55,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { inject, nextTick, onMounted, ref } from 'vue'
+import { inject, nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { Announcement } from '@petboarding/api/zod'
@@ -65,8 +78,13 @@ bus.on('administrator-open-announcements-create-dialog', () => {
     })
 })
 
-const { announcements, refetch: execute } =
-  useConfigurationGetAnnouncementsQuery()
+const {
+  announcements,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetAnnouncementsQuery()
+const total = computed(() => announcements.value?.at(0)?.total || 0)
 
 const { mutateAsync: createAnnouncementMutation } =
   useConfigurationCreateAnnouncementMutation()

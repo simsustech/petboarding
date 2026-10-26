@@ -13,7 +13,7 @@ import {
 import { findCustomer } from '../../repositories/customer'
 import { config } from '../../env.js'
 import { compileEmail } from '../admin/bookings'
-import { createOrUpdateSlimfactInvoice } from '../admin/bookings'
+import { syncBookingInvoice } from '../admin/slimfactInvoice.js'
 import { bookingEmailTemplates } from 'src/templates/email/bookings/index.js'
 
 const MAIL_BCC = config.mailBcc
@@ -57,23 +57,23 @@ export const userBookingRoutes = ({
   procedure: typeof t.procedure
 }) => ({
   getBookings: procedure.query(async ({ ctx }) => {
-    if (ctx.account?.id) {
-      const customer = await findCustomer({
-        criteria: {
-          accountId: Number(ctx.account.id)
-        }
-      })
-      if (customer?.id) {
-        const bookings = await findBookings({
-          criteria: {
-            customerId: customer.id
-          },
-          fastify
-        })
-        return bookings
+    // A staff account has no customer profile — that is valid, so return empty;
+    // BAD_REQUEST is only for unauthenticated callers.
+    if (!ctx.account?.id) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+    const customer = await findCustomer({
+      criteria: {
+        accountId: Number(ctx.account.id)
       }
-    }
-    throw new TRPCError({ code: 'BAD_REQUEST' })
+    })
+    if (!customer?.id) return []
+
+    return findBookings({
+      criteria: {
+        customerId: customer.id
+      },
+      fastify
+    })
   }),
   createBooking: procedure
     .input(userBookingValidation)
@@ -168,18 +168,8 @@ export const userBookingRoutes = ({
             }
           })
           if (booking) {
-            if (
-              fastify?.slimfact &&
-              booking?.statuses
-                .map((status) => status.status)
-                .includes(BOOKING_STATUS.APPROVED)
-            ) {
-              const result = await createOrUpdateSlimfactInvoice({
-                fastify,
-                booking,
-                customer
-              })
-              if (!result.success) fastify.log.debug(result.errorMessage)
+            if (fastify) {
+              await syncBookingInvoice({ fastify, bookingId: id })
             }
             if (fastify?.mailer) {
               let template: { subject: string; body: string }

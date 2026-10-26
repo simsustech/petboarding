@@ -4,6 +4,16 @@
       <q-item-label header>
         {{ lang.booking.messages.unpaidBookings(days) }}
       </q-item-label>
+      <!-- An empty list is a state, not a rendering failure: say so instead of
+           leaving the header alone on the page (audit: admin-financial-overview). -->
+      <q-item v-if="!unpaidBookings?.length">
+        <q-item-section avatar>
+          <q-icon name="i-mdi-check-circle-outline" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ lang.financial.noUnpaidBookings }}</q-item-label>
+        </q-item-section>
+      </q-item>
       <booking-item
         v-for="booking in unpaidBookings"
         :key="booking.id"

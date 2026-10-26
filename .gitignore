@@ -11,9 +11,18 @@ clients
 **/stats.html
 **/components.d.ts
 test-results.json
+# Reusable e2e logins captured by tests/e2e/global-setup.ts
+packages/api/tests/e2e/.auth/
 docker-compose.*.override.yaml
 
-# SigMap generated context (regenerated at session start)
-packages/**/AGENTS.md
-.contextignore
-**/.github/context*.md
+**/.pnpm-store/**
+.worktrees/**
+.pi/fff
+
+# Local review/scratch artifacts (not for commit)
+.scratch/
+# Showcase screenshots — keep README/spec, ignore PNG artifacts
+# Report artefacts — a PDF and screenshots that embed a render date
+.pi/reports/
+showcase/*/*.png
+showcase/*/!(*.md)

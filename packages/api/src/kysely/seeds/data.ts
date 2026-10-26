@@ -86,12 +86,13 @@ const seed = async () => {
   const documents = [
     {
       name: 'privacyPolicy',
-      content: `# Petboarding
+      content: `# Privacy policy
+
 A product of:
 simsustech
 https://www.simsus.tech
 info@simsus.tech
-Privacy policy
+
 Petboarding collects the following information:
 - First and last name
 - Gender
@@ -122,7 +123,69 @@ Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@
     },
     {
       name: 'termsAndConditions',
-      content: `# Terms and conditions`
+      content: `# Terms and conditions
+
+These terms and conditions apply to every booking made through Petboarding and to
+every service the client (the business using Petboarding) provides for the pet.
+
+## 1. Bookings
+
+A booking is a request until the client approves it. The client may reject a booking
+or place it on the reserve list. Times are indicative: arrival and departure happen
+within the opening times the client publishes. The customer is responsible for the
+accuracy of the details entered for the pet, including species, medication and
+alerts.
+
+## 2. Payment
+
+Prices follow the categories and services the client publishes. Payment is due
+before the start of the booking unless the client agreed otherwise in writing. Any
+surcharge for a period or a vacation day is charged per day.
+
+## 3. Cancellation
+
+Cancelling before the start of the booking is free of charge unless the client
+publishes a cancellation fee. Cancelling during the booking charges the days the pet
+stayed, plus any day the client cannot rebook. The client may invoice a cancellation
+cost in the cases the client publishes.
+
+## 4. Liability
+
+The customer declares that the pet is healthy and that the vaccinations the client
+requires are up to date. The customer reports contagious diseases before arrival.
+The client does not accept liability for damage the pet causes to itself or to
+others, except in the case of intent or gross negligence.
+
+## 5. Privacy
+
+The personal data Petboarding processes for this booking is described in the privacy
+policy the client publishes.
+
+# Algemene voorwaarden
+
+Deze algemene voorwaarden gelden voor elke boeking via Petboarding en voor elke dienst
+die de klant (het bedrijf dat Petboarding gebruikt) voor het dier levert.
+
+## 1. Boekingen
+
+Een boeking is een aanvraag totdat de klant deze goedkeurt. De klant kan een boeking
+weigeren of op de reservelijst plaatsen. Tijden zijn indicatief: aankomst en vertrek
+vinden plaats binnen de openingstijden die de klant publiceert. De klant is
+verantwoordelijk voor de juistheid van de gegevens van het dier, waaronder soort,
+medicatie en alerts.
+
+## 2. Betaling
+
+Prijzen volgen de categorie\u00ebn en diensten die de klant publiceert. Betaling vindt
+plaats voor de start van de boeking, tenzij de klant schriftelijk anders is
+overeengekomen. Een toeslag voor een periode of vakantiedag wordt per dag gerekend.
+
+## 3. Annulering
+
+Annuleren voor de start van de boeking is kosteloos, tenzij de klant een
+annuleringskosten publiceert. Annuleren tijdens de boeking brengt de dagen in rekening
+die het dier is gebleven, plus een dag die de klant niet opnieuw kan verhuren. De klant
+kan annuleringskosten factureren in de gevallen die de klant publiceert.`
     }
   ]
 

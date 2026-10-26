@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding class="column">
     <agenda-component
       ref="agendaComponentRef"
       :bookings="bookingsData"

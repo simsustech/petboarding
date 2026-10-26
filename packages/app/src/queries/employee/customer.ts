@@ -8,7 +8,7 @@ import {
 } from '@petboarding/tools/constants'
 
 export const useEmployeeGetCustomerQuery = defineQuery(() => {
-  const customerId = ref(NaN)
+  const customerId = ref<number | null>(null)
   const daycareDatesFrom = ref('')
   const daycareDatesUntil = ref('')
   const daycareDatesStatus = ref(DAYCARE_DATE_STATUS.APPROVED)

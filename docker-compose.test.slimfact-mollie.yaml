@@ -1,0 +1,31 @@
+# Override file to enable Mollie PSP routing in the SlimFact test service.
+#
+# The daycare subscription flow calls addPaymentToInvoice with
+# PaymentMethod.wero, which needs WERO_PAYMENT_HANDLER + MOLLIE_API_KEY.
+# Without them invoiceHandler returns "Could not add payment to invoice".
+#
+# Usage (MOLLIE_API_KEY mirrors the other petboarding secrets — the value
+# comes from the host environment, which `secrets:` projects into
+# /run/secrets/; @vitrify/tools/env reads that file when the value is a
+# /run/secrets path):
+#   export MOLLIE_API_KEY=$(cat ./env/MOLLIE_API_KEY)
+#   docker compose -f docker-compose.test.yaml \
+#     -f docker-compose.test.slimfact.yaml \
+#     -f docker-compose.test.slimfact-mollie.yaml up -d slimfact
+services:
+  slimfact:
+    environment:
+      WERO_PAYMENT_HANDLER: mollie
+      CREDITCARD_PAYMENT_HANDLER: mollie
+      MOLLIE_API_KEY: /run/secrets/MOLLIE_API_KEY
+    secrets:
+      - MOLLIE_API_KEY
+    # Migrate, but do NOT seed: `seed:test` is not idempotent and fails on
+    # unique constraints when the DB already holds data. Migrations are
+    # idempotent and must run so new ones (e.g. the payments.checkout_url
+    # column) are applied to an already-seeded database.
+    command: ['sh', '-c', 'npm run migrate:latest && npm run serve']
+
+secrets:
+  MOLLIE_API_KEY:
+    environment: MOLLIE_API_KEY

@@ -4,6 +4,7 @@
     :bus-emits="busEmits"
     :icons="icons"
     type="add"
+    :seek-attention="!daycareDates?.length"
   />
 </template>
 
@@ -11,6 +12,7 @@
 import { NavigationRailFabs } from '@simsustech/quasar-components/md3'
 import { onMounted, ref } from 'vue'
 import { useAccountGetPetsQuery } from 'src/queries/account/pet.js'
+import { useAccountGetDaycareDatesQuery } from 'src/queries/account/daycare.js'
 
 const busEmits = ref({
   add: 'account-open-daycare-create-dialog'
@@ -22,8 +24,11 @@ const icons = ref({
 })
 
 const { pets, refetch: executePets } = useAccountGetPetsQuery()
+const { data: daycareDates, refetch: executeDaycareDates } =
+  useAccountGetDaycareDatesQuery()
 
 onMounted(async () => {
   await executePets()
+  await executeDaycareDates()
 })
 </script>

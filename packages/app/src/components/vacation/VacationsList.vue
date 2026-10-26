@@ -22,6 +22,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
+          :aria-label="`${lang.moreOptions} — ${vacation.name}`"
         >
           <q-menu>
             <q-list>

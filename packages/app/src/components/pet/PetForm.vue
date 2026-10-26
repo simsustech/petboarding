@@ -162,8 +162,7 @@
         bottom-slots
         lazy-rules
         type="textarea"
-        row
-        q-col-gutter-mds="3"
+        rows="3"
       />
 
       <form-input
@@ -177,8 +176,7 @@
         bottom-slots
         lazy-rules
         type="textarea"
-        row
-        q-col-gutter-mds="3"
+        rows="3"
       />
 
       <boolean-select

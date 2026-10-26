@@ -17,7 +17,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Creating .npmrc
         run: |
@@ -30,12 +30,28 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: 11
+          version: 12.5.1
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: Install dependencies
         run: pnpm i
@@ -43,20 +59,27 @@ jobs:
       - name: Install playwright deps
         run: |
           cd packages/api
-          pnpm exec playwright install --with-deps
+          pnpm exec playwright install --with-deps chromium
 
-      - name: Start Docker compose staging
+      # The test stack is started by packages/api/tests/e2e/global-setup.ts,
+      # which resets its volumes and builds the image. Only the external `web`
+      # network (declared external by docker-compose.test.yaml) has to exist
+      # before that, so a run never brings the stack up twice.
+      - name: Prepare docker network
         run: |
           docker network inspect web >/dev/null 2>&1 || \
             docker network create web
-          docker compose -f docker-compose.test.yaml down
-          docker compose -f docker-compose.test.yaml --verbose up --force-recreate --wait --build -d
-        env:
-          SIMSUSTECH_NPM_TOKEN: ${{ secrets.SIMSUSTECH_NPM_TOKEN }}
 
       - name: Run Playwright tests
         run: |
           pnpm run test:e2e
+        env:
+          # global-setup builds the image here, and compose reads this for its
+          # build secret.
+          SIMSUSTECH_NPM_TOKEN: ${{ secrets.SIMSUSTECH_NPM_TOKEN }}
+          # Capture specs (screenshots/showcase) are opt-in; pinning this empty
+          # keeps CI on the normal e2e set (playwright.config.ts testIgnore).
+          PLAYWRIGHT_ALLOW_SCREENSHOTS: ''
 
       - name: Remove .npmrc
         run: rm ~/.npmrc

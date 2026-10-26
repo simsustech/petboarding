@@ -20,7 +20,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
-          aria-label="More options"
+          :aria-label="`${lang.moreOptions} — ${kennel.name}`"
         >
           <q-menu>
             <q-list>

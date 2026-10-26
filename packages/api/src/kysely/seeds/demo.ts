@@ -1,0 +1,550 @@
+// import generateData from './demo/generateData.js'
+import { hashPassword } from '@vitrify/tools/scrypt'
+import { db } from '../index.js'
+import { sql } from 'kysely'
+import { readFileSync } from 'fs'
+import {
+  OPENING_TIME_TYPE,
+  SERVICE_TYPE,
+  BOOKING_STATUS
+} from '@petboarding/tools/constants'
+import { getAllVacations } from './vacations/index.js'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const chunk = (arr: any[], size: number) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (_v, i) =>
+    arr.slice(i * size, i * size + size)
+  )
+
+const seed = async () => {
+  const {
+    accounts,
+    customers,
+    contactPeople,
+    pets,
+    bookings,
+    bookingPet,
+    bookingStatuses,
+    daycareDates,
+    daycarePet
+  } = (() => {
+    // A missing or malformed fixture must say so, rather than surfacing as a bare
+    // module-scope SyntaxError with no file context.
+    try {
+      return JSON.parse(
+        readFileSync(
+          new URL('./demo/data.json', import.meta.url).pathname,
+          'utf-8'
+        )
+      )
+    } catch (e) {
+      throw new Error(
+        `[seeds/demo] could not read seeds/demo/data.json: ${(e as Error).message}`
+      )
+    }
+  })()
+
+  const buildings = [
+    {
+      name: 'Main building',
+      location: 'A',
+      description: 'The main building'
+    },
+    {
+      name: 'Secondary building',
+      location: 'B',
+      description: 'The secondary building'
+    }
+  ]
+
+  const kennels = []
+  for (const buildingId of Array.from(
+    { length: buildings.length },
+    (_, i) => i + 1
+  )) {
+    kennels.push(
+      ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => ({
+        name: id.toString(),
+        buildingId: buildingId
+      }))
+    )
+  }
+
+  const categories = [
+    {
+      species: 'dog',
+      order: 1,
+      name: 'Small'
+      // price: 1000
+    }
+  ]
+  const categoryPrices = [
+    {
+      categoryId: 1,
+      date: '2024-01-01',
+      listPrice: 1000
+    },
+    {
+      categoryId: 1,
+      date: '2025-01-01',
+      listPrice: 1500
+    }
+  ]
+  const openingTimes = [
+    {
+      name: 'Morning',
+      startDayCounted: 1,
+      endDayCounted: 0.5,
+      daysOfWeek: '[0,1,2,3,4,5,6]',
+      unavailableHolidays: '["01-01"]',
+      startTime: '09:00',
+      endTime: '10:00',
+      type: OPENING_TIME_TYPE.ALL
+    },
+    {
+      name: 'Evening',
+      startDayCounted: 0.5,
+      endDayCounted: 1.0,
+      daysOfWeek: '[1,2,3,4,5]',
+      unavailableHolidays: '["01-01"]',
+      startTime: '17:00',
+      endTime: '18:00',
+      type: OPENING_TIME_TYPE.ALL
+    }
+  ]
+
+  const services = [
+    {
+      name: 'Wash pet(s)',
+      description: 'Pet(s) will be washed before leaving.',
+      type: SERVICE_TYPE.APPOINTMENT,
+      listPrice: null,
+      hidden: false
+    },
+    {
+      name: 'Groom pet(s)',
+      description: 'Pet(s) will be groomed during their stay.',
+      type: SERVICE_TYPE.APPOINTMENT,
+      listPrice: null,
+      hidden: false
+    },
+    {
+      name: 'Intensive medical care',
+      description: 'Pet(s) required intensive medical care during their stay.',
+      type: SERVICE_TYPE.SURCHARGE,
+      listPrice: null,
+      hidden: true
+    },
+    {
+      name: 'Veterinarian visit',
+      description: 'Pet(s) required a visit to the veterinarian',
+      type: SERVICE_TYPE.SURCHARGE,
+      listPrice: null,
+      hidden: true
+    }
+  ]
+
+  const announcements = [
+    {
+      title: 'This is a public demo',
+      message:
+        'Please do NOT enter personal information when using this demo. It may be public to everyone',
+      type: 'important',
+      expirationDate: '2030-01-01'
+    },
+    {
+      title: 'Email',
+      message:
+        'The emails send in the demo can be viewed at https://mail.demo.petboarding.app',
+      type: 'important',
+      expirationDate: '2030-01-01'
+    },
+    {
+      title: 'Admin account',
+      message: 'admin@petboarding.app / qjiNWdT8L',
+      type: 'general',
+      expirationDate: '2030-01-01'
+    }
+  ]
+
+  const documents = [
+    {
+      name: 'privacyPolicy',
+      content: `# Privacy policy
+
+A product of:
+simsustech
+https://www.simsus.tech
+info@simsus.tech
+
+Petboarding collects the following information:
+- First and last name
+- Gender
+- Address details
+- Contact information
+The purpose of collecting this information is the following:
+- Providing the user the ability to create an account.
+- Provide the ability to perform online payments.
+The information is shared only with the client (i.e. the business that uses our services). The
+information will not be shared with anyone else.
+The user has the ability to change or delete their information in their account.
+If you have any questions or remarks about the security, please contact info@simsus.tech.
+
+# Privacy verklaring
+Petboarding verzamelt de volgende informatie:
+- Voor en achternaam
+- Geslacht
+- Adres gegevens
+- Contact gegevens
+Het doel van het verzamelen van deze informatie is het volgende:
+- Het mogelijk maken voor de gebruiker om een account aan te maken
+- Het mogelijk maken om online betalingen te doen
+De informatie wordt alleen gedeeld met onze klant (i.e. het bedrijf dat onze dienst afneemt). De
+informatie zal niet worden gedeeld met anderen.
+De gebruiker heeft de mogelijkheid om zijn informatie te verwijderen of te veranderen in zijn
+account.
+Heeft u vragen of opmerkingen over de beveiliging, neem dan contact op met info@simsus.tech.`
+    },
+    {
+      name: 'termsAndConditions',
+      content: `# Terms and conditions
+
+These terms and conditions apply to every booking made through Petboarding and to
+every service the client (the business using Petboarding) provides for the pet.
+
+## 1. Bookings
+
+A booking is a request until the client approves it. The client may reject a booking
+or place it on the reserve list. Times are indicative: arrival and departure happen
+within the opening times the client publishes. The customer is responsible for the
+accuracy of the details entered for the pet, including species, medication and
+alerts.
+
+## 2. Payment
+
+Prices follow the categories and services the client publishes. Payment is due
+before the start of the booking unless the client agreed otherwise in writing. Any
+surcharge for a period or a vacation day is charged per day.
+
+## 3. Cancellation
+
+Cancelling before the start of the booking is free of charge unless the client
+publishes a cancellation fee. Cancelling during the booking charges the days the pet
+stayed, plus any day the client cannot rebook. The client may invoice a cancellation
+cost in the cases the client publishes.
+
+## 4. Liability
+
+The customer declares that the pet is healthy and that the vaccinations the client
+requires are up to date. The customer reports contagious diseases before arrival.
+The client does not accept liability for damage the pet causes to itself or to
+others, except in the case of intent or gross negligence.
+
+## 5. Privacy
+
+The personal data Petboarding processes for this booking is described in the privacy
+policy the client publishes.
+
+# Algemene voorwaarden
+
+Deze algemene voorwaarden gelden voor elke boeking via Petboarding en voor elke dienst
+die de klant (het bedrijf dat Petboarding gebruikt) voor het dier levert.
+
+## 1. Boekingen
+
+Een boeking is een aanvraag totdat de klant deze goedkeurt. De klant kan een boeking
+weigeren of op de reservelijst plaatsen. Tijden zijn indicatief: aankomst en vertrek
+vinden plaats binnen de openingstijden die de klant publiceert. De klant is
+verantwoordelijk voor de juistheid van de gegevens van het dier, waaronder soort,
+medicatie en alerts.
+
+## 2. Betaling
+
+Prijzen volgen de categorie\u00ebn en diensten die de klant publiceert. Betaling vindt
+plaats voor de start van de boeking, tenzij de klant schriftelijk anders is
+overeengekomen. Een toeslag voor een periode of vakantiedag wordt per dag gerekend.
+
+## 3. Annulering
+
+Annuleren voor de start van de boeking is kosteloos, tenzij de klant een
+annuleringskosten publiceert. Annuleren tijdens de boeking brengt de dagen in rekening
+die het dier is gebleven, plus een dag die de klant niet opnieuw kan verhuren. De klant
+kan annuleringskosten factureren in de gevallen die de klant publiceert.`
+    }
+  ]
+
+  await db.insertInto('announcements').values(announcements).execute()
+  await db.insertInto('buildings').values(buildings).execute()
+  await db.insertInto('kennels').values(kennels).execute()
+  await db.insertInto('categories').values(categories).execute()
+  await db.insertInto('categoryPrices').values(categoryPrices).execute()
+  await db.insertInto('openingTimes').values(openingTimes).execute()
+  await db.insertInto('services').values(services).execute()
+  await db.insertInto('documents').values(documents).execute()
+
+  const vacations = getAllVacations()
+  await db.insertInto('vacations').values(vacations).execute()
+
+  for (const insertAccounts of chunk(accounts, 1000)) {
+    await db.insertInto('accounts').values(insertAccounts).execute()
+  }
+
+  for (const insertCustomers of chunk(customers, 1000)) {
+    await db.insertInto('customers').values(insertCustomers).execute()
+  }
+  await sql`ALTER SEQUENCE customers_id_seq RESTART WITH ${sql.lit(
+    customers.length + 1
+  )}`.execute(db)
+
+  for (const insertContactPeople of chunk(contactPeople, 1000)) {
+    await db.insertInto('contactPeople').values(insertContactPeople).execute()
+  }
+  await sql`ALTER SEQUENCE contact_people_id_seq RESTART WITH ${sql.lit(
+    contactPeople.length + 1
+  )}`.execute(db)
+
+  for (const insertPets of chunk(pets, 1000)) {
+    await db.insertInto('pets').values(insertPets).execute()
+  }
+  await sql`ALTER SEQUENCE pets_id_seq RESTART WITH ${sql.lit(
+    pets.length + 1
+  )}`.execute(db)
+
+  for (const insertBookings of chunk(bookings, 1000)) {
+    await db.insertInto('bookings').values(insertBookings).execute()
+  }
+  await sql`ALTER SEQUENCE bookings_id_seq RESTART WITH ${sql.lit(
+    bookings.length + 1
+  )}`.execute(db)
+
+  for (const insertBookingPets of chunk(bookingPet, 1000)) {
+    await db.insertInto('bookingPetKennel').values(insertBookingPets).execute()
+  }
+
+  for (const insertBookingStatuses of chunk(bookingStatuses, 1000)) {
+    await db.insertInto('bookingStatus').values(insertBookingStatuses).execute()
+  }
+
+  for (const insertDaycareDates of chunk(daycareDates, 1000)) {
+    await db.insertInto('daycareDates').values(insertDaycareDates).execute()
+  }
+  await sql`ALTER SEQUENCE daycare_dates_id_seq RESTART WITH ${sql.lit(
+    daycareDates.length + 1
+  )}`.execute(db)
+
+  for (const insertDaycarePets of chunk(daycarePet, 1000)) {
+    await db
+      .insertInto('daycareDatePetKennel')
+      .values(insertDaycarePets)
+      .execute()
+  }
+
+  const adminAccounts = await db
+    .insertInto('accounts')
+    .values([
+      {
+        email: 'admin@petboarding.app',
+        roles: `["administrator", "employee"]`
+      }
+    ])
+    .returning('id')
+    .execute()
+
+  const admin = adminAccounts[0]
+
+  await db
+    .insertInto('authenticationMethods')
+    .values([
+      {
+        accountId: admin.id,
+        provider: 'native',
+        password: await hashPassword('qjiNWdT8L')
+      }
+    ])
+    .execute()
+
+  const [demoAccount] = await db
+    .insertInto('accounts')
+    .values({ email: 'demo@petboarding.app', roles: '[]' })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('authenticationMethods')
+    .values({
+      accountId: demoAccount.id,
+      provider: 'native',
+      password: await hashPassword('demodemo')
+    })
+    .execute()
+  const [demoCustomer] = await db
+    .insertInto('customers')
+    .values({
+      accountId: demoAccount.id,
+      gender: 'female',
+      firstName: 'Emma',
+      lastName: 'Williams',
+      address: 'Park Avenue 15',
+      postalCode: '5678 CD',
+      city: 'Utrecht',
+      telephoneNumber: '+31611122334',
+      veterinarian: 'Dierenkliniek Centrum'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('contactPeople')
+    .values([
+      {
+        customerId: demoCustomer.id,
+        firstName: 'Mark',
+        lastName: 'Williams',
+        telephoneNumber: '+31655566778'
+      },
+      {
+        customerId: demoCustomer.id,
+        firstName: 'Lisa',
+        lastName: 'de Vries',
+        telephoneNumber: '+31699988776'
+      }
+    ])
+    .execute()
+  const [dp1] = await db
+    .insertInto('pets')
+    .values({
+      customerId: demoCustomer.id,
+      species: 'dog',
+      name: 'Charlie',
+      breed: 'Golden Retriever',
+      gender: 'male',
+      sterilized: true,
+      birthDate: '2022-03-15',
+      color: 'Golden',
+      chipNumber: 'CHIP20220315',
+      deceased: true
+    })
+    .returning('id')
+    .execute()
+  const [dp2] = await db
+    .insertInto('pets')
+    .values({
+      customerId: demoCustomer.id,
+      species: 'cat',
+      name: 'Luna',
+      breed: 'Europese Korthaar',
+      gender: 'female',
+      sterilized: true,
+      birthDate: '2023-07-22',
+      color: 'Black & White',
+      chipNumber: 'CHIP20230722'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('vaccinations')
+    .values([
+      {
+        petId: dp1.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'kennelcough',
+          'parvo',
+          'hepatitis',
+          'distemper',
+          'leptospirosis',
+          'rabies'
+        ]),
+        expirationDate: '2027-06-01'
+      },
+      {
+        petId: dp2.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'panleukopenia',
+          'rhinotracheitis',
+          'caliciviruses',
+          'rabies',
+          'leukemia'
+        ]),
+        expirationDate: '2027-06-01'
+      }
+    ])
+    .execute()
+  const nm = new Date()
+  nm.setMonth(nm.getMonth() + 1)
+  const s = nm.toISOString().split('T')[0]
+  const e = new Date(nm)
+  e.setDate(e.getDate() + 5)
+  const es = e.toISOString().split('T')[0]
+  const [demoBook] = await db
+    .insertInto('bookings')
+    .values({
+      customerId: demoCustomer.id,
+      startDate: s,
+      endDate: es,
+      startTimeId: 1,
+      endTimeId: 2,
+      comments: 'test booking'
+    })
+    .returning('id')
+    .execute()
+  await db
+    .insertInto('bookingPetKennel')
+    .values({ bookingId: demoBook.id, petId: dp1.id })
+    .execute()
+  await db
+    .insertInto('bookingStatus')
+    .values({
+      bookingId: demoBook.id,
+      status: BOOKING_STATUS.APPROVED,
+      petIds: JSON.stringify([dp1.id]),
+      startDate: s,
+      endDate: es,
+      startTimeId: 1,
+      endTimeId: 2,
+      comments: 'test booking',
+      modifiedAt: new Date().toISOString()
+    })
+    .execute()
+
+  for (const pet of pets.filter(() => Math.random() > 0.05)) {
+    await db
+      .insertInto('vaccinations')
+      .values({
+        petId: pet.id,
+        image: Buffer.from(''),
+        types: JSON.stringify([
+          'kennelcough',
+          'parvo',
+          'hepatitis',
+          'distemper',
+          'leptospirosis',
+          'rabies'
+        ]),
+        expirationDate: '2027-06-01'
+      })
+      .execute()
+  }
+  const petRelations: {
+    petId1: number
+    petId2: number
+    rating: number
+  }[] = []
+
+  for (let i = 0; i < pets.length; i++) {
+    for (let j = i + 1; j < pets.length; j++) {
+      // Generates a random integer from 1 to 10
+      const randomRating = Math.floor(Math.random() * 10) + 1
+
+      petRelations.push({
+        petId1: pets[i].id, // Or just pets[i] if your array is a flat list of strings/IDs
+        petId2: pets[j].id,
+        rating: randomRating
+      })
+    }
+  }
+  for (const insertPetRelations of chunk(petRelations, 1000)) {
+    await db.insertInto('petRelations').values(insertPetRelations).execute()
+  }
+}
+
+seed()

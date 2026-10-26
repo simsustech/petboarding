@@ -1,5 +1,9 @@
 <template>
   <q-page padding @create="openCreateDialog">
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <opening-times-list
       v-if="openingTimes"
       :model-value="openingTimes"
@@ -8,6 +12,15 @@
       @update="openUpdateOpeningTimeDialog"
       @delete="openDeleteOpeningTimeDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createOpeningTimeDialogRef"
@@ -75,8 +88,13 @@ const $q = useQuasar()
 const { holidays, refetch: executeHolidays } =
   useConfigurationGetHolidaysQuery()
 
-const { openingTimes, refetch: execute } =
-  useConfigurationGetOpeningTimesQuery()
+const {
+  openingTimes,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetOpeningTimesQuery()
+const total = computed(() => openingTimes.value?.at(0)?.total || 0)
 
 const { mutateAsync: createOpeningTimeMutation } =
   useConfigurationCreateOpeningTimeMutation()

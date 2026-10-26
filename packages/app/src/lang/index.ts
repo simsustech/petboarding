@@ -2,6 +2,7 @@ export interface Language {
   isoName: string
   edit: string
   cancel: string
+  undo: string
   serverError: string
   search: string
   open: string
@@ -24,10 +25,12 @@ export interface Language {
   page: string
   next: string
   previous: string
+  today: string
   delete: string
   documentation: string
   add: string
   darkMode: string
+  moreOptions: string
   language: string
   termsAndConditions: string
   redirecting: string
@@ -55,8 +58,13 @@ export interface Language {
     title: string
     day: string
     week: string
+    empty: string
+    emptyDay: string
+    swipeHint: string
+    legend: string
   }
   availability: {
+    selectDates: string
     title: string
     messages: {
       doesNotApplyToApprovedBookings: string
@@ -106,6 +114,8 @@ export interface Language {
     }
   }
   pet: {
+    editTitle: string
+    addTitle: string
     title: string
     fields: {
       species: string
@@ -162,6 +172,8 @@ export interface Language {
       fieldRequired: string
     }
     messages: {
+      medicinesGiven: string
+      medicinesNone: string
       addCustomerDetails: string
       addContactPeople: string
       chemicalSterilizationDate: string
@@ -190,6 +202,24 @@ export interface Language {
     }
     relations: {
       relations: string
+    }
+    // Declared by en-US/nl but never added to the interface (excess-property error).
+    alerts: {
+      title: string
+      condition: string
+      startDate: string
+      endDate: string
+      addAlert: string
+      inHeat: string
+      needsRest: string
+      aggressive: string
+      diabetic: string
+      since: string
+      until: string
+      ongoing: string
+      editAlert: string
+      deleteAlert: string
+      endBeforeStart: string
     }
   }
   booking: {
@@ -316,6 +346,7 @@ export interface Language {
     }
     labels: {
       addDaycare: string
+      selectedDates: string
     }
     messages: {
       addPets: string
@@ -326,7 +357,18 @@ export interface Language {
       verifyStandby: string
       submitted: string
       openPets: string
-      addDaycareDates: string
+      selectDaysHint: string
+      selectDateForDaycare: string
+      selectPlusToAdd: string
+      datesInMonth: (n: number) => string
+      noUpcomingDates: string
+      cancelDate: string
+      clickDateToSelect: string
+      selectPetToStart: string
+      selectedDatesCount: (n: number) => string
+      datesAdded: string
+      datesAddedSummary: (n: number, pets: string) => string
+      datesSelected: string
     }
     replies: {
       approve: string
@@ -343,6 +385,9 @@ export interface Language {
   }
   occupancy: {
     title: string
+    labels: {
+      date: string
+    }
   }
   openingTime: {
     fields: {
@@ -448,6 +493,7 @@ export interface Language {
     }
   }
   information: {
+    title: string
     messages: {
       termsAndConditions: string
       openingTimes: string
@@ -465,8 +511,12 @@ export interface Language {
       listPrice: string
     }
     labels: {
+      year: string
       years: string
+      month: string
       months: string
+
+      day: string
       days: string
     }
     messages: {
@@ -487,6 +537,7 @@ export interface Language {
       purchaseSubscription: string
       checkout: string
       showAll: string
+      edit: string
     }
     messages: {
       daycareSubscriptionRequired: string
@@ -545,11 +596,32 @@ export interface Language {
       today: string
       tomorrow: string
     }
+    dialog: {
+      waitlist: string
+      back: string
+      placeTitle: string
+      rating: string
+      ratingBands: {
+        poor: string
+        fair: string
+        ok: string
+        good: string
+        great: string
+      }
+      legend: string
+      free: string
+      freeSummary: string
+      noKennels: string
+      moreOccupants: string
+      assignDone: string
+      assignFailed: string
+    }
     messages: {
-      dragAndDrop: string
+      selectKennel: string
     }
   }
   financial: {
+    noUnpaidBookings: string
     title: string
     total: string
     payment: {
@@ -573,6 +645,23 @@ export interface Language {
   overview: {
     title: string
   }
+  listPages: {
+    searchCustomers: string
+    searchPets: string
+    emptyCustomers: string
+    emptyPets: string
+  }
+
+  administration: { title: string }
+  accounts: { title: string }
+  openingTimes: { title: string }
+  integrations: {
+    title: string
+    connected: string
+    failed: string
+  }
+  labelsPage: { title: string }
+  document: { title: string }
 }
 
 import type { Ref } from 'vue'

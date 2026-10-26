@@ -16,10 +16,17 @@ const defaultSelect = [
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Announcement>
   select?: (keyof Announcement)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'title' | 'expirationDate' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -38,7 +45,23 @@ function find({
     query = query.where('type', '=', criteria.type)
   }
 
-  return query.select(select)
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  return query
+    .select(select)
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
 }
 
 export async function findAnnouncement({
@@ -55,14 +78,22 @@ export async function findAnnouncement({
 
 export async function findAnnouncements({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Announcement>
   select?: (keyof Announcement)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'title' | 'expirationDate' | null
+    descending: boolean
+  }
 }) {
   const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
   return query.execute()
 }

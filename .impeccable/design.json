@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-30T13:30:00+02:00",
+  "title": "Design System: Petboarding",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Teal",
+        "canonical": "#00696d",
+        "tonalRamp": ["#00191b", "#1e393b", "#3d5a5b", "#5b7a7b", "#799a9c", "#97babc", "#b6dbdc", "#d4fbfc"]
+      },
+      "source-teal": {
+        "role": "primary",
+        "displayName": "Source Teal",
+        "canonical": "#4EBDC2",
+        "tonalRamp": ["#0f3d40", "#2e585b", "#4e7376", "#6d8e91", "#8caaab", "#abc5c6", "#cbe0e1", "#eafbfc"]
+      },
+      "interactive-blue": {
+        "role": "interactive",
+        "displayName": "Signal Blue",
+        "canonical": "#005faf",
+        "tonalRamp": ["#01243f", "#1e405a", "#3c5b76", "#597791", "#7793ad", "#94afc8", "#b2cae4", "#cfe6ff"]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Slate Teal",
+        "canonical": "#4a6364",
+        "tonalRamp": ["#031718", "#233637", "#435657", "#637576", "#829495", "#a2b3b4", "#c2d3d4", "#e2f2f3"]
+      },
+      "surface-container": {
+        "role": "neutral",
+        "displayName": "Neutral Surface Ramp",
+        "canonical": "#eceeee",
+        "tonalRamp": ["#ffffff", "#f7faf9", "#f2f4f4", "#eceeee", "#e6e9e8", "#e0e3e2", "#bec8c9", "#93a0a0"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "MD3 displayLarge — reserved for marketing-scale moments, unused in the operational app." },
+      "title": { "displayName": "Title", "purpose": "Section labels, agenda period label, card headings (MD3 titleMedium/Quasar subtitle1)." },
+      "body": { "displayName": "Body", "purpose": "Default copy, list rows, table cells; input text steps to 16px (bodyLarge)." },
+      "label": { "displayName": "Label", "purpose": "Buttons, tabs, field labels — weight 500 anchors every control." },
+      "overline": { "displayName": "Overline", "purpose": "Signature metadata face: dates, ids, status lines (12px/500/+2px tracking)." }
+    },
+    "shadows": [
+      { "name": "elevation-0", "value": "none", "purpose": "The page canvas." },
+      { "name": "elevation-1", "value": "0 1px 3px 0 color-mix(in srgb, var(--q-shadow-color) 20%, transparent)", "purpose": "Resting cards and list surfaces — the everyday lift. Dark: var(--q-dark-shadow-color)." },
+      { "name": "elevation-2", "value": "0 2px 6px 0 color-mix(in srgb, var(--q-shadow-color) 20%, transparent)", "purpose": "Raised surfaces and popovers." },
+      { "name": "elevation-3", "value": "0 4px 10px 0 color-mix(in srgb, var(--q-shadow-color) 30%, transparent)", "purpose": "Menus and dialogs." },
+      { "name": "elevation-4", "value": "0 6px 14px 0 color-mix(in srgb, var(--q-shadow-color) 30%, transparent)", "purpose": "Transient higher surfaces (snackbars)." },
+      { "name": "elevation-5", "value": "0 8px 20px 0 color-mix(in srgb, var(--q-shadow-color) 30%, transparent)", "purpose": "Dragged or elevated transient material only." }
+    ],
+    "motion": [
+      { "name": "duration-short", "value": "100ms", "purpose": "State overlays, ripple-scale feedback." },
+      { "name": "duration-medium", "value": "300ms", "purpose": "Default component transitions (Quasar .3s)." },
+      { "name": "duration-long", "value": "500ms", "purpose": "Page-level or emphatic transitions." },
+      { "name": "easing-standard", "value": "cubic-bezier(0.2, 0, 0, 1)", "purpose": "MD3 standard easing for emphasized moves." },
+      { "name": "easing-decelerate", "value": "cubic-bezier(0, 0, 0, 1)", "purpose": "Entering elements." },
+      { "name": "easing-accelerate", "value": "cubic-bezier(0.4, 0, 1, 1)", "purpose": "Exiting elements." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled pill — the one decisive action per region (Submit, purchase, confirm).",
+      "html": "<button class=\"ds-btn-primary\">Submit</button>",
+      "css": ".ds-btn-primary { background: #00696d; color: #ffffff; font: 500 14px/20px Roboto, -apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif; padding: 4px 24px; border: none; border-radius: 28px; cursor: pointer; transition: box-shadow 300ms cubic-bezier(0.2, 0, 0, 1), background-color 300ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-primary:hover { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2); } .ds-btn-primary:focus-visible { outline: 2px solid #005faf; outline-offset: 2px; } .ds-btn-primary:active { background: #005255; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Pilled outline in Signal Blue — the secondary/creation pattern (\"Add\").",
+      "html": "<button class=\"ds-btn-outline\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z\"/></svg>Add</button>",
+      "css": ".ds-btn-outline { background: transparent; color: #005faf; font: 500 14px/20px Roboto, -apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif; padding: 4px 24px; border: none; border-radius: 28px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background-color 300ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-outline:hover { background: rgba(0, 95, 175, 0.08); } .ds-btn-outline:focus-visible { outline: 2px solid #005faf; outline-offset: 2px; } .ds-btn-outline:active { background: rgba(0, 95, 175, 0.12); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The grouping surface for a task — 16px corners on the low container tone, resting at elevation 1.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card__title\">Daycare subscriptions</div><div class=\"ds-card__body\">Jan 1, 2026 until Dec 31, 2027<br>5 days per week · 0 / 5</div></div>",
+      "css": ".ds-card { background: #f2f4f4; color: #191c1c; border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2); font: 400 14px/21px Roboto, -apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif; } .ds-card__title { font: 500 16px/28px Roboto, sans-serif; margin-bottom: 4px; } .ds-card__body { color: #3f4949; } .ds-card:hover { box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "MD3 filled field — floating label, high-container fill, Signal Blue focus.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field__label\">Email</span><input class=\"ds-field__input\" type=\"email\" placeholder=\"name@facility.app\"></label>",
+      "css": ".ds-field { display: block; position: relative; background: #e0e3e2; border-radius: 4px 4px 8px 8px; padding: 16px 12px 8px; } .ds-field__label { display: block; font: 400 12px/16px Roboto, sans-serif; color: #3f4949; letter-spacing: 0.4px; } .ds-field__input { display: block; width: 100%; border: 0; background: transparent; font: 400 16px/24px Roboto, -apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif; color: #191c1c; padding: 4px 0 0; outline: none; } .ds-field__input::placeholder { color: #6f7979; } .ds-field:focus-within { box-shadow: inset 0 0 0 2px #005faf; } .ds-field:focus-within .ds-field__label { color: #005faf; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip-status",
+      "description": "The fixed operational vocabulary — one status, one color, everywhere (legend, agenda, calendar).",
+      "html": "<span class=\"ds-chip ds-chip--approved\">Approved</span><span class=\"ds-chip ds-chip--pending\">Pending</span><span class=\"ds-chip ds-chip--canceled\">Canceled</span><span class=\"ds-chip ds-chip--standby\">Reserve list</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; font: 500 14px/20px Roboto, sans-serif; color: #191c1c; padding: 2px 8px; border-radius: 12px; margin-right: 6px; } .ds-chip--approved { background: #4ade80; } .ds-chip--pending { background: #9e9e9e; } .ds-chip--canceled { background: #ff5722; } .ds-chip--standby { background: #facc15; } .ds-chip:focus-visible { outline: 2px solid #005faf; outline-offset: 2px; }"
+    },
+    {
+      "name": "Navigation Tab",
+      "kind": "nav",
+      "refersTo": "nav-tab-active",
+      "description": "Icon-rail destination: icon over a 12px label; the active one wears the secondary-container pill.",
+      "html": "<button class=\"ds-nav-tab\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 3 2 12h3v8h6v-6h2v6h6v-8h3L12 3z\"/></svg><span>Home</span></button>",
+      "css": ".ds-nav-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 76px; padding: 10px 0; border: none; background: transparent; color: #191c1c; border-radius: 16px; cursor: pointer; font: 500 12px/16px Roboto, sans-serif; transition: background-color 300ms cubic-bezier(0.2, 0, 0, 1); } .ds-nav-tab:hover { background: rgba(74, 99, 100, 0.08); } .ds-nav-tab:focus-visible { outline: 2px solid #005faf; outline-offset: 2px; } .ds-nav-tab[aria-current=\"page\"] { background: #cce8e9; color: #041f20; }"
+    },
+    {
+      "name": "Calendar Day Button",
+      "kind": "custom",
+      "refersTo": "chip-status",
+      "description": "Signature: the month grid's day number rendered as a rounded button — today wears a blue ring, booked days fill with status color, adjacent-month days dim.",
+      "html": "<div class=\"ds-daygrid\"><button class=\"ds-daygrid__day\">5</button><button class=\"ds-daygrid__day ds-daygrid__day--today\">1</button><button class=\"ds-daygrid__day ds-daygrid__day--approved\">8</button><button class=\"ds-daygrid__day ds-daygrid__day--outside\">30</button></div>",
+      "css": ".ds-daygrid { display: flex; gap: 8px; } .ds-daygrid__day { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #005faf; background: transparent; color: #005faf; font: 500 14px/20px Roboto, sans-serif; cursor: pointer; transition: background-color 300ms cubic-bezier(0.2, 0, 0, 1), box-shadow 300ms cubic-bezier(0.2, 0, 0, 1); } .ds-daygrid__day:hover { background: rgba(0, 95, 175, 0.08); box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2); } .ds-daygrid__day:focus-visible { outline: 2px solid #005faf; outline-offset: 2px; } .ds-daygrid__day--today { box-shadow: 0 0 0 2px #2196f3 inset; } .ds-daygrid__day--approved { background: #4ade80; border-color: #4ade80; color: #191c1c; } .ds-daygrid__day--outside { opacity: 0.4; cursor: default; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calm Control Room",
+    "overview": "Petboarding's interface is a facility's quiet command surface: dense, scannable, unhurried. The whole system is Material Design 3, delivered entirely through `unocss-preset-quasar` with its `MaterialDesign3` style selected — every theming value (color, type, shape, elevation, motion, component metrics) is a token the preset emits, and the identity is applied at **runtime**: the source color `#4EBDC2` generates the MD3 light/dark scheme, and `setThemeColors(THEME_COLORS)` (fetched from `/configuration`) writes it onto the running app. Deployments can carry their own source color without a rebuild; the generator behind the runtime theme and the CSS the preset emits are the same generator, so both stay numerically identical.\n\nThe aesthetic philosophy is operational clarity: the tool disappears and the data leads. Calm, precise, quietly confident — a well-run back office where everything is findable and nothing shouts. Surfaces are near-neutral with a faint teal cast, structure comes from the surface-container ramp and hairline outlines rather than boxes-inside-boxes, and color is spent almost entirely on meaning: status, alerts, and the few actions that matter. Density suits a staff member scanning a week of bookings between phone calls; the customer-facing portal inherits the same calm so the two experiences read as one product.\n\nConfirmed visual rejections: playful pet-shop whimsy (paws, bones, cartoon mascots) and cutesy marketing warmth. The product speaks to adults running a business.",
+    "keyCharacteristics": [
+      "Material Design 3 token architecture, selected style `MaterialDesign3` in `unocss-preset-quasar`, seeded from source color `#4EBDC2`, applied at runtime.",
+      "Near-neutral teal-cast surfaces; color reserved for status and action.",
+      "Roboto throughout, with the MD3 type scale and a signature wide-tracked overline for dates, ids, and status lines.",
+      "Pill buttons (28px), soft 16px cards, 12px chips — confident and approachable.",
+      "Soft-static elevation: surfaces rest one quiet level up, never stacked deep.",
+      "Staff density with customer-facing calm; en/NL copy parity on every string."
+    ],
+    "rules": [
+      { "name": "The Source Rule", "section": "colors", "body": "Identity flows from `#4EBDC2` through the runtime theme — `setThemeColors` + the preset tokens — never from hand-picked hexes. A new surface reads `primary`, `surface-container-*`, `on-surface`; it does not paste a color." },
+      { "name": "The Status Meanings Rule", "section": "colors", "body": "The five status colors mean exactly one thing each across calendar, agenda, list, and legend. Green never decorates; grey never means success; yellow always means \"reserve\"." },
+      { "name": "The Overline Rule", "section": "typography", "body": "Dates, ids, and status lines render as MD3 overline — 12px, weight 500, 2px letter-spacing (`#3f4949`). This is a deliberate design token, not a missing font; never \"fix\" it to a body face." },
+      { "name": "The One Quiet Level Rule", "section": "elevation", "body": "Static content sits at level 1. If a shadow is deeper than level 3, something is transient or in motion." }
+    ],
+    "dos": [
+      "**Do** derive every color from the runtime theme tokens (source `#4EBDC2` → MD3 roles); read `primary`, `surface-container-*`, `on-surface` semantics.",
+      "**Do** use the MD3 type roles and keep the overline treatment (12px/500/2px) for dates, ids, and status lines.",
+      "**Do** keep buttons pilled (28px) and cards at 16px with the level-1 shadow.",
+      "**Do** place surfaces on the container ramp (card = low, menu/dialog/input climbs) instead of adding borders to create hierarchy.",
+      "**Do** assign the five status colors their single fixed meanings everywhere.",
+      "**Do** ship every string, date format, and flow equally in English and Dutch."
+    ],
+    "donts": [
+      "**Don't** introduce pet-shop whimsy — paws, bones, cartoon mascots, or cutesy marketing warmth — anywhere in the product surface.",
+      "**Don't** hardcode hex values in components; if a color isn't in the token set, it isn't a color of this system.",
+      "**Don't** invent radii outside the 4/8/12/16/28/full scale or stack shadows deeper than level 3 on static content.",
+      "**Don't** reach for neutral grey enterprise defaults — the neutrals carry a faint teal cast from the source family.",
+      "**Don't** override Quasar or preset styling locally; the style's tokens are the system (fix shared defects upstream with a changeset)."
+    ]
+  }
+}

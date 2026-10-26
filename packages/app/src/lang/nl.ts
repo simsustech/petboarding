@@ -4,6 +4,7 @@ const lang: Language = {
   isoName: 'nl',
   edit: 'Wijzigen',
   cancel: 'Annuleren',
+  undo: 'Ongedaan maken',
   serverError: 'Er ging iets fout...',
   search: 'Zoeken...',
   open: 'Openen',
@@ -26,10 +27,12 @@ const lang: Language = {
   page: 'Pagina',
   next: 'Volgende',
   previous: 'Vorige',
+  today: 'Vandaag',
   delete: 'Verwijderen',
   documentation: 'Documentatie',
   add: 'Toevoegen',
   darkMode: 'Donkere modus',
+  moreOptions: 'Meer opties',
   language: 'Taal',
   termsAndConditions: 'Algemene voorwaarden',
   redirecting: 'Omleiden',
@@ -56,9 +59,14 @@ const lang: Language = {
   agenda: {
     title: 'Agenda',
     day: 'Dag',
-    week: 'Week'
+    week: 'Week',
+    empty: 'Geen boekingen of dagopvang deze week.',
+    emptyDay: 'Geen boekingen of dagopvang deze dag.',
+    swipeHint: 'Veeg om de rest van de week te zien.',
+    legend: 'Legenda'
   },
   availability: {
+    selectDates: 'Kies aankomst en vertrek',
     title: 'Beschikbaarheid',
     messages: {
       doesNotApplyToApprovedBookings:
@@ -110,6 +118,8 @@ const lang: Language = {
     }
   },
   pet: {
+    editTitle: 'Dier bewerken',
+    addTitle: 'Dier toevoegen',
     title: 'Huisdieren',
     fields: {
       species: 'Soort',
@@ -166,6 +176,8 @@ const lang: Language = {
       fieldRequired: 'Veld is vereist'
     },
     messages: {
+      medicinesGiven: 'Medicatie toegediend',
+      medicinesNone: 'Geen medicatie',
       addCustomerDetails: 'Vul a.u.b. eerst uw klantgegevens in..',
       addContactPeople: 'Voeg a.u.b. eerst een contact persoon toe',
       chemicalSterilizationDate:
@@ -197,6 +209,23 @@ const lang: Language = {
     },
     relations: {
       relations: 'Relaties met andere dieren'
+    },
+    alerts: {
+      title: 'Waarschuwingen',
+      condition: 'Conditie',
+      startDate: 'Start datum',
+      endDate: 'Eind datum',
+      addAlert: 'Waarschuwing toevoegen',
+      inHeat: 'Loops',
+      needsRest: 'Rust nodig',
+      aggressive: 'Aanvallend',
+      diabetic: 'Diabetisch',
+      since: 'Sinds',
+      until: 'Tot',
+      ongoing: 'Doorlopend',
+      editAlert: 'Waarschuwing aanpassen',
+      deleteAlert: 'Waarschuwing verwijderen',
+      endBeforeStart: 'De eind datum mag niet voor de start datum liggen'
     }
   },
   booking: {
@@ -337,7 +366,8 @@ const lang: Language = {
       status: 'Status'
     },
     labels: {
-      addDaycare: 'Dagopvang toevoegen'
+      addDaycare: 'Dagopvang toevoegen',
+      selectedDates: 'Geselecteerde dagen'
     },
     messages: {
       addPets: 'Voeg a.u.b. eerst één of meerdere huisdieren toe.',
@@ -351,7 +381,23 @@ const lang: Language = {
       submitted:
         'De datums zijn verstuurd. Controleer de status op deze pagina, u ontvang geen email.',
       openPets: 'Huisdieren openen',
-      addDaycareDates: 'Gebruik de + knop bovenaan om datums toe te voegen.'
+      selectDaysHint:
+        'Klik op een dag om deze te selecteren. Gebruik de maandknoppen om naar een andere maand te gaan.',
+      selectDateForDaycare: 'Voeg deze datum toe aan de dagopvang aanvraag.',
+      selectPlusToAdd: 'Kies het plusje om datums toe te voegen.',
+      datesInMonth: (n: number) => (n === 1 ? '1 datum' : `${n} datums`),
+      noUpcomingDates: 'Nog geen dagopvang datums gepland.',
+      cancelDate: 'Deze datum annuleren',
+      clickDateToSelect: 'Klik op een datum om te selecteren.',
+      selectPetToStart: 'Selecteer hierboven een huisdier om datums te kiezen.',
+      selectedDatesCount: (n: number) =>
+        n === 1 ? '1 datum geselecteerd' : `${n} datums geselecteerd`,
+      datesAdded: 'Dagopvang datums toegevoegd',
+      datesAddedSummary: (n: number, pets: string) =>
+        n === 1
+          ? `1 dagopvang datum is toegevoegd voor ${pets}.`
+          : `${n} dagopvang datums zijn toegevoegd voor ${pets}.`,
+      datesSelected: 'datums geselecteerd'
     },
     replies: {
       approve: 'Datumns goedkeuren',
@@ -367,7 +413,10 @@ const lang: Language = {
     }
   },
   occupancy: {
-    title: 'Bezetting'
+    title: 'Bezetting',
+    labels: {
+      date: 'Datum'
+    }
   },
   openingTime: {
     fields: {
@@ -482,6 +531,7 @@ const lang: Language = {
     }
   },
   information: {
+    title: 'Informatie',
     messages: {
       termsAndConditions:
         'Zorg ervoor dat u op de hoogte bent van de algemene voorwaarden.',
@@ -504,8 +554,12 @@ const lang: Language = {
       listPrice: 'Prijs'
     },
     labels: {
+      year: 'Jaar',
       years: 'Jaren',
+      month: 'Maand',
       months: 'Maanden',
+
+      day: 'Dag',
       days: 'Dagen'
     },
     messages: {
@@ -528,7 +582,8 @@ const lang: Language = {
       purchase: 'Kopen',
       purchaseSubscription: 'Abonnement kopen',
       checkout: 'Afrekenen',
-      showAll: 'Toon alle'
+      showAll: 'Toon alle',
+      edit: 'Bewerken'
     },
     messages: {
       daycareSubscriptionRequired:
@@ -594,11 +649,34 @@ const lang: Language = {
       today: 'Vandaag',
       tomorrow: 'Morgen'
     },
+    dialog: {
+      waitlist: 'Wachtlijst',
+      back: 'Terug',
+      placeTitle: 'Plaats {pet}',
+      rating: '{n} · {band}',
+      ratingBands: {
+        poor: 'Slecht',
+        fair: 'Matig',
+        ok: 'Redelijk',
+        good: 'Goed',
+        great: 'Uitstekend'
+      },
+      legend:
+        'Compatibiliteit met de huisdieren die al in een kennel staan:  {poor} (1-2) · {fair} (3-4) · {ok} (5-6) · {good} (7-8) · {great} (9-10)',
+      free: 'Vrij',
+      freeSummary: '{free} van {total} vrij',
+      noKennels: 'Geen kennels in dit gebouw.',
+      moreOccupants: '+{n} meer',
+      assignDone: '{pet} geplaatst in {kennel}.',
+      assignFailed: 'Kon dit huisdier niet plaatsen. Er is niets gewijzigd.'
+    },
     messages: {
-      dragAndDrop: 'Sleep de huisdieren naar de kennels.'
+      selectKennel:
+        'Klik op een huisdier en kies daarna een kennel of de wachtlijst.'
     }
   },
   financial: {
+    noUnpaidBookings: 'Geen openstaande boekingen in de afgelopen 90 dagen.',
     title: 'Financieel',
     total: 'Totaal',
     payment: {
@@ -623,7 +701,24 @@ const lang: Language = {
   },
   overview: {
     title: 'Overzicht'
-  }
+  },
+  listPages: {
+    searchCustomers: 'Typ om klanten te zoeken...',
+    searchPets: 'Typ om dieren te zoeken...',
+    emptyCustomers: 'Zoek een klant om de gegevens te zien.',
+    emptyPets: 'Zoek een dier om de gegevens te zien.'
+  },
+
+  administration: { title: 'Administratie' },
+  accounts: { title: 'Accounts' },
+  openingTimes: { title: 'Openingstijden' },
+  integrations: {
+    title: 'Integraties',
+    connected: 'Verbonden',
+    failed: 'Verbinding mislukt'
+  },
+  labelsPage: { title: 'Labels' },
+  document: { title: 'Documenten' }
 }
 
 export default lang

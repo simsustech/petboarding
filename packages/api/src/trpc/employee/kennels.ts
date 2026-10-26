@@ -7,6 +7,8 @@ import {
   findKennels,
   getDaycareDatePetKennels,
   setBookingPetKennel,
+  setBookingPetKennelForDate,
+  clearForwardBookingPetKennelOverrides,
   setDaycareDatePetKennel
 } from '../../repositories/kennel.js'
 import { getBookingPetKennels } from '../../repositories/kennel.js'
@@ -64,6 +66,31 @@ export const employeeKennelRoutes = ({
     )
     .mutation(async ({ input }) => {
       await setBookingPetKennel(input)
+    }),
+  setBookingPetKennelForDate: procedure
+    .input(
+      z.object({
+        bookingId: z.number(),
+        petId: z.number(),
+        date: z.string(),
+        kennelId: z.number().nullable()
+      })
+    )
+    .mutation(async ({ input }) => {
+      if (input.kennelId === null) {
+        await clearForwardBookingPetKennelOverrides({
+          bookingId: input.bookingId,
+          petId: input.petId,
+          fromDate: input.date
+        })
+      } else {
+        await setBookingPetKennelForDate({
+          bookingId: input.bookingId,
+          petId: input.petId,
+          date: input.date,
+          kennelId: input.kennelId
+        })
+      }
     }),
   setDaycareDatePetKennel: procedure
     .input(

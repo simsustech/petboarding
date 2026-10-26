@@ -13,7 +13,10 @@ import {
   updateBookingService
 } from '../../repositories/booking.js'
 import { findCustomer } from 'src/repositories/customer.js'
-import { createOrUpdateSlimfactInvoice } from '../admin/bookings.js'
+import {
+  createOrUpdateSlimfactInvoice,
+  syncBookingInvoice
+} from '../admin/slimfactInvoice.js'
 
 export const employeeBookingValidation = booking
   .omit({
@@ -182,7 +185,8 @@ export const employeeBookingRoutes = ({
         const { id, reason } = input
 
         if (id) {
-          await cancelBooking({ id }, reason, true)
+          await cancelBooking({ id }, reason, { allowPastStartDate: true })
+          await syncBookingInvoice({ fastify, bookingId: id })
           return true
         }
         throw new TRPCError({ code: 'BAD_REQUEST' })

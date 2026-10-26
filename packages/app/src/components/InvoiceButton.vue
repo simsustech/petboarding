@@ -1,13 +1,14 @@
 <template>
   <q-btn
     :dense="$q.screen.lt.sm"
-    class="q-pa-none max-w-62px max-h-80px"
+    class="q-pa-none max-w-62px max-h-100px !rounded-[4px]"
     :href="`https://${configuration.INTEGRATIONS?.slimfact.host}/invoice/${modelValue.uuid}`"
     target="_blank"
     outline
     :rounded="false"
     :class="classes"
     :aria-label="lang.booking.messages.openInvoice"
+    data-testid="invoice-button"
   >
     <div class="column items-center">
       <q-avatar class="col-12">
@@ -85,6 +86,6 @@ const classes = computed(() => {
         return 'text-orange'
     }
   }
-  return 'text-grey'
+  return 'text-gray'
 })
 </script>

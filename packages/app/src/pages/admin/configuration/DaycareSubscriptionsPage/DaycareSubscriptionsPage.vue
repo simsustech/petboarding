@@ -1,5 +1,9 @@
 <template>
   <q-page padding>
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <q-banner>
       <template #avatar>
         <q-icon name="i-mdi-info" color="info" />
@@ -14,6 +18,15 @@
       @update="openUpdateDaycareSubscriptionDialog"
       @delete="openDeleteDaycareSubscriptionDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createDaycareSubscriptionDialogRef"
@@ -48,7 +61,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog, ResourcePage } from '@simsustech/quasar-components'
 import type { DaycareSubscription } from '@petboarding/api/zod'
@@ -75,8 +88,13 @@ bus.on(
   }
 )
 
-const { daycareSubscriptions, refetch: execute } =
-  useConfigurationGetDaycareSubscriptionsQuery()
+const {
+  daycareSubscriptions,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetDaycareSubscriptionsQuery()
+const total = computed(() => daycareSubscriptions.value?.at(0)?.total || 0)
 
 const { mutateAsync: createDaycareSubscriptionMutation } =
   useConfigurationCreateDaycareSubscriptionMutation()

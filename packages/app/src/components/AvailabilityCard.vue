@@ -12,7 +12,8 @@
       <div class="row justify-center items-center">
         <date-picker
           v-model="dateRange"
-          class="col-12 q-mt-md"
+          :class="['col-12 q-mt-md', { 'range-empty': rangeEmpty }]"
+          :style="rangeEmpty ? hintStyle : undefined"
           :periods="unavailablePeriods"
           :range="toggle === 'boarding'"
           :options="options"
@@ -23,7 +24,7 @@
     <q-card-section>
       {{ lang.availability.messages.doesNotApplyToApprovedBookings }}
       <br />
-      <router-link to="/account/bookings">{{
+      <router-link class="q-link" to="/account/bookings">{{
         lang.availability.messages.addBooking
       }}</router-link>
     </q-card-section>
@@ -87,6 +88,12 @@ const dateRange = ref({
   from: '',
   to: ''
 })
+
+// An empty range makes q-date print two em-dashes; scoped CSS swaps them for one hint.
+const rangeEmpty = computed(() => !dateRange.value.from || !dateRange.value.to)
+const hintStyle = computed(() => ({
+  '--availability-hint': JSON.stringify(lang.value.availability.selectDates)
+}))
 watch(toggle, (val) => {
   if (val) dateRange.value = { from: '', to: '' }
 })
@@ -129,3 +136,22 @@ const options = (date: string) => {
   )
 }
 </script>
+
+<style scoped>
+/* App content injected into Quasar's date header (`--availability-hint`), keyed off
+   this app's own `.range-empty` state — nothing generic to migrate. */
+.range-empty :deep(.q-date__header-title-label),
+.range-empty :deep(.q-date__header-subtitle) {
+  display: none;
+}
+.range-empty :deep(.q-date__header) {
+  position: relative;
+  min-height: 2.5rem;
+}
+.range-empty :deep(.q-date__header)::after {
+  content: var(--availability-hint);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--q-on-primary, #fff);
+}
+</style>

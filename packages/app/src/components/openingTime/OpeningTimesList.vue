@@ -1,9 +1,13 @@
 <template>
   <q-list>
+    <q-item-label header>{{ lang.configuration.openingTimes }}</q-item-label>
     <q-item
       v-for="openingTime in modelValue"
       :key="openingTime.id"
-      :class="{ 'bg-grey-3': openingTime.disabled }"
+      :class="{
+        'bg-surface-container-high text-on-surface-variant':
+          openingTime.disabled
+      }"
     >
       <q-item-section>
         <q-item-label>
@@ -18,7 +22,7 @@
           v-if="showEditButton || showDeleteButton"
           icon="i-mdi-more-vert"
           flat
-          aria-label="More options"
+          :aria-label="`${lang.moreOptions} — ${openingTime.name}`"
         >
           <q-menu>
             <q-list>

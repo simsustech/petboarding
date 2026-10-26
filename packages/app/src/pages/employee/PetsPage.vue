@@ -2,6 +2,8 @@
   <q-page padding>
     <q-toolbar class="q-mb-lg">
       <pet-select
+        style="flex: 1"
+        :hint="lang.listPages.searchPets"
         :model-value="ids"
         multiple
         clearable
@@ -13,10 +15,22 @@
         <template #prepend> <q-icon name="i-mdi-search" /> </template>
       </pet-select>
     </q-toolbar>
+
+    <!-- Nothing selected yet: the page is a search, so it says so instead of
+         rendering an empty list (audit: employee-pets.png). The token flips with
+         the scheme — `text-grey-7` measured 3.71:1 on the dark surface. -->
+    <div
+      v-if="!data?.length"
+      class="q-pa-lg flex flex-center text-body1 text-on-surface-variant"
+    >
+      {{ lang.listPages.emptyPets }}
+    </div>
+
     <div class="row q-col-gutter-md">
       <pet-card
         v-for="pet in data"
         :key="pet.id"
+        class="col-12 col-md-4"
         :model-value="pet"
         :categories="categories"
         use-rating
@@ -30,6 +44,7 @@
         @update="openUpdatePetDialog"
         @open-customer="openCustomer"
         @delete="deletePet"
+        :show-alerts="true"
       />
     </div>
   </q-page>
@@ -41,6 +56,7 @@
     persistent
     @submit="update"
   >
+    <template #title>{{ lang.pet.editTitle }}</template>
     <pet-form
       ref="updatePetFormRef"
       :categories="categories"

@@ -1,5 +1,5 @@
-import { ExpressionBuilder, sql } from 'kysely'
-import { Database, db } from '../kysely/index.js'
+import { type ExpressionBuilder, sql } from 'kysely'
+import { type Database, db } from '../kysely/index.js'
 import type { Kennels } from '../kysely/types.js'
 import {
   BOOKING_STATUS,
@@ -9,8 +9,7 @@ import {
 import type { Insertable, Selectable, Updateable } from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import { convertImageSql } from './index.js'
-import { withRelations, withValidVaccinations } from './pet.js'
-type Kennel = Selectable<Kennels>
+import { withAlerts, withRelations, withValidVaccinations } from './pet.js'
 type NewKennel = Insertable<Kennels>
 type KennelUpdate = Updateable<Kennels>
 
@@ -34,10 +33,17 @@ function withBuilding(eb: ExpressionBuilder<Database, 'kennels'>) {
 
 function find({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Kennel>
   select?: (keyof Kennel)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'name' | 'capacity' | 'order' | null
+    descending: boolean
+  }
 }) {
   if (select) select = [...defaultSelect, ...select]
   else select = [...defaultSelect]
@@ -52,7 +58,30 @@ function find({
     query = query.where('name', '=', criteria.name)
   }
 
-  return query.select(select).select([withBuilding])
+  let sorted = false
+  if (pagination) {
+    if (pagination.sortBy) {
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+      sorted = true
+    }
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  // Fall back to the configured `order` when the caller gave no sort.
+  if (!sorted) query = query.orderBy('order', 'asc')
+
+  return query
+    .select(select)
+    .select([withBuilding])
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
 }
 
 export async function findKennel({
@@ -69,14 +98,22 @@ export async function findKennel({
 
 export async function findKennels({
   criteria,
-  select
+  select,
+  pagination
 }: {
   criteria: Partial<Kennel>
   select?: (keyof Kennel)[]
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'name' | 'capacity' | 'order' | null
+    descending: boolean
+  }
 }) {
   const query = find({
     criteria,
-    select
+    select,
+    pagination
   })
   return query.execute()
 }
@@ -125,6 +162,21 @@ export async function getBookingPetKennels(date: string) {
     .selectFrom('pets')
     .innerJoin('bookingPetKennel', 'pets.id', 'bookingPetKennel.petId')
     .innerJoin('bookings', 'bookings.id', 'bookingPetKennel.bookingId')
+    .leftJoinLateral(
+      (eb) =>
+        eb
+          .selectFrom('bookingPetKennelOverride as bpk_o')
+          .select(['bpk_o.kennelId', 'bpk_o.bookingId as has_override'])
+          .whereRef('bpk_o.bookingId', '=', 'bookingPetKennel.bookingId')
+          .whereRef('bpk_o.petId', '=', 'bookingPetKennel.petId')
+          .whereRef('bpk_o.date', '<=', sql<string>`${date}::date`)
+          .whereRef('bpk_o.date', '>=', 'bookings.startDate')
+          .whereRef('bpk_o.date', '<=', 'bookings.endDate')
+          .orderBy('bpk_o.date', 'desc')
+          .limit(1)
+          .as('override'),
+      (join) => join.onTrue()
+    )
     .where('bookings.startDate', '<=', date)
     .where('bookings.endDate', '>=', date)
     .where(({ eb, selectFrom }) =>
@@ -182,7 +234,13 @@ export async function getBookingPetKennels(date: string) {
         .end()
         .as('departureTimeId'),
       convertImageSql.as('image'),
-      'bookingPetKennel.kennelId as kennelId',
+      seb
+        .case()
+        .when('override.has_override', 'is not', null)
+        .then(sql`override.kennel_id`)
+        .else(sql`booking_pet_kennel.kennel_id`)
+        .end()
+        .as('kennelId'),
       'bookingPetKennel.bookingId as bookingId',
       jsonObjectFrom(
         seb
@@ -191,7 +249,8 @@ export async function getBookingPetKennels(date: string) {
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
       withValidVaccinations,
-      withRelations
+      withRelations,
+      withAlerts(date)
     ])
     .execute()
 }
@@ -223,7 +282,8 @@ export async function getDaycareDatePetKennels(date: string) {
           .whereRef('customers.id', '=', 'pets.customerId')
       ).as('customer'),
       withValidVaccinations,
-      withRelations
+      withRelations,
+      withAlerts(date)
     ])
     .execute()
 }
@@ -260,4 +320,55 @@ export async function setDaycareDatePetKennel(daycareDatePetKennel: {
       kennelId: daycareDatePetKennel.kennelId
     })
     .execute()
+}
+
+export async function setBookingPetKennelForDate(input: {
+  bookingId: number
+  petId: number
+  date: string
+  kennelId: number
+}) {
+  return db
+    .insertInto('bookingPetKennelOverride')
+    .values({
+      bookingId: input.bookingId,
+      petId: input.petId,
+      date: input.date,
+      kennelId: input.kennelId
+    })
+    .onConflict((oc) =>
+      oc.columns(['bookingId', 'petId', 'date']).doUpdateSet({
+        kennelId: input.kennelId
+      })
+    )
+    .execute()
+}
+
+export async function clearForwardBookingPetKennelOverrides(input: {
+  bookingId: number
+  petId: number
+  fromDate: string
+}) {
+  return db.transaction().execute(async (trx) => {
+    await trx
+      .deleteFrom('bookingPetKennelOverride')
+      .where('bookingId', '=', input.bookingId)
+      .where('petId', '=', input.petId)
+      .where('date', '>=', input.fromDate)
+      .execute()
+    await trx
+      .insertInto('bookingPetKennelOverride')
+      .values({
+        bookingId: input.bookingId,
+        petId: input.petId,
+        date: input.fromDate,
+        kennelId: null
+      })
+      .onConflict((oc) =>
+        oc.columns(['bookingId', 'petId', 'date']).doUpdateSet({
+          kennelId: null
+        })
+      )
+      .execute()
+  })
 }

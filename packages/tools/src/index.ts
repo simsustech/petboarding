@@ -1,2 +1,2 @@
-const dummy = () => {};
-export default dummy;
+const dummy = () => {}
+export default dummy

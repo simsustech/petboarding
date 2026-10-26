@@ -4,13 +4,14 @@ import type {
   OidcPayloadsTable,
   AuthenticationMethodsTable
 } from '@modular-api/fastify-oidc/kysely'
-import {
+import type {
   BOOKING_STATUS,
   DAYCARE_DATE_STATUS,
   OPENING_TIME_TYPE,
   PERIOD_TYPE,
   SERVICE_TYPE,
-  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  PET_ALERT_CONDITIONS
 } from '@petboarding/tools/constants'
 
 export type Generated<T> =
@@ -46,6 +47,13 @@ export interface Announcements {
 export interface BookingPetKennel {
   bookingId: number
   petId: number
+  kennelId: number | null
+}
+
+export interface BookingPetKennelOverride {
+  bookingId: number
+  petId: number
+  date: string
   kennelId: number | null
 }
 
@@ -133,7 +141,6 @@ export interface Customers {
   accountId: number | null
   comments: string | null
   createdAt: Generated<string>
-  fulltext: Generated<string | null>
 }
 
 export interface DaycareDatePetKennel {
@@ -246,7 +253,6 @@ export interface Pets {
   customerId: number
   categoryId: number | null
   createdAt: Generated<string>
-  fulltext: Generated<string | null>
 }
 
 export interface Services {
@@ -283,6 +289,15 @@ export interface PetRelations {
   comment: string | null
 }
 
+export interface PetAlerts {
+  id: Generated<number>
+  petId: number
+  condition: PET_ALERT_CONDITIONS
+  startDate: string | null
+  endDate: string | null
+  createdAt: Generated<string>
+}
+
 export interface Vacations {
   id: Generated<number>
   name: string
@@ -300,6 +315,7 @@ export interface DB {
   oidcPayloads: OidcPayloadsTable
   announcements: Announcements
   bookingPetKennel: BookingPetKennel
+  bookingPetKennelOverride: BookingPetKennelOverride
   bookings: Bookings
   bookingService: BookingService
   bookingStatus: BookingStatus
@@ -321,5 +337,6 @@ export interface DB {
   vaccinations: Vaccinations
   documents: Documents
   petRelations: PetRelations
+  petAlerts: PetAlerts
   vacations: Vacations
 }

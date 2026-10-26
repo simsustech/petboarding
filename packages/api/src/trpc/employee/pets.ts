@@ -1,8 +1,11 @@
 import { TRPCError } from '@trpc/server'
-import { t } from '../index.js'
+import type { t } from '../index.js'
 import * as z from 'zod'
 import { pet } from '../../zod/pet.js'
-import { VACCINATION_IMAGE_SIZE } from '@petboarding/tools/constants'
+import {
+  PET_ALERT_CONDITIONS,
+  VACCINATION_IMAGE_SIZE
+} from '@petboarding/tools/constants'
 import { vaccination } from '../../zod/vaccination.js'
 import sharp from 'sharp'
 import { subYears } from 'date-fns'
@@ -13,6 +16,7 @@ import {
   setPetRelation,
   updatePet
 } from '../../repositories/pet.js'
+import { db } from '../../kysely/index.js'
 import {
   createVaccination,
   findVaccinations,
@@ -23,7 +27,8 @@ import type { FastifyInstance } from 'fastify'
 
 const employeePetValidation = pet.omit({
   customer: true,
-  customerId: true
+  customerId: true,
+  relations: true
 })
 
 export const convertVaccinationImage = async (uri: string) => {
@@ -45,7 +50,7 @@ export const employeePetRoutes = ({
 }) => ({
   searchPets: procedure.input(z.string()).query(async ({ input }) => {
     const searchPhrase = input
-    if (input) {
+    if (input && input.length > 1) {
       const pets = searchPets(searchPhrase)
       return pets
     }
@@ -92,7 +97,8 @@ export const employeePetRoutes = ({
           select: ['rating', 'comments'],
           relations: {
             vaccinations: true,
-            relations: true
+            relations: true,
+            alerts: true
           }
         })
         return pets
@@ -259,5 +265,55 @@ export const employeePetRoutes = ({
     .mutation(async ({ input }) => {
       const { petId1, petId2, rating } = input
       return setPetRelation({ petId1, petId2, rating })
+    }),
+  createAlert: procedure
+    .input(
+      z.object({
+        petId: z.number(),
+        condition: z.nativeEnum(PET_ALERT_CONDITIONS),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { petId, condition, startDate, endDate } = input
+      return db
+        .insertInto('petAlerts')
+        .values({
+          petId,
+          condition,
+          startDate: startDate ?? null,
+          endDate: endDate ?? null
+        })
+        .returningAll()
+        .executeTakeFirst()
+    }),
+  updateAlert: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        condition: z.string(),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, condition, startDate, endDate } = input
+      return db
+        .updateTable('petAlerts')
+        .set({
+          condition,
+          startDate: startDate ?? null,
+          endDate: endDate ?? null
+        })
+        .where('id', '=', id)
+        .returningAll()
+        .executeTakeFirst()
+    }),
+  deleteAlert: procedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const { id } = input
+      return db.deleteFrom('petAlerts').where('id', '=', id).execute()
     })
 })

@@ -3,7 +3,7 @@
     <div class="row justify-center text-h6">
       {{ formatDate(selectedDate, { dateStyle: 'medium' }) }}
     </div>
-    <div class="row pt-0px mt-0px">
+    <div id="waitlist" class="row pt-0px mt-0px">
       <pet-chip
         v-for="pet in internalPetKennels.filter((pet) => pet.kennelId === null)"
         :id="`pet${pet.id}`"
@@ -17,8 +17,6 @@
         }"
         :model-value="pet"
         show-last-name
-        draggable="true"
-        @dragstart="onDragStart"
       >
       </pet-chip>
     </div>
@@ -75,8 +73,6 @@
                   :model-value="pet"
                   show-badge
                   show-last-name
-                  draggable="true"
-                  @dragstart="onDragStart"
                 >
                 </pet-chip>
               </div>
@@ -156,12 +152,6 @@ watch(
       internalPetKennels.value = petKennels.value.map((val) => extend({}, val))
   }
 )
-
-// store the id of the draggable element
-function onDragStart(e) {
-  e.dataTransfer.setData('text', e.target.id)
-  e.dataTransfer.dropEffect = 'move'
-}
 
 onMounted(async () => {
   await executeBuildings()

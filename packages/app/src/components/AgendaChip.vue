@@ -2,7 +2,7 @@
   <div class="q-mb-md">
     <pet-chip
       v-for="(pet, index) in modelValue.pets"
-      :key="pet.id"
+      :overline="timeLabel"
       :model-value="pet"
       :show-last-name="showLastName"
       :selected="selectedPets?.includes(pet.id!)"
@@ -38,6 +38,7 @@
             ) && index === 0
           "
           :color="AGENDA_CHIP_BADGE_COLORS.appointment"
+          :text-color="AGENDA_CHIP_BADGE_INK_COLORS.appointment"
           rounded
         >
           <q-icon
@@ -49,6 +50,7 @@
         <q-badge
           v-if="modelValue.isDoubleBooked"
           :color="AGENDA_CHIP_BADGE_COLORS.isDoubleBooked"
+          :text-color="AGENDA_CHIP_BADGE_INK_COLORS.isDoubleBooked"
           rounded
         >
           <q-icon
@@ -89,6 +91,7 @@ import { computed, ref, toRefs } from 'vue'
 import { useLang } from '../lang/index.js'
 import {
   AGENDA_CHIP_BADGE_COLORS,
+  AGENDA_CHIP_BADGE_INK_COLORS,
   AGENDA_CHIP_BADGE_ICONS
 } from '../configuration.js'
 import PetChip from './pet/PetChip.vue'
@@ -123,6 +126,22 @@ const { modelValue } = toRefs(props)
 const petIds = computed(
   () => modelValue.value.pets?.map((pet) => pet.id!) || []
 )
+
+const timeLabel = computed(() => {
+  if (
+    props.type === 'arrival' &&
+    'startTime' in modelValue.value &&
+    modelValue.value.startTime?.name
+  )
+    return `${modelValue.value.startTime.name}`
+  if (
+    props.type === 'departure' &&
+    'endTime' in modelValue.value &&
+    modelValue.value.endTime?.name
+  )
+    return `${modelValue.value.endTime.name}`
+  return ''
+})
 
 const icons = ref({
   arrival: 'i-mdi-add',

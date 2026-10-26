@@ -993,9 +993,12 @@ export declare const createRouter: (
         getInvoices: import('@trpc/server').TRPCQueryProcedure<{
           input:
             | {
-                status:
+                status?:
                   | import('@modular-api/fastify-checkout').InvoiceStatus
-                  | null
+                  | undefined
+                statuses?:
+                  | import('@modular-api/fastify-checkout').InvoiceStatus[]
+                  | undefined
                 companyId?: number | null | undefined
                 clientId?: number | null | undefined
                 clientDetails?:
@@ -1018,6 +1021,8 @@ export declare const createRouter: (
                   | undefined
                 uuids?: string[] | undefined
                 paid?: boolean | undefined
+                startDate?: string | undefined
+                endDate?: string | undefined
               }
             | undefined
           output: import('@modular-api/fastify-checkout').Invoice[] | undefined

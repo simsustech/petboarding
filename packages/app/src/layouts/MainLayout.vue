@@ -5,13 +5,14 @@
 
       <user-menu-button
         v-if="user"
+        :aria-label="lang.account.title"
         color="accent"
         :user-route="userRoute"
         :icons="{ person: 'i-mdi-person' }"
         @sign-out="logout"
       />
       <login-button v-else color="accent" @click="login" />
-      <q-btn icon="i-mdi-more-vert" flat>
+      <q-btn icon="i-mdi-more-vert" flat :aria-label="lang.moreOptions">
         <q-menu>
           <q-list>
             <q-item clickable href="/print/termsandconditions" target="_blank">
@@ -36,7 +37,7 @@
             </q-item>
 
             <q-item
-              :href="`https://www.petboarding.app/${$q.lang.isoName === 'en-US' ? '' : $q.lang.isoName.slice(0, 2)}/documentation`"
+              :href="`https://www.petboarding.app/${$q.lang.isoName === 'en-US' ? '' : $q.lang.isoName.slice(0, 2)}/guide/`"
               target="_blank"
             >
               <q-item-section avatar>
@@ -65,8 +66,10 @@
               is-item
             />
             <q-item>
-              <q-item-section label>
-                {{ lang.darkMode }}
+              <q-item-section>
+                <q-item-label>
+                  {{ lang.darkMode }}
+                </q-item-label>
               </q-item-section>
               <q-item-section side>
                 <q-toggle
@@ -83,6 +86,16 @@
       </q-btn>
     </template>
 
+    <template #heading>
+      <!-- One h1 per routed page, from the same title map the header reads.
+           No page renders its own anymore — home's visible duplicate went with
+           "the title is in the toolbar" — so the root joins the condition: its
+           title falls back to the site name, the same string the bar shows. -->
+      <h1 v-if="route.meta?.lang || route.path === '/'" class="sr-only">
+        {{ title }}
+      </h1>
+    </template>
+
     <template #drawer-mini-navigation>
       <div class="col">
         <navigation-tabs vertical dense />
@@ -91,7 +104,14 @@
 
     <template #drawer>
       <q-scroll-area class="fit">
-        <div class="q-px-md">
+        <!--
+          No q-px-md here: the preset already states
+          `.q-drawer__content > * { padding-inline: 28px }` (reference parity),
+          so this wrapper's own 16px charged every drawer row 44px a side
+          before the row's own item padding — the label column lost the width
+          and "Administrator" needed 86px at 375px but got 60 (ellipsised).
+        -->
+        <div>
           <div class="text-overline">{{ title }}</div>
           <q-list>
             <q-item to="/" exact>
@@ -348,7 +368,7 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                  <q-item to="/admin/vacations">
+                  <q-item to="/admin/configuration/vacations">
                     <q-item-section>
                       <q-item-label> {{ lang.vacation.title }} </q-item-label>
                     </q-item-section>
@@ -399,7 +419,7 @@
 
     <template #footer>
       <div class="column fit items-center justify-center">
-        <navigation-tabs dense class="col-12 lt-md" />
+        <navigation-tabs dense class="col-12 lt-md navigation-tabs-footer" />
       </div>
     </template>
 
@@ -460,8 +480,13 @@ const userRoute = {
 }
 
 const title = computed(() => {
-  // @ts-expect-error key might not exist
-  if (lang.value[route.meta?.lang]) return lang.value[route.meta.lang].title
+  // A key without a title (or no key at all) falls back to the site name, never blank.
+  const key = route.meta?.lang
+  const entry = key ? (lang.value as Record<string, unknown>)[key] : undefined
+  if (entry && typeof entry === 'object' && 'title' in entry) {
+    const value = (entry as { title?: string }).title
+    if (value) return value
+  }
   return configuration.value.TITLE
 })
 
@@ -558,7 +583,7 @@ onMounted(async () => {
       ) {
         $q.loading.show({
           message: `${lang.value.redirecting}...`,
-          boxClass: 'bg-grey-2 text-grey-9',
+          boxClass: 'bg-grey-2 text-gray-9',
           spinnerColor: 'primary'
         })
         setTimeout(() => {
@@ -572,3 +597,23 @@ onMounted(async () => {
   ready.value = true
 })
 </script>
+
+<style>
+/*
+ * Layering is owned upstream now — unocss-preset-quasar ADR 0007 orders
+ * marginals 2000 < overlay drawer 3000 (scrim 2999) < menus/dialogs 6000, so an
+ * open drawer dims the app bar rather than sitting under it (ADR 0007, amended
+ * 2026-10-05). Do not re-add z-index overrides here; a conflict belongs upstream.
+ */
+
+/*
+ * Geometry, not layering: at mobile the drawer renders open and spans 0..812, so
+ * start it below the 50px app bar to keep both rows reachable (MD3: top app bar
+ * above the navigation drawer).
+ */
+@media (max-width: 599px) {
+  .q-drawer--fixed {
+    top: 50px !important;
+  }
+}
+</style>

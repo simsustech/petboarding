@@ -6,6 +6,8 @@
         class="q-pb-none"
         filled
         mask="date"
+        :label="lang.occupancy.labels.date"
+        :aria-label="lang.occupancy.labels.date"
         :rules="['date']"
         @update:model-value="updateDate"
       >
@@ -101,12 +103,6 @@ export default {
 import { computed, onMounted } from 'vue'
 import { useLang } from '../../lang/index.js'
 import { QCalendarMonth } from '@quasar/quasar-ui-qcalendar/QCalendarMonth'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
-// import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.scss'
-import '../../css/q-calendar.scss'
-import '../../css/calendar-month.scss'
-import '../../css/calendar-month-mini.scss'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import { date as dateUtil } from 'quasar'

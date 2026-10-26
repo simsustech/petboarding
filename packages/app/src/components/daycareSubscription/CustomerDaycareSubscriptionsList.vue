@@ -23,7 +23,10 @@
         customerDaycareSubscription, index
       ) in filteredCustomerDaycareSubscriptions"
       :key="index"
-      :class="{ 'bg-grey-3': !customerDaycareSubscription.isActive }"
+      :class="{
+        'bg-surface-container-high text-on-surface-variant':
+          !customerDaycareSubscription.isActive
+      }"
       :content-inset-level="1"
     >
       <template #header>
@@ -34,7 +37,7 @@
               CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
             "
             name="i-mdi-dollar"
-            color="green"
+            color="positive"
           />
         </q-item-section>
         <q-item-section>
@@ -57,6 +60,41 @@
             v-if="customerDaycareSubscription.invoice"
             :model-value="customerDaycareSubscription.invoice"
           />
+          <q-btn
+            v-else
+            flat
+            dense
+            round
+            icon="i-mdi-dots-vertical"
+            data-testid="daycare-subscription-more-button"
+            :aria-label="
+              customerDaycareSubscription.daycareSubscription?.description
+                ? `${lang.moreOptions} — ${
+                    customerDaycareSubscription.daycareSubscription.description
+                  }`
+                : lang.moreOptions
+            "
+          >
+            <q-menu>
+              <q-list style="min-width: 120px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  data-testid="daycare-subscription-edit-button"
+                  @click="
+                    $emit('update', { data: customerDaycareSubscription })
+                  "
+                >
+                  <q-item-section avatar>
+                    <q-icon name="i-mdi-pencil" />
+                  </q-item-section>
+                  <q-item-section>
+                    {{ lang.customerDaycareSubscription.labels.edit }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </q-item-section>
       </template>
       <q-item>
@@ -93,6 +131,17 @@ export interface Props {
   modelValue: CustomerDaycareSubscription[]
 }
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (
+    e: 'update',
+    {
+      data
+    }: {
+      data: CustomerDaycareSubscription
+    }
+  ): void
+}>()
 
 const { modelValue } = toRefs(props)
 

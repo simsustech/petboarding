@@ -4,6 +4,7 @@ const lang: Language = {
   isoName: 'en-US',
   edit: 'Edit',
   cancel: 'Cancel',
+  undo: 'Undo',
   serverError: 'Something went wrong...',
   search: 'Search...',
   open: 'Open',
@@ -26,10 +27,12 @@ const lang: Language = {
   page: 'Page',
   next: 'Next',
   previous: 'Previous',
+  today: 'Today',
   delete: 'Delete',
   documentation: 'Documentation',
   add: 'Add',
   darkMode: 'Dark mode',
+  moreOptions: 'More options',
   language: 'Language',
   termsAndConditions: 'Terms and conditions',
   redirecting: 'Redirecting',
@@ -56,9 +59,14 @@ const lang: Language = {
   agenda: {
     title: 'Agenda',
     day: 'Day',
-    week: 'Week'
+    week: 'Week',
+    empty: 'No bookings or daycare this week.',
+    emptyDay: 'No bookings or daycare on this day.',
+    swipeHint: 'Swipe to see the rest of the week.',
+    legend: 'Legend'
   },
   availability: {
+    selectDates: 'Select arrival and departure',
     title: 'Availability',
     messages: {
       doesNotApplyToApprovedBookings:
@@ -109,6 +117,8 @@ const lang: Language = {
     }
   },
   pet: {
+    editTitle: 'Edit pet',
+    addTitle: 'Add pet',
     title: 'Pets',
     fields: {
       species: 'Species',
@@ -165,6 +175,8 @@ const lang: Language = {
       fieldRequired: 'Field is required'
     },
     messages: {
+      medicinesGiven: 'Medicines given',
+      medicinesNone: 'No medicines',
       addCustomerDetails: 'Please enter your customer details first.',
       addContactPeople: 'Please add a contact person first.',
       chemicalSterilizationDate:
@@ -196,6 +208,23 @@ const lang: Language = {
     },
     relations: {
       relations: 'Relations with other pets'
+    },
+    alerts: {
+      title: 'Alerts',
+      condition: 'Condition',
+      startDate: 'Start date',
+      endDate: 'End date',
+      addAlert: 'Add alert',
+      inHeat: 'In heat',
+      needsRest: 'Needs rest',
+      aggressive: 'Aggressive',
+      diabetic: 'Diabetic',
+      since: 'Since',
+      until: 'Until',
+      ongoing: 'Ongoing',
+      editAlert: 'Edit alert',
+      deleteAlert: 'Delete alert',
+      endBeforeStart: 'The end date cannot be before the start date'
     }
   },
   booking: {
@@ -331,7 +360,8 @@ const lang: Language = {
       status: 'Status'
     },
     labels: {
-      addDaycare: 'Add daycare'
+      addDaycare: 'Add daycare',
+      selectedDates: 'Selected days'
     },
     messages: {
       addPets: 'Please add one or more pets first.',
@@ -344,7 +374,23 @@ const lang: Language = {
       submitted:
         'The dates have been submitted. Check the status on this page, you will not receive an email.',
       openPets: 'Open pets',
-      addDaycareDates: 'Use the + button at the top to add dates.'
+      selectDaysHint:
+        'Click a day to select it. Use the month buttons to move to another month.',
+      selectDateForDaycare: 'Add this date to the daycare request.',
+      selectPlusToAdd: 'Select the plus button to add dates.',
+      datesInMonth: (n: number) => (n === 1 ? '1 date' : `${n} dates`),
+      noUpcomingDates: 'No upcoming daycare dates.',
+      cancelDate: 'Cancel this date',
+      clickDateToSelect: 'Click a date to select it.',
+      selectPetToStart: 'Select a pet above to start picking dates.',
+      selectedDatesCount: (n: number) =>
+        n === 1 ? '1 date selected' : `${n} dates selected`,
+      datesAdded: 'Daycare dates added',
+      datesAddedSummary: (n: number, pets: string) =>
+        n === 1
+          ? `1 daycare date was added for ${pets}.`
+          : `${n} daycare dates were added for ${pets}.`,
+      datesSelected: 'dates selected'
     },
     replies: {
       approve: 'Approve dates',
@@ -360,7 +406,10 @@ const lang: Language = {
     }
   },
   occupancy: {
-    title: 'Occupancy'
+    title: 'Occupancy',
+    labels: {
+      date: 'Date'
+    }
   },
   openingTime: {
     fields: {
@@ -470,6 +519,7 @@ const lang: Language = {
     }
   },
   information: {
+    title: 'Information',
     messages: {
       termsAndConditions:
         'Make sure you have read and understand the terms and conditions.',
@@ -491,8 +541,12 @@ const lang: Language = {
       listPrice: 'Price'
     },
     labels: {
+      year: 'Year',
       years: 'Years',
+      month: 'Month',
       months: 'Months',
+
+      day: 'Day',
       days: 'Days'
     },
     messages: {
@@ -515,7 +569,8 @@ const lang: Language = {
       purchase: 'Purchase',
       purchaseSubscription: 'Purchase subscription',
       checkout: 'Checkout',
-      showAll: 'Show all'
+      showAll: 'Show all',
+      edit: 'Edit'
     },
     messages: {
       daycareSubscriptionRequired:
@@ -581,11 +636,33 @@ const lang: Language = {
       today: 'Today',
       tomorrow: 'Tomorrow'
     },
+    dialog: {
+      waitlist: 'Waiting list',
+      back: 'Back',
+      placeTitle: 'Place {pet}',
+      rating: '{n} · {band}',
+      ratingBands: {
+        poor: 'Poor',
+        fair: 'Fair',
+        ok: 'OK',
+        good: 'Good',
+        great: 'Great'
+      },
+      legend:
+        'Compatibility with the pets already in a kennel:  {poor} (1-2) · {fair} (3-4) · {ok} (5-6) · {good} (7-8) · {great} (9-10)',
+      free: 'Free',
+      freeSummary: '{free} of {total} free',
+      noKennels: 'No kennels in this building.',
+      moreOccupants: '+{n} more',
+      assignDone: '{pet} placed in {kennel}.',
+      assignFailed: 'Could not place this pet. Nothing was changed.'
+    },
     messages: {
-      dragAndDrop: 'Drag and drop the pets into the kennels.'
+      selectKennel: 'Click on a pet, then choose a kennel or the waiting list.'
     }
   },
   financial: {
+    noUnpaidBookings: 'No unpaid bookings in the last 90 days.',
     title: 'Financial',
     total: 'Total',
     payment: {
@@ -608,7 +685,25 @@ const lang: Language = {
   },
   overview: {
     title: 'Overview'
-  }
+  },
+  // Search-first pages still name the search until something is selected.
+  listPages: {
+    searchCustomers: 'Type to search customers...',
+    searchPets: 'Type to search pets...',
+    emptyCustomers: 'Search for a customer to see their details.',
+    emptyPets: 'Search for a pet to see its details.'
+  },
+
+  administration: { title: 'Administration' },
+  accounts: { title: 'Accounts' },
+  openingTimes: { title: 'Opening times' },
+  integrations: {
+    title: 'Integrations',
+    connected: 'Connected',
+    failed: 'Connection failed'
+  },
+  labelsPage: { title: 'Labels' },
+  document: { title: 'Documents' }
 }
 
 export default lang

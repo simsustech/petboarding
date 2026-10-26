@@ -31,19 +31,72 @@
       ]"
     />
   </div>
-  <div class="row justify-center">
-    <a class="col text-center">
-      {{ getMonthYear(selectedDate) }}
-    </a>
+  <div class="row items-center justify-center q-gutter-sm q-mb-sm">
+    <q-btn
+      dense
+      flat
+      icon="i-mdi-chevron-left"
+      :aria-label="lang.previous"
+      @click="onPrev"
+    />
+    <div
+      class="text-subtitle1 text-weight-medium text-center"
+      style="min-width: 13rem"
+    >
+      {{ rangeLabel }}
+    </div>
+    <q-btn
+      dense
+      flat
+      icon="i-mdi-chevron-right"
+      :aria-label="lang.next"
+      @click="onNext"
+    />
+    <q-btn
+      dense
+      flat
+      no-caps
+      icon="i-mdi-calendar-today"
+      :label="lang.today"
+      @click="onToday"
+    />
   </div>
-  <agenda-legend />
-  <pet-legend />
+  <q-btn
+    class="q-mb-sm"
+    outline
+    dense
+    icon="i-mdi-information-outline"
+    :label="lang.agenda.legend"
+    aria-haspopup="menu"
+  >
+    <q-menu>
+      <div class="q-pa-sm column q-gutter-sm">
+        <agenda-legend />
+        <q-separator />
+        <pet-legend />
+      </div>
+    </q-menu>
+  </q-btn>
   <div class="row q-mb-md">
     <q-toggle v-model="showLastNames" :label="lang.customer.fields.lastName" />
   </div>
-  <q-scroll-area :style="contentSize">
-    <q-resize-observer @resize="onResize" />
+  <div
+    v-if="view === 'week' && swipeHint"
+    class="text-caption text-grey q-px-sm q-pt-xs"
+  >
+    {{ lang.agenda.swipeHint }}
+  </div>
+  <!-- The 600px canvas is wider than a phone, so it scrolls inside this container rather
+       than widening the document — a document wider than the viewport makes the phone's
+       layout viewport pan, which drags the fixed header/footer along with the content.
+       `col` (flex + max-width: 100%) and `column` (flex-direction) both matter: without
+       `column` the grid collapses to its 20rem floor instead of filling the page. -->
+  <div
+    class="col column overflow-x-auto overscroll-x-contain agenda-scroll"
+    tabindex="0"
+  >
     <q-calendar-agenda
+      class="col"
       ref="calendar"
       v-model="date"
       :view="view"
@@ -52,122 +105,148 @@
       column-options-label="label"
       :day-min-height="200"
       :locale="$q.lang.isoName"
-      :style="{
-        height: '100%',
-        'min-width': '600px'
-      }"
+      :style="calendarStyle"
       animated
       bordered
       @change="onChange"
     >
       <template #day="{ scope: { timestamp } }">
-        <q-list>
-          <q-item
-            v-for="booking in agendaMaps.servicesMap[timestamp.date] || []"
+        <div class="q-mx-auto" style="max-width: 48rem; width: 100%">
+          <q-list>
+            <q-item
+              v-for="booking in agendaMaps.servicesMap[timestamp.date] || []"
+              :key="booking.id"
+            >
+              <q-item-section>
+                <q-item-label
+                  v-for="service in booking.services"
+                  :key="service.id"
+                >
+                  {{ service.service?.name }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ booking.pets?.map((pet) => pet.name).join(',') }}
+                </q-item-label>
+                <q-menu context-menu>
+                  <q-list>
+                    <q-item clickable :to="`/employee/bookings/${booking.id}`">
+                      <q-item-section>
+                        <q-item-label>
+                          {{ lang.open }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-separator
+            v-if="getNumberOfBookingPets(timestamp.date) > 0"
+            class="q-pt-none"
+            inset
+          />
+          <a
+            v-if="getNumberOfBookingPets(timestamp.date) > 0"
+            class="text-center text-subtitle-1"
+            >{{ lang.booking.title }}
+            {{ getNumberOfBookingPets(timestamp.date) }}</a
+          >
+          <q-separator
+            v-if="getNumberOfBookingPets(timestamp.date) > 0"
+            class="q-pt-none q-mb-md"
+            inset
+          />
+          <div
+            v-for="booking in agendaMaps.arrivalsMap[timestamp.date] || []"
             :key="booking.id"
           >
-            <q-item-section>
-              <q-item-label
-                v-for="service in booking.services"
-                :key="service.id"
-              >
-                {{ service.service?.name }}
-              </q-item-label>
-              <q-item-label caption>
-                {{ booking.pets?.map((pet) => pet.name).join(',') }}
-              </q-item-label>
-              <q-menu context-menu>
-                <q-list>
-                  <q-item clickable :to="`/employee/bookings/${booking.id}`">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ lang.open }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-item-section>
-          </q-item>
-        </q-list>
-        <q-separator class="q-pt-none" inset />
-        <a class="text-center text-subtitle-1"
-          >{{ lang.booking.title }}
-          {{ getNumberOfBookingPets(timestamp.date) }}</a
-        >
-        <q-separator class="q-pt-none q-mb-md" inset />
-        <div
-          v-for="booking in agendaMaps.arrivalsMap[timestamp.date] || []"
-          :key="booking.id"
-        >
-          <agenda-chip
-            :model-value="booking"
-            :show-last-name="showLastNames"
-            type="arrival"
-            :selected-pets="selectedPets"
-            @click="onClickPet"
-            @open-booking="onOpenBooking"
-            @open-pets="onOpenPets"
+            <agenda-chip
+              :model-value="booking"
+              :show-last-name="showLastNames"
+              type="arrival"
+              :selected-pets="selectedPets"
+              @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
+            >
+              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+            </agenda-chip>
+          </div>
+          <div
+            v-for="booking in agendaMaps.departuresMap[timestamp.date] || []"
+            :key="booking.id"
+            class="justify-end text-right"
           >
-            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-          </agenda-chip>
-        </div>
-        <div
-          v-for="booking in agendaMaps.departuresMap[timestamp.date] || []"
-          :key="booking.id"
-          class="justify-end text-right"
-        >
-          <agenda-chip
-            :model-value="booking"
-            :show-last-name="showLastNames"
-            type="departure"
-            :selected-pets="selectedPets"
-            @click="onClickPet"
-            @open-booking="onOpenBooking"
-            @open-pets="onOpenPets"
+            <agenda-chip
+              :model-value="booking"
+              :show-last-name="showLastNames"
+              type="departure"
+              :selected-pets="selectedPets"
+              @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
+            >
+              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+            </agenda-chip>
+          </div>
+          <div
+            v-for="booking in getBookingStays(timestamp.date)"
+            :key="booking.id"
+            class="justify-center text-center"
           >
-            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-          </agenda-chip>
-        </div>
-        <div
-          v-for="booking in getBookingStays(timestamp.date)"
-          :key="booking.id"
-          class="justify-center text-center"
-        >
-          <agenda-chip
-            :model-value="booking"
-            :show-last-name="showLastNames"
-            type="stay"
-            :selected-pets="selectedPets"
-            @click="onClickPet"
-            @open-booking="onOpenBooking"
-            @open-pets="onOpenPets"
-          >
-            <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
-          </agenda-chip>
-        </div>
+            <agenda-chip
+              :model-value="booking"
+              :show-last-name="showLastNames"
+              type="stay"
+              :selected-pets="selectedPets"
+              @click="onClickPet"
+              @open-booking="onOpenBooking"
+              @open-pets="onOpenPets"
+            >
+              <q-tooltip>{{ formatBooking(booking) }}</q-tooltip>
+            </agenda-chip>
+          </div>
 
-        <a class="text-center text-subtitle-1"
-          >{{ lang.daycare.title }}
-          {{ getNumberOfDaycarePets(timestamp.date) }}</a
-        >
-        <q-separator class="q-pt-none q-mb-md" inset />
-        <div
-          v-for="daycareDate in agendaMaps.daycareMap[timestamp.date] || []"
-          :key="daycareDate.id"
-          class="text-center justify-center"
-        >
-          <agenda-chip
-            :model-value="daycareDate"
-            :show-last-name="showLastNames"
-            type="daycare"
-            @open-pets="onOpenPets"
+          <a
+            v-if="getNumberOfDaycarePets(timestamp.date) > 0"
+            class="text-center text-subtitle-1"
+            >{{ lang.daycare.title }}
+            {{ getNumberOfDaycarePets(timestamp.date) }}</a
           >
-          </agenda-chip>
+          <q-separator
+            v-if="getNumberOfDaycarePets(timestamp.date) > 0"
+            class="q-pt-none q-mb-md"
+            inset
+          />
+          <div
+            v-for="daycareDate in agendaMaps.daycareMap[timestamp.date] || []"
+            :key="daycareDate.id"
+            class="text-center justify-center"
+          >
+            <agenda-chip
+              :model-value="daycareDate"
+              :show-last-name="showLastNames"
+              type="daycare"
+              @open-pets="onOpenPets"
+            >
+            </agenda-chip>
+          </div>
+        </div>
+      </template>
+      <template #day-container>
+        <div
+          v-if="emptyPeriod"
+          class="column items-center justify-center text-center q-pa-md"
+          style="position: absolute; top: 0; right: 0; bottom: 0; left: 0"
+        >
+          <span>{{
+            view === 'day' ? lang.agenda.emptyDay : lang.agenda.empty
+          }}</span>
         </div>
       </template>
     </q-calendar-agenda>
-  </q-scroll-area>
+  </div>
 </template>
 
 <script lang="ts">
@@ -178,13 +257,11 @@ export default {
 
 <script setup lang="ts">
 import { QCalendarAgenda } from '@quasar/quasar-ui-qcalendar/QCalendarAgenda'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarVariables.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarTransitions.scss'
-import '@quasar/quasar-ui-qcalendar/src/QCalendarAgenda.scss'
+import type { QCalendarAgenda as QCalendarAgendaInstance } from '@quasar/quasar-ui-qcalendar'
 
 import AgendaChip from './AgendaChip.vue'
-import { ref, toRefs, watch, computed } from 'vue'
-import { QResizeObserver, date as dateUtil, useQuasar } from 'quasar'
+import { ref, toRefs, watch, computed, onMounted, onUnmounted } from 'vue'
+import { date as dateUtil, useQuasar } from 'quasar'
 import type { Booking, DaycareDate, OpeningTime } from '@petboarding/api/zod'
 import { useLang } from '../lang/index.js'
 import { useRoute, useRouter } from 'vue-router'
@@ -233,7 +310,7 @@ const router = useRouter()
 const lang = useLang()
 
 const selectedDate = ref(
-  !Array.isArray(route.params.date)
+  !Array.isArray(route.params.date) && route.params.date
     ? route.params.date
     : new Date().toISOString().slice(0, 10)
 )
@@ -241,6 +318,12 @@ const date = ref(selectedDate.value)
 watch(selectedDate, (val) => {
   if (dateUtil.isValid(val)) {
     date.value = val
+  }
+})
+// keep the date picker in step when the calendar itself moves
+watch(date, (val) => {
+  if (dateUtil.isValid(val) && val !== selectedDate.value) {
+    selectedDate.value = val
   }
 })
 
@@ -251,6 +334,44 @@ const setDate = (newDate: string) => {
 }
 
 const view = ref('week')
+// The week keeps a 600px canvas (it scrolls inside `.agenda-scroll` rather than
+// widening the document); the day view is a single column and fits the phone.
+const calendarStyle = computed(() => ({
+  height: '100%',
+  minWidth: view.value === 'week' ? '600px' : undefined,
+  minHeight: '20rem'
+}))
+const calendar = ref<QCalendarAgendaInstance>()
+
+/**
+ * The swipe hint is a statement about geometry, so it is gated on geometry:
+ * it shows only while the week canvas is actually wider than its container.
+ * A fixed `lt-md` (the previous form) claimed "swipe to see the rest of the
+ * week" at 768px, where all seven columns fit (scrollWidth 744 == clientWidth
+ * 744, measured 2026-10-06) and at 1440px where the canvas fits too
+ * (1336 == 1336). ResizeObserver covers the cases a resize event misses:
+ * the view switch and the calendar growing as its data lands.
+ */
+const swipeHint = ref(false)
+const updateSwipeHint = () => {
+  const el = document.querySelector<HTMLElement>('.agenda-scroll')
+  swipeHint.value = Boolean(el && el.scrollWidth > el.clientWidth + 1)
+}
+let hintObserver: ResizeObserver | undefined
+onMounted(() => {
+  updateSwipeHint()
+  window.addEventListener('resize', updateSwipeHint)
+  const el = document.querySelector<HTMLElement>('.agenda-scroll')
+  if (el && typeof ResizeObserver !== 'undefined') {
+    hintObserver = new ResizeObserver(() => updateSwipeHint())
+    hintObserver.observe(el)
+    if (el.firstElementChild) hintObserver.observe(el.firstElementChild)
+  }
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', updateSwipeHint)
+  hintObserver?.disconnect()
+})
 
 const agendaMaps = computed(() => {
   const servicesMap: Record<string, Booking[]> = {}
@@ -334,6 +455,15 @@ const daycarePetCounts = computed(() => {
 const getNumberOfDaycarePets = (date: string) =>
   daycarePetCounts.value[date] || 0
 
+// The period's emptiness belongs to this surface; the page must not re-derive it.
+const emptyPeriod = computed(
+  () =>
+    bookings?.value !== undefined &&
+    daycareDates?.value !== undefined &&
+    bookings.value.length === 0 &&
+    daycareDates.value.length === 0
+)
+
 const formatBooking = (booking: Booking) =>
   formatBookingDates({
     startDate: booking.startDate,
@@ -366,18 +496,41 @@ const onChange = (data) => {
   })
 }
 
-const getMonthYear = (date: string) => dateUtil.formatDate(date, 'MMMM YYYY')
-
-const contentSize = ref({
-  width: '100%',
-  height: '200px'
-})
-const onResize: InstanceType<typeof QResizeObserver>['$props']['onResize'] = (
-  size
-) => {
-  contentSize.value.width = '100%'
-  contentSize.value.height = `${size.height}px`
+const parseLocalDate = (value: string) => {
+  const [year, month, day] = (value || '').slice(0, 10).split('-').map(Number)
+  if (!year || !month || month < 1 || month > 12 || !day || day > 31) {
+    return null
+  }
+  return new Date(year, month - 1, day)
 }
+
+const onPrev = () => calendar.value?.prev()
+const onNext = () => calendar.value?.next()
+const onToday = () => calendar.value?.moveToToday()
+
+const rangeLabel = computed(() => {
+  const start = parseLocalDate(date.value)
+  if (!start) return ''
+  if (view.value === 'day') {
+    return dateUtil.formatDate(start, 'dddd D MMMM YYYY')
+  }
+  // week view: Monday through Sunday
+  const offsetToMonday = (start.getDay() + 6) % 7
+  const weekStart = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate() - offsetToMonday
+  )
+  const weekEnd = new Date(
+    weekStart.getFullYear(),
+    weekStart.getMonth(),
+    weekStart.getDate() + 6
+  )
+  const sameYear = weekStart.getFullYear() === weekEnd.getFullYear()
+  return sameYear
+    ? `${dateUtil.formatDate(weekStart, 'D MMM')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
+    : `${dateUtil.formatDate(weekStart, 'D MMM YYYY')} – ${dateUtil.formatDate(weekEnd, 'D MMM YYYY')}`
+})
 
 const showLastNames = ref(false)
 

@@ -1,5 +1,9 @@
 <template>
   <q-page padding>
+    <q-toolbar>
+      <q-space />
+      <q-btn icon="i-mdi-search" disable />
+    </q-toolbar>
     <vacations-list
       v-if="vacations"
       :model-value="vacations"
@@ -8,6 +12,15 @@
       @update="openUpdateVacationDialog"
       @delete="openDeleteVacationDialog"
     />
+    <div class="flex flex-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :disable="!(total && page && rowsPerPage)"
+        :max="Math.ceil(total / rowsPerPage)"
+        :max-pages="5"
+        direction-links
+      />
+    </div>
   </q-page>
   <responsive-dialog
     ref="createVacationDialogRef"
@@ -36,7 +49,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, computed } from 'vue'
 import { useLang } from '../../../../lang/index.js'
 import { ResponsiveDialog } from '@simsustech/quasar-components'
 import VacationForm from '../../../../components/vacation/VacationForm.vue'
@@ -57,7 +70,13 @@ bus.on('administrator-open-vacations-create-dialog', () => {
   createVacationDialogRef.value?.functions.open()
 })
 
-const { vacations, refetch: execute } = useConfigurationGetVacationsQuery()
+const {
+  vacations,
+  refetch: execute,
+  page,
+  rowsPerPage
+} = useConfigurationGetVacationsQuery()
+const total = computed(() => vacations.value?.at(0)?.total || 0)
 const { mutateAsync: createVacationMutation } =
   useConfigurationCreateVacationMutation()
 const { mutateAsync: updateVacationMutation } =

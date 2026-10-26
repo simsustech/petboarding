@@ -17,13 +17,27 @@ export const configurationBuildingRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getBuildings: procedure.query(async () => {
-    const buildings = await findBuildings({
-      criteria: {}
-    })
-    if (buildings) return buildings
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getBuildings: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z.union([z.literal('name'), z.literal('order')]).nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const buildings = await findBuildings({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (buildings) return buildings
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createBuilding: procedure.input(building).mutation(async ({ input }) => {
     const building = await createBuilding(input)
 

@@ -14,10 +14,18 @@ const defaultSelect = [
   'surchargePerDay'
 ] as (keyof Vacation)[]
 
-export async function findVacations(criteria?: {
-  from?: string
-  until?: string
-}): Promise<Vacation[]> {
+export async function findVacations(
+  criteria?: {
+    from?: string
+    until?: string
+  },
+  pagination?: {
+    limit: number
+    offset: number
+    sortBy: 'name' | 'startDate' | null
+    descending: boolean
+  }
+): Promise<Vacation[]> {
   let query = db.selectFrom('vacations').select(defaultSelect)
 
   if (criteria?.from) {
@@ -28,7 +36,24 @@ export async function findVacations(criteria?: {
     query = query.where('startDate', '<=', criteria.until)
   }
 
-  return query.orderBy('startDate', 'asc').execute()
+  if (pagination) {
+    if (pagination.sortBy)
+      query = query.orderBy(
+        pagination.sortBy,
+        pagination.descending ? 'desc' : 'asc'
+      )
+
+    query = query.limit(pagination.limit).offset(pagination.offset)
+  }
+
+  return query
+    .$if(pagination !== void 0, (qb) =>
+      qb.select((seb) =>
+        seb.cast<number>(seb.fn.count('id').over(), 'integer').as('total')
+      )
+    )
+    .orderBy('startDate', 'asc')
+    .execute()
 }
 
 export async function createVacation(vacation: NewVacation) {

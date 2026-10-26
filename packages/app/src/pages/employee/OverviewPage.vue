@@ -49,7 +49,7 @@
           </q-icon>
         </template>
       </q-input> -->
-      <q-btn-dropdown icon="i-mdi-printer">
+      <q-btn-dropdown icon="i-mdi-printer" outline>
         <q-list>
           <q-item clickable @click="printPage">
             <q-item-section>

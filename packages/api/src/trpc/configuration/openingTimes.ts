@@ -18,13 +18,29 @@ export const configurationOpeningTimeRoutes = ({
   fastify?: FastifyInstance
   procedure: typeof t.procedure
 }) => ({
-  getOpeningTimes: procedure.query(async () => {
-    const openingTimes = await findOpeningTimes({
-      criteria: {}
-    })
-    if (openingTimes) return openingTimes
-    throw new TRPCError({ code: 'BAD_REQUEST' })
-  }),
+  getOpeningTimes: procedure
+    .input(
+      z.object({
+        pagination: z
+          .object({
+            limit: z.number(),
+            offset: z.number(),
+            sortBy: z
+              .union([z.literal('name'), z.literal('startTime')])
+              .nullable(),
+            descending: z.boolean()
+          })
+          .optional()
+      })
+    )
+    .query(async ({ input }) => {
+      const openingTimes = await findOpeningTimes({
+        criteria: {},
+        pagination: input.pagination
+      })
+      if (openingTimes) return openingTimes
+      throw new TRPCError({ code: 'BAD_REQUEST' })
+    }),
   createOpeningTime: procedure
     .input(openingTime)
     .mutation(async ({ input }) => {

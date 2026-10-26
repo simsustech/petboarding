@@ -1,7 +1,7 @@
 import * as z from 'zod'
 import { customer } from './customer.js'
 import { vaccination } from './vaccination.js'
-import { PET_SPECIES } from '@petboarding/tools/constants'
+import { PET_SPECIES, PET_ALERT_CONDITIONS } from '@petboarding/tools/constants'
 
 export const PET_IMAGE_SIZE = {
   width: 1024,
@@ -47,6 +47,20 @@ export const petValidation = {
         comment: z.string().optional()
       })
     )
+    .optional(),
+  alerts: z
+    .array(
+      z.object({
+        // `id` is what the delete/update endpoints key on, and every read that
+        // selects alerts returns it; without it here the UI has to read a field
+        // its own model type denies.
+        id: z.number().optional(),
+        condition: z.nativeEnum(PET_ALERT_CONDITIONS),
+        startDate: z.string().nullable().optional(),
+        endDate: z.string().nullable().optional()
+      })
+    )
+    .nullable()
     .optional()
 }
 

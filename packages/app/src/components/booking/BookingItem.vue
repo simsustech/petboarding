@@ -194,6 +194,7 @@ const { status, modelValue } = toRefs(props)
 const getClasses = () => ({
   'bg-green-2': status?.value === 'arriving' || status?.value === 'staying',
   'bg-red-2': status?.value === 'departing',
-  'bg-grey-3': modelValue.value.endDate < currentDate
+  'bg-$light-surface-container-high dark:bg-$dark-surface-container-high':
+    modelValue.value.endDate < currentDate
 })
 </script>

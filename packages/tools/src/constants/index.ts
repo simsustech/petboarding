@@ -34,6 +34,40 @@ export const VACCINATION_TYPES = {
 
 export const PET_SPECIES = ['dog', 'cat'] as const
 
+export enum PET_ALERT_CONDITIONS {
+  IN_HEAT = 'inHeat',
+  NEEDS_REST = 'needsRest',
+  AGGRESSIVE = 'aggressive',
+  DIABETIC = 'diabetic'
+}
+
+// No `color` here: a condition's colour is a token pair that follows the scheme
+// (ADR 005), so it lives in the app's `theme-tokens.ts` — a wind4 palette name
+// could not carry a dark value, and a presentation detail does not belong in the
+// shared package.
+export const PET_ALERTS = [
+  {
+    value: PET_ALERT_CONDITIONS.IN_HEAT,
+    label: 'pet.alerts.inHeat',
+    icon: 'i-mdi-paw'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.NEEDS_REST,
+    label: 'pet.alerts.needsRest',
+    icon: 'i-mdi-bed'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.AGGRESSIVE,
+    label: 'pet.alerts.aggressive',
+    icon: 'i-mdi-alert'
+  },
+  {
+    value: PET_ALERT_CONDITIONS.DIABETIC,
+    label: 'pet.alerts.diabetic',
+    icon: 'i-mdi-needle'
+  }
+] as const
+
 export enum PETBOARDING_ACCOUNT_ROLES {
   ADMINISTRATOR = 'administrator',
   MANAGER = 'manager',
