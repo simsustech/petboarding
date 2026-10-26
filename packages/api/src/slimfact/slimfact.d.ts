@@ -895,6 +895,12 @@ export declare const createRouter: (
             projectId?: string | null | undefined
             notes?: string | null | undefined
             reminderSentDates?: string[] | undefined
+            // SlimFact's invoiceValidation: one or more type fragments; every
+            // existing line whose `type` contains one is dropped before the
+            // payload is appended. Forwarded to checkout's updateInvoice only
+            // (SlimFact's admin invoices router), accepted-but-unused on
+            // createInvoice, because both procedures share that validation.
+            replaceTypedLines?: string | string[] | null | undefined
           }
           output: import('@modular-api/fastify-checkout').Invoice
         }>
@@ -987,6 +993,13 @@ export declare const createRouter: (
             projectId?: string | null | undefined
             notes?: string | null | undefined
             reminderSentDates?: string[] | undefined
+            // Declared by SlimFact's `invoiceValidation`
+            // (packages/api/src/zod/invoice.ts) and forwarded to
+            // `@modular-api/fastify-checkout`'s updateInvoice. Without the
+            // declaration zod strips the key, the handler falls back to "the
+            // payload becomes the invoice's lines", and every manually added
+            // line is deleted on each sync.
+            replaceTypedLines?: string | string[] | null | undefined
           }
           output: import('@modular-api/fastify-checkout').Invoice
         }>
