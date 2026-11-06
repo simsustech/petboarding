@@ -72,7 +72,24 @@ export const employeeDaycareRoutes = ({
           updateRejectedDaycareDates: isAdmin
         })
       } catch (e) {
-        throw new TRPCError({ code: 'BAD_REQUEST' })
+        // A bare `new TRPCError({ code: 'BAD_REQUEST' })` discarded the cause, so
+        // every failure here looked identical in the client (`BAD_REQUEST`, no
+        // message) and left nothing in the logs. Log what actually happened and
+        // pass the message on, so a data error is distinguishable from input
+        // validation.
+        fastify?.log.error(
+          {
+            err: e,
+            customerId: input[0]?.customerId,
+            dates: input.map((daycareDate) => daycareDate.date)
+          },
+          'employee.createDaycareDates failed'
+        )
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: e instanceof Error ? e.message : String(e),
+          cause: e
+        })
       }
     }),
   getCustomerDaycareSubscriptions: procedure

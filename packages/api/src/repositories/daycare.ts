@@ -462,8 +462,17 @@ export async function createOrUpdateDaycareDates(
       })
     }
     for (const updatedDaycareDate of updatedDaycareDates) {
+      // Target the row we read, by id. Updating by `(date, customerId)` matched
+      // *every* row for that date, and a day can legitimately have more than one
+      // row: `createDaycareDate` splits a date across subscriptions when one
+      // subscription has fewer days left than the number of pets. Two rows for
+      // the same date write the same `date, customer_id,
+      // customer_daycare_subscription_id` triple and trip
+      // `daycare_dates_unique` (present on the production database), which the
+      // employee page reported as a bare BAD_REQUEST.
       await updateDaycareDate(
         {
+          id: updatedDaycareDate.id,
           date: updatedDaycareDate.date,
           customerId
         },
