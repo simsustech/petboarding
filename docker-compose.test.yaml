@@ -4,9 +4,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - '80:80'
-      - '443:443'
-      - '443:443/udp'
+      - '${E2E_BIND_ADDR:-127.0.0.1}:80:80'
+      - '${E2E_BIND_ADDR:-127.0.0.1}:443:443'
+      - '${E2E_BIND_ADDR:-127.0.0.1}:443:443/udp'
+      - '${E2E_BIND_ADDR6:-[::1]}:80:80'
+      - '${E2E_BIND_ADDR6:-[::1]}:443:443'
+      - '${E2E_BIND_ADDR6:-[::1]}:443:443/udp'
       # - '3000:3000'  # disabled
       # - '3000:3000/udp'
     environment:
@@ -115,7 +118,6 @@ services:
 
 secrets:
   SIMSUSTECH_NPM_TOKEN:
-    # Local: export SIMSUSTECH_NPM_TOKEN=$(cat ./env/SIMSUSTECH_NPM_TOKEN)
     environment: 'SIMSUSTECH_NPM_TOKEN'
 
 networks:
