@@ -178,7 +178,17 @@ export default async function ({
             plugins: quasarConf['framework']['plugins'],
             iconSet: 'mdi-v7',
             // ADR 0005: the preset ships this CSS; opt the extensions in here.
-            appExtensions: ['qcalendar', 'qmarkdown']
+            appExtensions: ['qcalendar', 'qmarkdown'],
+            // The preset fetches Roboto from fonts.bunny.net at build time and
+            // UnoCSS aborts the build after 2s by default. Egress from this
+            // host's build containers needs ~5s to that origin (measured), so
+            // relax the client timer. Provider and font are the preset's own
+            // defaults, spelled out because the option replaces them wholesale.
+            presetWebFonts: {
+              provider: 'bunny',
+              fonts: { roboto: 'Roboto' },
+              timeouts: { warning: 10000, failure: 60000 }
+            }
           })
         ],
         // ADR 005: the status and alert tokens. Their values live in
