@@ -100,16 +100,16 @@
         @keydown.space.prevent="emit('select', kennel.id!)"
       >
         <q-item-section>
-          <!-- One line per row: kennel identity leads, state supports. An
-               occupied row shows the occupant as a compact chip (same PetChip
-               + colour system as the page); an empty row says Free. -->
+          <!-- Every occupant is rendered: a hidden pet in a kennel the user is
+               placing another pet into is a decision made without seeing it, so
+               the row wraps instead of capping or clipping. -->
           <div
             v-if="occupantsOf(kennel.id ?? null).length"
-            class="row items-center q-gutter-sm no-wrap"
+            class="row items-center q-gutter-sm"
           >
             <q-item-label class="col-auto">{{ kennel.name }}</q-item-label>
             <pet-chip
-              v-for="occupant in visibleOccupants(kennel.id ?? null)"
+              v-for="occupant in occupantsOf(kennel.id ?? null)"
               :key="occupant.id"
               :model-value="occupant"
               :class="chipColor(occupant)"
@@ -118,12 +118,6 @@
               show-badge
               show-last-name
             />
-            <span
-              v-if="hiddenOccupantCount(kennel.id ?? null)"
-              class="text-caption picker-muted col-auto"
-            >
-              {{ moreOccupantsText(kennel.id ?? null) }}
-            </span>
           </div>
           <div v-else class="row items-center q-gutter-sm no-wrap">
             <q-item-label class="col-auto">{{ kennel.name }}</q-item-label>
@@ -221,22 +215,6 @@ const occupantsOf = (kennelId: number | null) =>
   props.petKennels.filter(
     (pet) => pet.kennelId === kennelId && pet.id !== props.petKennel.id
   )
-
-// Row rhythm guard: a kennel holding many pets must not blow up the row.
-// Show up to 2 chips, then a "+N" remainder.
-const MAX_VISIBLE_OCCUPANTS = 2
-
-const visibleOccupants = (kennelId: number | null) =>
-  occupantsOf(kennelId).slice(0, MAX_VISIBLE_OCCUPANTS)
-
-const hiddenOccupantCount = (kennelId: number | null) =>
-  Math.max(0, occupantsOf(kennelId).length - MAX_VISIBLE_OCCUPANTS)
-
-const moreOccupantsText = (kennelId: number | null) =>
-  `${lang.value.kennellayout.dialog.moreOccupants.replace(
-    '{n}',
-    String(hiddenOccupantCount(kennelId))
-  )}`
 
 // "9 of 10 free" — kennel-count availability. Deliberately says nothing about
 // how many pets each kennel holds: a kennel can take several, so "occupied"

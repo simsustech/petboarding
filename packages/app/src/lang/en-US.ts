@@ -653,7 +653,6 @@ const lang: Language = {
       free: 'Free',
       freeSummary: '{free} of {total} free',
       noKennels: 'No kennels in this building.',
-      moreOccupants: '+{n} more',
       assignDone: '{pet} placed in {kennel}.',
       assignFailed: 'Could not place this pet. Nothing was changed.'
     },

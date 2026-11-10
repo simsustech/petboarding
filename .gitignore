@@ -18,6 +18,9 @@ docker-compose.*.override.yaml
 **/.pnpm-store/**
 .worktrees/**
 .pi/fff
+# Supervisor run file and gate evidence
+.pi/RUN.md
+.pi/evidence/
 
 # Local review/scratch artifacts (not for commit)
 .scratch/

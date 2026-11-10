@@ -666,7 +666,6 @@ const lang: Language = {
       free: 'Vrij',
       freeSummary: '{free} van {total} vrij',
       noKennels: 'Geen kennels in dit gebouw.',
-      moreOccupants: '+{n} meer',
       assignDone: '{pet} geplaatst in {kennel}.',
       assignFailed: 'Kon dit huisdier niet plaatsen. Er is niets gewijzigd.'
     },

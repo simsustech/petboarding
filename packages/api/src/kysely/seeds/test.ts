@@ -345,8 +345,8 @@ const seed = async () => {
     },
     // Jul 2024: FOUR pets share kennel 1. The picker excludes the pet being
     // placed from a kennel's occupant list (you are moving it, so it is not an
-    // "other" occupant), so three must be left over to exercise the cap
-    // (MAX_VISIBLE_OCCUPANTS = 2 → two chips + a "+1 more" remainder).
+    // "other" occupant), so opening from pet 1 leaves three occupants — the
+    // picker renders all of them, wrapped, on every viewport.
     {
       startDate: '2024-07-01',
       endDate: '2024-07-10',

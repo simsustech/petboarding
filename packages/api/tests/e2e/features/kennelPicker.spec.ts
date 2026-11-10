@@ -226,13 +226,12 @@ test.describe('Kennel picker dialog', () => {
     }
   })
 
-  test('a kennel with more occupants than the cap shows a +N remainder', async () => {
+  test('every occupant of a kennel is rendered, wrapped, at a phone width', async () => {
     // Seeded Jul 2024 window: pets 1, 3, 4 and 5 all share kennel 1. The picker
     // excludes the pet being placed from that kennel's occupants, so opening from
-    // pet 1 leaves three others: two chips plus a remainder. Four (not three)
-    // occupants are needed for the remainder to appear at all — this is the
-    // fixture's whole point.
-    await page.setViewportSize({ width: 1440, height: 812 })
+    // pet 1 leaves three others — all three must be visible on a 390px viewport
+    // with no "+N more" remainder and no chip clipped off the row.
+    await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/employee/kennellayout/2024-07-01')
     await page.waitForLoadState('networkidle')
     await expect(page.locator('#waitlist')).toBeVisible({ timeout: 10000 })
@@ -253,11 +252,40 @@ test.describe('Kennel picker dialog', () => {
 
     const row = page.locator('#pickerKennel1')
     await expect(row).toBeVisible()
-    // Three others remain, but at most the cap may be rendered.
-    await expect(row.locator('.q-chip')).toHaveCount(2)
-    // And the remainder is disclosed rather than silently dropped
-    // (`moreOccupants` copy is '+{n} more').
-    await expect(row).toContainText('+1 more')
+    // No cap: pets 3, 4 and 5 are all rendered as chips (pet 1 is excluded).
+    await expect(row.locator('.q-chip')).toHaveCount(3)
+    await expect(row).toContainText('name3')
+    await expect(row).toContainText('name4')
+    await expect(row).toContainText('name5')
+    // Nothing is disclosed away any more; the remainder copy is gone.
+    await expect(row).not.toContainText('more')
+
+    // Wrapping, not squeezing: the third chip must sit on a second line. One
+    // line of three chips would mean they were compressed, not wrapped.
+    const rowBox = await row.boundingBox()
+    const boxes = await row.locator('.q-chip').evaluateAll((chips) =>
+      chips.map((chipEl) => {
+        const rect = chipEl.getBoundingClientRect()
+        return { x: rect.x, y: rect.y, width: rect.width }
+      })
+    )
+    expect(
+      boxes.length,
+      'fixture regression: expected three occupant chips'
+    ).toBe(3)
+    expect(
+      boxes[2].y,
+      'the third chip must wrap onto a second line, not fit beside the others'
+    ).toBeGreaterThan(boxes[0].y)
+    // And the row nests them: a chip overflowing the row horizontally is the
+    // same information loss with extra steps.
+    expect(rowBox).not.toBeNull()
+    for (const box of boxes) {
+      expect(box.x).toBeGreaterThanOrEqual(rowBox!.x - 1)
+      expect(box.x + box.width).toBeLessThanOrEqual(
+        rowBox!.x + rowBox!.width + 1
+      )
+    }
 
     await page.keyboard.press('Escape')
     await expect(page.locator('#pickerDialog')).toHaveCount(0, {

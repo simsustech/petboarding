@@ -612,7 +612,6 @@ export interface Language {
       free: string
       freeSummary: string
       noKennels: string
-      moreOccupants: string
       assignDone: string
       assignFailed: string
     }

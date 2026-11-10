@@ -320,7 +320,12 @@
                 icon-half="i-mdi-star-half"
               />
             </q-item-label>
-            <q-item-label>
+            <!-- The preset's list rule ellipsizes `q-item__label`, which hid
+                 the tail of a rating group on a phone. -->
+            <q-item-label
+              class="whitespace-normal overflow-visible"
+              data-testid="pet-relations-names"
+            >
               {{
                 Object.values(modelValue.relations)
                   .filter((relation) => relation.rating === rating)
