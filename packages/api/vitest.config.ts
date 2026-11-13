@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { loadEnv } from 'vite'
+import { fileURLToPath } from 'node:url'
 
 export default defineConfig(({ mode }) => {
   // Some unit tests import modules that transitively load `env.js`, which
@@ -12,6 +13,14 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    // `src/...` imports (tsconfig baseUrl, and the alias the build sets up) also
+    // have to resolve under vitest; without this, whole test files failed on
+    // "Cannot find package 'src/repositories/...'".
+    resolve: {
+      alias: {
+        src: fileURLToPath(new URL('./src', import.meta.url))
+      }
+    },
     test: {
       include: ['src/**/*.test.ts', 'tests/e2e/**/*.test.ts'],
       // Playwright specs are collected by playwright.config.ts, never vitest.

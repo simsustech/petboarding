@@ -156,17 +156,27 @@ export const userCustomerDaycareSubscriptionRoutes = ({
     })
     if (!customer?.id) return []
 
-    return findCustomerDaycareSubscriptions({
-      criteria: {
-        customerId: customer.id,
-        expirationDate: new Date().toISOString().slice(0, 10),
-        statuses: [
-          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
-          CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
-        ]
-      },
-      fastify
-    })
+    const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
+      {
+        criteria: {
+          customerId: customer.id,
+          statuses: [
+            CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID,
+            CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.OPEN
+          ]
+        },
+        fastify
+      }
+    )
+
+    // An expired pack that still has days can pay for a booking (the ±1 month
+    // slack), so it stays visible while it has days left. Filtering it out here
+    // is what made those deductions invisible to the customer.
+    return customerDaycareSubscriptions.filter(
+      (customerDaycareSubscription) =>
+        customerDaycareSubscription.isActive ||
+        (customerDaycareSubscription.numberOfDaysRemaining ?? 0) > 0
+    )
   }),
   createCustomerDaycareSubscription: procedure
     .input(userCustomerDaycareSubscriptionValidation)

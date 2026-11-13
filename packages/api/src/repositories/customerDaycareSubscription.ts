@@ -341,7 +341,8 @@ export async function findCustomerDaycareSubscription({
 export async function findCustomerDaycareSubscriptions({
   criteria,
   select,
-  fastify
+  fastify,
+  trx
 }: {
   criteria: Partial<CustomerDaycareSubscription> & {
     statuses?: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS[]
@@ -351,10 +352,12 @@ export async function findCustomerDaycareSubscriptions({
   }
   select?: (keyof CustomerDaycareSubscription)[]
   fastify?: FastifyInstance
+  trx?: Transaction<DB>
 }): Promise<ParsedCustomerDaycareSubscription[]> {
   const query = find({
     criteria,
-    select
+    select,
+    trx
   })
   const result = await query.execute()
 
@@ -453,8 +456,13 @@ export async function setCustomerDaycareSubscriptionStatus({
     customerDaycareSubscription &&
     status === CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
   ) {
-    // Add existing daycare dates without subscription
-    const existingDaycareDateIds = await db
+    // Add existing daycare dates without subscription. A date costs one day per
+    // pet (see `withNumberOfDaysRemaining`), so the budget is spent per pet, not
+    // per row: `limit(numberOfDays)` let a two-pet date consume two days on a
+    // one-row budget and overloaded the pack.
+    const daysBudget =
+      customerDaycareSubscription.daycareSubscription?.numberOfDays || 0
+    const candidates = await db
       .selectFrom('daycareDates')
       .where(
         'daycareDates.customerId',
@@ -480,10 +488,36 @@ export async function setCustomerDaycareSubscriptionStatus({
         ])
       )
       .orderBy('daycareDates.date', 'asc')
-      .limit(customerDaycareSubscription.daycareSubscription?.numberOfDays || 0)
-      .select('id')
+      .select((eb) => [
+        'daycareDates.id',
+        eb
+          .selectFrom('daycareDatePetKennel')
+          .whereRef(
+            'daycareDatePetKennel.daycareDateId',
+            '=',
+            'daycareDates.id'
+          )
+          .select((seb) =>
+            seb
+              .cast<number>(
+                seb.fn.count('daycareDatePetKennel.petId'),
+                'integer'
+              )
+              .as('petCount')
+          )
+          .as('petCount')
+      ])
       .execute()
-      .then((result) => result.map(({ id }) => id))
+
+    // Fill in date order and stop at the first date the budget cannot cover.
+    const existingDaycareDateIds: number[] = []
+    let daysSpent = 0
+    for (const candidate of candidates) {
+      const petCount = Number(candidate.petCount) || 1
+      if (daysSpent + petCount > daysBudget) break
+      daysSpent += petCount
+      existingDaycareDateIds.push(candidate.id)
+    }
 
     if (existingDaycareDateIds.length) {
       await updateDaycareDate(

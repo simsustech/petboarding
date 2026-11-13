@@ -583,7 +583,8 @@ const lang: Language = {
       purchaseSubscription: 'Abonnement kopen',
       checkout: 'Afrekenen',
       showAll: 'Toon alle',
-      edit: 'Bewerken'
+      edit: 'Bewerken',
+      expired: 'Verlopen'
     },
     messages: {
       daycareSubscriptionRequired:

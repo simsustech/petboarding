@@ -188,7 +188,10 @@ import {
   useConfiguration
 } from '../../../configuration.js'
 import type { CustomerDaycareSubscription } from '@petboarding/api/zod'
-import { CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS } from '@petboarding/tools/constants'
+import {
+  CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
+  DAYCARE_SUBSCRIPTION_SLACK_MONTHS
+} from '@petboarding/tools/constants'
 import customerDaycareSubscriptionStepper from '../../../components/daycareSubscription/CustomerDaycareSubscriptionStepper.vue'
 import customerDaycareSubscriptionsList from '../../../components/daycareSubscription/CustomerDaycareSubscriptionsList.vue'
 
@@ -463,14 +466,28 @@ const onPurchaseCustomerDaycareSubscription = async ({
 const purchaseCustomerDaycareSubscriptionDialogRef =
   ref<typeof ResponsiveDialog>()
 
-const paidAndActiveCustomerDaycareSubscriptions = computed(() =>
-  customerDaycareSubscriptions.value?.filter(
+/**
+ * The packs the form may allocate days to. The API accepts a pack that expired
+ * within the slack window (that is the point of the slack), so the form must
+ * count those too — otherwise it caps the customer below what the server allows.
+ */
+const slackWindowStart = () => {
+  const date = new Date()
+  date.setMonth(date.getMonth() - DAYCARE_SUBSCRIPTION_SLACK_MONTHS)
+  return date.toISOString().slice(0, 10)
+}
+
+const paidAndActiveCustomerDaycareSubscriptions = computed(() => {
+  const slackStart = slackWindowStart()
+  return customerDaycareSubscriptions.value?.filter(
     (customerDaycareSubscription) =>
       customerDaycareSubscription.status ===
         CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID &&
-      customerDaycareSubscription.isActive
+      (customerDaycareSubscription.isActive ||
+        (customerDaycareSubscription.expirationDate >= slackStart &&
+          (customerDaycareSubscription.numberOfDaysRemaining ?? 0) > 0))
   )
-)
+})
 
 const allowPurchase = computed(() => {
   const currentSubscriptions =

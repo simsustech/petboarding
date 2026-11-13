@@ -115,3 +115,10 @@ export enum CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS {
   PAID = 'paid',
   CANCELED = 'canceled'
 }
+
+/**
+ * Months of slack a prepaid daycare pack gets on either side of a booked day: a
+ * pack that expired — or starts — within this window still pays for the day.
+ * Shared so the API and the portal agree on when a pack is usable.
+ */
+export const DAYCARE_SUBSCRIPTION_SLACK_MONTHS = 1

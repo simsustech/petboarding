@@ -78,7 +78,12 @@ export const userDaycareRoutes = ({
           }
         }
       } catch (e) {
-        throw new TRPCError({ code: 'BAD_REQUEST', message: e as string })
+        // `message: e` reached the portal as "Error: ..."; TRPCError stringifies
+        // whatever it is handed, so hand it the plain reason.
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: e instanceof Error ? e.message : String(e)
+        })
       }
     }),
 

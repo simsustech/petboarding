@@ -41,10 +41,20 @@
           />
         </q-item-section>
         <q-item-section>
-          <q-item-label overline>
-            {{
-              `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
-            }}
+          <q-item-label overline class="row items-center q-gutter-xs">
+            <span>
+              {{
+                `${formatDate(customerDaycareSubscription.effectiveDate)} ${lang.booking.until} ${formatDate(customerDaycareSubscription.expirationDate)}`
+              }}
+            </span>
+            <q-chip
+              v-if="isExpired(customerDaycareSubscription)"
+              dense
+              size="sm"
+              class="bg-surface-container-highest text-on-surface-variant"
+            >
+              {{ lang.customerDaycareSubscription.labels.expired }}
+            </q-chip>
           </q-item-label>
           <q-item-label>
             {{ customerDaycareSubscription.daycareSubscription?.description }}
@@ -158,6 +168,10 @@ const dateFormatter = (date: Date, locale: string) =>
 const formatDate = (date: string) => {
   return `${dateFormatter(new Date(date), $q.lang.isoName)}`
 }
+
+const isExpired = (customerDaycareSubscription: CustomerDaycareSubscription) =>
+  customerDaycareSubscription.expirationDate <
+  new Date().toISOString().slice(0, 10)
 
 const showAll = ref(false)
 const filteredCustomerDaycareSubscriptions = computed(() =>

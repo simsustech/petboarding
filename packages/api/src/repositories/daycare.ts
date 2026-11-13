@@ -1,20 +1,25 @@
 import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres'
 import { Database, db } from '../kysely/index.js'
 import { withValidVaccinations, checkVaccinations } from './pet.js'
-import type { DaycareDates } from '../kysely/types.ts'
+import type { DB, DaycareDates } from '../kysely/types.ts'
 
 import type {
   ExpressionBuilder,
   Insertable,
   Selectable,
+  Transaction,
   Updateable
 } from 'kysely'
 import {
   CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS,
   DAYCARE_DATE_STATUS
 } from '../zod/index.js'
-import { findCustomerDaycareSubscriptions } from './customerDaycareSubscription.js'
-import { subMonths, formatDate, parseISO, addMonths } from 'date-fns'
+import { DAYCARE_SUBSCRIPTION_SLACK_MONTHS } from '@petboarding/tools/constants'
+import {
+  findCustomerDaycareSubscriptions,
+  type ParsedCustomerDaycareSubscription
+} from './customerDaycareSubscription.js'
+import { subMonths, addMonths, parseISO, formatDate } from 'date-fns'
 type DaycareDate = Selectable<DaycareDates>
 type NewDaycareDate = Insertable<DaycareDates>
 type DaycareDateUpdate = Updateable<DaycareDates>
@@ -212,6 +217,141 @@ export async function findDaycareDates({
   return results
 }
 
+const bySoonestExpiry = (
+  a: ParsedCustomerDaycareSubscription,
+  b: ParsedCustomerDaycareSubscription
+) => a.expirationDate.localeCompare(b.expirationDate) || a.id - b.id
+
+/**
+ * Turn the slack into the two criteria `find` understands: `effectiveDate` is an
+ * upper bound on the pack's start, `expirationDate` a lower bound on its end.
+ */
+const subscriptionSlack = (date: string) => ({
+  effectiveDate: formatDate(
+    addMonths(parseISO(date), DAYCARE_SUBSCRIPTION_SLACK_MONTHS),
+    'yyyy-MM-dd'
+  ),
+  expirationDate: formatDate(
+    subMonths(parseISO(date), DAYCARE_SUBSCRIPTION_SLACK_MONTHS),
+    'yyyy-MM-dd'
+  )
+})
+
+/**
+ * Take the customer's paid packs for update, so two bookings cannot both spend
+ * the last remaining day. `order by id` keeps concurrent bookings taking the
+ * locks in the same order.
+ */
+async function lockCustomerDaycareSubscriptions(
+  trx: Transaction<DB>,
+  customerId: number
+) {
+  await trx
+    .selectFrom('customerDaycareSubscriptions')
+    .where('customerId', '=', customerId)
+    .where('status', '=', CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID)
+    .orderBy('customerDaycareSubscriptions.id')
+    .forUpdate()
+    .select('id')
+    .execute()
+}
+
+async function insertDaycareDate(
+  trx: Transaction<DB>,
+  { daycareDate, petIds }: { daycareDate: NewDaycareDate; petIds: number[] }
+) {
+  const newDaycareDate = await trx
+    .insertInto('daycareDates')
+    .values(daycareDate)
+    .returningAll()
+    .executeTakeFirstOrThrow()
+
+  await trx
+    .insertInto('daycareDatePetKennel')
+    .values(
+      petIds.map((petId) => ({
+        petId,
+        daycareDateId: newDaycareDate.id
+      }))
+    )
+    .executeTakeFirstOrThrow()
+  return true
+}
+
+/**
+ * Pick the pack for one date inside the caller's transaction, splitting the date
+ * across packs when the first-expiring one has fewer days left than pets.
+ */
+async function createDaycareDateWithSubscription(
+  trx: Transaction<DB>,
+  {
+    daycareDate,
+    petIds,
+    options
+  }: {
+    daycareDate: NewDaycareDate
+    petIds: number[]
+    options?: {
+      useCustomerDaycareSubscription?: boolean
+      ignoreCustomerDaycareSubscriptionErrors?: boolean
+    }
+  }
+): Promise<boolean> {
+  // The picker owns this field: a split re-enters with the same object, and a
+  // leftover id from the previous pack would attach the row to a full pack.
+  daycareDate.customerDaycareSubscriptionId = undefined
+
+  const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions({
+    criteria: {
+      customerId: daycareDate.customerId,
+      // Slack on both sides of the pack's window (user decision, 2026-11-13),
+      // so a booking just after a pack expired or just before it starts is
+      // still paid for instead of rejected.
+      ...subscriptionSlack(daycareDate.date),
+      status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+    },
+    trx
+  })
+  // Days come off the pack that expires soonest; the query orders by
+  // effectiveDate for the display lists, so order the candidates here.
+  const customerDaycareSubscription = customerDaycareSubscriptions
+    .sort(bySoonestExpiry)
+    .find(
+      (customerDaycareSubscription) =>
+        (customerDaycareSubscription.numberOfDaysRemaining || 0) > 0
+    )
+
+  if (
+    customerDaycareSubscription &&
+    customerDaycareSubscription.numberOfDaysRemaining &&
+    customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
+  ) {
+    daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
+  } else if (
+    customerDaycareSubscription &&
+    customerDaycareSubscription.numberOfDaysRemaining &&
+    customerDaycareSubscription.numberOfDaysRemaining < petIds.length
+  ) {
+    await createDaycareDateWithSubscription(trx, {
+      daycareDate,
+      petIds: petIds.slice(0, 1),
+      options
+    })
+    await createDaycareDateWithSubscription(trx, {
+      daycareDate,
+      petIds: petIds.slice(1),
+      options
+    })
+    return true
+  } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
+    throw new Error(
+      `No valid customer daycare subscription available for date ${daycareDate.date}`
+    )
+  }
+
+  return insertDaycareDate(trx, { daycareDate, petIds })
+}
+
 export async function createDaycareDate({
   daycareDate,
   petIds,
@@ -224,77 +364,57 @@ export async function createDaycareDate({
     ignoreCustomerDaycareSubscriptionErrors?: boolean
   }
 }): Promise<boolean> {
-  if (options?.useCustomerDaycareSubscription) {
-    const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
-      {
-        criteria: {
-          customerId: daycareDate.customerId,
-          expirationDate: formatDate(
-            subMonths(parseISO(daycareDate.date), 1),
-            'yyyy-MM-dd'
-          ),
-          effectiveDate: formatDate(
-            addMonths(parseISO(daycareDate.date), 1),
-            'yyyy-MM-dd'
-          ),
-          // date: daycareDate.date,
-          status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-        }
-      }
-    )
-    const customerDaycareSubscription = customerDaycareSubscriptions.find(
-      (customerDaycareSubscription) =>
-        (customerDaycareSubscription.numberOfDaysRemaining || 0) > 0
-    )
-
-    if (
-      customerDaycareSubscription &&
-      customerDaycareSubscription.numberOfDaysRemaining &&
-      customerDaycareSubscription.numberOfDaysRemaining >= petIds.length
-    ) {
-      daycareDate.customerDaycareSubscriptionId = customerDaycareSubscription.id
-    } else if (
-      customerDaycareSubscription &&
-      customerDaycareSubscription.numberOfDaysRemaining &&
-      customerDaycareSubscription.numberOfDaysRemaining < petIds.length
-    ) {
-      await createDaycareDate({
-        daycareDate,
-        petIds: petIds.slice(0, 1),
-        options
-      })
-      await createDaycareDate({
-        daycareDate,
-        petIds: petIds.slice(1),
-        options
-      })
-      return true
-    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
-      throw new Error(
-        `No valid customer daycare subscription available for date ${daycareDate.date}`
-      )
-    }
+  if (!options?.useCustomerDaycareSubscription) {
+    return db
+      .transaction()
+      .execute((trx) => insertDaycareDate(trx, { daycareDate, petIds }))
   }
 
-  const newDaycareDate = await db
-    .insertInto('daycareDates')
-    .values(daycareDate)
-    .returningAll()
-    .executeTakeFirstOrThrow()
-
-  await db
-    .insertInto('daycareDatePetKennel')
-    .values(
-      petIds.map((petId) => ({
-        petId,
-        daycareDateId: newDaycareDate.id
-      }))
-    )
-    .executeTakeFirstOrThrow()
-  return true
+  // The selection reads the days left and then writes: without a lock two
+  // bookings of the same customer both spend the last day.
+  return db.transaction().execute(async (trx) => {
+    await lockCustomerDaycareSubscriptions(trx, daycareDate.customerId)
+    return createDaycareDateWithSubscription(trx, {
+      daycareDate,
+      petIds,
+      options
+    })
+  })
 }
 
 export async function updateDaycareDate(
+  criteria: Partial<DaycareDate> & {
+    startDate?: string
+    endDate?: string
+    ids?: number[]
+  },
+  updateWith: {
+    daycareDate: DaycareDateUpdate
+    petIds?: number[]
+  },
+  options?: {
+    useCustomerDaycareSubscription?: boolean
+    ignoreCustomerDaycareSubscriptionErrors?: boolean
+  }
+) {
+  if (!options?.useCustomerDaycareSubscription || !criteria.customerId) {
+    return db
+      .transaction()
+      .execute((trx) =>
+        updateDaycareDateInTransaction(trx, criteria, updateWith, options)
+      )
+  }
+
+  // Same read-then-write as a booking, so it takes the same lock: an approval
+  // must not spend a day another approval just spent.
+  return db.transaction().execute(async (trx) => {
+    await lockCustomerDaycareSubscriptions(trx, criteria.customerId!)
+    return updateDaycareDateInTransaction(trx, criteria, updateWith, options)
+  })
+}
+
+async function updateDaycareDateInTransaction(
+  trx: Transaction<DB>,
   criteria: Partial<DaycareDate> & {
     startDate?: string
     endDate?: string
@@ -314,36 +434,44 @@ export async function updateDaycareDate(
     updateWith.petIds &&
     !updateWith.daycareDate.customerDaycareSubscriptionId
   ) {
-    const customerDaycareSubscriptions = await findCustomerDaycareSubscriptions(
-      {
-        criteria: {
-          customerId: criteria.customerId,
-          date: criteria.date,
-          status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
-        }
+    const date = criteria.date ?? updateWith.daycareDate.date
+    // Without the customer and the day there is nothing to decide against: the
+    // old code queried with neither filter and could link a stranger's pack.
+    if (!criteria.customerId || !date) {
+      if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
+        throw new Error(
+          'Cannot select a customer daycare subscription without a customer and a date'
+        )
       }
-    )
-    const customerDaycareSubscription = customerDaycareSubscriptions.find(
-      (customerDaycareSubscription) =>
-        (customerDaycareSubscription.numberOfDaysRemaining || 0) >=
-        (updateWith.petIds?.length || 1)
-    )
-    if (
-      customerDaycareSubscription &&
-      customerDaycareSubscription.numberOfDaysRemaining !== null &&
-      customerDaycareSubscription.numberOfDaysRemaining >=
-        updateWith.petIds.length
-    ) {
-      updateWith.daycareDate.customerDaycareSubscriptionId =
-        customerDaycareSubscription.id
-    } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
-      throw new Error(
-        `No valid customer daycare subscription available for date ${criteria.date}`
-      )
+    } else {
+      const customerDaycareSubscriptions =
+        await findCustomerDaycareSubscriptions({
+          criteria: {
+            customerId: criteria.customerId,
+            ...subscriptionSlack(date),
+            status: CUSTOMER_DAYCARE_SUBSCRIPTION_STATUS.PAID
+          },
+          trx
+        })
+      const customerDaycareSubscription = customerDaycareSubscriptions
+        .sort(bySoonestExpiry)
+        .find(
+          (customerDaycareSubscription) =>
+            (customerDaycareSubscription.numberOfDaysRemaining || 0) >=
+            (updateWith.petIds?.length || 1)
+        )
+      if (customerDaycareSubscription) {
+        updateWith.daycareDate.customerDaycareSubscriptionId =
+          customerDaycareSubscription.id
+      } else if (!options?.ignoreCustomerDaycareSubscriptionErrors) {
+        throw new Error(
+          `No valid customer daycare subscription available for date ${date}`
+        )
+      }
     }
   }
 
-  let query = db.updateTable('daycareDates')
+  let query = trx.updateTable('daycareDates')
 
   if (criteria.ids && !criteria.ids.length) {
     throw new Error('ids array cannot be empty')
@@ -367,12 +495,12 @@ export async function updateDaycareDate(
     .executeTakeFirstOrThrow()
 
   if (Array.isArray(updateWith.petIds)) {
-    await db
+    await trx
       .deleteFrom('daycareDatePetKennel')
       .where('daycareDateId', '=', updatedDaycareDate.id)
       .executeTakeFirstOrThrow()
 
-    await db
+    await trx
       .insertInto('daycareDatePetKennel')
       .values(
         updateWith.petIds.map((petId) => ({

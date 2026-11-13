@@ -21,11 +21,14 @@ docker-compose.*.override.yaml
 # Supervisor run file and gate evidence
 .pi/RUN.md
 .pi/evidence/
+.pi/notes/
+.pi/research/
 
 # Local review/scratch artifacts (not for commit)
 .scratch/
 # Showcase screenshots — keep README/spec, ignore PNG artifacts
-# Report artefacts — a PDF and screenshots that embed a render date
+# Run artefacts — notes, research, reports. The report PDF and screenshots embed a
+# render date; none of these are part of the change.
 .pi/reports/
 showcase/*/*.png
 showcase/*/!(*.md)

@@ -570,7 +570,8 @@ const lang: Language = {
       purchaseSubscription: 'Purchase subscription',
       checkout: 'Checkout',
       showAll: 'Show all',
-      edit: 'Edit'
+      edit: 'Edit',
+      expired: 'Expired'
     },
     messages: {
       daycareSubscriptionRequired:
