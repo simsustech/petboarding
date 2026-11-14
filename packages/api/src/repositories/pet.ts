@@ -14,6 +14,8 @@ import {
 import {
   buildSearchTsQuery,
   customerSearchVector,
+  isMultiTermQuery,
+  petAndCustomerSearchVector,
   petSearchVector
 } from './search.js'
 import type { Vaccination } from '../zod/index.js'
@@ -341,11 +343,17 @@ export async function updatePet(criteria: Partial<Pet>, updateWith: PetUpdate) {
 }
 
 export async function searchPets(searchPhrase: string) {
-  // The database folds accents; this builder drops stopwords and AND-joins.
   const tsQueryString = buildSearchTsQuery(searchPhrase)
   if (!tsQueryString) {
     return []
   }
+
+  // A phrase can name the pet and its owner at once — the select's own label is
+  // "<pet> <surname>". Two vectors cannot answer that, so the customer branch
+  // searches the concatenated text for multi-term phrases.
+  const relationVector = isMultiTermQuery(tsQueryString)
+    ? petAndCustomerSearchVector('p.', 'c.')
+    : customerSearchVector('c.')
 
   try {
     const query = sql<ParsedPet[]>`
@@ -400,7 +408,7 @@ export async function searchPets(searchPhrase: string) {
       inner join customers c on p.customer_id = c.id 
     where 
       p.deceased = false
-      and ${sql.raw(customerSearchVector('c.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
+      and ${sql.raw(relationVector)} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
   )
   select distinct on (id) * from main union select * from relation
   order by name asc;

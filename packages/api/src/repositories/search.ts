@@ -106,11 +106,10 @@ const stopwordKey = (term: string): string =>
 export function buildSearchTsQuery(searchPhrase: string): string {
   if (!searchPhrase || typeof searchPhrase !== 'string') return ''
 
+  // Split on every non-alphanumeric: the vector tokenises `O'Brien` as o+brien
+  // and `Peters-de Wit` as peters/de/wit, so a glued `obrien:*` matches neither.
   const terms = searchPhrase
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .trim()
-    .split(/\s+/)
-    .map((term) => term.replace(/[^\p{L}\p{N}]/gu, ''))
+    .split(/[^\p{L}\p{N}]+/u)
     .filter(
       (term) => term.length > 0 && !SEARCH_STOPWORDS.has(stopwordKey(term))
     )
@@ -125,22 +124,52 @@ export function buildSearchTsQuery(searchPhrase: string): string {
  * one in migration 07 (`customers_search_idx`) or Postgres will not use it.
  */
 export function customerSearchVector(alias = ''): string {
+  return `to_tsvector('${SEARCH_CONFIG}', ${customerSearchText(alias)})`
+}
+
+/** The customer text a vector is built from (migration 07 concatenates these). */
+export function customerSearchText(alias = ''): string {
   return (
-    `to_tsvector('${SEARCH_CONFIG}', ` +
     `coalesce(${alias}first_name, '') || ' ' || ` +
     `coalesce(${alias}last_name, '') || ' ' || ` +
     `coalesce(${alias}city, '') || ' ' || ` +
-    `coalesce(${alias}address, ''))`
+    `coalesce(${alias}address, '')`
   )
 }
 
 /** Indexed tsvector expression for a pet row (migration 10, `pets_search_idx`). */
 export function petSearchVector(alias = ''): string {
+  return `to_tsvector('${SEARCH_CONFIG}', ${petSearchText(alias)})`
+}
+
+/** The pet text a vector is built from (migration 10 concatenates these). */
+export function petSearchText(alias = ''): string {
   return (
-    `to_tsvector('${SEARCH_CONFIG}', ` +
     `coalesce(${alias}name, '') || ' ' || ` +
     `coalesce(${alias}breed, '') || ' ' || ` +
     `coalesce(${alias}chip_number, '') || ' ' || ` +
-    `coalesce(${alias}color, ''))`
+    `coalesce(${alias}color, '')`
   )
+}
+
+/**
+ * One vector holding a pet's and its owner's text. `@@` never crosses two
+ * vectors, so an AND-joined phrase whose terms are split between them — a pet
+ * name plus the owner's surname, `Moos Kratom` — can only match this. No GIN
+ * index covers it: use it for multi-term phrases only, where the indexed
+ * per-table branches cannot answer anyway.
+ */
+export function petAndCustomerSearchVector(
+  petAlias = '',
+  customerAlias = ''
+): string {
+  return (
+    `to_tsvector('${SEARCH_CONFIG}', ` +
+    `${petSearchText(petAlias)} || ' ' || ${customerSearchText(customerAlias)})`
+  )
+}
+
+/** True when the tsquery AND-joins more than one term. */
+export function isMultiTermQuery(tsQueryString: string): boolean {
+  return tsQueryString.includes(' & ')
 }

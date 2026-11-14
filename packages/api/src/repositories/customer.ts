@@ -12,6 +12,8 @@ import {
 import {
   buildSearchTsQuery,
   customerSearchVector,
+  isMultiTermQuery,
+  petAndCustomerSearchVector,
   petSearchVector
 } from './search.js'
 export type Customer = Selectable<Customers>
@@ -184,6 +186,12 @@ export async function searchCustomers(searchPhrase: string) {
     return []
   }
 
+  // Mirrors searchPets: the customer's text and the pet's are separate vectors,
+  // so a phrase naming both is only answerable by the joined one.
+  const relationVector = isMultiTermQuery(tsQueryString)
+    ? petAndCustomerSearchVector('p.', 'c.')
+    : petSearchVector('p.')
+
   try {
     const query = sql<Customer[]>`
     with main as (
@@ -229,7 +237,7 @@ export async function searchCustomers(searchPhrase: string) {
         customers c 
         inner join pets p on c.id = p.customer_id
       where 
-        ${sql.raw(petSearchVector('p.'))} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
+        ${sql.raw(relationVector)} @@ to_tsquery('unaccented', ${sql.val(tsQueryString)})
     )
     select distinct on (id) * from main union select * from relation
     order by last_name asc, first_name asc;`
