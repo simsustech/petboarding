@@ -22,7 +22,9 @@ services:
   database:
     image: postgres
     ports:
-      - '5432:5432'
+      # Loopback only, like caddy below: a sandbox worker reaches the host's
+      # loopback listeners through its gateway, the LAN has no business here.
+      - '${E2E_BIND_ADDR:-127.0.0.1}:5432:5432'
     environment:
       POSTGRES_PASSWORD: ufgouifdgjdfg
       POSTGRES_DB: petboarding

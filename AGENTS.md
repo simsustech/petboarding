@@ -111,6 +111,12 @@ Notes:
 - The mocking pattern below still works — `vi.mock` wins over the loaded env.
 - If you add new `required()` vars to `env.ts`, add a default to `packages/api/.env` too or the unit tests break at collection.
 
+### Running the database tests inside a pi-safe sandbox
+
+The compose `database` service is published on the host's loopback, which a sandbox guest cannot see as `localhost`. The guest gateway forwards every host loopback listener, so the same database answers as `host.microsandbox.internal:5432`; `vitest.config.ts` substitutes that name when `/etc/hosts` carries it and `POSTGRES_HOST` is unset or `localhost`. Never hardcode the gateway IP — it is assigned per sandbox (172.16.0.21 today). The rule that permits this is `allow@host`, so `PI_SAFE_SEARCH=0` removes the database together with SearXNG.
+
+A worker cannot start this stack at all: the `pi-worker` profile has no `/run/docker.sock`. Start compose on the host and let the worker's tests connect to the published port.
+
 ### Mocking env for tests
 
 API modules often import `../../env.js` which requires `POSTGRES_PASSWORD` at module init. To test functions that transitively depend on env, mock it early:
