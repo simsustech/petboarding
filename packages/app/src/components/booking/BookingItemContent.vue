@@ -65,9 +65,8 @@
     </q-item-label>
     <q-item-label
       v-if="modelValue.comments"
-      class="text-bold"
+      class="text-bold whitespace-normal overflow-visible"
       caption
-      lines="2"
     >
       {{ modelValue.comments }}
     </q-item-label>
